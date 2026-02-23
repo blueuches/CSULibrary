@@ -20,6 +20,8 @@ const router = createRouter({
     { path: '/personnel', name: 'personnel', component: PersonnelPage, },
     { path: '/records', name: 'records', component: RecordPage, },
     { path: '/services', name: 'services', component: ServicesPage, },
+
+    //
   ],
 })
 
