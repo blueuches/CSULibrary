@@ -49,8 +49,63 @@
           :key="i"
           @click="currentIndex = i"
           class="w-2 h-2 rounded-full transition-all"
-          :class="currentIndex === i ? 'bg-[#fbc02d] w-4' : 'bg-[#fbc02d]/50'"
+          :class="currentIndex === i ? 'bg-[#fbc02d] w-2' : 'bg-[#fbc02d]/50'"
         />
+      </div>
+    </div>
+
+    <!-- TAGLINE -->
+    <!-- <-- I-ADD DIRI -->
+    <div class="w-full py-8 flex justify-center">
+      <h2
+        class="tagline text-3xl md:text-4xl font-bold tracking-widest text-center"
+        style="
+          font-family: 'Cinzel', serif;
+          background: linear-gradient(to right, #0d2b0f, #0d2b0f, #2e7d32, #66bb6a, #f2c078);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        "
+      >
+        H.E.R.O Learning Commons
+      </h2>
+    </div>
+
+    <!-- READ LEARN DISCOVER SECTION -->
+    <div class="w-full flex justify-center px-5 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-6xl">
+        <!-- Read -->
+        <div class="flex flex-col items-center">
+          <h2
+            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 border-b-2 border-[#1B5E20] w-full text-center"
+            style="font-size: 1.5rem; font-weight: 900; color: #1b5e20"
+          >
+            Read
+          </h2>
+          <img src="@/assets/images/img.jpg" alt="Read" class="w-full h-80 object-cover" />
+        </div>
+
+        <!-- Learn -->
+        <div class="flex flex-col items-center">
+          <h2
+            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 border-b-2 border-[#1B5E20] w-full text-center"
+            style="font-size: 1.5rem; font-weight: 900; color: #1b5e20"
+          >
+            Learn
+          </h2>
+          <img src="@/assets/images/img.jpg" alt="Learn" class="w-full h-80 object-cover" />
+        </div>
+
+        <!-- Discover -->
+        <div class="flex flex-col items-center">
+          <h2
+            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 border-b-2 border-[#1B5E20] w-full text-center"
+            style="font-size: 1.5rem; font-weight: 900; color: #1b5e20"
+          >
+            Discover
+          </h2>
+          <img src="@/assets/images/img.jpg" alt="Discover" class="w-full h-80 object-cover" />
+        </div>
       </div>
     </div>
   </div>
@@ -74,7 +129,6 @@ const images = [
 ]
 
 const imageHeight = '600px'
-
 const currentIndex = ref(0)
 const slideWidth = 100
 
@@ -97,4 +151,6 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
+</style>
