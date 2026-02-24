@@ -4,6 +4,8 @@ import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 </script>
 
+<!-- max-w-7xl -->
+ 
 <template>
   <div class="min-h-screen w-full flex flex-col bg-slate-50">
     <Navbar />
