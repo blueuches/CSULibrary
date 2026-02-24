@@ -2,7 +2,6 @@
   <div class="w-full !m-0 !p-0">
     <!-- CAROUSEL -->
     <div class="relative w-full overflow-hidden">
-      <!-- Slides Wrapper -->
       <div
         class="flex transition-transform duration-700 ease-in-out"
         :style="{ transform: `translateX(-${currentIndex * slideWidth}%)` }"
@@ -34,7 +33,7 @@
 
       <!-- Next Button -->
       <button
-        @click="prev"
+        @click="next"
         class="absolute right-2 top-1/2 -translate-y-1/2 text-white hover:text-[#0d2b0f] transition opacity-0 hover:opacity-100 p-2"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -49,7 +48,7 @@
           :key="i"
           @click="currentIndex = i"
           class="w-2 h-2 rounded-full transition-all"
-          :class="currentIndex === i ? 'bg-[#fbc02d] w-2' : 'bg-[#fbc02d]/50'"
+          :class="currentIndex === i ? 'bg-[#fbc02d] w-4' : 'bg-[#fbc02d]/50'"
         />
       </div>
     </div>
@@ -57,7 +56,7 @@
     <!-- TAGLINE -->
     <div class="w-full py-8 flex justify-center">
       <h2
-        class="tagline text-3xl md:text-4xl font-bold tracking-widest text-center"
+        class="text-3xl md:text-4xl font-bold tracking-widest text-center"
         style="
           font-family: 'Cinzel', serif;
           background: linear-gradient(
@@ -85,33 +84,119 @@
         <div class="flex flex-col items-center">
           <h2
             class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 border-b-2 border-[#1B5E20] w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #1b5e20"
+            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
           >
             Read
           </h2>
-          <img src="@/assets/images/img.jpg" alt="Read" class="w-full h-80 object-cover" />
+          <img src="@/assets/images/read.jpg" alt="Read" class="w-full h-80 object-cover" />
         </div>
 
         <!-- Learn -->
         <div class="flex flex-col items-center">
           <h2
             class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 border-b-2 border-[#1B5E20] w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #1b5e20"
+            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
           >
             Learn
           </h2>
-          <img src="@/assets/images/img.jpg" alt="Learn" class="w-full h-80 object-cover" />
+          <img src="@/assets/images/learn.jpg" alt="Learn" class="w-full h-80 object-cover" />
         </div>
 
         <!-- Discover -->
         <div class="flex flex-col items-center">
           <h2
             class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 border-b-2 border-[#1B5E20] w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #1b5e20"
+            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
           >
             Discover
           </h2>
-          <img src="@/assets/images/img.jpg" alt="Discover" class="w-full h-80 object-cover" />
+          <img src="@/assets/images/discover.jpg" alt="Discover" class="w-full h-80 object-cover" />
+        </div>
+      </div>
+    </div>
+
+    <!-- WELCOME BANNER ------------------------------------------------->
+
+    <!-- CSU LIBRARY -->
+    <div class="w-full bg-[#0d2b0f] flex justify-center py-12 px-6 mt-8">
+      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <!-- Left: Image -->
+        <div class="w-full h-96 flex justify-center">
+          <img
+            src="@/assets/images/lib.jpg"
+            alt="Students"
+            class="w-full h-full object-cover rounded-sm"
+          />
+        </div>
+
+        <!-- Right: Text -->
+        <div class="flex flex-col text-white px-4">
+          <h2 class="text-3xl mb-4" style="font-size: 1.5rem; font-weight: 900; color: white">
+            Caraga State University Library
+          </h2>
+          <p class="text-white text-base leading-relaxed mb-6">
+            The CSU Library Service Unit aims to support and achieve the educational objectives of
+            CSU. It seeks relevant materials and services; and provide these to fulfull the
+            vision,mission goals and objectives of the State College to respond to the changing
+            needs of the clientele and the curricular offerings.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAMPUS UPDATES SECTION -->
+    <div class="w-full flex justify-center px-6 py-12">
+      <div class="w-full max-w-6xl mx-auto">
+        <h2
+          class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 text-center"
+          style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
+        >
+          LIBRARY UPDATES
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="border border-gray-200 rounded-lg overflow-hidden flex flex-col">
+            <img src="@/assets/images/card1.jpg" alt="News 3" class="w-full h-56 object-cover" />
+            <div class="p-5 flex flex-col flex-grow">
+              <h3 class="text-lg font-bold text-[#0d2b0f] mb-3">BSP Knowledge Resource Network</h3>
+
+              <button
+                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#1b5e20] hover:text-white transition"
+              >
+                More Details →
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="border border-gray-200 rounded-lg overflow-hidden flex flex-col">
+            <img src="@/assets/images/card2.jpg" alt="News 3" class="w-full h-56 object-cover" />
+            <div class="p-5 flex flex-col flex-grow">
+              <h3 class="text-lg font-bold text-[#0d2b0f] mb-3">
+                84th National Book Week Celebration
+              </h3>
+
+              <button
+                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#1b5e20] hover:text-white transition"
+              >
+                More Details →
+              </button>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="border border-gray-200 rounded-lg overflow-hidden flex flex-col">
+            <img src="@/assets/images/card3.png" alt="News 3" class="w-full h-56 object-cover" />
+            <div class="p-5 flex flex-col flex-grow">
+              <h3 class="text-lg font-bold text-[#0d2b0f] mb-3">STARBOOKS - DOST-STII</h3>
+
+              <button
+                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#1b5e20] hover:text-white transition"
+              >
+                More Details →
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
