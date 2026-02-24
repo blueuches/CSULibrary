@@ -1,31 +1,22 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import Navbar from './components/Navbar.vue' 
+import { RouterView } from 'vue-router'
+import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 </script>
 
 <!-- max-w-7xl -->
  
 <template>
-  <div class="min-h-screen w-full flex flex-col bg-slate-50 overflow-x-hidden">
-    
+  <div class="min-h-screen w-full flex flex-col bg-slate-50">
     <Navbar />
-
-    <main class="grow w-full">
-      <div class="mx-auto px-4 py-8 sm:px-6 lg:px-12"> 
-        <RouterView />
-      </div>
+    <main class="flex-grow w-full !p-0 !m-0">
+      <RouterView />
     </main>
-
-    <Footer/>
-
+    <Footer />
   </div>
 </template>
 
 <style>
-/* Ensuring the browser doesn't add default padding/margins 
-  that would break the "full-width" look of the Navbar/Footer.
-*/
 body {
   margin: 0;
   padding: 0;
