@@ -20,7 +20,7 @@
       <!-- Prev Button -->
       <button
         @click="prev"
-        class="absolute left-2 top-1/2 -translate-y-1/2 text-white/70 hover:text-[#0d2b0f] transition p-2"
+        class="absolute left-2 top-1/2 -translate-y-1/2 text-white hover:text-[#0d2b0f] transition opacity-0 hover:opacity-100 p-2"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -34,8 +34,8 @@
 
       <!-- Next Button -->
       <button
-        @click="next"
-        class="absolute right-2 top-1/2 -translate-y-1/2 text-white/70 hover:text-[#0d2b0f] transition p-2"
+        @click="prev"
+        class="absolute right-2 top-1/2 -translate-y-1/2 text-white hover:text-[#0d2b0f] transition opacity-0 hover:opacity-100 p-2"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -55,13 +55,20 @@
     </div>
 
     <!-- TAGLINE -->
-    <!-- <-- I-ADD DIRI -->
     <div class="w-full py-8 flex justify-center">
       <h2
         class="tagline text-3xl md:text-4xl font-bold tracking-widest text-center"
         style="
           font-family: 'Cinzel', serif;
-          background: linear-gradient(to right, #0d2b0f, #0d2b0f, #2e7d32, #66bb6a, #f2c078);
+          background: linear-gradient(
+            to right,
+            #0d2b0f,
+            #0d2b0f,
+            #2e7d32,
+            #66bb6a,
+            #fbc02d,
+            #f2c078
+          );
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;

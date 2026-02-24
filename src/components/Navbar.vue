@@ -57,7 +57,7 @@ const navLinks = [
 
 .nav-link {
   font-family: 'Poppins', sans-serif;
-  font-weight: 500;
+  font-weight: 700;
   font-size: 0.95rem;
   color: #0d2b0f;
   transition: all 0.3s ease;
