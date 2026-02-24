@@ -3,7 +3,7 @@
     <div class=" mx-auto px-6">
       <Carousel :items="images" />
 
-      <div class="mt-20">
+      <!-- <div class="mt-20">
         <h2 class="text-3xl font-bold mb-8">
           📅 Monthly Events
         </h2>
@@ -11,7 +11,7 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           ...
         </div>
-      </div>
+      </div> -->
 
     </div>
   </section>
