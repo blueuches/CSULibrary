@@ -49,7 +49,7 @@
             <h2 class="text-xl font-black tracking-widest text-white uppercase">Contact Us</h2>
           </div>
 
-          <div class="space-y-3">
+          <div class="flex flex-col gap-1">
             <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 hover:border-[#d35400]/50 transition-all group cursor-default">
               <div class="p-2 bg-slate-800 rounded-lg group-hover:bg-[#d35400] transition-colors">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -80,7 +80,7 @@
                 <span class="text-[10px] font-bold text-white uppercase tracking-tighter">Messenger</span>
               </a>
             </div>
-            <p class="text-[9px] leading-tight text-center pl-13 pt-2 lg:text-left text-slate-500 italic mt-4">
+            <p class="pb-2 text-[9px] leading-tight text-center pl-13 pt-2 lg:text-left text-slate-500 italic mt-4">
               "Come & visit us @ New Library Building near Harrison bridge"
             </p>
           </div>
