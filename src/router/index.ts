@@ -38,7 +38,7 @@ const router = createRouter({
     { path: '/bcp', name: 'bcppage', component: BSPPage, },
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage, },
     { path: '/starbooks', name: 'starbooks', component: Starbooks, },
-  ],
+   ],
 })
 
 export default router
