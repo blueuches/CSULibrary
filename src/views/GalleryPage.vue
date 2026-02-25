@@ -192,14 +192,16 @@ const filteredFloors = computed(() => {
         s.title.toLowerCase().includes(query) ||
         (s.note && s.note.toLowerCase().includes(query))
       )
-    })).filter(w => w.sections.length > 0)
+    })).filter(w => w.sections.length > 0) //gsgsgsggsgsgsg
   })).filter(f => f.wings.length > 0)
 })
 
-// Current Floor viewing logic (WHEN NOT SEARCHING)
+// Current Floor viewing logic (WHEN NOT SEARCHING) //hahshahhahdhhad
 const activeFloorData = computed(() => {
   return floors.filter(f => f.id === activeFloor.value)
 })
+
+//hahshsahdhadhahdhahd
 
 const searchResultCount = computed(() => {
   return filteredFloors.value.reduce((acc, f) => acc + f.wings.reduce((a, w) => a + w.sections.length, 0), 0)
