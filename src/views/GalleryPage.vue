@@ -196,7 +196,7 @@ const filteredFloors = computed(() => {
   })).filter(f => f.wings.length > 0)
 })
 
-// Current Floor viewing logic (when NOT searching)
+// Current Floor viewing logic (WHEN NOT SEARCHING)
 const activeFloorData = computed(() => {
   return floors.filter(f => f.id === activeFloor.value)
 })
