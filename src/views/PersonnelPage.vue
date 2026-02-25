@@ -28,14 +28,17 @@
           <div class="flex flex-col items-center text-center">
 
             <!-- Circle -->
-            <div class="relative w-44 h-44 mb-20 rounded-full overflow-visible">
+            <div class="relative w-40 h-40 mb-20 rounded-full overflow-visible">
 
-              <div class="absolute inset-0 rounded-full bg-green-800 border-4 border-green-600 shadow-md"></div>
+             <div 
+  class="absolute inset-0 rounded-full border-3 shadow-md"
+  style="background-color:#0d2b0f; border-color:#66bb6a;" 
+></div>
 
               <img
                 :src="staff[0].image"
                 :alt="staff[0].name"
-                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-56 object-cover rounded-full transition-transform duration-300 hover:scale-105"
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-50 h-55 object-cover rounded-full transition-transform duration-300 hover:scale-105"
               />
 
             </div>
@@ -79,14 +82,18 @@
           class="flex flex-col items-center text-center w-full max-w-sm"
         >
 
-          <div class="relative w-44 h-44 mb-16 rounded-full overflow-visible">
+          <div class="relative w-40 h-40 mb-16 rounded-full overflow-visible">
 
-            <div class="absolute inset-0 rounded-full bg-green-800 border-4 border-green-600 shadow-md"></div>
+            <div 
+  class="absolute inset-0 rounded-full border-3 shadow-md"
+  style="background-color:#0d2b0f; border-color:#66bb6a;" 
+></div>
 
             <img
               :src="person.image"
               :alt="person.name"
-              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-56 object-cover rounded-full transition-transform duration-300 hover:scale-105"
+              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-50
+              object-cover rounded-full transition-transform duration-300 hover:scale-105"
             />
 
           </div>
