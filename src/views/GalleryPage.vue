@@ -203,6 +203,13 @@ const activeFloorData = computed(() => {
 
 //hahshsahdhadhahdhahd
 
+
+//ahhsahidhaidha
+
+
+//hahdhadhahda
+
+//hadhajdahdaha
 const searchResultCount = computed(() => {
   return filteredFloors.value.reduce((acc, f) => acc + f.wings.reduce((a, w) => a + w.sections.length, 0), 0)
 })
