@@ -127,7 +127,12 @@
       </div>
     </div>
 
-    <!-- WELCOME BANNER ------------------------------------------------->
+    <!-- WELCOME RIBBON BANNER -->
+    <div class="csu-ribbon-wrap">
+      <div class="csu-ribbon">
+        <span class="csu-ribbon-title"> Welcome to Caraga State University Library</span>
+      </div>
+    </div>
 
     <!-- CSU LIBRARY -->
     <div class="w-full bg-[#0d2b0f] flex justify-center py-12 px-6 mt-8">
@@ -173,12 +178,16 @@
           >
             <img src="@/assets/images/card1.jpg" alt="Card 1" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3 class="text-lg font-bold text-[#0d2b0f] mb-3">BSP Knowledge Resource Network</h3>
+              <h3
+                class="pb-5 text-center"
+                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
+              >
+                BSP Knowledge Resource Network
+              </h3>
 
               <RouterLink
                 :to="{ name: 'bcppage' }"
-                class="inline-block border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold
-                      hover:bg-[#1b5e20] hover:text-white transition"
+                class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
               </RouterLink>
@@ -531,4 +540,69 @@ onUnmounted(() => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
+
+.csu-ribbon-wrap {
+  width: 100%;
+  padding: 12px 0 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.csu-ribbon {
+  position: relative;
+  width: 85%;
+  height: 48px;
+  background: #1b5e20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.csu-ribbon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34px;
+  height: 48px;
+  background: #ffffff;
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.csu-ribbon::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid #0d2b0f;
+  border-right: 12px solid transparent;
+}
+
+.csu-ribbon-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 48px;
+  letter-spacing: 0.3px;
+}
+
+.csu-ribbon-title::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-120px);
+  width: 4px;
+  height: 10px;
+  border-radius: 1px;
+}
 </style>
