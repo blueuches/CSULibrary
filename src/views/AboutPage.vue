@@ -1,20 +1,20 @@
 <script setup lang="ts">
 const objectives = [
-  "1. Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;",
-  "2. Effect a universally-accepted library system of organization and circulation;",
-  "3. Ensure the provision and maintenance of efficient facilities and equipment for quality library services and operations;",
-  "4. Install a computerized system of information access for wider information coverage and facilitated library operations;"
+  '1. Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;',
+  '2. Effect a universally-accepted library system of organization and circulation;',
+  '3. Ensure the provision and maintenance of efficient facilities and equipment for quality library services and operations;',
+  '4. Install a computerized system of information access for wider information coverage and facilitated library operations;',
 ]
 
 const rules = [
-  "1. Always use appropriate voice level.",
-  "2. No eating and drinking at reader’s area.",
-  "3. Keep away books from rain, water and dust.",
-  "4. Do not write or draw anything in our books.",
-  "5. Cellular Phone should be put to silent mode.",
-  "6. Answering phone calls inside the library is not allowed.",
-  "7. Walk quietly into the library.",
-  "8. Never run around the hallway outside the library premises."
+  '1. Always use appropriate voice level.',
+  '2. No eating and drinking at reader’s area.',
+  '3. Keep away books from rain, water and dust.',
+  '4. Do not write or draw anything in our books.',
+  '5. Cellular Phone should be put to silent mode.',
+  '6. Answering phone calls inside the library is not allowed.',
+  '7. Walk quietly into the library.',
+  '8. Never run around the hallway outside the library premises.',
 ]
 </script>
 
@@ -28,22 +28,24 @@ const rules = [
         </div>
       </div>
     </div>
-
     <!-- Content area -->
     <div class="about-content page-inner">
       <div class="intro-text">
         <p>
-          Libraries play a very crucial role in supporting the academic programs of any university as it identifies,
-          evaluates, procures, processes, and then makes these learning resources available to the faculty and student
-          for their teaching, learning and research assignments.
+          Libraries play a very crucial role in supporting the academic programs of any university
+          as it identifies, evaluates, procures, processes, and then makes these learning resources
+          available to the faculty and student for their teaching, learning and research
+          assignments.
         </p>
 
         <p class="mt-4">
-          The Caraga State University (CSU) Library in support to the attainment of the mandate of the University
-          specifically the educational objectives endeavors to provide relevant materials and services. It has a program
-          of selection, acquisition, collection maintenance and stocking, circulation of relevant materials, and provision
-          of physical facilities and professional manpower. It positions itself to respond to the changing expectations
-          faced by the University which paves way to the changing needs of its clientele, and the curricular offerings.
+          The Caraga State University (CSU) Library in support to the attainment of the mandate of
+          the University specifically the educational objectives endeavors to provide relevant
+          materials and services. It has a program of selection, acquisition, collection maintenance
+          and stocking, circulation of relevant materials, and provision of physical facilities and
+          professional manpower. It positions itself to respond to the changing expectations faced
+          by the University which paves way to the changing needs of its clientele, and the
+          curricular offerings.
         </p>
       </div>
 
@@ -57,9 +59,9 @@ const rules = [
               <h3 class="green-heading with-accent">Vision</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  The CSU Library envisions to be a leading repository of knowledge in the pursuit of globally competitive
-                  academic aspirations of the University with respect to the advancement of science and technology for the
-                  changing demands of Caraga Region.
+                  The CSU Library envisions to be a leading repository of knowledge in the pursuit
+                  of globally competitive academic aspirations of the University with respect to the
+                  advancement of science and technology for the changing demands of Caraga Region.
                 </p>
               </div>
             </div>
@@ -73,8 +75,9 @@ const rules = [
               <h3 class="green-heading with-accent">Mission</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  It is committed to sustain an excellent bank of information to support the services of the empowering
-                  stakeholders with knowledge and skills relevant to the broad-based development of the region.
+                  It is committed to sustain an excellent bank of information to support the
+                  services of the empowering stakeholders with knowledge and skills relevant to the
+                  broad-based development of the region.
                 </p>
               </div>
             </div>
@@ -88,8 +91,9 @@ const rules = [
               <h3 class="green-heading with-accent">Goal</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  To ensure a well organized library system with a vast collection of information and education materials
-                  relative to the academic programs of the University and the societal demand of the region.
+                  To ensure a well organized library system with a vast collection of information
+                  and education materials relative to the academic programs of the University and
+                  the societal demand of the region.
                 </p>
               </div>
             </div>
@@ -143,8 +147,7 @@ const rules = [
   --accent-orange: #f15a24;
   --text-color: #1f1f1f;
   --card-border: #d8d8d8;
-  --float-shadow-green: 102, 187, 106; 
-
+  --float-shadow-green: 102, 187, 106;
 
   width: 100%;
   min-height: 100vh;
@@ -153,7 +156,7 @@ const rules = [
 }
 
 .page-inner {
-  width: min(100%, 1500px); 
+  width: min(100%, 1500px);
   margin: 0 auto;
   padding: 0 32px;
   box-sizing: border-box;
@@ -179,7 +182,7 @@ const rules = [
 }
 
 .csu-ribbon::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   right: 0;
@@ -190,7 +193,7 @@ const rules = [
 }
 
 .csu-ribbon::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   bottom: -10px;
@@ -215,7 +218,7 @@ const rules = [
 }
 
 .csu-ribbon-title::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -14px;
   left: 50%;
@@ -266,7 +269,7 @@ const rules = [
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
   align-items: stretch;
-  perspective: 1200px; 
+  perspective: 1200px;
 }
 
 .grid-item {
@@ -286,10 +289,10 @@ const rules = [
   padding: 18px 20px;
   box-sizing: border-box;
 
-   box-shadow:
+  box-shadow:
     0 6px 14px rgba(var(--float-shadow-green), 0.16),
     0 14px 28px rgba(var(--float-shadow-green), 0.12),
-    0 2px 4px rgba(var(--float-shadow-green), 0.10);
+    0 2px 4px rgba(var(--float-shadow-green), 0.1);
 
   position: relative;
   transform-style: preserve-3d;
@@ -306,7 +309,7 @@ const rules = [
 }
 
 .content-box::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -316,27 +319,30 @@ const rules = [
     rgba(255, 255, 255, 0.22) 35%,
     rgba(255, 255, 255, 0) 62%
   );
-  opacity: 0.35; 
+  opacity: 0.35;
   transition: opacity 0.28s ease;
   pointer-events: none;
 }
 
 .content-box::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: -1px;
   border-radius: inherit;
   border: 1px solid rgba(var(--float-shadow-green), 0.16);
   box-shadow: 0 0 0 0 rgba(var(--float-shadow-green), 0);
   opacity: 0.5;
-  transition: opacity 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  transition:
+    opacity 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
   pointer-events: none;
 }
 
 .grid-item:hover .content-box::after {
   opacity: 1;
   border-color: rgba(var(--float-shadow-green), 0.32);
-  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.10);
+  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.1);
 }
 
 .grid-item:hover .content-box {
@@ -344,7 +350,7 @@ const rules = [
   border-color: rgba(var(--float-shadow-green), 0.35);
   box-shadow:
     0 18px 34px rgba(var(--float-shadow-green), 0.28),
-    0 28px 48px rgba(var(--float-shadow-green), 0.20),
+    0 28px 48px rgba(var(--float-shadow-green), 0.2),
     0 10px 20px rgba(var(--float-shadow-green), 0.16);
 }
 
@@ -408,7 +414,7 @@ const rules = [
 }
 
 .with-accent::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   top: 4px;
@@ -464,7 +470,7 @@ const rules = [
 ========================= */
 .list-card {
   height: auto !important;
-  min-height: 390px; 
+  min-height: 390px;
 }
 
 .list-card .card-body {
