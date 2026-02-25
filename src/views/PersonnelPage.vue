@@ -1,170 +1,210 @@
 <template>
-  <div class="w-screen bg-white">
-    <!-- Pattern Background Container -->
-    <div class="relative w-full bg-gradient-to-b from-amber-50 via-white to-white overflow-hidden">
-      
-      <!-- Decorative Pattern SVG Background -->
-      <svg class="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <pattern id="decorPattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-            <circle cx="50" cy="50" r="30" fill="none" stroke="#166534" stroke-width="2" opacity="0.3" />
-            <rect x="20" y="20" width="60" height="60" fill="none" stroke="#166534" stroke-width="2" opacity="0.2" transform="rotate(45 50 50)" />
-            <path d="M 50 20 Q 70 35 70 50 Q 70 65 50 80 Q 30 65 30 50 Q 30 35 50 20" fill="none" stroke="#166534" stroke-width="1.5" opacity="0.25" />
-          </pattern>
-        </defs>
-        <rect width="1000" height="600" fill="url(#decorPattern)" />
-      </svg>
+  <div class="w-full bg-white">
 
-      <!-- Content -->
-      <div class="relative z-10 px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center">
-        
-        <!-- Header -->
-        <div class="text-center pb-16">
-          <h1 class="text-4xl sm:text-4xl font-bold text-gray-700">
-            LIBRARY PERSONNEL
-          </h1>
+    <!-- TOP FULL DIVIDER -->
+    <div class="w-full h-px bg-gray-400"></div>
 
-          <!-- Yellow Center Line -->
-          <div class="h-1 w-15 bg-yellow-400 mx-auto rounded-full mt-3 mb-28 center"></div>
-        </div>
+    <!-- GREEN RIBBON HEADER -->
+    <div 
+  class="w-full flex justify-center py-6"
+  style="background-color:#2e7d32;"
+>
+      <h1
+        style="font-size:1.5rem; font-weight:750; color:#ffffff;"
+        class="text-center"
+      >
+        LIBRARY PERSONNEL
+      </h1>
+    </div>
 
-        <!-- Featured Person (Top) -->
-        <div v-if="staff.length > 0" class="max-w-4xl w-full mx-auto mb-16">
-          <div class="flex flex-col items-center">
+    <!-- Patterned Featured Section -->
+    <div class="featured-section w-full py-20">
 
-            <!-- Circular Image with Green Border -->
-            <div class="relative mb-6">
-              <div class="w-48 h-48 rounded-full border-8 border-green-700 overflow-hidden shadow-lg bg-white">
-                <img
-                  :src="staff[0].image"
-                  :alt="staff[0].name"
-                  class="w-full h-full object-cover"
-                />
-              </div>
+      <div class="px-4 sm:px-6 lg:px-8 flex flex-col items-center">
 
-              <!-- Decorative corner accents -->
-              <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-green-700 rounded-tl-lg"></div>
-              <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-green-700 rounded-tr-lg"></div>
-              <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-green-700 rounded-bl-lg"></div>
-              <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-green-700 rounded-br-lg"></div>
+        <!-- Featured Person -->
+        <div v-if="staff.length > 0" class="max-w-4xl w-full mx-auto">
+
+          <div class="flex flex-col items-center text-center">
+
+            <!-- Circle -->
+            <div class="relative w-40 h-40 mb-20 rounded-full overflow-visible">
+
+             <div 
+  class="absolute inset-0 rounded-full border-3 shadow-md"
+  style="background-color:#0d2b0f; border-color:#66bb6a;" 
+></div>
+
+              <img
+                :src="staff[0].image"
+                :alt="staff[0].name"
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-50 h-55 object-cover rounded-full transition-transform duration-300 hover:scale-105"
+              />
+
             </div>
 
             <!-- Info -->
-            <div class="text-center">
-              <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ staff[0].name }}</h2>
-              <p class="text-sm text-gray-600 italic mb-2">{{ staff[0].subtitle }}</p>
-              <p class="text-base font-bold text-gray-900">{{ staff[0].position }}</p>
+            <div class="mt-4">
+              <h2 style="font-size:1rem; font-weight:800; color:#1b5e20">
+                {{ staff[0].name }}
+              </h2>
+
+              <p class="text-sm text-gray-600 italic mt-2">
+                {{ staff[0].subtitle }}
+              </p>
+
+              <p
+                v-if="staff[0].position"
+                style="font-size:1rem; font-weight:800; color:#1b5e20"
+                class="mt-2"
+              >
+                {{ staff[0].position }}
+              </p>
             </div>
-          </div>
 
-          <!-- Divider -->
-          <div class="flex items-center justify-center my-12">
-            <div class="flex-grow h-px bg-gray-300"></div>
-            <div class="px-4 text-gray-400">•</div>
-            <div class="flex-grow h-px bg-gray-300"></div>
-          </div>
-        </div>
-
-        <!-- Grid for Other Staff -->
-        <div class="max-w-6xl w-full mx-auto">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
-            <div
-              v-for="person in staff.slice(1)"
-              :key="person.id"
-              class="flex flex-col items-center"
-            >
-              <!-- Circular Image -->
-              <div class="relative mb-6">
-                <div class="w-40 h-40 rounded-full border-8 border-green-700 overflow-hidden shadow-lg bg-white">
-                  <img
-                    :src="person.image"
-                    :alt="person.name"
-                    class="w-full h-full object-cover"
-                  />
-                </div>
-
-                <!-- Decorative corner accents -->
-                <div class="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-green-700 rounded-tl-lg"></div>
-                <div class="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-green-700 rounded-tr-lg"></div>
-                <div class="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-green-700 rounded-bl-lg"></div>
-                <div class="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-green-700 rounded-br-lg"></div>
-              </div>
-
-              <!-- Info -->
-              <div class="text-center">
-                <h3 class="text-lg font-bold text-gray-900 mb-1">{{ person.name }}</h3>
-                <p class="text-sm text-gray-600 italic mb-2">{{ person.subtitle }}</p>
-                <p class="text-sm font-bold text-gray-900">{{ person.position }}</p>
-              </div>
-            </div>
           </div>
         </div>
 
       </div>
     </div>
+
+    <!-- BOTTOM FULL DIVIDER -->
+    <div class="w-full h-px bg-gray-400"></div>
+
+    <!-- Other Staff Section -->
+    <div class="px-4 sm:px-6 lg:px-8 py-20">
+
+      <div class="class=max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 justify-items-center items-start">
+
+        <div
+          v-for="person in staff.slice(1)"
+          :key="person.id"
+          class="flex flex-col items-center text-center w-full max-w-sm"
+        >
+
+          <div class="relative w-40 h-40 mb-16 rounded-full overflow-visible">
+
+            <div 
+  class="absolute inset-0 rounded-full border-3 shadow-md"
+  style="background-color:#0d2b0f; border-color:#66bb6a;" 
+></div>
+
+            <img
+              :src="person.image"
+              :alt="person.name"
+              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-50
+              object-cover rounded-full transition-transform duration-300 hover:scale-105"
+            />
+
+          </div>
+
+          <div>
+            <h3 style="font-size:1rem; font-weight:800; color:#1b5e20">
+              {{ person.name }}
+            </h3>
+
+            <p class="text-sm text-gray-600 italic mt-2">
+              {{ person.subtitle }}
+            </p>
+
+            <p
+              v-if="person.position"
+              class="text-sm font-semibold text-gray-900 mt-2"
+            >
+              {{ person.position }}
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 export default {
-  name: 'PersonalPage',
   data() {
     return {
       staff: [
         {
           id: 1,
-          name: 'Maria Corazon L. Tercera',
-          subtitle: 'University Librarian',
-          position: 'Head, Library Services',
-          image: '/public/tin.jpg'
+          name: "MARIA CORAZON L. TERCERA, RL",
+          subtitle: "University Librarian",
+          position: "Head, Library Services",
+          image: "/public/imgs/personnelpage/cora.png"
         },
         {
           id: 2,
-          name: 'Mercy G. Reyes',
-          subtitle: 'College Librarian I',
-          position: 'Member, Library Board',
-          image: 'https://via.placeholder.com/300?text=Mercy'
+          name: "MERCY G. REYES, RL",
+          subtitle: "Technical Librarian I",
+          image: "/public/imgs/personnelpage/mercy.png"
         },
         {
           id: 3,
-          name: 'Ann Marie Monte de Ramos',
-          subtitle: 'Librarian I',
-          position: 'Head, Reference Services',
-          image: 'https://via.placeholder.com/300?text=Ann'
+          name: "ANN MARIE MONTE DE RAMOS, RL",
+          subtitle: "Readers Services Librarian",
+          image: "/public/imgs/personnelpage/marie.png"
         },
         {
           id: 4,
-          name: 'Staff Member 4',
-          subtitle: 'Library Assistant',
-          position: 'Circulation Services',
-          image: 'https://via.placeholder.com/300?text=Staff4'
+          name: "JEHOVENN T. BERONGOY",
+          subtitle: "Audio-Visual Technician",
+          image: "/public/imgs/personnelpage/berongoy.png"
         },
         {
           id: 5,
-          name: 'Staff Member 5',
-          subtitle: 'Library Assistant',
-          position: 'Cataloging Services',
-          image: 'https://via.placeholder.com/300?text=Staff5'
+          name: "JORGE V. BAUTISTA",
+          subtitle: "Public Assistance & Complaints Desk Officer",
+          image: "/public/imgs/personnelpage/jorge.png"
         },
         {
           id: 6,
-          name: 'Staff Member 6',
-          subtitle: 'Library Assistant',
-          position: 'Technical Services',
-          image: 'https://via.placeholder.com/300?text=Staff6'
+          name: "JOHN WARREN S. BATONDO, LPT",
+          subtitle: "Administrative Aide VI Clerk III",
+          image: "/public/imgs/personnelpage/warren.png"
+        },
+        {
+          id: 7,
+          name: "MALYN C. TRAYA",
+          subtitle: "Technical Service Staff",
+          image: "/public/imgs/personnelpage/malyn.png"
+        },
+        {
+          id: 8,
+          name: "SABRENA MAE ELLEVERA",
+          subtitle: "Periodical Service Staff",
+          image: "/public/imgs/personnelpage/sabrena.png"
+        },
+        {
+          id: 9,
+          name: "JASMIN D. PADILLA",
+          subtitle: "Library Learning Spaces Staff",
+          image: "/public/imgs/personnelpage/jasmin.png"
+        },
+        {
+          id: 10,
+          name: "JHOGIE A. LAGARAS",
+          subtitle: "Circulation Services Staff",
+          image: "/public/imgs/personnelpage/lagaras.png"
         }
       ]
-    }
+    };
   }
-}
+};
 </script>
 
 <style scoped>
-img {
-  transition: transform 0.3s ease;
+.featured-section {
+  background-color: #f4f6f5;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(27,94,32,0.08) 0%, transparent 40%),
+    radial-gradient(circle at 75% 75%, rgba(183,148,79,0.08) 0%, transparent 40%);
+  background-size: 300px 300px;
 }
 
-div:has(img):hover img {
-  transform: scale(1.05);
+img {
+  transition: transform 0.3s ease;
 }
 </style>
