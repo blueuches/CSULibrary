@@ -1,26 +1,26 @@
 <script setup lang="ts">
 const objectives = [
-  "Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;",
-  "Effect a universally-accepted library system of organization and circulation;",
-  "Ensure the provision and maintenance of efficient facilities and equipment for quality library services and operations;",
-  "Install a computerized system of information access for wider information coverage and facilitated library operations;"
+  "1. Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;",
+  "2. Effect a universally-accepted library system of organization and circulation;",
+  "3. Ensure the provision and maintenance of efficient facilities and equipment for quality library services and operations;",
+  "4. Install a computerized system of information access for wider information coverage and facilitated library operations;"
 ]
 
 const rules = [
-  "Always use appropriate voice level.",
-  "No eating and drinking at reader’s area.",
-  "Keep away books from rain, water and dust.",
-  "Do not write or draw anything in our books.",
-  "Cellular Phone should be put to silent mode.",
-  "Answering phone calls inside the library is not allowed.",
-  "Walk quietly into the library.",
-  "Never run around the hallway outside the library premises."
+  "1. Always use appropriate voice level.",
+  "2. No eating and drinking at reader’s area.",
+  "3. Keep away books from rain, water and dust.",
+  "4. Do not write or draw anything in our books.",
+  "5. Cellular Phone should be put to silent mode.",
+  "6. Answering phone calls inside the library is not allowed.",
+  "7. Walk quietly into the library.",
+  "8. Never run around the hallway outside the library premises."
 ]
 </script>
 
 <template>
   <section class="about-page">
-    <!-- Ribbon uses SAME width container as content -->
+    <!-- Ribbon -->
     <div class="csu-ribbon-wrap">
       <div class="page-inner">
         <div class="csu-ribbon">
@@ -29,7 +29,7 @@ const rules = [
       </div>
     </div>
 
-    <!-- Content area uses SAME width container -->
+    <!-- Content area -->
     <div class="about-content page-inner">
       <div class="intro-text">
         <p>
@@ -49,7 +49,6 @@ const rules = [
 
       <h2 class="vmg-title">Vision, Mission, Goal</h2>
 
-      <!-- 3-column fixed-size cards -->
       <div class="cards-grid">
         <!-- Vision -->
         <div class="grid-item">
@@ -125,7 +124,6 @@ const rules = [
           </div>
         </div>
 
-        <!-- Invisible placeholder to preserve 3-column alignment -->
         <div class="grid-item ghost-item" aria-hidden="true">
           <div class="content-box fixed-card"></div>
         </div>
@@ -145,6 +143,8 @@ const rules = [
   --accent-orange: #f15a24;
   --text-color: #1f1f1f;
   --card-border: #d8d8d8;
+  --float-shadow-green: 102, 187, 106; 
+
 
   width: 100%;
   min-height: 100vh;
@@ -152,9 +152,8 @@ const rules = [
   background: var(--page-bg);
 }
 
-/* Shared width container for BOTH ribbon and content */
 .page-inner {
-  width: min(100%, 1500px); /* adjust if you want slightly wider/narrower */
+  width: min(100%, 1500px); 
   margin: 0 auto;
   padding: 0 32px;
   box-sizing: border-box;
@@ -179,7 +178,6 @@ const rules = [
   justify-content: center;
 }
 
-/* Right notch cut */
 .csu-ribbon::after {
   content: "";
   position: absolute;
@@ -191,7 +189,6 @@ const rules = [
   clip-path: polygon(0 50%, 100% 0, 100% 100%);
 }
 
-/* Left folded flap */
 .csu-ribbon::before {
   content: "";
   position: absolute;
@@ -217,7 +214,6 @@ const rules = [
   letter-spacing: 0.3px;
 }
 
-/* Small red accent line above title */
 .csu-ribbon-title::before {
   content: "";
   position: absolute;
@@ -226,7 +222,7 @@ const rules = [
   transform: translateX(-120px);
   width: 4px;
   height: 10px;
-  background: #ff5a36;
+  /* background: #ff5a36; */
   border-radius: 1px;
 }
 
@@ -270,7 +266,7 @@ const rules = [
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
   align-items: stretch;
-  perspective: 1200px; /* for 3D hover */
+  perspective: 1200px; 
 }
 
 .grid-item {
@@ -284,26 +280,31 @@ const rules = [
 ========================= */
 .content-box {
   width: 100%;
-  background: #fff;
-  border: 1px solid var(--card-border);
+  background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 16px;
   padding: 18px 20px;
   box-sizing: border-box;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.03),
-    0 8px 18px rgba(0, 0, 0, 0.04);
+
+   box-shadow:
+    0 6px 14px rgba(var(--float-shadow-green), 0.16),
+    0 14px 28px rgba(var(--float-shadow-green), 0.12),
+    0 2px 4px rgba(var(--float-shadow-green), 0.10);
 
   position: relative;
   transform-style: preserve-3d;
   transform-origin: center center;
+  backface-visibility: hidden;
+
+  transform: translateY(-2px) translateZ(0);
+
   transition:
-    transform 0.28s ease,
-    box-shadow 0.28s ease,
+    transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
     border-color 0.28s ease;
-  will-change: transform;
+  will-change: transform, box-shadow;
 }
 
-/* soft highlight */
 .content-box::before {
   content: "";
   position: absolute;
@@ -311,47 +312,56 @@ const rules = [
   border-radius: inherit;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.12) 38%,
-    rgba(255, 255, 255, 0) 60%
+    rgba(255, 255, 255, 0.75) 0%,
+    rgba(255, 255, 255, 0.22) 35%,
+    rgba(255, 255, 255, 0) 62%
   );
-  opacity: 0;
+  opacity: 0.35; 
   transition: opacity 0.28s ease;
   pointer-events: none;
 }
 
-/* subtle green outline glow */
 .content-box::after {
   content: "";
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  border: 1px solid rgba(27, 94, 32, 0.14);
-  opacity: 0;
-  transition: opacity 0.28s ease;
+  border: 1px solid rgba(var(--float-shadow-green), 0.16);
+  box-shadow: 0 0 0 0 rgba(var(--float-shadow-green), 0);
+  opacity: 0.5;
+  transition: opacity 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
   pointer-events: none;
 }
 
-/* Hover lift */
-.grid-item:hover .content-box {
-  transform: translateY(-8px) rotateX(5deg) rotateY(-4deg) scale(1.01);
-  border-color: rgba(27, 94, 32, 0.25);
-  box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.10),
-    0 8px 14px rgba(27, 94, 32, 0.12);
-}
-
-/* Alternate tilt direction */
-.grid-item:nth-child(even):hover .content-box {
-  transform: translateY(-8px) rotateX(5deg) rotateY(4deg) scale(1.01);
-}
-
-.grid-item:hover .content-box::before,
 .grid-item:hover .content-box::after {
   opacity: 1;
+  border-color: rgba(var(--float-shadow-green), 0.32);
+  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.10);
 }
 
-/* no hover effect on ghost placeholder */
+.grid-item:hover .content-box {
+  transform: translateY(-12px) rotateX(7deg) rotateY(-5deg) scale(1.015);
+  border-color: rgba(var(--float-shadow-green), 0.35);
+  box-shadow:
+    0 18px 34px rgba(var(--float-shadow-green), 0.28),
+    0 28px 48px rgba(var(--float-shadow-green), 0.20),
+    0 10px 20px rgba(var(--float-shadow-green), 0.16);
+}
+
+.grid-item:nth-child(even):hover .content-box {
+  transform: translateY(-12px) rotateX(7deg) rotateY(5deg) scale(1.015);
+}
+
+.grid-item:hover .content-box::before {
+  opacity: 0.8;
+}
+
+.grid-item:hover .content-box::after {
+  opacity: 1;
+  border-color: rgba(27, 94, 32, 0.2);
+  box-shadow: 0 0 0 4px rgba(27, 94, 32, 0.05);
+}
+
 .ghost-item:hover .content-box {
   transform: none !important;
   box-shadow: none !important;
@@ -362,7 +372,6 @@ const rules = [
   display: none;
 }
 
-/* Fixed same size cards (desktop/tablet) */
 .fixed-card {
   height: 350px;
   display: flex;
@@ -409,7 +418,6 @@ const rules = [
   border-radius: 1px;
 }
 
-/* Scrollable body for normal cards only */
 .card-body {
   margin-top: 12px;
   flex: 1;
@@ -427,7 +435,6 @@ const rules = [
   transform: translateZ(10px);
 }
 
-/* Text */
 .section-paragraph {
   margin: 0 0 0 34px;
   font-size: 1rem;
@@ -447,7 +454,6 @@ const rules = [
   margin-bottom: 10px;
 }
 
-/* Invisible placeholder keeps last row balanced */
 .ghost-item {
   visibility: hidden;
   pointer-events: none;
@@ -455,11 +461,10 @@ const rules = [
 
 /* =========================
    List Cards (Objectives + Rules)
-   No scrollbar, taller / auto height
 ========================= */
 .list-card {
   height: auto !important;
-  min-height: 390px; /* adjust to 410px if you want more space */
+  min-height: 390px; 
 }
 
 .list-card .card-body {
@@ -609,7 +614,6 @@ const rules = [
   }
 }
 
-/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   .content-box,
   .green-heading,

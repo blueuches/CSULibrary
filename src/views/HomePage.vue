@@ -183,7 +183,7 @@
                 class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
-              </button>
+              </RouterLink>
             </div>
           </div>
 
