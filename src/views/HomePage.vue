@@ -160,11 +160,13 @@
             <div class="p-5 flex flex-col flex-grow">
               <h3 class="text-lg font-bold text-[#0d2b0f] mb-3">BSP Knowledge Resource Network</h3>
 
-              <button
-                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#1b5e20] hover:text-white transition"
+              <RouterLink
+                :to="{ name: 'bcppage' }"
+                class="inline-block border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold
+                      hover:bg-[#1b5e20] hover:text-white transition"
               >
                 More Details →
-              </button>
+              </RouterLink>
             </div>
           </div>
 
