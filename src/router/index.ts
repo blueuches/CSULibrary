@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import HomePage from '../views/HomePage.vue'
 import AboutPage from '../views/AboutPage.vue'
-import AnnouncementPage from '../views/AnnouncementPage.vue'
+import AnnouncementPage from '../views/AnnouncementPage.vue' //devvv
 import FeaturesPage from '../views/FeaturesPage.vue'
 import GalleryPage from '../views/GalleryPage.vue'
 import PersonnelPage from '../views/PersonnelPage.vue'
