@@ -133,61 +133,61 @@ export default {
           name: "MARIA CORAZON L. TERCERA, RL",
           subtitle: "University Librarian",
           position: "Head, Library Services",
-          image: "/cora.png"
+          image: "/public/imgs/personnelpage/cora.png"
         },
         {
           id: 2,
           name: "MERCY G. REYES, RL",
           subtitle: "Technical Librarian I",
-          image: "mercy.png"
+          image: "/public/imgs/personnelpage/mercy.png"
         },
         {
           id: 3,
           name: "ANN MARIE MONTE DE RAMOS, RL",
           subtitle: "Readers Services Librarian",
-          image: "marie.png"
+          image: "/public/imgs/personnelpage/marie.png"
         },
         {
           id: 4,
           name: "JEHOVENN T. BERONGOY",
           subtitle: "Audio-Visual Technician",
-          image: "berongoy.png"
+          image: "/public/imgs/personnelpage/berongoy.png"
         },
         {
           id: 5,
           name: "JORGE V. BAUTISTA",
           subtitle: "Public Assistance & Complaints Desk Officer",
-          image: "jorge.png"
+          image: "/public/imgs/personnelpage/jorge.png"
         },
         {
           id: 6,
           name: "JOHN WARREN S. BATONDO, LPT",
           subtitle: "Administrative Aide VI Clerk III",
-          image: "warren.png"
+          image: "/public/imgs/personnelpage/warren.png"
         },
         {
           id: 7,
           name: "MALYN C. TRAYA",
           subtitle: "Technical Service Staff",
-          image: "malyn.png"
+          image: "/public/imgs/personnelpage/malyn.png"
         },
         {
           id: 8,
           name: "SABRENA MAE ELLEVERA",
           subtitle: "Periodical Service Staff",
-          image: "sabrena.png"
+          image: "/public/imgs/personnelpage/sabrena.png"
         },
         {
           id: 9,
           name: "JASMIN D. PADILLA",
           subtitle: "Library Learning Spaces Staff",
-          image: "jasmin.png"
+          image: "/public/imgs/personnelpage/jasmin.png"
         },
         {
           id: 10,
           name: "JHOGIE A. LAGARAS",
           subtitle: "Circulation Services Staff",
-          image: "lagaras.png"
+          image: "/public/imgs/personnelpage/lagaras.png"
         }
       ]
     };
