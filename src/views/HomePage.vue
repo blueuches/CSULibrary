@@ -55,38 +55,26 @@
 
     <!-- TAGLINE -->
     <div class="w-full py-8 flex justify-center">
-      <h2
-        class="text-3xl md:text-4xl font-bold tracking-widest text-center"
-        style="
-          font-family: 'Cinzel', serif;
-          background: linear-gradient(
-            to right,
-            #0d2b0f,
-            #0d2b0f,
-            #2e7d32,
-            #66bb6a,
-            #fbc02d,
-            #f2c078
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        "
-      >
-        H.E.R.O Learning Commons
-      </h2>
+      <h2 class="tagline-title tracking-widest">H.E.R.O Learning Commons</h2>
     </div>
 
     <!-- READ LEARN DISCOVER SECTION -->
-    <div class="w-full flex justify-center px-5 py-12">
+    <div class="w-full flex justify-center px-5 py-10">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-6xl">
         <!-- Read -->
         <div class="flex flex-col items-center">
           <h2
-            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
+            class="w-full text-center"
+            style="
+              font-size: 1.9rem;
+              font-weight: 900;
+              color: #1b5e20;
+              border-bottom: 4px solid #f9a825;
+              padding-bottom: 6px;
+              margin-bottom: 16px;
+            "
           >
-            Read
+            READ
           </h2>
           <img
             src="@/assets/images/read.jpg"
@@ -96,12 +84,19 @@
         </div>
 
         <!-- Learn -->
-        <div class="flex flex-col items-center">
+        <div class="flex flex-col itmb-3 pb-2ems-center">
           <h2
-            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
+            class="w-full text-center"
+            style="
+              font-size: 1.9rem;
+              font-weight: 900;
+              color: #1b5e20;
+              border-bottom: 4px solid #f9a825;
+              padding-bottom: 6px;
+              margin-bottom: 16px;
+            "
           >
-            Learn
+            LEARN
           </h2>
           <img
             src="@/assets/images/learn.jpg"
@@ -113,10 +108,17 @@
         <!-- Discover -->
         <div class="flex flex-col items-center">
           <h2
-            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
+            class="w-full text-center"
+            style="
+              font-size: 1.9rem;
+              font-weight: 900;
+              color: #1b5e20;
+              border-bottom: 4px solid #f9a825;
+              padding-bottom: 6px;
+              margin-bottom: 16px;
+            "
           >
-            Discover
+            DISCOVER
           </h2>
           <img
             src="@/assets/images/discover.jpg"
@@ -130,7 +132,7 @@
     <!-- WELCOME RIBBON BANNER -->
     <div class="csu-ribbon-wrap">
       <div class="csu-ribbon">
-        <span class="csu-ribbon-title"> Welcome to Caraga State University Library</span>
+        <span class="csu-ribbon-title">Welcome to Caraga State University Library</span>
       </div>
     </div>
 
@@ -148,9 +150,7 @@
 
         <!-- Right: Text -->
         <div class="flex flex-col text-white px-4">
-          <h2 class="text-3xl mb-4" style="font-size: 1.5rem; font-weight: 900; color: white">
-            Caraga State University Library
-          </h2>
+          <h2 class="page-heading mb-4" style="color: white">Caraga State University Library</h2>
           <p class="text-white text-base leading-relaxed mb-6">
             The CSU Library Service Unit aims to support and achieve the educational objectives of
             CSU. It seeks relevant materials and services; and provide these to fulfull the
@@ -166,8 +166,8 @@
       <div class="w-full max-w-6xl mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
-            class="border-b-3 border-[#f9a825] pb-1"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
+            class="border-b-4 border-[#f9a825] pb-1"
+            style="font-size: 1.9rem; font-weight: 900; color: #1b5e20"
             >LIBRARY UPDATES</span
           >
         </h2>
@@ -178,13 +178,7 @@
           >
             <img src="@/assets/images/card1.jpg" alt="Card 1" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                BSP Knowledge Resource Network
-              </h3>
-
+              <h3 class="card-heading pb-5 text-center">BSP Knowledge Resource Network</h3>
               <RouterLink
                 :to="{ name: 'bcppage' }"
                 class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
@@ -200,12 +194,7 @@
           >
             <img src="@/assets/images/card2.jpg" alt="Card 2" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                84th National Book Week Celebration
-              </h3>
+              <h3 class="card-heading pb-5 text-center">84th National Book Week Celebration</h3>
               <button
                 class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
@@ -220,12 +209,7 @@
           >
             <img src="@/assets/images/card3.png" alt="Card 3" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                STARBOOKS - DOST-STII
-              </h3>
+              <h3 class="card-heading pb-5 text-center">STARBOOKS - DOST-STII</h3>
               <button
                 class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
@@ -244,12 +228,7 @@
               class="w-full h-56 object-cover"
             />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                AVR Reservation
-              </h3>
+              <h3 class="card-heading pb-5 text-center">AVR Reservation</h3>
               <button
                 class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
@@ -264,12 +243,7 @@
           >
             <img src="@/assets/images/top.jpg" alt="Card 5" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                Top Library Borrowers and Visitors
-              </h3>
+              <h3 class="card-heading pb-5 text-center">Top Library Borrowers and Visitors</h3>
               <button
                 class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
@@ -288,12 +262,7 @@
               class="w-full h-56 object-cover"
             />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                Newly Acquired Books
-              </h3>
+              <h3 class="card-heading pb-5 text-center">Newly Acquired Books</h3>
               <button
                 class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
@@ -310,12 +279,7 @@
           >
             <img src="@/assets/images/card7.png" alt="Card 7" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                85th National Book Week Celebration
-              </h3>
+              <h3 class="card-heading pb-5 text-center">85th National Book Week Celebration</h3>
               <button
                 class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
@@ -327,14 +291,14 @@
       </div>
     </div>
 
-    <!-- NEWS SECTION -->
+    <!-- USEFUL LINKS SECTION -->
     <div class="w-full bg-white flex justify-center py-12 px-6 mt-8">
       <div class="w-full max-w-6xl mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
             class="border-b-4 border-[#f9a825] pb-1"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
-            >LATEST NEWS</span
+            style="font-size: 1.9rem; font-weight: 900; color: #1b5e20"
+            >USEFUL LINKS</span
           >
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -354,9 +318,7 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2 style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f">
-                  Philippine E-Lib
-                </h2>
+                <h2 class="link-heading">Philippine E-Lib</h2>
               </a>
               <p class="text-[#0d2b0f]">National Library of the Philippines (NLP)</p>
             </div>
@@ -366,7 +328,11 @@
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
-            <img src="/csu-logo.png" alt="News 3" class="w-20 h-full object-cover flex-shrink-0" />
+            <img
+              src="/csu-logo.png"
+              alt="News 2"
+              class="w-20 h-full object-contain flex-shrink-0 p-2"
+            />
             <div class="p-4 flex flex-col justify-center gap-1">
               <a
                 href="https://www.carsu.edu.ph/"
@@ -374,12 +340,7 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  CARSU Webpage
-                </h2>
+                <h2 class="link-heading">CARSU Webpage</h2>
               </a>
               <p class="text-[#0d2b0f]">CARAGA STATE UNIVERSITY</p>
             </div>
@@ -401,12 +362,7 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  Web OPAC
-                </h2>
+                <h2 class="link-heading">Web OPAC</h2>
               </a>
               <p class="text-[#0d2b0f]">Online Public Access Catalog</p>
             </div>
@@ -418,22 +374,17 @@
           >
             <img
               src="@/assets/images/free.jpg"
-              alt="News 3"
+              alt="News 4"
               class="w-20 h-full object-cover flex-shrink-0"
             />
-            <div class="p-4 flex flex-col justify-center">
+            <div class="p-4 flex flex-col justify-center gap-1">
               <a
                 href="https://www.journals.uchicago.edu/action/showPublications"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full gap-1"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  New free access journals
-                </h2>
+                <h2 class="link-heading">New free access journals</h2>
               </a>
               <p class="text-[#0d2b0f]">Online Public Access Catalog</p>
             </div>
@@ -445,7 +396,7 @@
           >
             <img
               src="@/assets/images/gale.jpg"
-              alt="News 2"
+              alt="News 5"
               class="w-40 h-full object-cover flex-shrink-0"
             />
             <div class="p-4 flex flex-col justify-center gap-1">
@@ -455,12 +406,7 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  Infotrac
-                </h2>
+                <h2 class="link-heading">Infotrac</h2>
               </a>
               <p class="text-[#0d2b0f]">Online Custom Journals</p>
             </div>
@@ -472,22 +418,17 @@
           >
             <img
               src="@/assets/images/EBSCO.jpg"
-              alt="News 3"
-              class="w-20 h-full object-cover flex-shrink-0 p-2"
+              alt="News 6"
+              class="w-20 h-full object-contain flex-shrink-0 p-2"
             />
             <div class="p-4 flex flex-col justify-center gap-1">
               <a
-                href="https://login.ebsco.com/?requestIdentifier=4a67d2a8-ffeb-49ba-b81a-56bcad923862&acrValues=uid&ui_locales&redirect_uri=https://logon.ebsco.zone/api/dispatcher/continue/prompted?state=MGM1ODBjMTUyZTA1NGE2NWFiYmQ3ZjM1NjA4MjI2MTQ=&authRequest=eyJraWQiOiIxNzY5MTEwMjQ0MDQ3IiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczpcL1wvYXV0aC5lYnNjby56b25lXC9hcGlcL2Rpc3BhdGNoZXIiLCJhdXRoUmVxdWVzdCI6eyJsb2dpbl9oaW50IjpudWxsLCJncmFudF90eXBlIjoiYXV0aG9yaXphdGlvbl9jb2RlIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgYWZmaWxpYXRpb24iLCJhY3JfdmFsdWVzIjoidWlkIiwicmVzcG9uc2VfdHlwZSI6ImNvZGUiLCJyZWRpcmVjdF91cmkiOiJodHRwczpcL1wvc2VhcmNoLmVic2NvaG9zdC5jb21cL3dlYmF1dGhcL1Byb21wdGVkQ2FsbGJhY2suYXNweCIsInN0YXRlIjoiQXhCZWpDcE5adU9kdUVVTkdKOWNBZHdzbDBPUURBM2VRY0F2a3ZvYUVtQWN0ajg2bjQxY3U4cHh0QnQ2MjBPMnV6VzVsVHhYRWRnc3FmR0hoMnpwZERjWDdtUjVKdUdIMkVlaURtWmpDWW5id1pON0ZGVGRnX0htRms4YXM5TEN3NzRFYmdhdGpLSnd6R01qNS1MdnJSNGZFQnI5XzNVMGg2M2o5YV9IeWJQX3kzTHhiS3JscWVLUkV0OTV0U0tDcmpoTTE0VVUzN0pHOEc1RHhLbC1tTmozOEZFek1tY2tHTEZxYW5tYlpiWlZNb3d6b1I4LVN4US1ic0tmMmkwSFhzUDBnUDM0TTBsbHNCOXNBNy1XUnR5N1doM200ZmdMZDQ1b2EyRnY0Ui1xS3ZrazVXVWRhZ2RhM1ZzMXRmSHVpdWs2N2dMUzE0OTV4OGF6OUE4NWo2ZmV3OWNRLVhkV3RmTlJHX09nRVRFZUJhLUtEVUNoMFEiLCJjbGllbnRfaWQiOiJhd2d5Y0l4NTdNcnduRFE1aDRVZTZ5Q1ZFUDByNU10OSIsInJlc3BvbnNlX21vZGUiOiJxdWVyeSIsInJlcUlkIjoiNGE2N2QyYTgtZmZlYi00OWJhLWI4MWEtNTZiY2FkOTIzODYyIn0sImlhdCI6MTc3MjAwMTkzMSwianRpIjoiZTA0OTVjZTgtOTc1ZC00NDMxLTk5ZDctMTM5NjhkOWQ5ZmUyIiwicmVxSWQiOiI0YTY3ZDJhOC1mZmViLTQ5YmEtYjgxYS01NmJjYWQ5MjM4NjIifQ.lanZ6eJGj9KTJDp2x5oIHxoxAv0xx7Y3plQpOTordflU8p6NWi1NOgdGPPG3Kj1Eqboq50P64trc0HcgLQnXBXbAJ0B78bv5xA4CMd6Zg5RuhSg2a7cFapuejT4TaEM9f4d_0SCoR8v0QruXibK8wsoq3-AlsxG_4j5OfXKcc6xXpAUv7QnSUj6OnVIyrNzGkynXFRzm62SOxzJJ8KKH0YRrcFsEvpbwGATqrMdv8bacnWQboMD4NNCICGAAFX76LjjC0bougPgDkXCdXmM2Bj0GBod8R5hgyLbBUV7dXil0eytZ3oeHGk7LkjsyxhILgAu2C6v6ysrifkad9qusvw"
+                href="https://login.ebsco.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  EBSCO
-                </h2>
+                <h2 class="link-heading">EBSCO</h2>
               </a>
               <p class="text-[#0d2b0f]">Research databases, EBooks, Discovery Service</p>
             </div>
@@ -539,8 +480,49 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
+/* ========================= 
+   Shared Font/Heading Styles
+========================= */
+.tagline-title {
+  font-weight: 900;
+  font-size: 3rem;
+  color: #0d2b0f;
+  text-align: center;
+  line-height: 2;
+}
 
+.card-heading {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #0d2b0f;
+}
+
+.link-heading {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #0d2b0f;
+}
+
+@media (max-width: 1400px) {
+  .tagline-title {
+    font-size: 2.5rem;
+  }
+  .page-heading {
+    font-size: 1.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tagline-title {
+    margin-top: 22px;
+    margin-bottom: 14px;
+    font-size: 1.5rem;
+  }
+}
+
+/* =========================
+   Ribbon
+========================= */
 .csu-ribbon-wrap {
   width: 100%;
   padding: 12px 0 20px;
