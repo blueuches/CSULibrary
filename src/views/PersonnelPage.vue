@@ -2,13 +2,13 @@
   <div class="w-full bg-white">
 
     <!-- TOP FULL DIVIDER -->
-    <div class="w-full h-px bg-gray-400"></div>
+    <div class="w-full h-px bg-[#c69214]"></div>
 
     <!-- GREEN RIBBON HEADER -->
     <div 
-  class="w-full flex justify-center py-6"
-  style="background-color:#2e7d32;"
->
+      class="w-full flex justify-center py-6"
+      style="background-color:#2e7d32;"
+    >
       <h1
         style="font-size:1.5rem; font-weight:750; color:#ffffff;"
         class="text-center"
@@ -19,31 +19,24 @@
 
     <!-- Patterned Featured Section -->
     <div class="featured-section w-full py-20">
-
       <div class="px-4 sm:px-6 lg:px-8 flex flex-col items-center">
 
-        <!-- Featured Person -->
         <div v-if="staff.length > 0" class="max-w-4xl w-full mx-auto">
-
           <div class="flex flex-col items-center text-center">
 
-            <!-- Circle -->
             <div class="relative w-40 h-40 mb-20 rounded-full overflow-visible">
-
-             <div 
-  class="absolute inset-0 rounded-full border-3 shadow-md"
-  style="background-color:#0d2b0f; border-color:#66bb6a;" 
-></div>
+              <div 
+                class="absolute inset-0 rounded-full border-4 shadow-md"
+                style="background-color:#0d2b0f; border-color:#66bb6a;"
+              ></div>
 
               <img
                 :src="staff[0].image"
                 :alt="staff[0].name"
-                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-50 h-55 object-cover rounded-full transition-transform duration-300 hover:scale-105"
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-56 object-cover rounded-full transition-transform duration-300 hover:scale-105"
               />
-
             </div>
 
-            <!-- Info -->
             <div class="mt-4">
               <h2 style="font-size:1rem; font-weight:800; color:#1b5e20">
                 {{ staff[0].name }}
@@ -69,55 +62,66 @@
     </div>
 
     <!-- BOTTOM FULL DIVIDER -->
-    <div class="w-full h-px bg-gray-400"></div>
+    <div class="w-full h-px bg-[#c69214]"></div>
 
     <!-- Other Staff Section -->
-    <div class="px-4 sm:px-6 lg:px-8 py-20">
+    <div class="px-6 sm:px-8 lg:px-12 py-16 flex justify-center">
 
-      <div class="class=max-w-6xl w-full mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 justify-items-center items-start">
+      <!-- UPDATED CARD (Centered Content) -->
+      <div class="w-full max-w-6xl bg-white rounded-xl shadow-md px-8 py-14 
+                  flex flex-col justify-center items-center">
 
-        <div
-          v-for="person in staff.slice(1)"
-          :key="person.id"
-          class="flex flex-col items-center text-center w-full max-w-sm"
-        >
+        <!-- UPDATED GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-16 justify-items-center w-full">
 
-          <div class="relative w-40 h-40 mb-16 rounded-full overflow-visible">
+          <template v-for="(person, index) in staff.slice(1)" :key="person.id">
 
+            <div class="flex flex-col items-center text-center w-full max-w-sm">
+
+              <div class="relative w-40 h-40 mb-14 rounded-full overflow-visible">
+
+                <div 
+                  class="absolute inset-0 rounded-full border-4 shadow-md"
+                  style="background-color:#0d2b0f; border-color:#66bb6a;"
+                ></div>
+
+                <img
+                  :src="person.image"
+                  :alt="person.name"
+                  class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-56 object-cover rounded-full transition-transform duration-300 hover:scale-105"
+                />
+              </div>
+
+              <div>
+                <h3 style="font-size:1rem; font-weight:800; color:#1b5e20">
+                  {{ person.name }}
+                </h3>
+
+                <p class="text-sm text-gray-600 italic mt-2">
+                  {{ person.subtitle }}
+                </p>
+
+                <p
+                  v-if="person.position"
+                  class="text-sm font-semibold text-gray-900 mt-2"
+                >
+                  {{ person.position }}
+                </p>
+              </div>
+
+            </div>
+
+            <!-- Divider every 2 staff (desktop only) -->
             <div 
-  class="absolute inset-0 rounded-full border-3 shadow-md"
-  style="background-color:#0d2b0f; border-color:#66bb6a;" 
-></div>
+              v-if="(index + 1) % 2 === 0 && index !== staff.slice(1).length - 1"
+              class="col-span-1 md:col-span-2 border-t bg-[#c69214] mt-8 w-full"
+            ></div>
 
-            <img
-              :src="person.image"
-              :alt="person.name"
-              class="absolute bottom-0 left-1/2 -translate-x-1/2 w-48 h-50
-              object-cover rounded-full transition-transform duration-300 hover:scale-105"
-            />
-
-          </div>
-
-          <div>
-            <h3 style="font-size:1rem; font-weight:800; color:#1b5e20">
-              {{ person.name }}
-            </h3>
-
-            <p class="text-sm text-gray-600 italic mt-2">
-              {{ person.subtitle }}
-            </p>
-
-            <p
-              v-if="person.position"
-              class="text-sm font-semibold text-gray-900 mt-2"
-            >
-              {{ person.position }}
-            </p>
-          </div>
+          </template>
 
         </div>
-
       </div>
+
     </div>
 
   </div>
