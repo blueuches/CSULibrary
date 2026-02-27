@@ -16,7 +16,7 @@
         LIBRARY PERSONNEL
       </h1>
     </div>
-
+    
     <!-- Patterned Featured Section -->
     <div class="featured-section w-full py-20">
       <div class="px-4 sm:px-6 lg:px-8 flex flex-col items-center">
@@ -137,61 +137,61 @@ export default {
           name: "MARIA CORAZON L. TERCERA, RL",
           subtitle: "University Librarian",
           position: "Head, Library Services",
-          image: "/public/imgs/personnelpage/cora.png"
+          image: "/src/assets/images/personnelpage/cora.png"
         },
         {
           id: 2,
           name: "MERCY G. REYES, RL",
           subtitle: "Technical Librarian I",
-          image: "/public/imgs/personnelpage/mercy.png"
+          image: "/src/assets/images/personnelpage/mercy.png"
         },
         {
           id: 3,
           name: "ANN MARIE MONTE DE RAMOS, RL",
           subtitle: "Readers Services Librarian",
-          image: "/public/imgs/personnelpage/marie.png"
+          image: "/src/assets/images/personnelpage/marie.png"
         },
         {
           id: 4,
           name: "JEHOVENN T. BERONGOY",
           subtitle: "Audio-Visual Technician",
-          image: "/public/imgs/personnelpage/berongoy.png"
+          image: "/src/assets/images/personnelpage/berongoy.png"
         },
         {
           id: 5,
           name: "JORGE V. BAUTISTA",
           subtitle: "Public Assistance & Complaints Desk Officer",
-          image: "/public/imgs/personnelpage/jorge.png"
+          image: "/src/assets/images/personnelpage/jorge.png"
         },
         {
           id: 6,
           name: "JOHN WARREN S. BATONDO, LPT",
           subtitle: "Administrative Aide VI Clerk III",
-          image: "/public/imgs/personnelpage/warren.png"
+          image: "/src/assets/images/personnelpage/warren.png"
         },
         {
           id: 7,
           name: "MALYN C. TRAYA",
           subtitle: "Technical Service Staff",
-          image: "/public/imgs/personnelpage/malyn.png"
+          image: "/src/assets/images/personnelpage/malyn.png"
         },
         {
           id: 8,
           name: "SABRENA MAE ELLEVERA",
           subtitle: "Periodical Service Staff",
-          image: "/public/imgs/personnelpage/sabrena.png"
+          image: "/src/assets/images/personnelpage/sabrena.png"
         },
         {
           id: 9,
           name: "JASMIN D. PADILLA",
           subtitle: "Library Learning Spaces Staff",
-          image: "/public/imgs/personnelpage/jasmin.png"
+          image: "/src/assets/images/personnelpage/jasmin.png"
         },
         {
           id: 10,
           name: "JHOGIE A. LAGARAS",
           subtitle: "Circulation Services Staff",
-          image: "/public/imgs/personnelpage/lagaras.png"
+          image: "/src/assets/images/personnelpage/lagaras.png"
         }
       ]
     };
