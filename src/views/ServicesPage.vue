@@ -3,7 +3,7 @@
     
     <div class="relative mb-6 w-full flex justify-center pl-27">
       
-      <div class="bg-[#005a31] text-white text-center py-1 pl-10 md:pl-32 pr-20 text-2xl md:text-3xl font-black uppercase tracking-[0.2em] relative z-10 shadow-lg w-[100%]
+      <div class="bg-[#005a31] text-white text-center py-1 md:pl-32 pr-20 text-2xl md:text-3xl font-black uppercase tracking-[0.2em] relative z-10 shadow-lg w-[100%]
                   [clip-path:polygon(0%_0%,_100%_0%,_96%_50%,_100%_100%,_0%_100%)]">
         Services
         
@@ -12,8 +12,8 @@
       </div>
     </div>
 
-    <div class="max-w-7xl px-8 w-full pb-20"> 
-      <p class="text-gray-800 leading-relaxed text-lg font-medium text-center mb-16 pl-25 pb-10 pt-5">
+    <div class="max-w-7xl px-8 w-full pb-10"> 
+      <p class="text-gray-800 leading-relaxed text-lg font-medium text-center mb-16 pl-10 pb-10 pt-5">
         The 
         <span class="font-[900] text-[#005a31] text-2xl tracking-tight mx-1">
           CSU Library
@@ -21,7 +21,7 @@
         provides the following services:
       </p>
 
-      <div class="grid grid-cols-1 gap-x-30 gap-y-8 items-stretch pl-25">
+      <div class="grid grid-cols-1 gap-x-30 gap-y-8 items-stretch pl-5">
         <div v-for="(service, index) in libraryServices" :key="index" 
              class="flex items-start gap-5 bg-white p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 group">
           
