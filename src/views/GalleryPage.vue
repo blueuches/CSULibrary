@@ -7,7 +7,6 @@
 
     <div class="w-full sticky top-0 z-30">
       <div class="w-full bg-black/20 backdrop-blur-xl py-6 px-8 flex items-center justify-between border-b border-white/10">
-        
         <div class="relative w-full max-w-[280px]">
           <input
             v-model="searchQuery"
@@ -15,9 +14,6 @@
             placeholder="Search Section..."
             class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/95 border-2 border-yellow-400 text-[#1b3a2f] font-semibold text-sm focus:outline-none focus:ring-4 focus:ring-yellow-400/30 transition-all shadow-lg"
           />
-          <svg class="absolute left-3 top-3 h-4 w-4 text-[#1b3a2f]/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
         </div>
 
         <div class="flex gap-4 absolute left-1/2 -translate-x-1/2">
@@ -35,7 +31,6 @@
             {{ floor.name }}
           </button>
         </div>
-
         <div class="w-[280px] hidden lg:block"></div>
       </div>
     </div>
@@ -60,32 +55,23 @@
               <div
                 v-for="section in wing.sections"
                 :key="section.title"
-                @click="openGallery(section.images)"
-                class="group relative h-96 rounded-[2.5rem] overflow-hidden cursor-pointer shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-[#1b3a2f]/60 backdrop-blur-md border border-white/10"
+                @click="openGallery(section)"
+                class="group relative h-96 rounded-[2.5rem] overflow-hidden cursor-pointer shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-[#1b3a2f]/60 border border-white/10"
+                :style="section.images.length > 0 ? { backgroundImage: `url(${section.images[0]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
               >
-                <div class="absolute inset-0 bg-gradient-to-br from-black/20 to-[#1b3a2f]/90 group-hover:bg-[#1b3a2f]/40 transition-all duration-500"></div>
+                <div class="absolute inset-0 bg-gradient-to-br from-black/40 to-[#1b3a2f]/90 group-hover:from-black/20 transition-all duration-500"></div>
                 
                 <div class="absolute inset-0 p-8 flex flex-col justify-end">
                   <div class="w-10 h-1 bg-yellow-400 mb-4 rounded-full transition-all group-hover:w-20"></div>
-                  
                   <h4 class="text-white font-black text-2xl leading-tight uppercase group-hover:text-yellow-400 transition-colors">
                     {{ section.title }}
                   </h4>
-                  
                   <p v-if="section.note" class="text-yellow-400 text-[10px] font-bold uppercase mt-1 tracking-widest">
                     {{ section.note }}
                   </p>
-
-                  <p class="text-white/80 text-sm mt-4 leading-relaxed line-clamp-3 group-hover:text-white transition-colors">
+                  <p class="text-white/80 text-sm mt-4 leading-relaxed line-clamp-3">
                     {{ section.description }}
                   </p>
-                  
-                  <div class="mt-6 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-y-4 group-hover:translate-y-0">
-                    <span class="text-[10px] text-yellow-400 font-black uppercase">Enter Section</span>
-                    <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                    </svg>
-                  </div>
                 </div>
               </div>
             </div>
@@ -94,12 +80,46 @@
       </transition-group>
     </div>
 
-    <div v-if="showModal" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-md">
-       <button @click="showModal = false" class="absolute top-8 right-8 text-white hover:text-yellow-400 text-4xl">&times;</button>
-       <div class="bg-white/10 p-12 rounded-3xl border border-white/20 max-w-lg text-center">
-         <h2 class="text-yellow-400 text-2xl font-black mb-4 uppercase">Section Gallery</h2>
-         <p class="text-white/70">Images for this section are being prepared. Check back soon!</p>
-       </div>
+    <div v-if="showModal" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-md" @click.self="closeModal">
+        <button @click="closeModal" class="absolute top-8 right-8 text-white hover:text-yellow-400 text-5xl z-[60]">&times;</button>
+        
+        <div class="w-full max-w-5xl overflow-hidden rounded-3xl bg-[#1b3a2f]/60 border border-white/20 shadow-2xl relative">
+          <div v-if="selectedSection" class="flex flex-col">
+            
+            <div class="relative min-h-[400px] flex items-center justify-center bg-black/20 group">
+              <button v-if="selectedSection.images.length > 1" @click="prevImg" class="absolute left-4 z-10 p-3 rounded-full bg-black/50 text-white hover:bg-yellow-400 hover:text-black transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+
+              <img 
+                v-if="selectedSection.images.length > 0"
+                :src="selectedSection.images[currentImgIndex]" 
+                class="w-full h-auto max-h-[60vh] object-contain mx-auto transition-opacity duration-300" 
+              />
+
+              <button v-if="selectedSection.images.length > 1" @click="nextImg" class="absolute right-4 z-10 p-3 rounded-full bg-black/50 text-white hover:bg-yellow-400 hover:text-black transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+
+            <div class="flex justify-center gap-3 p-4 bg-black/40 overflow-x-auto">
+              <div 
+                v-for="(img, idx) in selectedSection.images" 
+                :key="idx"
+                @click="currentImgIndex = idx"
+                class="w-20 h-14 rounded-lg cursor-pointer border-2 overflow-hidden flex-shrink-0 transition-all"
+                :class="currentImgIndex === idx ? 'border-yellow-400 scale-110' : 'border-white/10 opacity-50'"
+              >
+                <img :src="img" class="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            <div class="p-8 bg-black/60 text-center">
+              <h2 class="text-yellow-400 text-3xl font-black uppercase mb-2">{{ selectedSection.title }}</h2>
+              <p class="text-white/80">{{ selectedSection.description }}</p>
+            </div>
+          </div>
+        </div>
     </div>
   </div>
 </template>
@@ -107,39 +127,104 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const floors = [
+interface Section {
+  title: string;
+  description: string;
+  note?: string;
+  images: string[];
+}
+
+interface Wing {
+  name: string;
+  sections: Section[];
+}
+
+interface Floor {
+  id: string;
+  name: string;
+  wings: Wing[];
+}
+
+const floors: Floor[] = [
   {
     id: 'floor1',
     name: '1st Floor',
-    wings: [{ 
-      name: 'Main Wing', 
-      sections: [
-        { title: 'Computer Lab', description: 'High-speed internet and modern workstations for digital research and academic tasks.', images: [] },
-        { title: 'Auditorium', description: 'A spacious venue equipped for seminars, large lectures, and university presentations.', images: [] }
-      ]
-    }]
+    wings: [
+      { 
+        name: 'Main Wing', 
+        sections: [
+          { 
+            title: 'Computer Lab', 
+            description: 'High-speed internet and modern workstations for digital research.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          },
+          { 
+            title: 'Auditorium', 
+            description: 'A spacious venue equipped for seminars and large lectures.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          },
+          { 
+            title: 'Award and Recognition Area', 
+            description: 'Showcasing the excellence and achievements of the university community.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          },
+          { 
+            title: 'Natural Science Museum', 
+            description: 'A collection of biological and physical science specimens for educational display.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          },
+          { 
+            title: 'PWD Section', 
+            description: 'Inclusive learning area specifically designed for persons with disabilities.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          },
+          { 
+            title: 'Wall of Merit', 
+            description: 'Honoring the notable contributors and distinguished alumni of the institution.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          }
+        ]
+      },
+      {
+        name: 'Administrative Wing',
+        sections: [
+          { 
+            title: 'Office of the University Librarian', 
+            description: 'The administrative heart of the library system.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          },
+          { 
+            title: 'Technical Room', 
+            description: 'IT infrastructure and server management area.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          },
+          { 
+            title: 'Board Room', 
+            description: 'Executive meeting space for library board and faculty committees.', 
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] 
+          }
+        ]
+      }
+    ]
   },
   {
     id: 'floor2',
     name: '2nd Floor',
     wings: [
       { name: 'Right Wing', sections: [
-        { title: 'Circulation', description: 'The central hub for borrowing, returning, and managing your library book accounts.', images: [] },
-        { title: 'General Reference', description: 'Comprehensive collection of encyclopedias, dictionaries, and global reference materials.', images: [] },
-        { title: 'Reserve', description: 'High-demand course materials and textbooks reserved for short-term student use.', images: [] },
-        { title: 'Discussion Room', note: '1, 2, 3', description: 'Private sound-proof spaces for group brainstorming and collaborative projects.', images: [] },
-        { title: 'Huddle Area', description: 'Semi-private open spaces designed for quick meetings and casual group discussions.', images: [] },
-        { title: 'Phone Booth', description: 'A quiet, private acoustic pod for taking important personal or professional calls.', images: [] }
+        { title: 'Circulation', description: 'The hub for borrowing and returning books.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'General Reference', description: 'Global reference materials.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Reserve', description: 'High-demand course materials.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Discussion Room', note: '1, 2, 3', description: 'Group brainstorming spaces.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Huddle Area', description: 'Casual group discussions.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Phone Booth', description: 'Quiet pod for personal calls.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] }
       ]},
       { name: 'Left Wing', sections: [
-        { title: 'Filipiniana', description: 'A dedicated collection of books and documents written by Filipinos or about the Philippines.', images: [] },
-        { title: 'Periodicals', description: 'Up-to-date newspapers, academic journals, and popular magazines for current research.', images: [] },
-        { title: 'Shelving Area', description: 'Organized stacks housing the library\'s extensive physical book collections.', images: [] },
-        { title: 'Discussion Room', note: '4', description: 'Extended group study space equipped with whiteboards and modern furniture.', images: [] },
-        { title: 'Huddle Area', description: 'Comfortable corner for small teams to sync and collaborate on assignments.', images: [] },
-        { title: 'Reading Hub', description: 'A brightly lit, silent zone perfect for deep focus and long-duration reading sessions.', images: [] },
-        { title: 'Rectangular Collaborative Lounge', description: 'Wide open lounge designed for cross-functional group activities and social learning.', images: [] },
-        { title: 'Phone Booth', description: 'Isolated sound-insulated unit for secure and silent communication.', images: [] }
+        { title: 'Filipiniana', description: 'Books about the Philippines.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Periodicals', description: 'Newspapers and journals.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Shelving Area', description: 'Stacks housing physical books.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Reading Hub', description: 'Silent zone for deep focus.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Phone Booth', description: 'Isolated sound-insulated unit.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] }
       ]}
     ]
   },
@@ -148,22 +233,16 @@ const floors = [
     name: '3rd Floor',
     wings: [
       { name: 'Right Wing', sections: [
-        { title: 'Nap Pad', note: 'Female', description: 'A serene, safe resting area for female students to recharge between classes.', images: [] },
-        { title: 'Activity Loft', description: 'Elevated creative space for hands-on learning, workshops, and student activities.', images: [] },
-        { title: 'Discussion Room', note: '1, 2, 3, 4', description: 'Versatile rooms for larger group study and student-led organizations.', images: [] },
-        { title: 'Quiet Room', description: 'Strictly silent atmosphere for students requiring zero-distraction concentration.', images: [] },
-        { title: 'Multimedia and Viewing Room', description: 'Digital media center for watching documentaries, films, and video-based learning.', images: [] },
-        { title: 'Phone Booth', description: 'Private space for voice calls without disturbing the floor\'s quiet zones.', images: [] }
+        { title: 'Nap Pad', note: 'Female', description: 'Serene resting area for female students.', images: ['/imgs/Gallery/nappad.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Activity Loft', description: 'Creative space for workshops.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Quiet Room', description: 'Strictly silent atmosphere.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Multimedia Room', description: 'Digital media center.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] }
       ]},
       { name: 'Left Wing', sections: [
-        { title: 'Nap Pad', note: 'Male', description: 'Comfortable sleeping pods for male students needing a quick rest and rejuvenation.', images: [] },
-        { title: 'Storytelling Area', description: 'Creative corner for narrative sessions, literary talks, and open-mic reading.', images: [] },
-        { title: 'Decision Theater', description: 'Tech-enabled data visualization space for advanced research and presentation.', images: [] },
-        { title: 'Library Cafe', description: 'Relaxed area to enjoy light snacks and coffee while browsing your favorite books.', images: [] },
-        { title: 'Exhibit Area', description: 'A curated gallery space showcasing university art, history, and student projects.', images: [] },
-        { title: 'Business Area', description: 'Equipped with printers, scanners, and tools for professional document preparation.', images: [] },
-        { title: 'Activity Center', description: 'Flexible event space for student engagement and collaborative community events.', images: [] },
-        { title: 'Phone Booth', description: 'Compact acoustic station for focused private conversations.', images: [] }
+        { title: 'Nap Pad', note: 'Male', description: 'Sleeping pods for male students.', images: ['/imgs/Gallery/nappad.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Library Cafe', description: 'Snacks and coffee browsing area.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Activity Center', description: 'Flexible event space.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+        { title: 'Phone Booth', description: 'Focused private conversations.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] }
       ]}
     ]
   }
@@ -172,8 +251,30 @@ const floors = [
 const activeFloor = ref('floor1')
 const searchQuery = ref('')
 const showModal = ref(false)
+const selectedSection = ref<Section | null>(null)
+const currentImgIndex = ref(0)
 
-const openGallery = (images: string[]) => { showModal.value = true }
+const openGallery = (section: Section) => { 
+  selectedSection.value = section
+  currentImgIndex.value = 0
+  showModal.value = true 
+}
+
+const closeModal = () => { showModal.value = false }
+
+const nextImg = () => {
+  if (selectedSection.value) {
+    currentImgIndex.value = (currentImgIndex.value + 1) % selectedSection.value.images.length
+  }
+}
+
+const prevImg = () => {
+  if (selectedSection.value) {
+    currentImgIndex.value = currentImgIndex.value === 0 
+      ? selectedSection.value.images.length - 1 
+      : currentImgIndex.value - 1
+  }
+}
 
 const activeFloorData = computed(() => floors.filter(f => f.id === activeFloor.value))
 const filteredFloors = computed(() => {
@@ -183,22 +284,15 @@ const filteredFloors = computed(() => {
     ...f,
     wings: f.wings.map(w => ({
       ...w,
-      sections: w.sections.filter(s => 
-        s.title.toLowerCase().includes(q) || 
-        s.description.toLowerCase().includes(q) || 
-        (s.note && s.note.toLowerCase().includes(q))
-      )
+      sections: w.sections.filter(s => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q))
     })).filter(w => w.sections.length > 0)
   })).filter(f => f.wings.length > 0)
 })
 </script>
 
 <style scoped>
-.fade-enter-active, .fade-leave-active { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.fade-enter-active, .fade-leave-active { transition: all 0.4s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
-
-/* Custom scrollbar for better aesthetics */
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
 ::-webkit-scrollbar-thumb { background: #facc15; border-radius: 10px; }
 </style>
