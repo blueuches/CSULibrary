@@ -5,8 +5,8 @@
         <div class="flex items-center">
           <img src="/csu-logo.png" alt="University Logo" class="w-[55px] h-auto" />
           <div class="flex flex-col font-serif leading-tight text-[#0d2b0f]">
-            <span class="text-lg md:text-xl font-bold uppercase tracking-tight">Caraga State</span>
-            <span class="text-lg md:text-xl font-bold uppercase tracking-tight">University</span>
+            <span class="text-lg md:text-xl font-bold uppercase tracking-tight text-green-900">Caraga State University</span>
+            <!-- <span class="text-lg md:text-xl font-bold uppercase tracking-tight">University</span> -->
           </div>
         </div>
 
