@@ -179,12 +179,12 @@
             <img src="@/assets/images/card1.jpg" alt="Card 1" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
               <h3 class="card-heading pb-5 text-center">BSP Knowledge Resource Network</h3>
-              <RouterLink
+              <!-- <RouterLink
                 :to="{ name: 'bcppage' }"
                 class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
-              </RouterLink>
+              </RouterLink> -->
             </div>
           </div>
 
