@@ -4,19 +4,17 @@
     <!-- TOP FULL DIVIDER -->
     <div class="w-full h-px bg-[#c69214]"></div>
 
-    <!-- GREEN RIBBON HEADER -->
-    <div 
-      class="w-full flex justify-center py-6"
-      style="background-color:#2e7d32;"
-    >
-      <h1
-        style="font-size:1.5rem; font-weight:750; color:#ffffff;"
-        class="text-center"
-      >
-        LIBRARY PERSONNEL
-      </h1>
+    <!-- Ribbon -->
+    <div class="csu-ribbon-wrap">
+      <div class="page-inner">
+        <div class="csu-ribbon">
+          <span class="csu-ribbon-title">
+            LIBRARY PERSONNEL
+          </span>
+        </div>
+      </div>
     </div>
-    
+
     <!-- Patterned Featured Section -->
     <div class="featured-section w-full py-20">
       <div class="px-4 sm:px-6 lg:px-8 flex flex-col items-center">
@@ -66,12 +64,9 @@
 
     <!-- Other Staff Section -->
     <div class="px-6 sm:px-8 lg:px-12 py-16 flex justify-center">
-
-      <!-- UPDATED CARD (Centered Content) -->
       <div class="w-full max-w-6xl bg-white rounded-xl shadow-md px-8 py-14 
                   flex flex-col justify-center items-center">
 
-        <!-- UPDATED GRID -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-16 justify-items-center w-full">
 
           <template v-for="(person, index) in staff.slice(1)" :key="person.id">
@@ -111,7 +106,6 @@
 
             </div>
 
-            <!-- Divider every 2 staff (desktop only) -->
             <div 
               v-if="(index + 1) % 2 === 0 && index !== staff.slice(1).length - 1"
               class="col-span-1 md:col-span-2 border-t bg-[#c69214] mt-8 w-full"
@@ -121,7 +115,6 @@
 
         </div>
       </div>
-
     </div>
 
   </div>
@@ -199,7 +192,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .featured-section {
   background-color: #f4f6f5;
   background-image: 
@@ -210,5 +203,67 @@ export default {
 
 img {
   transition: transform 0.3s ease;
+}
+
+/* =========================
+   Ribbon (EXACT About Style)
+========================= */
+
+.page-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.csu-ribbon-wrap {
+  width: 100%;
+  padding: 12px 0 8px;
+  position: relative;
+}
+
+.csu-ribbon {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  background: #1f5e23;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.csu-ribbon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34px;
+  height: 48px;
+  background: #f4f6f5;
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+
+.csu-ribbon::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid #17491b;
+  border-right: 12px solid transparent;
+}
+
+.csu-ribbon-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 48px;
+  letter-spacing: 0.3px;
 }
 </style>
