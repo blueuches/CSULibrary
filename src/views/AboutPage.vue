@@ -156,10 +156,11 @@ const rules = [
 }
 
 .page-inner {
-  width: min(100%, 1500px);
-  margin: 0 auto;
-  padding: 0 32px;
-  box-sizing: border-box;
+  width: 100vw !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 32px !important;
+  box-sizing: border-box !important;
 }
 
 /* =========================
@@ -173,8 +174,8 @@ const rules = [
 
 .csu-ribbon {
   position: relative;
-  width: 100%;
-  height: 48px;
+  width: min(100%, 1500px); /* adjust: 1100/1200/1300 */
+  margin: 0 auto;
   background: var(--ribbon-green);
   display: flex;
   align-items: center;
