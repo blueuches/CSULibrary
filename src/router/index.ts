@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import HomePage from '../views/HomePage.vue'
 import AboutPage from '../views/AboutPage.vue'
-import AnnouncementPage from '../views/AnnouncementPage.vue' //Dev commit
+import AnnouncementPage from '../views/AnnouncementPage.vue' 
 import FeaturesPage from '../views/FeaturesPage.vue'
 import GalleryPage from '../views/GalleryPage.vue'
 import PersonnelPage from '../views/PersonnelPage.vue'
@@ -10,15 +10,13 @@ import RecordPage from '../views/RecordPage.vue'
 import ServicesPage from '../views/ServicesPage.vue'
 
 //other route
-// import Link1 from '@/views/OtherRoutes/Link1.vue'
-// import Link2 from '@/views/OtherRoutes/Link2.vue'
-// import Link3 from '@/views/OtherRoutes/Link3.vue'
 import BSPPage from '@/views/OtherRoutes/BSPPage.vue'
 import NBWCPage from '@/views/OtherRoutes/NBWCPage.vue'
 import Starbooks from '@/views/OtherRoutes/Starbooks.vue'
 import AVRPage from '@/views/OtherRoutes/AVRPage.vue'
 import TopBorrowerPage from '@/views/OtherRoutes/TopBorrowerPage.vue'
 import NewlyAcquiredBooksPage from '@/views/OtherRoutes/NewlyAcquiredBooksPage.vue'
+import EResources from '@/views/OtherRoutes/EResources.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.pBASE_URL),
@@ -40,6 +38,7 @@ const router = createRouter({
     { path: '/bcp', name: 'bcppage', component: BSPPage },
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage },
     { path: '/starbooks', name: 'starbooks', component: Starbooks },
+    { path: '/e-resources', name: 'eresources', component: EResources },
   ],
 })
 
