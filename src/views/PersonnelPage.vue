@@ -2,7 +2,7 @@
   <div class="w-full bg-white">
 
     <!-- TOP DIVIDER -->
-    <div class="w-full h-px bg-[#c69214]"></div>
+    <div class="w-full h-px bg-[#c69214] mb-5"></div>
 
     <!-- Ribbon Header -->
     <Ribbon>
@@ -101,7 +101,7 @@
         </div>
       </div>
     </div>
-
+    
   </div>
 </template>
 
