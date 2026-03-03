@@ -71,14 +71,14 @@ onUnmounted(() => {
 
     <!-- Previous Button -->
     <button @click="prev"
-      class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-3 rounded-full shadow transition">
-      <CircleChevronLeft class="text-white" />
+      class="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full shadow transition">
+      <CircleChevronLeft class="text-transparent" />
     </button>
 
     <!-- Next Button -->
     <button @click="next"
-      class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white p-3 rounded-full shadow transition">
-      <CircleChevronRight class="text-white" />
+      class="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full shadow transition">
+      <CircleChevronRight class="text-transparent" />
     </button>
 
   </div>

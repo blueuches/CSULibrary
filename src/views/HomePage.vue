@@ -104,7 +104,7 @@
         <!-- Read -->
         <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
-            src="@/assets/images/read.jpg"
+            src="@/assets/images/tinay.jpg"
             alt="Read"
             class="w-full h-[450px] object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -130,7 +130,7 @@
         <!-- Learn -->
         <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
-            src="@/assets/images/learn.jpg"
+            src="@/assets/images/eden.jpg"
             alt="Learn"
             class="w-full h-[450px] object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -156,7 +156,7 @@
         <!-- Discover -->
         <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
-            src="@/assets/images/discover.jpg"
+            src="@/assets/images/tinay.jpg"
             alt="Discover"
             class="w-full h-[450px] object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -187,7 +187,7 @@
         <!-- Left: Image -->
         <div class="w-full h-full flex justify-center">
           <img
-            src="@/assets/images/lib.jpg"
+            src="@/assets/images/img0.jpg"
             alt="Students"
             class="w-full h-full object-cover rounded-sm"
           />
@@ -376,7 +376,7 @@
             <div class="p-5 flex flex-col flex-grow">
               <h3 class="card-heading pb-5 text-center">Top Library Borrowers and Visitors</h3>
               <RouterLink
-                :to="{ name: 'topborrower' }"
+                :to="{ name: 'top-borrowers' }"
                 class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
@@ -540,6 +540,202 @@
       </div>
     </div>
 
+    <!-- FEATURES SECTION -->
+    <div class="w-full bg-white py-12 px-6 mt-8">
+      <div class="mx-auto flex flex-col gap-10">
+        <!-- VIRTUAL TOUR -->
+        <div class="flex flex-col md:flex-row items-center gap-8 border-b border-gray-200 pb-10">
+          <!-- Left: Video Thumbnail -->
+          <div
+            @click="isModalOpen = true"
+            class="w-full md:w-[50%] flex-shrink-0 relative cursor-pointer group rounded-xl overflow-hidden shadow-md"
+            style="aspect-ratio: 16/9"
+          >
+            <div
+              class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+              style="background-image: url('https://img.youtube.com/vi/Lv0URTSBniY/hqdefault.jpg')"
+            ></div>
+
+            <!-- Dark overlay -->
+            <div class="absolute inset-0 bg-black/20"></div>
+
+            <!-- YouTube-style play button -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div
+                class="bg-red-600 rounded-xl px-5 py-3 flex items-center gap-2 shadow-lg transition-transform group-hover:scale-110"
+              >
+                <!-- Play icon -->
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Watch on YouTube badge -->
+            <div
+              class="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 rounded px-2 py-1"
+            >
+              <span class="text-white text-xs font-medium">Watch on</span>
+              <svg class="h-4" viewBox="0 0 90 20" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24288e-07 14.285 0 14.285 0C14.285 0 5.35042 2.24288e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24288e-07 5.35042 0 10 0 10C0 10 2.24288e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35042 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5677 5.35042 27.9727 3.12324Z"
+                  fill="#FF0000"
+                />
+                <path d="M11.4253 14.2854L18.8477 10.0004L11.4253 5.71533V14.2854Z" fill="white" />
+                <path
+                  d="M34.6024 13.0036L31.3945 1.41846H34.1932L35.3961 6.50354C35.7198 7.83796 35.9535 8.9696 36.0972 9.89844H36.1821C36.2971 9.24352 36.5341 8.11484 36.887 6.50354L38.1074 1.41846H40.9061L37.6829 13.0036V18.561H34.6024V13.0036Z"
+                  fill="white"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Right: Text Content -->
+          <div class="w-full md:w-[60%] flex flex-col gap-3">
+            <h2 class="text-3xl font-extrabold text-[#0d2b0f] leading-tight">Virtual Tour</h2>
+
+            <p class="text-gray-700 text-base leading-relaxed mt-1">
+              Explore our modern facilities and collection areas from the comfort of your device.
+              Get a full 360° look at our campus and library spaces.
+            </p>
+
+            <p class="font-bold text-[#0d2b0f] text-sm">This is a virtual experience.</p>
+            <p class="font-bold text-[#0d2b0f] text-sm">This is Caraga State University Library.</p>
+
+            <div class="mt-3">
+              <button
+                @click="isModalOpen = true"
+                class="border-2 border-[#0d2b0f] text-[#0d2b0f] px-6 py-2 text-sm font-semibold rounded flex items-center gap-2 hover:bg-[#0d2b0f] hover:text-white transition-all duration-200"
+              >
+                Watch Video
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIBRARY ORIENTATION -->
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <!-- Left: Text Content — right-aligned to sit close to the video -->
+          <div class="w-full md:w-[50%] flex flex-col gap-3 text-right">
+            <h2 class="text-3xl font-extrabold text-[#0d2b0f] leading-tight">
+              Library Orientation
+            </h2>
+
+            <p class="text-gray-700 text-base leading-relaxed mt-1">
+              First time here? Learn how to navigate our physical and digital resources effectively.
+              This orientation will guide you through everything you need to know.
+            </p>
+
+            <p class="font-bold text-[#0d2b0f] text-sm">This is your guide.</p>
+            <p class="font-bold text-[#0d2b0f] text-sm">This is Caraga State University Library.</p>
+
+            <div class="mt-3 flex justify-end">
+              <button
+                @click="isOrientationModalOpen = true"
+                class="border-2 border-[#0d2b0f] text-[#0d2b0f] px-6 py-2 text-sm font-semibold rounded flex items-center gap-2 hover:bg-[#0d2b0f] hover:text-white transition-all duration-200"
+              >
+                Watch Video
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Video Thumbnail -->
+          <div
+            @click="isOrientationModalOpen = true"
+            class="w-full md:w-[50%] flex-shrink-0 relative cursor-pointer group rounded-xl overflow-hidden shadow-md"
+            style="aspect-ratio: 16/9"
+          >
+            <div
+              class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+              style="background-image: url('https://img.youtube.com/vi/HAEPrH2aYpc/hqdefault.jpg')"
+            ></div>
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div
+                class="bg-red-600 rounded-xl px-5 py-3 flex items-center gap-2 shadow-lg transition-transform group-hover:scale-110"
+              >
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+            <div
+              class="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 rounded px-2 py-1"
+            >
+              <span class="text-white text-xs font-medium">Watch on</span>
+              <svg class="h-4" viewBox="0 0 90 20" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24288e-07 14.285 0 14.285 0C14.285 0 5.35042 2.24288e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24288e-07 5.35042 0 10 0 10C0 10 2.24288e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35042 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5677 5.35042 27.9727 3.12324Z"
+                  fill="#FF0000"
+                />
+                <path d="M11.4253 14.2854L18.8477 10.0004L11.4253 5.71533V14.2854Z" fill="white" />
+                <path
+                  d="M34.6024 13.0036L31.3945 1.41846H34.1932L35.3961 6.50354C35.7198 7.83796 35.9535 8.9696 36.0972 9.89844H36.1821C36.2971 9.24352 36.5341 8.11484 36.887 6.50354L38.1074 1.41846H40.9061L37.6829 13.0036V18.561H34.6024V13.0036Z"
+                  fill="white"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIRTUAL TOUR MODAL -->
+    <div
+      v-if="isModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      @click.self="isModalOpen = false"
+    >
+      <div
+        class="relative w-full max-w-5xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl"
+      >
+        <button
+          @click="isModalOpen = false"
+          class="absolute top-4 right-4 text-white text-2xl font-bold hover:text-[#ffb74d] transition z-10"
+        >
+          ✕
+        </button>
+        <iframe
+          class="w-full h-full"
+          src="https://www.youtube.com/embed/Lv0URTSBniY?autoplay=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- ORIENTATION MODAL -->
+    <div
+      v-if="isOrientationModalOpen"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+      @click.self="isOrientationModalOpen = false"
+    >
+      <div
+        class="relative w-full max-w-5xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl"
+      >
+        <button
+          @click="isOrientationModalOpen = false"
+          class="absolute top-4 right-4 text-white text-2xl font-bold hover:text-[#66bb6a] transition z-10"
+        >
+          ✕
+        </button>
+        <iframe
+          class="w-full h-full"
+          src="https://www.youtube.com/embed/HAEPrH2aYpc?autoplay=1"
+          frameborder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+
     <!-- SCROLL TO TOP -->
     <Transition name="fade">
       <button
@@ -575,6 +771,9 @@ import photo2 from '@/assets/images/img0.jpg'
 import photo3 from '@/assets/images/img1.jpg'
 import photo4 from '@/assets/images/img2.jpg'
 import photo5 from '@/assets/images/img3.jpg'
+
+const isModalOpen = ref(false)
+const isOrientationModalOpen = ref(false)
 
 const images = [
   { src: photo1, alt: 'Photo 1' },
