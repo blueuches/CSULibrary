@@ -49,8 +49,8 @@ const router = createRouter({
 
     //admin
     { path: '/admin', name: 'admin', component: Dashboard },
-    { path: '/login', name: 'login', component: Login },
-    { path: '/signin', name: 'signin', component: Signin },
+    { path: '/admin/login', name: 'login', component: Login },
+    { path: '/admin/signin', name: 'signin', component: Signin },
   ],
 })
 

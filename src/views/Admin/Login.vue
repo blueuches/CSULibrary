@@ -3,6 +3,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
       
       <!-- INSIDE HERE THE CONTENTS -->
+       <h1>HELO</h1>
 
     </div>
   </div>
