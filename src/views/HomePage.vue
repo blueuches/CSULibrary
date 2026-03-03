@@ -376,7 +376,7 @@
             <div class="p-5 flex flex-col flex-grow">
               <h3 class="card-heading pb-5 text-center">Top Library Borrowers and Visitors</h3>
               <RouterLink
-                :to="{ name: 'topborrower' }"
+                :to="{ name: 'top-borrowers' }"
                 class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
