@@ -257,7 +257,7 @@ const rules = [
   margin: 34px 0 20px;
   font-weight: 900;
   font-size: 3rem;
-  color: #1b5e20;
+  color: #2e7d32;
   text-align: center;
   line-height: 1.1;
 }
