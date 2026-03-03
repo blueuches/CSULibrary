@@ -3,14 +3,13 @@
     
     <div class="relative mb-10 w-full max-w-7xl mx-auto pl-4">
   
-  <div class="bg-[#1b5e20] text-white text-center py-2 px-10 text-xl md:text-2xl font-black uppercase tracking-[0.2em] relative z-10 shadow-md 
-              [clip-path:polygon(0%_0%,_100%_0%,_97%_50%,_100%_100%,_0%_100%)]">
-    SERVICES
-    
-    <div class="absolute -left-[12px] bottom-[-12px] w-0 h-0 
-                border-t-[12px] border-t-[#0e3514] 
-                border-l-[12px] border-l-transparent">
-    </div>
+  <!-- Ribbon -->
+    <div class="csu-ribbon-wrap">
+      <div class="page-inner">
+        <div class="csu-ribbon">
+          <span class="csu-ribbon-title">SERVICES</span>
+        </div>
+      </div>
   </div>
 </div>
 
@@ -28,7 +27,7 @@
         <div v-for="(service, index) in libraryServices" :key="index" 
              class="flex items-start gap-5 bg-white p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-1 group">
           
-          <div class="w-2 h-7 bg-[#d35400] shrink-0 group-hover:h-10 transition-all"></div>
+          <div class="w-2 h-7 bg-yellow-400 shrink-0 group-hover:h-10 transition-all"></div>
           
           <div>
             <h3 class="font-black text-lg text-gray-950 mb-2 leading-tight uppercase tracking-tight">
@@ -41,10 +40,28 @@
         </div>
       </div>
     </div>
+    <Transition name="fade">
+      <button
+        v-if="showScrollTop"
+        @click="scrollToTop"
+        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90 shadow-lg"
+        style="background: #1b5e20"
+      >
+        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+        </svg>
+      </button>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
+
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const showScrollTop = ref(false);
+
 const libraryServices = [
   { title: "Online Public Access Catalog (OPAC)", description: "- where terminals are provided for available library materials. It is the electronic version of the paper Card Catalog." },
   { title: "Audio Visual Room", description: "- for viewing and borrowing of digital interactive CDs and DVDs." },
@@ -60,4 +77,22 @@ const libraryServices = [
   { title: "Acquisition List", description: "- technical librarian prepares and distribute acquisition lists which enumerate the materials acquired by the library in certain period within the semester. The lists are written in bibliographic format." },
   { title: "Book Selection", description: "- faculty are encouraged actively to participate in the selection of books for the library. Forms on which to write the complete bibliographic information of the books to be recommended are available at the librarian's desk." }
 ];
+
+// Logic para sa pag-scroll
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 300;
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
 </script>
