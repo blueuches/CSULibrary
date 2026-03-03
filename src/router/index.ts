@@ -10,9 +10,6 @@ import RecordPage from '../views/RecordPage.vue'
 import ServicesPage from '../views/ServicesPage.vue'
 
 //other route
-// import Link1 from '@/views/OtherRoutes/Link1.vue'
-// import Link2 from '@/views/OtherRoutes/Link2.vue'
-// import Link3 from '@/views/OtherRoutes/Link3.vue'
 import BSPPage from '@/views/OtherRoutes/BSPPage.vue'
 import NBWCPage from '@/views/OtherRoutes/NBWCPage.vue'
 import Starbooks from '@/views/OtherRoutes/Starbooks.vue'
