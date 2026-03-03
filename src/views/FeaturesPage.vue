@@ -19,7 +19,6 @@
 
           <div class="p-6 flex flex-col flex-grow text-center">
             <h3 class="text-xl font-bold text-[#1b5e20] mb-2">
-              Thesis Support
             </h3>
 
             <p class="text-sm text-gray-600 leading-relaxed mb-6 text-justify">
