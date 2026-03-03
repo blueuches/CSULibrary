@@ -1,28 +1,31 @@
 <template>
-  <div class="w-full min-h-screen flex items-center justify-center bg-gray-50">
-    <div class="w-full max-w-lg mx-auto px-6"> <!-- increased from md -> lg -->
+  <div 
+    class="w-full min-h-screen flex items-center justify-center py-6 bg-cover bg-center bg-no-repeat relative"
+    style="background-image: url('/Gemini_Generated_Image_sx9k3lsx9k3lsx9k.png');"
+  >
+    <div class="absolute inset-0 bg-black/10"></div>
 
-      <!-- SIGN UP FORM -->
-      <div class="bg-white p-8 md:p-10 rounded-3xl border border-green-200 shadow-sm">
+    <div class="w-full max-w-md mx-auto relative z-10 p-4">
+      <div class="bg-white/20 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/30 shadow-2xl">
+        <div class="mb-10 text-center">
+          <h2 class="text-3xl font-bold text-white">Sign Up</h2>
+        </div>
 
-        <h3 class="text-2xl font-bold text-gray-800 mb-8 text-center">
-          Sign Up
-        </h3>
-
-        <form @submit.prevent="handleSignup" class="space-y-5">
-
+        <form @submit.prevent="handleSignup" class="space-y-6">
+          
           <!-- Full Name -->
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
+            <label class="block text-sm font-semibold text-white mb-2">
               Full Name
             </label>
             <input
               type="text"
               placeholder="Juan Dela Cruz"
               class="w-full px-4 py-3 rounded-xl
-                     border border-green-300
-                     focus:ring-2 focus:ring-green-500
-                     focus:border-green-500
+                     border border-white/40 bg-white/10
+                     text-white placeholder-white/60
+                     focus:ring-2 focus:ring-green-400
+                     focus:border-green-400
                      outline-none transition"
               required
             />
@@ -30,16 +33,17 @@
 
           <!-- Email -->
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
+            <label class="block text-sm font-semibold text-white mb-2">
               Email Address
             </label>
             <input
               type="email"
               placeholder="admin@email.com"
               class="w-full px-4 py-3 rounded-xl
-                     border border-green-300
-                     focus:ring-2 focus:ring-green-500
-                     focus:border-green-500
+                     border border-white/40 bg-white/10
+                     text-white placeholder-white/60
+                     focus:ring-2 focus:ring-green-400
+                     focus:border-green-400
                      outline-none transition"
               required
             />
@@ -47,16 +51,19 @@
 
           <!-- Password -->
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              Password
-            </label>
+            <div class="flex justify-between items-center mb-2">
+              <label class="text-sm font-semibold text-white">
+                Password
+              </label>
+            </div>
             <input
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
               class="w-full px-4 py-3 rounded-xl
-                     border border-green-300
-                     focus:ring-2 focus:ring-green-500
-                     focus:border-green-500
+                     border border-white/40 bg-white/10
+                     text-white placeholder-white/60
+                     focus:ring-2 focus:ring-green-400
+                     focus:border-green-400
                      outline-none transition"
               required
             />
@@ -64,16 +71,17 @@
 
           <!-- Confirm Password -->
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
+            <label class="block text-sm font-semibold text-white mb-2">
               Confirm Password
             </label>
             <input
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
               class="w-full px-4 py-3 rounded-xl
-                     border border-green-300
-                     focus:ring-2 focus:ring-green-500
-                     focus:border-green-500
+                     border border-white/40 bg-white/10
+                     text-white placeholder-white/60
+                     focus:ring-2 focus:ring-green-400
+                     focus:border-green-400
                      outline-none transition"
               required
             />
@@ -82,7 +90,7 @@
           <!-- Submit -->
           <button
             type="submit"
-            class="w-full bg-green-600 hover:bg-green-700
+            class="w-full bg-green-600 hover:bg-green-500
                    text-white font-bold py-3 rounded-xl
                    shadow-lg transition duration-200"
           >
@@ -90,28 +98,36 @@
           </button>
         </form>
 
-        <!-- Login Link -->
-        <p class="mt-6 text-center text-gray-600">
-          Already have an account?
-          <RouterLink
-            to="/admin/login"
-            class="text-green-600 font-semibold hover:underline"
-          >
-            Log In
-          </RouterLink>
-        </p>
-
+        <div class="mt-8 text-center">
+          <p class="text-white/80">
+              Already have an account?
+              <RouterLink
+                to="/admin/login"
+                class="text-green-400 font-semibold hover:underline"
+              >
+                Log In
+              </RouterLink>
+          </p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
+const showPassword = ref(false)
+
+const togglePassword = () => {
+  showPassword.value = !showPassword.value
+}
+
 const handleSignup = () => {
-  console.log('Nag-sign up na...')
+  console.log("Nag-sign up na...");
 }
 </script>
 
 <style scoped>
-/* Tailwind handles all styling */
+
 </style>
