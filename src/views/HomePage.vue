@@ -19,7 +19,7 @@
       <!-- Prev Button -->
       <button
         @click="prev"
-        class="absolute left-2 top-1/2 -translate-y-1/2 text-white hover:text-[#0d2b0f] transition opacity-0 hover:opacity-100 p-2"
+        class="absolute left-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -34,7 +34,7 @@
       <!-- Next Button -->
       <button
         @click="next"
-        class="absolute right-2 top-1/2 -translate-y-1/2 text-white hover:text-[#0d2b0f] transition opacity-0 hover:opacity-100 p-2"
+        class="absolute right-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -56,89 +56,136 @@
     <!-- TAGLINE -->
     <div class="w-full py-8 flex justify-center">
       <h2
-        class="text-3xl md:text-4xl font-bold tracking-widest text-center"
-        style="
-          font-family: 'Cinzel', serif;
-          background: linear-gradient(
-            to right,
-            #0d2b0f,
-            #0d2b0f,
-            #2e7d32,
-            #66bb6a,
-            #fbc02d,
-            #f2c078
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        "
+        class="font-bold tracking-widest text-center"
+        style="font-family: 'Cinzel', serif; font-size: 2.5rem"
       >
-        H.E.R.O Learning Commons
+        <span
+          class="animate-fade-in inline-block"
+          style="
+            animation-delay: 0s;
+            animation-fill-mode: both;
+            background: linear-gradient(to right, #0d2b0f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          "
+          >HERO</span
+        >
+        <span
+          class="animate-fade-in inline-block mx-2"
+          style="
+            animation-delay: 0.4s;
+            animation-fill-mode: both;
+            background: linear-gradient(to right, #0d2b0f, #1b5e20, #66bb6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          "
+          >LEARNING</span
+        >
+        <span
+          class="animate-fade-in inline-block"
+          style="
+            animation-delay: 0.8s;
+            animation-fill-mode: both;
+            background: linear-gradient(to right, #fbc02d, #fbc02d, #f2c078, #f2c078);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          "
+          >COMMONS</span
+        >
       </h2>
     </div>
 
     <!-- READ LEARN DISCOVER SECTION -->
-    <div class="w-full flex justify-center px-5 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full max-w-6xl">
+    <div class="w-full flex justify-center px-6 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-[100%]">
         <!-- Read -->
-        <div class="flex flex-col items-center">
-          <h2
-            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
-          >
-            Read
-          </h2>
+        <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
             src="@/assets/images/read.jpg"
             alt="Read"
-            class="w-full h-[400px] rounded-lg object-cover"
+            class="w-full h-[450px] object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-[#1b5e20]/90 via-[#0d2b0f]/30 to-transparent"
+          ></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <h2
+              style="
+                font-size: 1.9rem;
+                font-weight: 900;
+                color: white;
+                border-bottom: 4px solid #f9a825;
+                padding-bottom: 6px;
+                display: inline-block;
+              "
+            >
+              Read
+            </h2>
+          </div>
         </div>
 
         <!-- Learn -->
-        <div class="flex flex-col items-center">
-          <h2
-            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
-          >
-            Learn
-          </h2>
+        <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
             src="@/assets/images/learn.jpg"
             alt="Learn"
-            class="w-full h-[400px] rounded-lg object-cover"
+            class="w-full h-[450px] object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-[#1b5e20]/90 via-[#0d2b0f]/30 to-transparent"
+          ></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <h2
+              style="
+                font-size: 1.9rem;
+                font-weight: 900;
+                color: white;
+                border-bottom: 4px solid #f9a825;
+                padding-bottom: 6px;
+                display: inline-block;
+              "
+            >
+              Learn
+            </h2>
+          </div>
         </div>
 
         <!-- Discover -->
-        <div class="flex flex-col items-center">
-          <h2
-            class="text-2xl font-extrabold text-[#1B5E20] mb-3 pb-2 w-full text-center"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
-          >
-            Discover
-          </h2>
+        <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
             src="@/assets/images/discover.jpg"
             alt="Discover"
-            class="w-full h-[400px] rounded-lg object-cover"
+            class="w-full h-[450px] object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-[#1b5e20]/90 via-[#0d2b0f]/30 to-transparent"
+          ></div>
+          <div class="absolute bottom-0 left-0 right-0 p-6">
+            <h2
+              style="
+                font-size: 1.9rem;
+                font-weight: 900;
+                color: white;
+                border-bottom: 4px solid #f9a825;
+                padding-bottom: 6px;
+                display: inline-block;
+              "
+            >
+              Discover
+            </h2>
+          </div>
         </div>
-      </div>
-    </div>
-
-    <!-- WELCOME RIBBON BANNER -->
-    <div class="csu-ribbon-wrap">
-      <div class="csu-ribbon">
-        <span class="csu-ribbon-title"> Welcome to Caraga State University Library</span>
       </div>
     </div>
 
     <!-- CSU LIBRARY -->
     <div class="w-full bg-[#0d2b0f] flex justify-center py-12 px-6 mt-8">
-      <div class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div class="w-[100%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <!-- Left: Image -->
-        <div class="w-full h-96 flex justify-center">
+        <div class="w-full h-full flex justify-center">
           <img
             src="@/assets/images/lib.jpg"
             alt="Students"
@@ -147,94 +194,163 @@
         </div>
 
         <!-- Right: Text -->
-        <div class="flex flex-col text-white px-4">
-          <h2 class="text-3xl mb-4" style="font-size: 1.5rem; font-weight: 900; color: white">
+        <div class="flex flex-col text-white px-4 relative">
+          <div style="width: 60px; height: 4px; background: #f9a825; margin-bottom: 16px"></div>
+          <div class="mb-4">
+            <span
+              style="
+                background: #f9a825;
+                color: #0d2b0f;
+                font-size: 0.75rem;
+                font-weight: 900;
+                letter-spacing: 0.15em;
+                padding: 4px 12px;
+                border-radius: 4px;
+              "
+              >CSU LIBRARY</span
+            >
+          </div>
+          <h2
+            class="mb-4"
+            style="color: white; font-size: 1.9rem; font-weight: 900; letter-spacing: 0.1em"
+          >
             Caraga State University Library
           </h2>
-          <p class="text-white text-base leading-relaxed mb-6">
+          <div class="mb-4">
+            <div
+              style="
+                width: 100%;
+                height: 1px;
+                background: linear-gradient(to right, #f9a825, transparent);
+              "
+            ></div>
+          </div>
+          <p class="text-white/80 text-base leading-relaxed mb-6" style="text-align: justify">
             The CSU Library Service Unit aims to support and achieve the educational objectives of
             CSU. It seeks relevant materials and services; and provide these to fulfull the
             vision,mission goals and objectives of the State College to respond to the changing
             needs of the clientele and the curricular offerings.
           </p>
+
+          <!-- Stats -->
+          <div class="grid grid-cols-3 gap-4 mt-2">
+            <div
+              class="flex flex-col items-center border border-white/20 rounded-lg p-4 bg-white/5 hover:bg-white/10 hover:border-[#f9a825] hover:scale-105 transition-all duration-300 cursor-pointer"
+            >
+              <svg
+                class="w-8 h-8 mb-2"
+                style="color: #f9a825"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+              <span style="font-size: 1.4rem; font-weight: 900; color: #f9a825">10,000+</span>
+              <span class="text-white/80 text-sm text-center">Books</span>
+            </div>
+            <div
+              class="flex flex-col items-center border border-white/20 rounded-lg p-4 bg-white/5 hover:bg-white/10 hover:border-[#f9a825] hover:scale-105 transition-all duration-300 cursor-pointer"
+            >
+              <svg
+                class="w-8 h-8 mb-2"
+                style="color: #f9a825"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+                />
+              </svg>
+              <span style="font-size: 1.4rem; font-weight: 900; color: #f9a825">500+</span>
+              <span class="text-white/80 text-sm text-center">Journals</span>
+            </div>
+            <div
+              class="flex flex-col items-center border border-white/20 rounded-lg p-4 bg-white/5 hover:bg-white/10 hover:border-[#f9a825] hover:scale-105 transition-all duration-300 cursor-pointer"
+            >
+              <svg
+                class="w-8 h-8 mb-2"
+                style="color: #f9a825"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+                />
+              </svg>
+              <span style="font-size: 1.4rem; font-weight: 900; color: #f9a825">5,000+</span>
+              <span class="text-white/80 text-sm text-center">Students Served</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- CAMPUS UPDATES SECTION -->
     <div class="w-full flex justify-center px-6 py-12">
-      <div class="w-full max-w-6xl mx-auto">
+      <div class="w-[100%] mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
-            class="border-b-3 border-[#f9a825] pb-1"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
+            class="border-b-4 border-[#f9a825] pb-1"
+            style="font-size: 1.9rem; font-weight: 900; color: #1b5e20"
             >LIBRARY UPDATES</span
           >
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Card 1 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
             <img src="@/assets/images/card1.jpg" alt="Card 1" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                BSP Knowledge Resource Network
-              </h3>
-
+              <h3 class="card-heading pb-5 text-center">BSP Knowledge Resource Network</h3>
               <RouterLink
                 :to="{ name: 'bcppage' }"
+                class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
+                >More Details →</RouterLink
+              >
+            </div>
+          </div>
+          <div
+            class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
+          >
+            <img src="@/assets/images/card2.jpg" alt="Card 2" class="w-full h-56 object-cover" />
+            <div class="p-5 flex flex-col flex-grow">
+              <h3 class="card-heading pb-5 text-center">National Book Week Celebration</h3>
+              <RouterLink
+                :to="{ name: 'nbwcpage' }"
                 class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
               </RouterLink>
             </div>
           </div>
-
-          <!-- Card 2 -->
-          <div
-            class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
-          >
-            <img src="@/assets/images/card2.jpg" alt="Card 2" class="w-full h-56 object-cover" />
-            <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                84th National Book Week Celebration
-              </h3>
-              <button
-                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
-              >
-                More Details →
-              </button>
-            </div>
-          </div>
-
-          <!-- Card 3 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
             <img src="@/assets/images/card3.png" alt="Card 3" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                STARBOOKS - DOST-STII
-              </h3>
-              <button
-                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
+              <h3 class="card-heading pb-5 text-center">STARBOOKS - DOST-STII</h3>
+              <RouterLink
+                :to="{ name: 'starbooks' }"
+                class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
-              </button>
+              </RouterLink>
             </div>
           </div>
-
-          <!-- Card 4 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
@@ -244,41 +360,29 @@
               class="w-full h-56 object-cover"
             />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                AVR Reservation
-              </h3>
-              <button
-                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
+              <h3 class="card-heading pb-5 text-center">AVR Reservation</h3>
+              <RouterLink
+                :to="{ name: 'avr' }"
+                class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
-              </button>
+              </RouterLink>
             </div>
           </div>
-
-          <!-- Card 5 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
             <img src="@/assets/images/top.jpg" alt="Card 5" class="w-full h-56 object-cover" />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                Top Library Borrowers and Visitors
-              </h3>
-              <button
-                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
+              <h3 class="card-heading pb-5 text-center">Top Library Borrowers and Visitors</h3>
+              <RouterLink
+                :to="{ name: 'topborrower' }"
+                class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
-              </button>
+              </RouterLink>
             </div>
           </div>
-
-          <!-- Card 6 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
@@ -288,57 +392,30 @@
               class="w-full h-56 object-cover"
             />
             <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                Newly Acquired Books
-              </h3>
-              <button
-                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
+              <h3 class="card-heading pb-5 text-center">Newly Acquired Books</h3>
+              <RouterLink
+                :to="{ name: 'newlyacquiredbooks' }"
+                class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
               >
                 More Details →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 7 - Centered -->
-        <div class="w-full h-96 flex justify-center py-4">
-          <div
-            class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-col hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300 w-1/3"
-          >
-            <img src="@/assets/images/card7.png" alt="Card 7" class="w-full h-56 object-cover" />
-            <div class="p-5 flex flex-col flex-grow">
-              <h3
-                class="pb-5 text-center"
-                style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
-              >
-                85th National Book Week Celebration
-              </h3>
-              <button
-                class="border-2 border-[#1b5e20] text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
-              >
-                More Details →
-              </button>
+              </RouterLink>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- NEWS SECTION -->
+    <!-- USEFUL LINKS SECTION -->
     <div class="w-full bg-white flex justify-center py-12 px-6 mt-8">
-      <div class="w-full max-w-6xl mx-auto">
+      <div class="w-[100%] mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
             class="border-b-4 border-[#f9a825] pb-1"
-            style="font-size: 1.5rem; font-weight: 900; color: #0d2b0f"
-            >LATEST NEWS</span
+            style="font-size: 1.9rem; font-weight: 900; color: #1b5e20"
+            >USEFUL LINKS</span
           >
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- News Card 1 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
@@ -354,19 +431,19 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2 style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f">
-                  Philippine E-Lib
-                </h2>
+                <h2 class="link-heading">Philippine E-Lib</h2>
               </a>
               <p class="text-[#0d2b0f]">National Library of the Philippines (NLP)</p>
             </div>
           </div>
-
-          <!-- News Card 2 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
-            <img src="/csu-logo.png" alt="News 3" class="w-20 h-full object-cover flex-shrink-0" />
+            <img
+              src="/csu-logo.png"
+              alt="News 2"
+              class="w-20 h-full object-contain flex-shrink-0 p-2"
+            />
             <div class="p-4 flex flex-col justify-center gap-1">
               <a
                 href="https://www.carsu.edu.ph/"
@@ -374,18 +451,11 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  CARSU Webpage
-                </h2>
+                <h2 class="link-heading">CARSU Webpage</h2>
               </a>
               <p class="text-[#0d2b0f]">CARAGA STATE UNIVERSITY</p>
             </div>
           </div>
-
-          <!-- News Card 3 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
@@ -401,51 +471,37 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  Web OPAC
-                </h2>
+                <h2 class="link-heading">Web OPAC</h2>
               </a>
               <p class="text-[#0d2b0f]">Online Public Access Catalog</p>
             </div>
           </div>
-
-          <!-- News Card 4 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
             <img
               src="@/assets/images/free.jpg"
-              alt="News 3"
+              alt="News 4"
               class="w-20 h-full object-cover flex-shrink-0"
             />
-            <div class="p-4 flex flex-col justify-center">
+            <div class="p-4 flex flex-col justify-center gap-1">
               <a
                 href="https://www.journals.uchicago.edu/action/showPublications"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full gap-1"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  New free access journals
-                </h2>
+                <h2 class="link-heading">New free access journals</h2>
               </a>
               <p class="text-[#0d2b0f]">Online Public Access Catalog</p>
             </div>
           </div>
-
-          <!-- News Card 5 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
             <img
               src="@/assets/images/gale.jpg"
-              alt="News 2"
+              alt="News 5"
               class="w-40 h-full object-cover flex-shrink-0"
             />
             <div class="p-4 flex flex-col justify-center gap-1">
@@ -455,39 +511,27 @@
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  Infotrac
-                </h2>
+                <h2 class="link-heading">Infotrac</h2>
               </a>
               <p class="text-[#0d2b0f]">Online Custom Journals</p>
             </div>
           </div>
-
-          <!-- News Card 6 -->
           <div
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
             <img
               src="@/assets/images/EBSCO.jpg"
-              alt="News 3"
-              class="w-20 h-full object-cover flex-shrink-0 p-2"
+              alt="News 6"
+              class="w-20 h-full object-contain flex-shrink-0 p-2"
             />
             <div class="p-4 flex flex-col justify-center gap-1">
               <a
-                href="https://login.ebsco.com/?requestIdentifier=4a67d2a8-ffeb-49ba-b81a-56bcad923862&acrValues=uid&ui_locales&redirect_uri=https://logon.ebsco.zone/api/dispatcher/continue/prompted?state=MGM1ODBjMTUyZTA1NGE2NWFiYmQ3ZjM1NjA4MjI2MTQ=&authRequest=eyJraWQiOiIxNzY5MTEwMjQ0MDQ3IiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczpcL1wvYXV0aC5lYnNjby56b25lXC9hcGlcL2Rpc3BhdGNoZXIiLCJhdXRoUmVxdWVzdCI6eyJsb2dpbl9oaW50IjpudWxsLCJncmFudF90eXBlIjoiYXV0aG9yaXphdGlvbl9jb2RlIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgYWZmaWxpYXRpb24iLCJhY3JfdmFsdWVzIjoidWlkIiwicmVzcG9uc2VfdHlwZSI6ImNvZGUiLCJyZWRpcmVjdF91cmkiOiJodHRwczpcL1wvc2VhcmNoLmVic2NvaG9zdC5jb21cL3dlYmF1dGhcL1Byb21wdGVkQ2FsbGJhY2suYXNweCIsInN0YXRlIjoiQXhCZWpDcE5adU9kdUVVTkdKOWNBZHdzbDBPUURBM2VRY0F2a3ZvYUVtQWN0ajg2bjQxY3U4cHh0QnQ2MjBPMnV6VzVsVHhYRWRnc3FmR0hoMnpwZERjWDdtUjVKdUdIMkVlaURtWmpDWW5id1pON0ZGVGRnX0htRms4YXM5TEN3NzRFYmdhdGpLSnd6R01qNS1MdnJSNGZFQnI5XzNVMGg2M2o5YV9IeWJQX3kzTHhiS3JscWVLUkV0OTV0U0tDcmpoTTE0VVUzN0pHOEc1RHhLbC1tTmozOEZFek1tY2tHTEZxYW5tYlpiWlZNb3d6b1I4LVN4US1ic0tmMmkwSFhzUDBnUDM0TTBsbHNCOXNBNy1XUnR5N1doM200ZmdMZDQ1b2EyRnY0Ui1xS3ZrazVXVWRhZ2RhM1ZzMXRmSHVpdWs2N2dMUzE0OTV4OGF6OUE4NWo2ZmV3OWNRLVhkV3RmTlJHX09nRVRFZUJhLUtEVUNoMFEiLCJjbGllbnRfaWQiOiJhd2d5Y0l4NTdNcnduRFE1aDRVZTZ5Q1ZFUDByNU10OSIsInJlc3BvbnNlX21vZGUiOiJxdWVyeSIsInJlcUlkIjoiNGE2N2QyYTgtZmZlYi00OWJhLWI4MWEtNTZiY2FkOTIzODYyIn0sImlhdCI6MTc3MjAwMTkzMSwianRpIjoiZTA0OTVjZTgtOTc1ZC00NDMxLTk5ZDctMTM5NjhkOWQ5ZmUyIiwicmVxSWQiOiI0YTY3ZDJhOC1mZmViLTQ5YmEtYjgxYS01NmJjYWQ5MjM4NjIifQ.lanZ6eJGj9KTJDp2x5oIHxoxAv0xx7Y3plQpOTordflU8p6NWi1NOgdGPPG3Kj1Eqboq50P64trc0HcgLQnXBXbAJ0B78bv5xA4CMd6Zg5RuhSg2a7cFapuejT4TaEM9f4d_0SCoR8v0QruXibK8wsoq3-AlsxG_4j5OfXKcc6xXpAUv7QnSUj6OnVIyrNzGkynXFRzm62SOxzJJ8KKH0YRrcFsEvpbwGATqrMdv8bacnWQboMD4NNCICGAAFX76LjjC0bougPgDkXCdXmM2Bj0GBod8R5hgyLbBUV7dXil0eytZ3oeHGk7LkjsyxhILgAu2C6v6ysrifkad9qusvw"
+                href="https://login.ebsco.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:underline hover:decoration-[#f9a825] cursor-pointer"
               >
-                <h2
-                  class="text-[#1B5E20] mb-3 pb-2 w-full"
-                  style="font-size: 1.1rem; font-weight: 900; color: #0d2b0f"
-                >
-                  EBSCO
-                </h2>
+                <h2 class="link-heading">EBSCO</h2>
               </a>
               <p class="text-[#0d2b0f]">Research databases, EBooks, Discovery Service</p>
             </div>
@@ -495,6 +539,31 @@
         </div>
       </div>
     </div>
+
+    <!-- SCROLL TO TOP -->
+    <Transition name="fade">
+      <button
+        v-if="showScrollTop"
+        @click="scrollToTop"
+        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
+        style="background: #0d2b0f"
+      >
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 11l7-7 7 7"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 17l7-7 7 7"
+          />
+        </svg>
+      </button>
+    </Transition>
   </div>
 </template>
 
@@ -518,6 +587,7 @@ const images = [
 const imageHeight = '600px'
 const currentIndex = ref(0)
 const slideWidth = 100
+const showScrollTop = ref(false)
 
 let autoplayInterval: ReturnType<typeof setInterval> | null = null
 
@@ -529,80 +599,86 @@ function prev() {
   currentIndex.value = (currentIndex.value - 1 + images.length) % images.length
 }
 
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 300
+}
+
 onMounted(() => {
   autoplayInterval = setInterval(next, 3000)
+  window.addEventListener('scroll', handleScroll)
 })
 
 onUnmounted(() => {
   if (autoplayInterval) clearInterval(autoplayInterval)
+  window.removeEventListener('scroll', handleScroll)
 })
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
-
-.csu-ribbon-wrap {
-  width: 100%;
-  padding: 12px 0 20px;
-  position: relative;
-  display: flex;
-  justify-content: center;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.csu-ribbon {
-  position: relative;
-  width: 85%;
-  height: 48px;
-  background: #1b5e20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards;
 }
 
-.csu-ribbon::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 34px;
-  height: 48px;
-  background: #ffffff;
-  clip-path: polygon(0 50%, 100% 0, 100% 100%);
-}
-
-.csu-ribbon::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -10px;
-  width: 0;
-  height: 0;
-  border-top: 10px solid #0d2b0f;
-  border-right: 12px solid transparent;
-}
-
-.csu-ribbon-title {
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  margin: 0;
+.tagline-title {
+  font-weight: 900;
+  font-size: 3rem;
+  color: #0d2b0f;
   text-align: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.2rem;
-  line-height: 48px;
-  letter-spacing: 0.3px;
+  line-height: 2;
 }
 
-.csu-ribbon-title::before {
-  content: '';
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-120px);
-  width: 4px;
-  height: 10px;
-  border-radius: 1px;
+.card-heading {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #0d2b0f;
+}
+
+.link-heading {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #0d2b0f;
+}
+
+@media (max-width: 1400px) {
+  .tagline-title {
+    font-size: 2.5rem;
+  }
+  .page-heading {
+    font-size: 1.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tagline-title {
+    margin-top: 22px;
+    margin-bottom: 14px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Scroll to top transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
