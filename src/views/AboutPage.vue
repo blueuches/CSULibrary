@@ -31,7 +31,7 @@ const rules = [
     <!-- Content area -->
     <div class="about-content page-inner">
       <div class="intro-text">
-        <p>
+        <p class="mt-5">
           Libraries play a very crucial role in supporting the academic programs of any university
           as it identifies, evaluates, procures, processes, and then makes these learning resources
           available to the faculty and student for their teaching, learning and research
