@@ -1,39 +1,18 @@
 <template>
   <div class="w-full py-6 relative min-h-screen overflow-y-auto flex flex-col items-center bg-white">
      
-  <div class="w-full mb-8 flex justify-center px-12 pt-2">
-  <div class="relative w-full max-w-7xl">
-    
-    <div 
-      class="absolute -left-3 top-2 h-10 w-10 bg-[#142c24] -z-10" 
-      style="clip-path: polygon(100% 0, 0 50%, 100% 100%);"
-    ></div>
-
-    <div class="relative z-10 w-full bg-gradient-to-r from-[#1b3a2f] via-[#2d5a49] to-[#1b3a2f] py-2 shadow-lg border-y-[3px] border-yellow-500 flex justify-center items-center">
-      <span class="text-white text-lg font-black uppercase tracking-[0.2em] drop-shadow-md">
-        Section Gallery
-      </span>
-    </div>
-
-    <div 
-      class="absolute -right-3 top-2 h-10 w-10 bg-[#142c24] -z-10" 
-      style="clip-path: polygon(0 0, 100% 50%, 0 100%);"
-    ></div>
-
-    <div 
-      class="absolute left-0 top-[100%] w-3 h-2 bg-[#0d1d18]" 
-      style="clip-path: polygon(0 0, 100% 0, 100% 100%);"
-    ></div>
-    <div 
-      class="absolute right-0 top-[100%] w-3 h-2 bg-[#0d1d18]" 
-      style="clip-path: polygon(0 0, 100% 0, 0 100%);"
-    ></div>
+  <div class="mx-auto w-full flex justify-center px-8">
+  <div class="relative w-full">
+    <ribbon>
+      GALLERY
+     </ribbon>
     
   </div>
 </div>
-
+    
     <div class="w-full sticky top-0 z-30 px-6">
       <div class="w-full backdrop-blur-md bg-white/40 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-3xl shadow-lg">
+        
         
         <div class="flex gap-4">
           <button
@@ -62,7 +41,7 @@
       </div>
     </div>
 
-    <div class="w-full max-w-7xl px-4 flex flex-col items-center mt-12 relative z-10">
+    <div class="w-full px-4 flex flex-col items-center mt-12 relative z-10">
       <transition-group name="fade" tag="div" class="w-full">
         <div
           v-for="floor in searchQuery ? filteredFloors : activeFloorData"
@@ -156,6 +135,7 @@
 </template>
 
 <script setup lang="ts">
+import Ribbon from "@/components/Ribbon.vue";
 import { ref, computed } from 'vue'
 
 interface Section {
@@ -290,4 +270,13 @@ const filteredFloors = computed(() => {
 .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-thumb { background: #1b3a2f; border-radius: 10px; }
+
+:deep(.csu-ribbon-wrap .page-inner) {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 30px;
+}
 </style>
