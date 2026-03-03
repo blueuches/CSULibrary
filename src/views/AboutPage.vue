@@ -601,7 +601,6 @@ const rules = [
     margin-left: 28px;
   }
 
-  /* Disable heavy 3D hover on mobile */
   .grid-item:hover .content-box,
   .grid-item:nth-child(even):hover .content-box {
     transform: none;
