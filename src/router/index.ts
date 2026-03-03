@@ -14,7 +14,7 @@ import BSPPage from '@/views/OtherRoutes/BSPPage.vue'
 import NBWCPage from '@/views/OtherRoutes/NBWCPage.vue'
 import Starbooks from '@/views/OtherRoutes/Starbooks.vue'
 import AVRPage from '@/views/OtherRoutes/AVRPage.vue'
-import TopBorrowerPage from '@/views/OtherRoutes/TopBorrowerPage.vue'
+import TopBorrowers from '@/views/OtherRoutes/TopBorrowers.vue'
 import NewlyAcquiredBooksPage from '@/views/OtherRoutes/NewlyAcquiredBooksPage.vue'
 import EResources from '@/views/OtherRoutes/EResources.vue'
 
@@ -37,7 +37,7 @@ const router = createRouter({
 
     //other routes
     { path: '/avr', name: 'avr', component: AVRPage },
-    { path: '/topborrower', name: 'topborrower', component: TopBorrowerPage },
+    { path: '/top-borrowers', name: 'top-borrowers', component: TopBorrowers },
     { path: '/newlyacquiredbooks', name: 'newlyacquiredbooks', component: NewlyAcquiredBooksPage },
     { path: '/bcp', name: 'bcppage', component: BSPPage },
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage },
