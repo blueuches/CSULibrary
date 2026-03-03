@@ -5,6 +5,7 @@
     <div class="w-full h-px bg-[#c69214]"></div>
 
     <!-- Ribbon -->
+      
     <div class="csu-ribbon-wrap">
       <div class="page-inner">
         <div class="csu-ribbon">
@@ -22,7 +23,7 @@
         <div v-if="staff.length > 0" class="max-w-4xl w-full mx-auto">
           <div class="flex flex-col items-center text-center">
 
-            <div class="relative w-40 h-40 mb-20 rounded-full overflow-visible">
+            <div class="relative w-40 h-40 mb-1 rounded-full overflow-visible">
               <div 
                 class="absolute inset-0 rounded-full border-4 shadow-md"
                 style="background-color:#0d2b0f; border-color:#66bb6a;"
@@ -73,7 +74,7 @@
 
             <div class="flex flex-col items-center text-center w-full max-w-sm">
 
-              <div class="relative w-40 h-40 mb-14 rounded-full overflow-visible">
+              <div class="relative w-40 h-40 mb-1 rounded-full overflow-visible">
 
                 <div 
                   class="absolute inset-0 rounded-full border-4 shadow-md"
