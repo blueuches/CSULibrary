@@ -1,12 +1,14 @@
 <template>
-  <div class="w-full pb-10 font-poppins antialiased text-gray-800 flex flex-col items-center bg-gray-50 overflow-x-hidden">
+  <div class="w-full pb-10 font-poppins antialiased text-green-950 flex flex-col items-center bg-gray-50 overflow-x-hidden">
     
-    <div class="relative mb-10 w-full pt-1">
-      <Ribbon class="w-full">SERVICES</Ribbon>
-    </div>
+    <!-- <div class="relative mb-10 w-full pt-1">
+      <Ribbon class="mt-6">SERVICES</Ribbon>
+    </div> -->
     
-    <div class="max-w-7xl mx-auto px-6 w-full pb-10"> 
-      <p class="text-gray-800 leading-relaxed text-lg font-medium text-center mb-16 pt-5">
+    <div class="mx-auto px-8 w-full pb-10"> 
+    <Ribbon class="mt-6">SERVICES</Ribbon>
+
+      <p class="text-green-950 leading-relaxed text-lg font-medium text-center mb-16 pt-5">
         The 
         <span class="font-black text-[#1b5e20] text-2xl tracking-tight mx-1">
           CSU Library
@@ -22,7 +24,7 @@
           <div class="w-1.5 h-10 bg-[#f9a825] shrink-0 rounded-full mt-1"></div>
           
           <div>
-            <h3 class="font-bold text-lg text-gray-900 mb-2 leading-tight uppercase tracking-wide">
+            <h3 class="font-bold text-lg text-green-950 mb-2 leading-tight uppercase tracking-wide">
               {{ service.title }}
             </h3>
             <p class="text-gray-600 leading-relaxed text-sm font-normal">
@@ -101,5 +103,14 @@ onUnmounted(() => {
 }
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
+}
+
+:deep(.csu-ribbon-wrap .page-inner) {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 30px;
 }
 </style>
