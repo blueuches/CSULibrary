@@ -142,8 +142,8 @@ const rules = [
 ========================= */
 .about-page {
   --page-bg: #f3f4f6;
-  --ribbon-green: #1b5e20;
-  --ribbon-green-dark: #1b5e20;
+  --ribbon-green: #0d2b0f;
+  --ribbon-green-dark: #0d2b0f;
   --accent-orange: #f15a24;
   --text-color: #1f1f1f;
   --card-border: #d8d8d8;
@@ -174,7 +174,7 @@ const rules = [
 
 .csu-ribbon {
   position: relative;
-  width: min(100%, 1500px); /* adjust: 1100/1200/1300 */
+  width: min(100%, 1500px);
   margin: 0 auto;
   background: var(--ribbon-green);
   display: flex;
