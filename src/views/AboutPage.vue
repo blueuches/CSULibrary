@@ -137,10 +137,15 @@ const rules = [
 </template>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 /* =========================
    Page
 ========================= */
 .about-page {
+  font-family: 'Poppins', sans-serif;
+
   --page-bg: #f3f4f6;
   --ribbon-green: #0d2b0f;
   --ribbon-green-dark: #0d2b0f;
@@ -153,6 +158,17 @@ const rules = [
   min-height: 100vh;
   padding: 24px 0 40px;
   background: var(--page-bg);
+}
+
+/* extra safety: force poppins on key parts */
+.csu-ribbon-title,
+.vmg-title,
+.green-heading,
+.intro-text,
+.section-paragraph,
+.custom-list,
+.card-body {
+  font-family: 'Poppins', sans-serif;
 }
 
 .page-inner {
@@ -243,7 +259,7 @@ const rules = [
 .intro-text {
   color: var(--text-color);
   line-height: 1.45;
-  font-size: 1rem;
+  font-size: 15px;
   max-width: 1300px;
   margin: 0 auto;
   text-align: center;
