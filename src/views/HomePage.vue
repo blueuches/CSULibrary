@@ -440,7 +440,7 @@
             class="border-2 border-[#1b5e20] rounded-lg overflow-hidden flex flex-row hover:shadow-lg hover:shadow-[#0d2b0f]/100 hover:scale-105 transition-all duration-300"
           >
             <img
-              src="/logo.png"
+              src="/csu-logo.png"
               alt="News 2"
               class="w-20 h-full object-contain flex-shrink-0 p-2"
             />
