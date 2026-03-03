@@ -18,6 +18,10 @@ import TopBorrowerPage from '@/views/OtherRoutes/TopBorrowerPage.vue'
 import NewlyAcquiredBooksPage from '@/views/OtherRoutes/NewlyAcquiredBooksPage.vue'
 import EResources from '@/views/OtherRoutes/EResources.vue'
 
+import Dashboard from '@/views/Admin/Dashboard.vue'
+import Login from '@/views/Admin/Login.vue'
+import Signin from '@/views/Admin/Signin.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.pBASE_URL),
   routes: [
@@ -39,6 +43,11 @@ const router = createRouter({
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage },
     { path: '/starbooks', name: 'starbooks', component: Starbooks },
     { path: '/e-resources', name: 'eresources', component: EResources },
+
+    //admin
+    { path: '/admin', name: 'admin', component: Dashboard },
+    { path: '/login', name: 'login', component: Login },
+    { path: '/signin', name: 'signin', component: Signin },
   ],
 })
 
