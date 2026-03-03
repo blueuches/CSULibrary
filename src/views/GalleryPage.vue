@@ -1,16 +1,39 @@
 <template>
   <div class="w-full py-6 relative min-h-screen overflow-y-auto flex flex-col items-center bg-white">
      
-    <div class="w-full mb-10 flex justify-center px-4">
-      <div class="relative w-full max-w-6xl bg-gradient-to-r from-[#1b3a2f] via-[#2d5a49] to-[#1b3a2f] py-8 shadow-xl border-y-4 border-yellow-500 flex justify-center items-center overflow-hidden rounded-lg">
-        <span class="text-white text-4xl font-black uppercase tracking-[0.3em] drop-shadow-md">
-          Section Gallery
-        </span>
-      </div>
+  <div class="w-full mb-8 flex justify-center px-12 pt-2">
+  <div class="relative w-full max-w-7xl">
+    
+    <div 
+      class="absolute -left-3 top-2 h-10 w-10 bg-[#142c24] -z-10" 
+      style="clip-path: polygon(100% 0, 0 50%, 100% 100%);"
+    ></div>
+
+    <div class="relative z-10 w-full bg-gradient-to-r from-[#1b3a2f] via-[#2d5a49] to-[#1b3a2f] py-2 shadow-lg border-y-[3px] border-yellow-500 flex justify-center items-center">
+      <span class="text-white text-lg font-black uppercase tracking-[0.2em] drop-shadow-md">
+        Section Gallery
+      </span>
     </div>
 
+    <div 
+      class="absolute -right-3 top-2 h-10 w-10 bg-[#142c24] -z-10" 
+      style="clip-path: polygon(0 0, 100% 50%, 0 100%);"
+    ></div>
+
+    <div 
+      class="absolute left-0 top-[100%] w-3 h-2 bg-[#0d1d18]" 
+      style="clip-path: polygon(0 0, 100% 0, 100% 100%);"
+    ></div>
+    <div 
+      class="absolute right-0 top-[100%] w-3 h-2 bg-[#0d1d18]" 
+      style="clip-path: polygon(0 0, 100% 0, 0 100%);"
+    ></div>
+    
+  </div>
+</div>
+
     <div class="w-full sticky top-0 z-30 px-6">
-      <div class="w-full backdrop-blur-md bg-white/80 py-6 px-8 flex items-center justify-between border border-gray-200 rounded-3xl shadow-lg">
+      <div class="w-full backdrop-blur-md bg-white/40 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-3xl shadow-lg">
         
         <div class="flex gap-4">
           <button
@@ -20,7 +43,7 @@
             :class="[
               'px-8 py-2.5 rounded-full font-black transition-all duration-300 text-xs uppercase tracking-widest border-2',
               activeFloor === floor.id && !searchQuery
-                ? 'bg-[#1b3a2f] border-[#1b3a2f] text-white scale-110 shadow-md'
+                ? 'bg-[#1b3a2f] border-[#1b3a2f] text-white scale-100 shadow-md'
                 : 'bg-transparent border-[#1b3a2f] text-[#1b3a2f] hover:bg-[#1b3a2f] hover:text-white',
             ]"
           >
@@ -48,11 +71,12 @@
         >
           <div v-for="wing in floor.wings" :key="wing.name" class="mb-20">
             <div class="flex items-center justify-center mb-10 gap-6">
-              <span class="text-green-600 font-bold tracking-tighter text-sm">{{ floor.name }}</span>
+              <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{ floor.name }}</span>
               <h3 class="text-4xl font-black text-[#1b3a2f] uppercase tracking-tighter">
                 {{ wing.name }}
+                <!-- fading line to the direction of the wing -->
               </h3>
-              <div class="h-[2px] flex-grow max-w-[150px] bg-gradient-to-r from-green-600 to-transparent"></div>
+              <div class="h-[2px] flex-grow max-w-[150px] bg-gradient-to-r from-yellow-600 to-transparent"></div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -67,8 +91,8 @@
                 
                 <div class="absolute inset-0 p-8 flex flex-col justify-end">
                   <div class="w-10 h-1 bg-green-500 mb-4 rounded-full transition-all group-hover:w-20"></div>
-                  
-                  <h4 class="text-white font-black text-2xl leading-tight uppercase group-hover:text-green-400 transition-colors duration-300">
+                  <!-- section name -->
+                  <h4 class="text-white font-black text-2xl leading-tight uppercase group-hover:text-yellow-500 transition-colors duration-300">
                     {{ section.title }}
                   </h4>
                   
@@ -104,12 +128,12 @@
                 class="w-full h-auto max-h-[60vh] object-contain mx-auto" 
               />
 
-              <button v-if="selectedSection.images.length > 1" @click="nextImg" class="absolute right-4 z-10 p-3 rounded-full bg-black/50 text-white hover:bg-[#1b3a2f] transition-all">
+              <button v-if="selectedSection.images.length > 1" @click="nextImg" class="absolute right-4 z-10 p-3 rounded-full yellow/50 text-white hover:bg-[#1b3a2f] transition-all">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
 
-            <div class="flex justify-center gap-3 p-4 bg-gray-100 overflow-x-auto">
+            <div class="flex justify-center gap-3 p-4 darkgreen-100 overflow-x-auto">
               <div 
                 v-for="(img, idx) in selectedSection.images" 
                 :key="idx"
@@ -121,9 +145,9 @@
               </div>
             </div>
 
-            <div class="p-8 bg-white text-center border-t border-gray-100">
+            <div class="p-8 darkgreen text-center border-t border-gray-100">
               <h2 class="text-[#1b3a2f] text-3xl font-black uppercase mb-2">{{ selectedSection.title }}</h2>
-              <p class="text-gray-600 max-w-2xl mx-auto">{{ selectedSection.description }}</p>
+              <p class="text-yellow-600 max-w-2xl mx-auto">{{ selectedSection.description }}</p>
             </div>
           </div>
         </div>
