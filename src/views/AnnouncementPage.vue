@@ -1,200 +1,182 @@
 <template>
   <section class="py-5">
-  <div class="px-6">
-    <!-- <Ribbon class="pb-6">
-      Events & Announcement
-    </Ribbon> -->
+    <div class="px-6">
 
-    <Carousel :items="images" />
+      <!-- Carousel -->
+      <!-- <Carousel :items="images" /> -->
 
+      <!-- <Ribbon class="uppercase">
+        Announcements
+      </Ribbon> -->
 
-      <section class="mt-16">
-        <h2 class="text-3xl tracking-normal text-center font-extrabold text-[#1B5E20] uppercase"> Monthly Events</h2>
+      <card>
+
+      </card>
+
+      <!-- ================= MONTHLY EVENTS ================= -->
+      <section class="mt-5 mb-10">
+        <h2 class="text-3xl tracking-normal text-center font-extrabold text-[#1B5E20] uppercase">
+          Monthly Events
+        </h2>
         <div class="w-50 h-1 bg-yellow-500 mx-auto mt-1 mb-8 rounded-full"></div>
 
+        <!-- ================= MONTH OVAL FILTER ================= -->
+        <div class="flex flex-wrap justify-center gap-2 mb-8">
+
+          <button v-for="month in months" :key="month" @click="selectedEventMonth = month" :class="[
+            'px-5 py-2 rounded-full border transition',
+            selectedEventMonth === month
+              ? 'bg-green-700 text-white border-green-700'
+              : 'bg-white text-gray-600 border-gray-300 hover:bg-green-100'
+          ]">
+            {{ month }}
+          </button>
+        </div>
+
+        <!-- ================= EVENTS GRID ================= -->
         <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-6">
+          <div v-for="event in filteredEvents" :key="event.id" class="bg-white rounded-xl shadow overflow-hidden">
+            <img :src="event.image" class="w-full h-48 object-cover" />
 
-          <!-- Card 1 -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <img src="/imgs/a8.jpg" class="w-full h-48 object-cover" />
             <div class="p-6">
               <h3 class="text-xl font-semibold mb-2">
-                Book Fair 2026
+                {{ event.title }}
               </h3>
+
               <p class="text-sm text-gray-500 mb-2">
-                March 18, 2026 • 10:00 AM • Main Hall
+                {{ event.date }} • {{ event.time }} • {{ event.location }}
               </p>
+
               <p class="text-gray-600 text-sm">
-                Explore a diverse collection of books and enjoy exclusive
-                discounts from participating publishers.
+                {{ event.description }}
               </p>
             </div>
           </div>
 
-          <!-- Card 2 -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <img src="/imgs/a9.jpg" class="w-full h-48 object-cover" />
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">
-                Book Fair 2026
-              </h3>
-              <p class="text-sm text-gray-500 mb-2">
-                March 18, 2026 • 10:00 AM • Main Hall
-              </p>
-              <p class="text-gray-600 text-sm">
-                Explore a diverse collection of books and enjoy exclusive
-                discounts from participating publishers.
-              </p>
-            </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <img src="/imgs/a10.jpg" class="w-full h-48 object-cover" />
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">
-                Book Fair 2026
-              </h3>
-              <p class="text-sm text-gray-500 mb-2">
-                March 18, 2026 • 10:00 AM • Main Hall
-              </p>
-              <p class="text-gray-600 text-sm">
-                Explore a diverse collection of books and enjoy exclusive
-                discounts from participating publishers.
-              </p>
-            </div>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <img src="/imgs/a11.jpg" class="w-full h-48 object-cover" />
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">
-                Book Fair 2026
-              </h3>
-              <p class="text-sm text-gray-500 mb-2">
-                March 18, 2026 • 10:00 AM • Main Hall
-              </p>
-              <p class="text-gray-600 text-sm">
-                Explore a diverse collection of books and enjoy exclusive
-                discounts from participating publishers.
-              </p>
-            </div>
-          </div>
-
-          <!-- Card 5 -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <img src="/imgs/a12.jpg" class="w-full h-48 object-cover" />
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">
-                Book Fair 2026
-              </h3>
-              <p class="text-sm text-gray-500 mb-2">
-                March 18, 2026 • 10:00 AM • Main Hall
-              </p>
-              <p class="text-gray-600 text-sm">
-                Explore a diverse collection of books and enjoy exclusive
-                discounts from participating publishers.
-              </p>
-            </div>
-          </div>
-
-          <!-- Card 6 -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <img src="/imgs/a13.jpg" class="w-full h-48 object-cover" />
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">
-                Book Fair 2026
-              </h3>
-              <p class="text-sm text-gray-500 mb-2">
-                March 18, 2026 • 10:00 AM • Main Hall
-              </p>
-              <p class="text-gray-600 text-sm">
-                Explore a diverse collection of books and enjoy exclusive
-                discounts from participating publishers.
-              </p>
-            </div>
-          </div>
+          <p v-if="filteredEvents.length === 0" class="text-center col-span-3 text-gray-500" style="padding: 100px;">
+            No events available.
+          </p>
 
         </div>
+
+        <div class="text-center mt-6">
+          <router-link to="/top-borrowers" class="text-green-700 hover:underline text-center font-semibold">
+           Go to Top Borrowers
+          </router-link>
+        </div>
+      
+
+
       </section>
 
+    </div>
+  </section>
 
-      <h2 class="mt-10 text-3xl tracking-normal text-center font-extrabold text-[#1B5E20] uppercase"> Top Borrowers</h2>
-        <div class="w-50 h-1 bg-yellow-500 mx-auto mt-1 mb-8 rounded-full"></div>
-
-      <!-- Top Borrowers section -->
-      <div class="flex flex-col md:flex-row gap-4 justify-center mb-8">
-
-        <!-- Month Filter -->
-        <select v-model="selectedMonth"
-          class="px-5 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-          <option>All</option>
-          <option>February 2026</option>
-          <option>March 2026</option>
-          <option>April 2026</option>
-        </select>
-
-        <!-- Department Filter -->
-        <select v-model="selectedDepartment"
-          class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-          <option>All</option>
-          <option>CCIS</option>
-          <option>CEGS</option>
-          <option>CHASS</option>
-
-        </select>
-
-      </div>
-
-
-
-  </div>
-</section>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue"
 import Carousel from "@/components/Announcement/Carousel.vue"
-// import Ribbon from "@/components/Ribbon.vue"
+import Ribbon from "@/components/Ribbon.vue"
+
+/* ================= CAROUSEL DATA ================= */
 
 const images = [
   {
-     src: "/imgs/a1.jpg",
-     text: "Book Fair Month",
-     span: "Explore a wide selection of books from different genres, authors, and publishers. The Book Fair offers an opportunity to discover new readings, access exclusive discounts, and connect with fellow book lovers in a vibrant learning environment."
+    src: "/imgs/a1.jpg",
+    text: "Book Fair Month",
+    span: "Explore a wide selection of books."
   },
   {
-     src: "/imgs/a6.jpg",
-     text: "Facilities Offer",
-     span: "Try our available facilities designed to support learning, research, and collaboration. This offer provides access to modern equipment, study spaces, and essential resources to enhance productivity and academic development."
+    src: "/imgs/a6.jpg",
+    text: "Facilities Offer",
+    span: "Try our available facilities."
   },
   {
-     src: "/imgs/a3.png",
-     text: "Other Announcement & Updates",
-     span: "Stay informed about additional events, special programs, top borrowers, and important updates happening across the CSU Library."
+    src: "/imgs/a3.png",
+    text: "Other Announcement & Updates",
+    span: "Stay informed about updates."
   }
-  
 ]
 
-import { ref, computed } from "vue"
+/* ================= FILTER DATA ================= */
 
-const selectedMonth = ref("March 2026")
-const selectedDepartment = ref("All")
-
-const borrowers = [
-  { name: "STudent 1", books: 25, month: "March 2026", department: "Engineering" },
-  { name: "Student 2", books: 21, month: "March 2026", department: "Business" },
-  { name: "Student 3", books: 18, month: "February 2026", department: "Engineering" }
+const months = [
+  "All",
+  "Jan", "Feb", "March", "April",
+  "May", "June", "July", "Aug",
+  "Sep", "Oct", "Nov", "Dec"
 ]
 
-const filteredBorrowers = computed(() => {
-  return borrowers.filter(b =>
-    (selectedMonth.value === "All" || b.month === selectedMonth.value) &&
-    (selectedDepartment.value === "All" || b.department === selectedDepartment.value)
+const selectedEventMonth = ref("All")
+
+/* ================= EVENTS DATA ================= */
+
+const events = [
+  {
+    id: 1,
+    title: "Book Fair 2026",
+    month: "March",
+    year: "2026",
+    date: "March 18, 2026",
+    time: "10:00 AM",
+    location: "Main Hall",
+    description: "Explore a diverse collection of books.",
+    image: "/imgs/a8.jpg"
+  },
+  {
+    id: 2,
+    title: "Reading Workshop",
+    month: "Jan",
+    year: "2026",
+    date: "January 12, 2026",
+    time: "1:00 PM",
+    location: "Conference Room",
+    description: "Improve reading skills.",
+    image: "/imgs/a9.jpg"
+  },
+  {
+    id: 3,
+    title: "Science Fair 2027",
+    month: "March",
+    year: "2027",
+    date: "March 10, 2027",
+    time: "9:00 AM",
+    location: "Auditorium",
+    description: "Student science project showcase.",
+    image: "/imgs/a6.jpg"
+  },
+  {
+    id: 4,
+    title: "Science Fair 2027",
+    month: "June",
+    year: "2027",
+    date: "March 10, 2027",
+    time: "9:00 AM",
+    location: "Auditorium",
+    description: "Student science project showcase.",
+    image: "/imgs/a11.jpg"
+  },
+  {
+    id: 5,
+    title: "Reading Workshop",
+    month: "Aug",
+    year: "2026",
+    date: "January 12, 2026",
+    time: "1:00 PM",
+    location: "Conference Room",
+    description: "Improve reading skills.",
+    image: "/imgs/a13.jpg"
+  },
+]
+
+/* ================= FILTER LOGIC ================= */
+
+const filteredEvents = computed(() => {
+  return events.filter(event =>
+    (selectedEventMonth.value === "All" || event.month === selectedEventMonth.value)
   )
 })
-
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

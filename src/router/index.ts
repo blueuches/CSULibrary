@@ -16,6 +16,7 @@ import Link3 from '@/views/OtherRoutes/Link3.vue'
 import BSPPage from '@/views/OtherRoutes/BSPPage.vue'
 import NBWCPage from '@/views/OtherRoutes/NBWCPage.vue'
 import Starbooks from '@/views/OtherRoutes/Starbooks.vue'
+import TopBorrowers from "@/views/OtherRoutes/TopBorrowers.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.pBASE_URL),
@@ -38,6 +39,7 @@ const router = createRouter({
     { path: '/bcp', name: 'bcppage', component: BSPPage, },
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage, },
     { path: '/starbooks', name: 'starbooks', component: Starbooks, },
+    { path: "/top-borrowers", name: "TopBorrowers", component: TopBorrowers, },
    ],
 })
 
