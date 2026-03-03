@@ -144,10 +144,10 @@ const rules = [
   --page-bg: #f3f4f6;
   --ribbon-green: #0d2b0f;
   --ribbon-green-dark: #0d2b0f;
-  --accent-orange: #f15a24;
+  --accent-orange: #fbc02d;
   --text-color: #1f1f1f;
   --card-border: #d8d8d8;
-  --float-shadow-green: 102, 187, 106;
+  --float-shadow-green: 13, 43, 15;
 
   width: 100%;
   min-height: 100vh;
@@ -293,19 +293,19 @@ const rules = [
   box-shadow:
     0 6px 14px rgba(var(--float-shadow-green), 0.16),
     0 14px 28px rgba(var(--float-shadow-green), 0.12),
-    0 2px 4px rgba(var(--float-shadow-green), 0.1);
+    0 2px 4px rgba(var(--float-shadow-green), 0.10);
 
   position: relative;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  backface-visibility: hidden;
 
-  transform: translateY(-2px) translateZ(0);
+  /* no 3D behavior */
+  transform-style: flat;
+  backface-visibility: hidden;
+  transform: translateY(0);
 
   transition:
-    transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.28s ease;
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.24s ease;
   will-change: transform, box-shadow;
 }
 
@@ -321,7 +321,7 @@ const rules = [
     rgba(255, 255, 255, 0) 62%
   );
   opacity: 0.35;
-  transition: opacity 0.28s ease;
+  transition: opacity 0.24s ease;
   pointer-events: none;
 }
 
@@ -334,39 +334,31 @@ const rules = [
   box-shadow: 0 0 0 0 rgba(var(--float-shadow-green), 0);
   opacity: 0.5;
   transition:
-    opacity 0.28s ease,
-    box-shadow 0.28s ease,
-    border-color 0.28s ease;
+    opacity 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
   pointer-events: none;
+}
+
+/* POP-UP hover only (no rotate/tilt) */
+.grid-item:hover .content-box,
+.grid-item:nth-child(even):hover .content-box {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(var(--float-shadow-green), 0.28);
+  box-shadow:
+    0 18px 34px rgba(var(--float-shadow-green), 0.28),
+    0 28px 48px rgba(var(--float-shadow-green), 0.20),
+    0 10px 20px rgba(var(--float-shadow-green), 0.16);
+}
+
+.grid-item:hover .content-box::before {
+  opacity: 0.75;
 }
 
 .grid-item:hover .content-box::after {
   opacity: 1;
   border-color: rgba(var(--float-shadow-green), 0.32);
-  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.1);
-}
-
-.grid-item:hover .content-box {
-  transform: translateY(-12px) rotateX(7deg) rotateY(-5deg) scale(1.015);
-  border-color: rgba(var(--float-shadow-green), 0.35);
-  box-shadow:
-    0 18px 34px rgba(var(--float-shadow-green), 0.28),
-    0 28px 48px rgba(var(--float-shadow-green), 0.2),
-    0 10px 20px rgba(var(--float-shadow-green), 0.16);
-}
-
-.grid-item:nth-child(even):hover .content-box {
-  transform: translateY(-12px) rotateX(7deg) rotateY(5deg) scale(1.015);
-}
-
-.grid-item:hover .content-box::before {
-  opacity: 0.8;
-}
-
-.grid-item:hover .content-box::after {
-  opacity: 1;
-  border-color: rgba(27, 94, 32, 0.2);
-  box-shadow: 0 0 0 4px rgba(27, 94, 32, 0.05);
+  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.08);
 }
 
 .ghost-item:hover .content-box {
@@ -405,8 +397,8 @@ const rules = [
   margin: 0;
   flex-shrink: 0;
 
-  transition: transform 0.28s ease;
-  transform-style: preserve-3d;
+  transition: none;
+  transform: none;
 }
 
 .with-accent {
@@ -430,16 +422,9 @@ const rules = [
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
-  transition: transform 0.28s ease;
-  transform-style: preserve-3d;
-}
 
-.grid-item:hover .green-heading {
-  transform: translateZ(18px);
-}
-
-.grid-item:hover .card-body {
-  transform: translateZ(10px);
+  transition: none;
+  transform: none;
 }
 
 .section-paragraph {
