@@ -6,13 +6,13 @@
         
         <div class="flex flex-col">
           <div class="flex items-center gap-3 mb-4">
-            <div class="h-6 w-[4px] bg-[#fbc02d] rounded-full"></div>
+            <div class="h-6 w-[4px] bg-[#f9a825] rounded-full"></div>
             <h2 class="text-xl font-black tracking-widest text-white uppercase">Library Hours</h2>
           </div>
           
           <div class="grid grid-cols-2 gap-3">
             <div class="bg-white/5 p-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-              <h3 class="font-bold text-[#fbc02d] text-[12px] uppercase mb-2 tracking-wider">Undergraduate</h3>
+              <h3 class="font-bold text-[#f9a825] text-[12px] uppercase mb-2 tracking-wider">Undergraduate</h3>
               <div class="space-y-2">
                 <div>
                   <p class="text-[9px] text-slate-400 font-bold uppercase">Mon — Fri</p>
@@ -22,12 +22,12 @@
                   <p class="text-[9px] text-slate-400 font-bold uppercase">Saturday</p>
                   <p class="text-xs text-white">8:00 AM - 12:00 PM</p>
                 </div>
-                <p class="text-[9px] italic text-[#fbc02d] bg-[#fbc02d]/10 py-0.5 px-2 rounded-md inline-block">No Noon Break</p>
+                <p class="text-[9px] italic text-[#f9a825] bg-[#fbc02d]/10 py-0.5 px-2 rounded-md inline-block">No Noon Break</p>
               </div>
             </div>
             
             <div class="bg-white/5 p-4 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-              <h3 class="font-bold text-[#fbc02d] text-[12px] uppercase mb-2 tracking-wider">Graduate</h3>
+              <h3 class="font-bold text-[#f9a825] text-[12px] uppercase mb-2 tracking-wider">Graduate</h3>
               <div class="space-y-2">
                 <div>
                   <p class="text-[9px] text-slate-400 font-bold uppercase">Mon — Fri</p>
@@ -37,7 +37,7 @@
                   <p class="text-[9px] text-slate-400 font-bold uppercase">Saturday</p>
                   <p class="text-xs text-white">8:00 AM - 5:00 PM</p>
                 </div>
-                <p class="text-[9px] italic text-[#fbc02d] bg-[#fbc02d]/10 py-0.5 px-2 rounded-md inline-block">No Noon Break</p>
+                <p class="text-[9px] italic text-[#f9a825] bg-[#fbc02d]/10 py-0.5 px-2 rounded-md inline-block">No Noon Break</p>
               </div>
             </div>
           </div>
@@ -45,13 +45,13 @@
 
         <div class="flex flex-col">
           <div class="flex items-center gap-3 mb-4 justify-center lg:justify-start">
-            <div class="h-6 w-[4px] bg-[#fbc02d] rounded-full"></div>
+            <div class="h-6 w-[4px] bg-[#f9a825] rounded-full"></div>
             <h2 class="text-xl font-black tracking-widest text-white uppercase">Contact Us</h2>
           </div>
 
           <div class="flex flex-col gap-1">
             <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 hover:border-[#fbc02d]/50 transition-all group cursor-default">
-              <div class="p-2 bg-slate-800 rounded-lg group-hover:bg-[#fbc02d] transition-colors">
+              <div class="p-2 bg-slate-800 rounded-lg group-hover:bg-[#f9a825] transition-colors">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </div>
               <div>
@@ -61,7 +61,7 @@
             </div>
 
             <a href="mailto:csulibrary@carsu.edu.ph" class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/5 hover:border-[#fbc02d]/50 transition-all group">
-              <div class="p-2 bg-slate-800 rounded-lg group-hover:bg-[#fbc02d] transition-colors">
+              <div class="p-2 bg-slate-800 rounded-lg group-hover:bg-[#f9a825] transition-colors">
                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </div>
               <div>
@@ -88,7 +88,7 @@
 
         <div class="flex flex-col">
           <div class="flex items-center gap-3 mb-4 justify-center lg:justify-start">
-            <div class="h-6 w-[4px] bg-[#fbc02d] rounded-full"></div>
+            <div class="h-6 w-[4px] bg-[#f9a825] rounded-full"></div>
             <h2 class="text-xl font-black tracking-widest text-white uppercase">Find Us</h2>
           </div>
           <div class="flex-grow min-h-[150px] rounded-3xl overflow-hidden shadow-2xl border-2 border-slate-500/50 group relative">

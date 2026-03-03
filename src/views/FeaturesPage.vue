@@ -1,7 +1,9 @@
 <template>
-  <div class="w-full min-h-screen flex justify-center bg-gray-50 font-['Poppins'] pb-12 pt-[100px]">
+  <div class="w-full min-h-screen bg-gray-50 font-['Poppins'] pb-12 pt-[25px]">
 
-    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="w-full px-4 sm:px-6 lg:px-8">
+
+      <Ribbon>Features Page</Ribbon>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
 
@@ -64,7 +66,7 @@
 
             <button 
               @click="isModalOpen = true"
-              class="mt-auto w-full py-2.5 bg-[#ffb74d] text-white font-semibold rounded-lg hover:bg-[#ffa726] transition-all text-sm shadow-sm"
+              class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
             >
               Watch Video
             </button>
@@ -99,7 +101,7 @@
 
             <button 
               @click="isOrientationModalOpen = true"
-              class="mt-auto w-full py-2.5 bg-[#66bb6a] text-white font-semibold rounded-lg hover:bg-[#4caf50] transition-all text-sm shadow-sm"
+              class="border-2 border-[#1b5e20] text-center text-[#1b5e20] px-4 py-2 text-sm font-semibold hover:bg-[#0d2b0f] hover:text-white hover:underline transition"
             >
               Watch Video
             </button>
@@ -108,13 +110,14 @@
 
       </div>
     </div>
+    
 
     <div 
       v-if="isModalOpen" 
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
       @click.self="isModalOpen = false"
     >
-      <div class="relative w-full max-w-5xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
+      <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
         <button 
           @click="isModalOpen = false"
           class="absolute top-4 right-4 text-white text-2xl font-bold hover:text-[#ffb74d] transition-colors z-10"
@@ -158,11 +161,19 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import Ribbon from '@/components/Ribbon.vue';
 
 const isModalOpen = ref(false)
 const isOrientationModalOpen = ref(false)
 </script>
 
 <style scoped>
-/* Empty as requested */
+:deep(.csu-ribbon-wrap .page-inner) {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 30px;
+}
 </style>

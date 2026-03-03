@@ -1,6 +1,6 @@
 <template>
   <div class="w-full py-6 px-4 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <!-- LEFT: Article (2/3) -->
       <div class="lg:col-span-2">
         <!-- Tags -->
@@ -13,7 +13,7 @@
               border-left: 3px solid #1b5e20;
               padding-left: 8px;
             "
-            >Feature</span
+            >News</span
           >
           <span
             style="
@@ -108,7 +108,7 @@
       </div>
 
       <!-- RIGHT: Latest Post (1/3) -->
-      <div class="lg:col-span-1">
+      <div class="lg:col-span-1 self-start">
         <div class="sticky top-6">
           <h2
             style="
@@ -147,10 +147,56 @@
         </div>
       </div>
     </div>
+
+    <!-- SCROLL TO TOP -->
+    <Transition name="fade">
+      <button
+        v-if="showScrollTop"
+        @click="scrollToTop"
+        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
+        style="background: #0d2b0f"
+      >
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 11l7-7 7 7"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 17l7-7 7 7"
+          />
+        </svg>
+      </button>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const showScrollTop = ref(false)
+
+const handleScroll = () => {
+  showScrollTop.value = window.scrollY > 300
+}
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+onMounted(() => {
+  window.scrollTo({ top: 0, behavior: 'instant' })
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+
 const latestPosts = [
   {
     image: new URL('@/assets/images/card2.jpg', import.meta.url).href,
@@ -180,4 +226,13 @@ const latestPosts = [
 ]
 </script>
 
-<style scoped></style>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
