@@ -100,7 +100,7 @@
 
     <!-- READ LEARN DISCOVER SECTION -->
     <div class="w-full flex justify-center px-6 py-10">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-[95%]">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-[100%]">
         <!-- Read -->
         <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
@@ -183,7 +183,7 @@
 
     <!-- CSU LIBRARY -->
     <div class="w-full bg-[#0d2b0f] flex justify-center py-12 px-6 mt-8">
-      <div class="w-[95%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div class="w-[100%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <!-- Left: Image -->
         <div class="w-full h-full flex justify-center">
           <img
@@ -301,7 +301,7 @@
 
     <!-- CAMPUS UPDATES SECTION -->
     <div class="w-full flex justify-center px-6 py-12">
-      <div class="w-[95%] mx-auto">
+      <div class="w-[100%] mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
             class="border-b-4 border-[#f9a825] pb-1"
@@ -407,7 +407,7 @@
 
     <!-- USEFUL LINKS SECTION -->
     <div class="w-full bg-white flex justify-center py-12 px-6 mt-8">
-      <div class="w-[95%] mx-auto">
+      <div class="w-[100%] mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
             class="border-b-4 border-[#f9a825] pb-1"
