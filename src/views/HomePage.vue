@@ -19,7 +19,7 @@
       <!-- Prev Button -->
       <button
         @click="prev"
-        class="absolute left-2 top-1/2 -translate-y-1/2 text-white hover:text-[#0d2b0f] transition opacity-0 hover:opacity-100 p-2"
+        class="absolute left-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -34,7 +34,7 @@
       <!-- Next Button -->
       <button
         @click="next"
-        class="absolute right-2 top-1/2 -translate-y-1/2 text-white hover:text-[#0d2b0f] transition opacity-0 hover:opacity-100 p-2"
+        class="absolute right-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -50,6 +50,13 @@
           class="w-2 h-2 rounded-full transition-all"
           :class="currentIndex === i ? 'bg-[#fbc02d] w-2' : 'bg-[#fbc02d]/50'"
         />
+      </div>
+    </div>
+
+    <!-- WELCOME RIBBON BANNER -->
+    <div class="csu-ribbon-wrap">
+      <div class="csu-ribbon">
+        <span class="csu-ribbon-title">Welcome to Caraga State University Library</span>
       </div>
     </div>
 
@@ -178,13 +185,6 @@
             </h2>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- WELCOME RIBBON BANNER -->
-    <div class="csu-ribbon-wrap">
-      <div class="csu-ribbon">
-        <span class="csu-ribbon-title">Welcome to Caraga State University Library</span>
       </div>
     </div>
 
@@ -553,7 +553,7 @@
         v-if="showScrollTop"
         @click="scrollToTop"
         class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
-        style="background: #1b5e20"
+        style="background: #0d2b0f"
       >
         <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -692,7 +692,7 @@ function scrollToTop() {
   position: relative;
   width: 95%;
   height: 48px;
-  background: #1b5e20;
+  background: #0d2b0f;
   display: flex;
   align-items: center;
   justify-content: center;
