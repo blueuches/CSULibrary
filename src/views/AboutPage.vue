@@ -142,8 +142,8 @@ const rules = [
 ========================= */
 .about-page {
   --page-bg: #f3f4f6;
-  --ribbon-green: #1b5e20;
-  --ribbon-green-dark: #1b5e20;
+  --ribbon-green: #0d2b0f;
+  --ribbon-green-dark: #0d2b0f;
   --accent-orange: #f15a24;
   --text-color: #1f1f1f;
   --card-border: #d8d8d8;
@@ -156,10 +156,11 @@ const rules = [
 }
 
 .page-inner {
-  width: min(100%, 1500px);
-  margin: 0 auto;
-  padding: 0 32px;
-  box-sizing: border-box;
+  width: 100vw !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 32px !important;
+  box-sizing: border-box !important;
 }
 
 /* =========================
@@ -173,8 +174,8 @@ const rules = [
 
 .csu-ribbon {
   position: relative;
-  width: 100%;
-  height: 48px;
+  width: min(100%, 1500px);
+  margin: 0 auto;
   background: var(--ribbon-green);
   display: flex;
   align-items: center;
@@ -600,7 +601,6 @@ const rules = [
     margin-left: 28px;
   }
 
-  /* Disable heavy 3D hover on mobile */
   .grid-item:hover .content-box,
   .grid-item:nth-child(even):hover .content-box {
     transform: none;
