@@ -53,13 +53,6 @@
       </div>
     </div>
 
-    <!-- WELCOME RIBBON BANNER -->
-    <div class="csu-ribbon-wrap">
-      <div class="csu-ribbon">
-        <span class="csu-ribbon-title">Welcome to Caraga State University Library</span>
-      </div>
-    </div>
-
     <!-- TAGLINE -->
     <div class="w-full py-8 flex justify-center">
       <h2
@@ -76,7 +69,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
           "
-          >H.E.R.O</span
+          >HERO</span
         >
         <span
           class="animate-fade-in inline-block mx-2"
@@ -107,7 +100,7 @@
 
     <!-- READ LEARN DISCOVER SECTION -->
     <div class="w-full flex justify-center px-6 py-10">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-[95%]">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 w-[100%]">
         <!-- Read -->
         <div class="relative overflow-hidden rounded-lg group cursor-pointer">
           <img
@@ -190,7 +183,7 @@
 
     <!-- CSU LIBRARY -->
     <div class="w-full bg-[#0d2b0f] flex justify-center py-12 px-6 mt-8">
-      <div class="w-[95%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div class="w-[100%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         <!-- Left: Image -->
         <div class="w-full h-full flex justify-center">
           <img
@@ -308,7 +301,7 @@
 
     <!-- CAMPUS UPDATES SECTION -->
     <div class="w-full flex justify-center px-6 py-12">
-      <div class="w-[95%] mx-auto">
+      <div class="w-[100%] mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
             class="border-b-4 border-[#f9a825] pb-1"
@@ -414,7 +407,7 @@
 
     <!-- USEFUL LINKS SECTION -->
     <div class="w-full bg-white flex justify-center py-12 px-6 mt-8">
-      <div class="w-[95%] mx-auto">
+      <div class="w-[100%] mx-auto">
         <h2 class="text-2xl font-extrabold py-10 text-center">
           <span
             class="border-b-4 border-[#f9a825] pb-1"
@@ -677,72 +670,6 @@ function scrollToTop() {
     margin-bottom: 14px;
     font-size: 1.5rem;
   }
-}
-
-/* Ribbon */
-.csu-ribbon-wrap {
-  width: 100%;
-  padding: 12px 24px 20px;
-  position: relative;
-  display: flex;
-  justify-content: center;
-}
-
-.csu-ribbon {
-  position: relative;
-  width: 95%;
-  height: 48px;
-  background: #0d2b0f;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.csu-ribbon::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 34px;
-  height: 48px;
-  background: #ffffff;
-  clip-path: polygon(0 50%, 100% 0, 100% 100%);
-}
-
-.csu-ribbon::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -10px;
-  width: 0;
-  height: 0;
-  border-top: 10px solid #0d2b0f;
-  border-right: 12px solid transparent;
-}
-
-.csu-ribbon-title {
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  margin: 0;
-  text-align: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.2rem;
-  line-height: 48px;
-  letter-spacing: 0.3px;
-}
-
-.csu-ribbon-title::before {
-  content: '';
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-120px);
-  width: 4px;
-  height: 10px;
-  border-radius: 1px;
 }
 
 /* Scroll to top transition */
