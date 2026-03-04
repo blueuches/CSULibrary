@@ -4,12 +4,6 @@
     <div class="personnel-hero">
       <div class="absolute inset-0 hero-overlay"></div>
 
-      <!-- Decorative corner lines -->
-      <div class="absolute top-8 left-8 corner-tl"></div>
-      <div class="absolute top-8 right-8 corner-tr"></div>
-      <div class="absolute bottom-8 left-8 corner-bl"></div>
-      <div class="absolute bottom-8 right-8 corner-br"></div>
-
       <div class="relative z-10 flex flex-col items-center gap-3">
         <p class="hero-eyebrow">Caraga State University</p>
         <h1 class="hero-title">Library Personnel</h1>
@@ -20,7 +14,6 @@
           <span class="hero-line"></span>
           <span class="hero-dot gold"></span>
         </div>
-        <p class="hero-sub">The people behind your library experience</p>
       </div>
     </div>
 
@@ -92,9 +85,6 @@
             <p class="staff-subtitle">{{ person.subtitle }}</p>
             <p v-if="person.position" class="staff-position">{{ person.position }}</p>
           </div>
-
-          <!-- Bottom hover line -->
-          <div class="staff-bottom-line"></div>
         </div>
       </div>
     </div>
@@ -177,14 +167,14 @@ const featuredStaff = computed(() => staff.value[0])
 const otherStaff = computed(() => staff.value.slice(1))
 
 const showScrollTop = ref(false)
+let observer: IntersectionObserver | null = null
+
 function handleScroll() {
   showScrollTop.value = window.scrollY > 300
 }
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
-
-let observer: IntersectionObserver | null = null
 
 function initObserver() {
   observer = new IntersectionObserver(
@@ -208,10 +198,9 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   setTimeout(initObserver, 100)
 })
-
 onUnmounted(() => {
-  if (observer) observer.disconnect()
   window.removeEventListener('scroll', handleScroll)
+  if (observer) observer.disconnect()
 })
 </script>
 
@@ -338,6 +327,9 @@ onUnmounted(() => {
 /* ================================
    FEATURED CARD
 ================================ */
+.featured-wrapper {
+  animation: fadeUp 0.7s ease both;
+}
 
 .featured-card {
   position: relative;
@@ -457,13 +449,15 @@ onUnmounted(() => {
   background: #ffffff;
   border: 1px solid rgba(13, 43, 15, 0.07);
   border-radius: 4px;
-  padding: 24px 28px 24px 36px;
+  padding: 24px 28px;
   box-shadow: 0 2px 16px rgba(13, 43, 15, 0.05);
   transition:
     box-shadow 0.3s ease,
     transform 0.3s ease,
     border-color 0.3s ease;
-  overflow: visible;
+  overflow: hidden;
+
+  margin-top: 8px; /* <-- add this */
 }
 
 .staff-card:hover {
@@ -488,7 +482,7 @@ onUnmounted(() => {
   left: 50%;
   transform: translateX(-50%);
   width: 96px;
-  height: 112px;
+  height: 106px;
   object-fit: cover;
   border-radius: 50%;
   z-index: 1;
@@ -543,45 +537,28 @@ onUnmounted(() => {
   color: rgba(13, 43, 15, 0.45);
 }
 
-/* Bottom gold-green line on hover via inner div */
-.staff-card .staff-bottom-line {
+/* Bottom gold-green line on hover */
+.staff-card::after {
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 2px;
   background: linear-gradient(to right, #f9a825, #1b5e20);
-  border-radius: 0 0 4px 4px;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s ease;
 }
 
-.staff-card:hover .staff-bottom-line {
+.staff-card:hover::after {
   transform: scaleX(1);
-}
-
-/* Scroll to top transition */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 
 /* ================================
    SCROLL REVEAL
 ================================ */
-.sr-item {
-  opacity: 0;
-  transform: translateY(32px);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-}
-
+.sr-item,
 .sr-card {
   opacity: 0;
   transform: translateY(32px);
@@ -595,6 +572,22 @@ onUnmounted(() => {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ================================
+   FADE TRANSITION
+================================ */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* ================================
+   ANIMATIONS
+================================ */
 @keyframes fadeUp {
   from {
     opacity: 0;
