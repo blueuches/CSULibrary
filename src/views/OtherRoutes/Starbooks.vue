@@ -3,8 +3,23 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <!-- LEFT: Article (2/3) -->
       <div class="lg:col-span-2">
-        <!-- Tags -->
-        <div class="flex gap-2 mb-3">
+        <!-- Back Button + Tags -->
+        <div class="flex items-center gap-3 mb-3">
+          <button
+            @click="$router.back()"
+            class="inline-flex items-center gap-1 text-sm font-semibold text-[#1b5e20] hover:underline"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            Back
+          </button>
+
           <span
             style="
               font-size: 0.75rem;
