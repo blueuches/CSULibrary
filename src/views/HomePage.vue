@@ -1617,6 +1617,7 @@
     </div>
   </div>
 
+
   <!-- FEATURES SECTION -->
   <div class="w-full py-20 px-6" style="background: #f9faf9">
     <div class="max-w-7xl mx-auto">
@@ -1670,6 +1671,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
         <!-- VIRTUAL TOUR -->
+        <!-- CARDS -->
         <div
           class="sr-card relative rounded-xl overflow-hidden cursor-pointer animate-fade-in-up"
           style="
