@@ -40,7 +40,6 @@ const navLinks = [
   { name: 'Home', path: '/' },
   { name: 'About Us', path: '/about' },
   { name: 'announcement', path: '/announcements' },
-  { name: 'features', path: '/features' },
   { name: 'Gallery', path: '/gallery' },
   { name: 'personnel', path: '/personnel' },
   { name: 'Record', path: '/records' },
