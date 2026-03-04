@@ -1,4 +1,11 @@
 <script setup lang="ts">
+const heroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
+const iconGif1 = new URL('@/assets/icons/idea.gif', import.meta.url).href
+const iconGif2 = new URL('@/assets/icons/opportunities.gif', import.meta.url).href
+const iconGif3 = new URL('@/assets/icons/student.gif', import.meta.url).href
+const iconGif4 = new URL('@/assets/icons/social-life.gif', import.meta.url).href
+// const iconGif5 = new URL('@/assets/icons/student.gif', import.meta.url).href
+
 const objectives = [
   '1. Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;',
   '2. Effect a universally-accepted library system of organization and circulation;',
@@ -19,7 +26,7 @@ const rules = [
 </script>
 
 <template>
-  <section class="about-page">
+<section class="about-page">
     <!-- Ribbon -->
     <div class="csu-ribbon-wrap">
       <div class="page-inner">
@@ -28,6 +35,14 @@ const rules = [
         </div>
       </div>
     </div>
+
+    <!-- HERO IMAGE (full-bleed cover) -->
+<div class="hero-bleed">
+  <div class="hero-wrap hero-overlay">
+    <img :src="heroSrc" alt="CSU Library" class="hero-img" loading="lazy" />
+  </div>
+</div>
+
     <!-- Content area -->
     <div class="about-content page-inner">
       <div class="intro-text">
@@ -49,7 +64,25 @@ const rules = [
         </p>
       </div>
 
-      <h2 class="vmg-title">Vision, Mission, Goal</h2>
+       <!-- ✅ Animated GIF icon ABOVE hero image (mt-8 default) -->
+    <div class="page-inner">
+      <div class="icon-wrap icon-mt">
+        <div class="icon-pill">
+          <img :src="iconGif1" alt="Animated idea icon" class="gif-icon" loading="lazy" />
+        </div>
+        <div class="icon-pill">
+          <img :src="iconGif2" alt="Animated idea icon" class="gif-icon" loading="lazy" />
+        </div>
+        <div class="icon-pill">
+          <img :src="iconGif3" alt="Animated idea icon" class="gif-icon" loading="lazy" />
+        </div>
+        <div class="icon-pill">
+          <img :src="iconGif4" alt="Animated idea icon" class="gif-icon" loading="lazy" />
+        </div>
+      </div>
+    </div>
+
+      <h2 class="vmg-title"></h2>
 
       <div class="cards-grid">
         <!-- Vision -->
@@ -137,12 +170,8 @@ const rules = [
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap;');
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
-/* =========================
-   Page
-========================= */
 .about-page {
   font-family: 'Poppins', sans-serif;
 
@@ -151,8 +180,9 @@ const rules = [
   --ribbon-green-dark: #0d2b0f;
   --accent-orange: #fbc02d;
   --text-color: #1f1f1f;
-  --card-border: #d8d8d8;
   --float-shadow-green: 13, 43, 15;
+
+  --icon-mt: 32px;
 
   width: 100%;
   min-height: 100vh;
@@ -160,34 +190,21 @@ const rules = [
   background: var(--page-bg);
 }
 
-/* extra safety: force poppins on key parts */
-.csu-ribbon-title,
-.vmg-title,
-.green-heading,
-.intro-text,
-.section-paragraph,
-.custom-list,
-.card-body {
-  font-family: 'Poppins', sans-serif;
-}
 
 .page-inner {
-  width: 100vw !important;
+  width: 100% !important;
   max-width: none !important;
   margin: 0 !important;
   padding: 0 32px !important;
   box-sizing: border-box !important;
 }
 
-/* =========================
-   Ribbon (aligned to content)
-========================= */
+/* Ribbon */
 .csu-ribbon-wrap {
   width: 100%;
-  padding: 12px 0 8px;
+  padding-top: 0;  
   position: relative;
 }
-
 .csu-ribbon {
   position: relative;
   width: min(100%, 1500px);
@@ -196,8 +213,8 @@ const rules = [
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 48px;
 }
-
 .csu-ribbon::after {
   content: '';
   position: absolute;
@@ -208,7 +225,6 @@ const rules = [
   background: var(--page-bg);
   clip-path: polygon(0 50%, 100% 0, 100% 100%);
 }
-
 .csu-ribbon::before {
   content: '';
   position: absolute;
@@ -219,7 +235,6 @@ const rules = [
   border-top: 10px solid var(--ribbon-green-dark);
   border-right: 12px solid transparent;
 }
-
 .csu-ribbon-title {
   position: absolute;
   left: 0;
@@ -234,21 +249,117 @@ const rules = [
   letter-spacing: 0.3px;
 }
 
-.csu-ribbon-title::before {
-  content: '';
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-120px);
-  width: 4px;
-  height: 10px;
-  /* background: #ff5a36; */
-  border-radius: 1px;
+/* ✅ GIF icon block */
+.icon-mt {
+  margin-top: var(--icon-mt);
+}
+.icon-wrap {
+  width: min(100%, 1500px);
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: center;
+  gap: 16px; /* space between icons */
+
+}
+.icon-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.06);
+}
+.gif-icon {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  display: block;
+}
+.icon-text {
+  font-weight: 900;
+  color: #0d2b0f;
+  letter-spacing: 0.2px;
+  font-size: 0.95rem;
 }
 
-/* =========================
-   Content
-========================= */
+/* ✅ Hero image */
+.hero-wrap {
+  width: min(100%, 1500px);
+  margin: 10px auto 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10), 0 18px 34px rgba(0, 0, 0, 0.08);
+}
+.hero-img {
+  width: 100%;
+  height: 370px; 
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* ✅ Full-bleed container (no side padding) */
+.hero-bleed {
+  width: 100%;
+  padding: 0 !important;
+  margin: 10px 0 0;
+}
+
+/* ✅ Make hero-wrap truly full width */
+.hero-wrap {
+  width: 100% !important;     /* override min(100%,1500px) */
+  max-width: none !important; /* remove cap */
+  margin: 0 !important;       /* no auto center padding gaps */
+  border-radius: 0;           /* optional: edge-to-edge look */
+}
+
+/* ✅ Keep your fixed height, cover crop, crisp render */
+.hero-img {
+  width: 100%;
+  height: 370px;              /* keep as-is */
+  object-fit: cover;          /* ✅ cover image */
+  object-position: center;    /* keep focus center */
+  display: block;
+}
+
+/* ✅ Dim/tint overlay (not too OA) */
+.hero-dim {
+  position: relative;
+}
+
+/* ✅ Darker CSU green overlay */
+.hero-overlay {
+  position: relative;
+}
+
+.hero-img {
+  position: relative;
+  z-index: 0;
+
+  /* helps tone down brightness without ruining quality */
+  filter: brightness(0.92) contrast(1.03);
+}
+
+.hero-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  /* darker green "tabon" + gradient */
+  background: linear-gradient(
+    to bottom,
+    rgba(13, 43, 15, 0.40),
+    rgba(13, 43, 15, 0.68)
+  );
+}
+
 .about-content {
   width: 100%;
   padding-top: 10px;
@@ -264,10 +375,7 @@ const rules = [
   margin: 0 auto;
   text-align: center;
 }
-
-.intro-text .mt-4 {
-  margin-top: 14px;
-}
+.intro-text .mt-4 { margin-top: 14px; }
 
 .vmg-title {
   margin: 34px 0 20px;
@@ -278,9 +386,7 @@ const rules = [
   line-height: 1.1;
 }
 
-/* =========================
-   3-column cards grid
-========================= */
+/* Grid */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -288,20 +394,17 @@ const rules = [
   align-items: stretch;
   perspective: 1200px;
 }
-
 .grid-item {
   min-width: 0;
   display: flex;
   perspective: 1200px;
 }
 
-/* =========================
-   Card + 3D Hover Effect
-========================= */
+/* Card */
 .content-box {
   width: 100%;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, #ffffff 50%, #0d2b0f 100%);
+  /* border: 1px solid rgba(0, 0, 0, 0.06); */
   border-radius: 16px;
   padding: 18px 20px;
   box-sizing: border-box;
@@ -312,8 +415,6 @@ const rules = [
     0 2px 4px rgba(var(--float-shadow-green), 0.10);
 
   position: relative;
-
-  /* no 3D behavior */
   transform-style: flat;
   backface-visibility: hidden;
   transform: translateY(0);
@@ -356,35 +457,13 @@ const rules = [
   pointer-events: none;
 }
 
-/* POP-UP hover only (no rotate/tilt) */
-.grid-item:hover .content-box,
-.grid-item:nth-child(even):hover .content-box {
+.grid-item:hover .content-box {
   transform: translateY(-10px) scale(1.02);
   border-color: rgba(var(--float-shadow-green), 0.28);
   box-shadow:
     0 18px 34px rgba(var(--float-shadow-green), 0.28),
     0 28px 48px rgba(var(--float-shadow-green), 0.20),
     0 10px 20px rgba(var(--float-shadow-green), 0.16);
-}
-
-.grid-item:hover .content-box::before {
-  opacity: 0.75;
-}
-
-.grid-item:hover .content-box::after {
-  opacity: 1;
-  border-color: rgba(var(--float-shadow-green), 0.32);
-  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.08);
-}
-
-.ghost-item:hover .content-box {
-  transform: none !important;
-  box-shadow: none !important;
-  border-color: transparent !important;
-}
-.ghost-item .content-box::before,
-.ghost-item .content-box::after {
-  display: none;
 }
 
 .fixed-card {
@@ -412,16 +491,12 @@ const rules = [
   line-height: 1.1;
   margin: 0;
   flex-shrink: 0;
-
-  transition: none;
-  transform: none;
 }
 
 .with-accent {
   position: relative;
   padding-left: 22px;
 }
-
 .with-accent::before {
   content: '';
   position: absolute;
@@ -438,9 +513,6 @@ const rules = [
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
-
-  transition: none;
-  transform: none;
 }
 
 .section-paragraph {
@@ -457,7 +529,6 @@ const rules = [
   line-height: 1.5;
   font-size: 1rem;
 }
-
 .custom-list li {
   margin-bottom: 10px;
 }
@@ -467,152 +538,70 @@ const rules = [
   pointer-events: none;
 }
 
-/* =========================
-   List Cards (Objectives + Rules)
-========================= */
 .list-card {
   height: auto !important;
   min-height: 390px;
 }
-
 .list-card .card-body {
   overflow-y: visible;
   padding-right: 0;
 }
 
-/* =========================
-   Responsive
-========================= */
-@media (max-width: 1400px) {
-  .vmg-title {
-    font-size: 2.5rem;
-  }
-
-  .green-heading {
-    font-size: 1.75rem;
-  }
-
-  .fixed-card {
-    height: 330px;
-  }
-
-  .list-card {
-    min-height: 400px;
-  }
-
-  .with-accent::before {
-    height: 34px;
-  }
-}
-
+/* Responsive */
 @media (max-width: 1100px) {
   .page-inner {
-    padding: 0 24px;
+    padding: 0 24px !important;
   }
-
   .cards-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
-
   .ghost-item {
     display: none;
   }
-
-  .fixed-card {
-    height: 320px;
-  }
-
-  .list-card {
-    height: auto !important;
-    min-height: 360px;
-  }
-
-  .vmg-title {
-    font-size: 2.1rem;
+  .hero-img {
+    height: 280px;
   }
 }
 
 @media (max-width: 768px) {
   .page-inner {
-    width: 100%;
-    padding: 0 14px;
+    padding: 0 14px !important;
+    width: 100% !important;
   }
-
   .csu-ribbon {
     height: 42px;
   }
-
   .csu-ribbon::after {
     width: 26px;
     height: 42px;
   }
-
   .csu-ribbon-title {
     font-size: 1rem;
     line-height: 42px;
   }
 
-  .csu-ribbon-title::before {
-    top: -12px;
-    transform: translateX(-82px);
-    height: 8px;
-  }
-
-  .intro-text {
-    font-size: 0.96rem;
-  }
-
-  .vmg-title {
-    margin-top: 22px;
-    margin-bottom: 14px;
-    font-size: 1.5rem;
+  .hero-img {
+    height: 210px;
   }
 
   .cards-grid {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-
-  .content-box {
-    padding: 16px;
-    border-radius: 14px;
-  }
-
   .fixed-card {
     height: auto;
     min-height: 220px;
   }
-
   .list-card {
     min-height: 220px;
   }
 
-  .green-heading {
-    font-size: 1.45rem;
-  }
-
-  .with-accent::before {
-    top: 3px;
-    height: 28px;
-  }
-
-  .section-paragraph,
-  .custom-list {
-    margin-left: 28px;
-  }
-
-  .grid-item:hover .content-box,
-  .grid-item:nth-child(even):hover .content-box {
+  .grid-item:hover .content-box {
     transform: none;
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.03),
       0 8px 18px rgba(0, 0, 0, 0.04);
-  }
-
-  .grid-item:hover .green-heading,
-  .grid-item:hover .card-body {
-    transform: none;
   }
 
   .content-box::before,
@@ -627,5 +616,16 @@ const rules = [
   .card-body {
     transition: none !important;
   }
+}
+
+@media (max-width: 1100px) {
+  .page-inner { padding: 0 24px !important; }
+  .hero-img { height: 280px; }
+}
+@media (max-width: 768px) {
+  .page-inner { padding: 0 14px !important; width: 100% !important; }
+  .gif-icon { width: 42px; height: 42px; }
+  .hero-img { height: 210px; }
+  .vmg-title { font-size: 1.6rem; }
 }
 </style>

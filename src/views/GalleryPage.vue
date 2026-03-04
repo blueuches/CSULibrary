@@ -137,6 +137,7 @@
 <script setup lang="ts">
 import Ribbon from "@/components/Ribbon.vue";
 import { ref, computed } from 'vue'
+import photo1 from '@/assets/gallery/lib.jpg'
 
 interface Section {
   title: string;
@@ -164,7 +165,7 @@ const floors: Floor[] = [
       { 
         name: 'Main Wing', 
         sections: [
-          { title: 'Computer Lab', description: 'High-speed internet and modern workstations for digital research.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
+          { title: 'Computer Lab', description: 'High-speed internet and modern workstations for digital research.', images: [photo1] },
           { title: 'Auditorium', description: 'A spacious venue equipped for seminars and large lectures.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
           { title: 'Award and Recognition Area', description: 'Showcasing the excellence and achievements of the university community.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
           { title: 'Natural Science Museum', description: 'A collection of biological and physical science specimens for educational display.', images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'] },
