@@ -3,6 +3,9 @@ import { RouterView, useRoute } from 'vue-router'
 import { computed } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
+import { db } from "@/firebase"
+
+console.log("Firestore instance:", db)
 
 const route = useRoute()
 
