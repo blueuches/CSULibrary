@@ -182,16 +182,6 @@
             their research needs or simply to satisfy their curious minds."
           </p>
         </blockquote>
-
-        <!-- Visit Link -->
-        <div class="mt-6">
-          <a>
-            href="https://www.starbooks.ph" target="_blank" rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-sm transition-all duration-300
-            hover:opacity-90" style="background: #1b5e20; color: white; font-weight: 700; font-size:
-            0.9rem" > Visit STARBOOKS Website →
-          </a>
-        </div>
       </div>
 
       <!-- RIGHT: Latest Post (1/3) -->
