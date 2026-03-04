@@ -87,6 +87,22 @@
             />
           </div>
 
+          <div>
+            <label class="block text-sm font-semibold text-white mb-2">
+              Staff Code
+            </label>
+            <input
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="••••••••"
+              class="w-full px-4 py-3 rounded-xl
+                     border border-white/40 bg-white/10
+                     text-white placeholder-white/60
+                     focus:ring-2 focus:ring-green-400
+                     focus:border-green-400
+                     outline-none transition"
+              required
+            />
+          </div>
           <!-- Submit -->
           <button
             type="submit"

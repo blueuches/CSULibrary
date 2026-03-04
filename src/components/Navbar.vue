@@ -38,12 +38,13 @@ import { RouterLink } from 'vue-router'
 
 const navLinks = [
   { name: 'Home', path: '/' },
-  { name: 'About Us', path: '/about' },
   { name: 'announcement', path: '/announcements' },
   { name: 'Gallery', path: '/gallery' },
   { name: 'personnel', path: '/personnel' },
   { name: 'Record', path: '/records' },
   { name: 'services', path: '/services' },
+  { name: 'About Us', path: '/about' },
+  { name: 'Admin', path: '/admin/login' },
 ]
 </script>
 
