@@ -4,14 +4,14 @@
       
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
         <div class="header-reveal">
-          <h2 class="text-4xl font-light text-gray-900 tracking-tight">
+          <h2 class="text-3xl font-light text-gray-900 tracking-tight">
             Upcoming <span class="font-bold text-green-900">Events</span>
           </h2>
           <div class="w-16 h-1 bg-yellow-500 mt-2 rounded-full line-expand"></div>
           <p class="text-gray-500 mt-2 sub-header-reveal">Explore what's happening this year.</p>
         </div>
 
-        <nav class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide nav-reveal">
+        <nav class="flex items-center gap-1 overflow-x-auto pb-2 scrollbar-hide nav-reveal">
           <button
             v-for="(month, index) in months"
             :key="month"
@@ -58,7 +58,7 @@
               <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
               <span class="text-gray-500 font-medium capitalize">{{ event.time }}</span>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
+            <h3 class="text-xl font-semibold text-gray-900 group-hover:text-green-900 transition-colors">
               {{ event.title }}
             </h3>
             <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
@@ -109,7 +109,7 @@ const events = [
   { id: 1, title: "Book Fair 2026", month: "March", year: "2026", time: "10:00 AM", location: "Main Hall", description: "Explore a diverse collection of books and meet local authors.", image: announcement_pic },
   { id: 2, title: "Reading Workshop", month: "Jan", year: "2026", time: "1:00 PM", location: "Conference Room", description: "Improve reading speed and comprehension with our expert-led session.", image: announcement_pic2 },
   { id: 3, title: "Storytelling Session", month: "March", year: "2027", time: "9:00 AM", location: "Storytelling Room", description: "Interactive storytelling for kids with crafts and fun learning activities.", image: announcement_pic3 },
-  { id: 4, title: "Art Exhibition", month: "June", year: "2027", time: "9:00 AM", location: "Auditorium", description: "A celebration of local talent and contemporary visual arts.", image: announcement_pic4 },
+  { id: 4, title: "Art Exhibition", month: "June", year: "2027", time: "9:00 AM", location: "Exhibit Area", description: "A celebration of local talent and contemporary visual arts.", image: announcement_pic4 },
   { id: 5, title: "Art & Literature Exhibition", month: "Aug", year: "2026", time: "1:00 PM", location: "Library Garden", description: "Display of student artwork inspired by literary works, open for public viewing.", image: announcement_pic5 }
 ]
 
@@ -119,6 +119,11 @@ const filteredEvents = computed(() => {
 </script>
 
 <style scoped>
+
+section {
+  font-family: 'Poppins', sans-serif;
+}
+
 /*  INITIAL PAGE LOAD ANIMATIONS */
 .header-reveal {
   animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
