@@ -1,30 +1,18 @@
 <template>
   <div
     class="relative w-full pb-16 font-poppins antialiased text-white 
-           flex flex-col items-center overflow-x-hidden
-           bg-cover bg-center bg-no-repeat"
-    style="background-image: url('/book.jpg');"
+           flex flex-col items-center overflow-x-hidden"
   >
+      <Ribbon class = "mt-5">SERVICES</Ribbon>
 
-    <div class="relative mx-auto px-8 w-full max-w-7xl">
-
-      <!-- HEADING -->
-      <h2
-        class="relative text-4xl font-extrabold text-white text-center mt-10 mb-6"
-      >
-        SERVICES
-        <span
-          class="absolute left-1/2 -bottom-2 w-43 h-1 rounded-full
-                 bg-gradient-to-r from-yellow-500 to-green-700 -translate-x-1/2"
-        ></span>
-      </h2>
+    <div class="relative mt-5 mx-auto px-8 w-full max-w-7xl">
 
       <!-- DESCRIPTION -->
       <p
-        class="text-white text-lg md:text-xl font-semibold text-center mb-16 max-w-3xl mx-auto"
+        class="text-black text-lg md:text-xl font-semibold text-center mb-16 max-w-3xl mx-auto"
       >
         The
-        <span class="font-black text-[#66bb6a] mx-1">
+        <span class="font-black text-green-800 mx-1">
           CSU Library
         </span>
         proudly offers a wide range of academic and research services
@@ -44,23 +32,27 @@
           <!-- TOP ICON AREA -->
           <div
             class="h-40 flex items-center justify-center
-                   bg-[#2e7d32]"
+                   bg-[#0d2b0f]" 
           >
             <component
               :is="service.icon"
-              class="w-16 h-16 text-white
+              class="w-20 h-20 text-white
                      transition-transform duration-500
                      group-hover:scale-110"
             />
           </div>
 
           <!-- CONTENT -->
-          <div class="p-6 text-center">
-            <h3 class="text-lg font-bold text-gray-700 mb-2 uppercase tracking-wide">
+          <div class="p-6 text-center"> 
+            <h3 class="text-lg font-bold text-black mb-2 uppercase tracking-wide relative inline-block">
               {{ service.title }}
+              <!-- Gradient underline auto-adjusts to title width -->
+              <span
+                class="block h-1 rounded-full bg-gradient-to-r from-yellow-500 to-green-700 mt-1"
+              ></span>
             </h3>
 
-            <p class="text-gray-500 text-m leading-relaxed mb-4">
+            <p class="text-black text-m leading-relaxed mb-4">
               {{ service.description }}
             </p>
           </div>
@@ -83,6 +75,8 @@ import {
   List,
   Users,
 } from 'lucide-vue-next'
+
+import Ribbon from '@/components/Ribbon.vue' 
 
 const libraryServices = [
   {
