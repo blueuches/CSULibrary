@@ -128,6 +128,7 @@
 <script setup lang="ts">
 import Ribbon from "@/components/Ribbon.vue";
 import { ref, computed } from 'vue'
+import photo1 from '@/assets/gallery/lib.jpg'
 
 /**
  * DATA INTERFACES
