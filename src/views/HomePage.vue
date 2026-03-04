@@ -2010,7 +2010,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 import photo1 from '@/assets/images/img.jpg'
-import photo2 from '@/assets/images/img0.jpg'
+import photo2 from '@/assets/images/lib.jpg'
 import photo3 from '@/assets/images/img1.jpg'
 import photo4 from '@/assets/images/img2.jpg'
 import photo5 from '@/assets/images/img3.jpg'
