@@ -31,7 +31,7 @@ const rules = [
     <!-- Content area -->
     <div class="about-content page-inner">
       <div class="intro-text">
-        <p>
+        <p class="mt-5">
           Libraries play a very crucial role in supporting the academic programs of any university
           as it identifies, evaluates, procures, processes, and then makes these learning resources
           available to the faculty and student for their teaching, learning and research
@@ -137,17 +137,22 @@ const rules = [
 </template>
 
 <style scoped>
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 /* =========================
    Page
 ========================= */
 .about-page {
+  font-family: 'Poppins', sans-serif;
+
   --page-bg: #f3f4f6;
-  --ribbon-green: #1b5e20;
-  --ribbon-green-dark: #1b5e20;
-  --accent-orange: #f15a24;
+  --ribbon-green: #0d2b0f;
+  --ribbon-green-dark: #0d2b0f;
+  --accent-orange: #fbc02d;
   --text-color: #1f1f1f;
   --card-border: #d8d8d8;
-  --float-shadow-green: 102, 187, 106;
+  --float-shadow-green: 13, 43, 15;
 
   width: 100%;
   min-height: 100vh;
@@ -155,11 +160,23 @@ const rules = [
   background: var(--page-bg);
 }
 
+/* extra safety: force poppins on key parts */
+.csu-ribbon-title,
+.vmg-title,
+.green-heading,
+.intro-text,
+.section-paragraph,
+.custom-list,
+.card-body {
+  font-family: 'Poppins', sans-serif;
+}
+
 .page-inner {
-  width: min(100%, 1500px);
-  margin: 0 auto;
-  padding: 0 32px;
-  box-sizing: border-box;
+  width: 100vw !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 32px !important;
+  box-sizing: border-box !important;
 }
 
 /* =========================
@@ -173,8 +190,8 @@ const rules = [
 
 .csu-ribbon {
   position: relative;
-  width: 100%;
-  height: 48px;
+  width: min(100%, 1500px);
+  margin: 0 auto;
   background: var(--ribbon-green);
   display: flex;
   align-items: center;
@@ -242,7 +259,7 @@ const rules = [
 .intro-text {
   color: var(--text-color);
   line-height: 1.45;
-  font-size: 1rem;
+  font-size: 15px;
   max-width: 1300px;
   margin: 0 auto;
   text-align: center;
@@ -256,7 +273,7 @@ const rules = [
   margin: 34px 0 20px;
   font-weight: 900;
   font-size: 3rem;
-  color: #1b5e20;
+  color: #2e7d32;
   text-align: center;
   line-height: 1.1;
 }
@@ -292,19 +309,19 @@ const rules = [
   box-shadow:
     0 6px 14px rgba(var(--float-shadow-green), 0.16),
     0 14px 28px rgba(var(--float-shadow-green), 0.12),
-    0 2px 4px rgba(var(--float-shadow-green), 0.1);
+    0 2px 4px rgba(var(--float-shadow-green), 0.10);
 
   position: relative;
-  transform-style: preserve-3d;
-  transform-origin: center center;
-  backface-visibility: hidden;
 
-  transform: translateY(-2px) translateZ(0);
+  /* no 3D behavior */
+  transform-style: flat;
+  backface-visibility: hidden;
+  transform: translateY(0);
 
   transition:
-    transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.28s ease;
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.24s ease;
   will-change: transform, box-shadow;
 }
 
@@ -320,7 +337,7 @@ const rules = [
     rgba(255, 255, 255, 0) 62%
   );
   opacity: 0.35;
-  transition: opacity 0.28s ease;
+  transition: opacity 0.24s ease;
   pointer-events: none;
 }
 
@@ -333,39 +350,31 @@ const rules = [
   box-shadow: 0 0 0 0 rgba(var(--float-shadow-green), 0);
   opacity: 0.5;
   transition:
-    opacity 0.28s ease,
-    box-shadow 0.28s ease,
-    border-color 0.28s ease;
+    opacity 0.24s ease,
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
   pointer-events: none;
+}
+
+/* POP-UP hover only (no rotate/tilt) */
+.grid-item:hover .content-box,
+.grid-item:nth-child(even):hover .content-box {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(var(--float-shadow-green), 0.28);
+  box-shadow:
+    0 18px 34px rgba(var(--float-shadow-green), 0.28),
+    0 28px 48px rgba(var(--float-shadow-green), 0.20),
+    0 10px 20px rgba(var(--float-shadow-green), 0.16);
+}
+
+.grid-item:hover .content-box::before {
+  opacity: 0.75;
 }
 
 .grid-item:hover .content-box::after {
   opacity: 1;
   border-color: rgba(var(--float-shadow-green), 0.32);
-  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.1);
-}
-
-.grid-item:hover .content-box {
-  transform: translateY(-12px) rotateX(7deg) rotateY(-5deg) scale(1.015);
-  border-color: rgba(var(--float-shadow-green), 0.35);
-  box-shadow:
-    0 18px 34px rgba(var(--float-shadow-green), 0.28),
-    0 28px 48px rgba(var(--float-shadow-green), 0.2),
-    0 10px 20px rgba(var(--float-shadow-green), 0.16);
-}
-
-.grid-item:nth-child(even):hover .content-box {
-  transform: translateY(-12px) rotateX(7deg) rotateY(5deg) scale(1.015);
-}
-
-.grid-item:hover .content-box::before {
-  opacity: 0.8;
-}
-
-.grid-item:hover .content-box::after {
-  opacity: 1;
-  border-color: rgba(27, 94, 32, 0.2);
-  box-shadow: 0 0 0 4px rgba(27, 94, 32, 0.05);
+  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.08);
 }
 
 .ghost-item:hover .content-box {
@@ -404,8 +413,8 @@ const rules = [
   margin: 0;
   flex-shrink: 0;
 
-  transition: transform 0.28s ease;
-  transform-style: preserve-3d;
+  transition: none;
+  transform: none;
 }
 
 .with-accent {
@@ -429,16 +438,9 @@ const rules = [
   flex: 1;
   overflow-y: auto;
   padding-right: 4px;
-  transition: transform 0.28s ease;
-  transform-style: preserve-3d;
-}
 
-.grid-item:hover .green-heading {
-  transform: translateZ(18px);
-}
-
-.grid-item:hover .card-body {
-  transform: translateZ(10px);
+  transition: none;
+  transform: none;
 }
 
 .section-paragraph {
@@ -600,7 +602,6 @@ const rules = [
     margin-left: 28px;
   }
 
-  /* Disable heavy 3D hover on mobile */
   .grid-item:hover .content-box,
   .grid-item:nth-child(even):hover .content-box {
     transform: none;
