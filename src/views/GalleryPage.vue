@@ -1,12 +1,7 @@
-<template>
+1<template>
   <div class="w-full py-6 relative min-h-screen overflow-y-auto flex flex-col items-center bg-white">
     
-    <div class="mx-auto w-full flex justify-center px-8">
-      <div class="relative w-full">
-        <Ribbon> SECTION GALLERY</Ribbon>
-      </div>
-    </div>
-    
+   
     <div class="w-full sticky top-0 z-30 px-6 mt-4">
       <div class="w-full backdrop-blur-md bg-white/40 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-3xl shadow-lg">
         
