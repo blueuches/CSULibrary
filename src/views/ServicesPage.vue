@@ -1,135 +1,95 @@
 <template>
   <div
-    class="w-full pb-10 font-poppins antialiased text-green-950 flex flex-col items-center bg-gray-50 overflow-x-hidden"
+    class="relative w-full pb-16 font-poppins antialiased text-white 
+           flex flex-col items-center overflow-x-hidden"
   >
-    <!-- <div class="relative mb-10 w-full pt-1">
-      <Ribbon class="mt-6">SERVICES</Ribbon>
-    </div> -->
+    <Ribbon class="mt-5">SERVICES</Ribbon>
 
-    <div class="mx-auto px-8 w-full pb-10">
-      <Ribbon class="mt-6">SERVICES</Ribbon>
+    <div class="relative mt-5 mx-auto px-8 w-full max-w-7xl">
 
-      <p class="text-green-950 leading-relaxed text-lg font-medium text-center mb-16 pt-5">
+      <p
+        class="text-black text-lg md:text-xl font-semibold text-center mb-16 max-w-3xl mx-auto"
+      >
         The
-        <span class="font-black text-[#1b5e20] text-2xl tracking-tight mx-1"> CSU Library </span>
-        provides the following services:
+        <span class="font-black text-green-800 mx-1">
+          CSU Library
+        </span>
+        proudly offers a wide range of academic and research services
+        designed to support learning and innovation.
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <div
           v-for="(service, index) in libraryServices"
           :key="index"
-          class="flex items-start gap-4 bg-white p-6 rounded-xl shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(27,94,32,0.15)] hover:-translate-y-1 group cursor-pointer"
+          class="reveal-card group bg-white rounded-2xl overflow-hidden
+                 shadow-md hover:shadow-2xl
+                 transition-all duration-500
+                 hover:-translate-y-3"
         >
-          <div class="w-1.5 h-10 bg-[#f9a825] shrink-0 rounded-full mt-1"></div>
+          <div
+            class="h-40 flex items-center justify-center
+                   bg-[#0d2b0f]" 
+          >
+            <component
+              :is="service.icon"
+              class="w-20 h-20 text-white
+                     transition-transform duration-500
+                     group-hover:scale-110"
+            />
+          </div>
 
-          <div>
-            <h3 class="font-bold text-lg text-green-950 mb-2 leading-tight uppercase tracking-wide">
+          <div class="p-6 text-center"> 
+            <h3 class="text-lg font-bold text-black mb-2 uppercase tracking-wide relative inline-block">
               {{ service.title }}
+              <span
+                class="block h-1 rounded-full bg-gradient-to-r from-yellow-500 to-green-700 mt-1"
+              ></span>
             </h3>
-            <p class="text-gray-600 leading-relaxed text-sm font-normal">
+
+            <p class="text-black text-m leading-relaxed mb-4">
               {{ service.description }}
             </p>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- SCROLL TO TOP -->
-    <Transition name="fade">
-      <button
-        v-if="showScrollTop"
-        @click="scrollToTop"
-        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
-        style="background: #0d2b0f"
-      >
-        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M5 11l7-7 7 7"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M5 17l7-7 7 7"
-          />
-        </svg>
-      </button>
-    </Transition>
+    </div>
   </div>
+
+  <Transition name="fade">
+    <button
+      v-if="showScrollTop"
+      @click="scrollToTop"
+      class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
+      style="background: #0d2b0f"
+      aria-label="Scroll to top"
+    >
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+      </svg>
+    </button>
+  </Transition>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import {
+  BookOpen,
+  Monitor,
+  Laptop,
+  PlayCircle,
+  Share2,
+  Info,
+  Book,
+  List,
+  Users,
+} from 'lucide-vue-next'
 import Ribbon from '@/components/Ribbon.vue'
 
-const libraryServices = [
-  {
-    title: 'Online Public Access Catalog (OPAC)',
-    description:
-      'Terminals provided for available library materials. It is the electronic version of the paper Card Catalog.',
-  },
-  {
-    title: 'Audio Visual Room',
-    description: 'For viewing and borrowing of digital interactive CDs and DVDs.',
-  },
-  {
-    title: 'eLibrary',
-    description:
-      'Access to online resources such as online journals, research websites, e-books, video streaming, and printing.',
-  },
-  {
-    title: 'Automated Circulation',
-    description:
-      'Borrowing and returning of books are computerized. It also records daily performance and provides bibliographic information.',
-  },
-  {
-    title: 'Laptop Area',
-    description: 'This service allows clients to plug their laptops in designated areas.',
-  },
-  {
-    title: 'OPAC Tutorial',
-    description:
-      'Training to search for materials using nine options: title, author, call number, subject, series, keyword, category, power, and events.',
-  },
-  {
-    title: 'Library Resource Sharing',
-    description: 'Accommodates researchers from other schools and government organizations.',
-  },
-  {
-    title: 'Library Orientation',
-    description:
-      "Provides an understanding of the library's objectives, facilities, resources, and services.",
-  },
-  {
-    title: 'Library Instruction',
-    description: 'Educates students on how to use the library resources effectively.',
-  },
-  {
-    title: 'Book Display/New Arrival',
-    description:
-      'Newly processed books are posted on the bulletin board and displayed in the new arrival area for faculty and students.',
-  },
-  {
-    title: 'Bibliographic Assistance',
-    description: 'Librarians prepare bibliographies on specific subjects upon request.',
-  },
-  {
-    title: 'Acquisition List',
-    description:
-      'Technical librarians prepare lists of materials acquired by the library during the semester.',
-  },
-  {
-    title: 'Book Selection',
-    description:
-      'Faculty are encouraged to participate in recommending books for the library collection.',
-  },
-]
-
 const showScrollTop = ref(false)
+let observer: IntersectionObserver | null = null
 
 function handleScroll() {
   showScrollTop.value = window.scrollY > 300
@@ -140,38 +100,75 @@ function scrollToTop() {
 }
 
 onMounted(() => {
-  const link = document.createElement('link')
-  link.href =
-    'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap'
-  link.rel = 'stylesheet'
-  document.head.appendChild(link)
   window.addEventListener('scroll', handleScroll)
+
+  // Reveal Animation Logic
+  const observerOptions = {
+    threshold: 0.15, // 15% sa card ang makita una mo-trigger
+  }
+
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show-card')
+      } else {
+        // I-remove ang class kung mo-scroll up (para mo-fade out balik)
+        entry.target.classList.remove('show-card')
+      }
+    })
+  }, observerOptions)
+
+  // Target tanang card elements
+  const cards = document.querySelectorAll('.reveal-card')
+  cards.forEach((card) => observer?.observe(card))
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  if (observer) observer.disconnect()
 })
+
+const libraryServices = [
+  { title: 'Online Public Access Catalog (OPAC)', description: 'Electronic catalog for searching available library materials.', icon: BookOpen },
+  { title: 'Audio Visual Room', description: 'Viewing and borrowing of digital interactive CDs and DVDs.', icon: PlayCircle },
+  { title: 'eLibrary', description: 'Access to online journals, e-books, and digital resources.', icon: Monitor },
+  { title: 'Automated Circulation', description: 'Computerized borrowing and returning of books.', icon: Share2 },
+  { title: 'Laptop Area', description: 'Designated areas for plugging in and using laptops.', icon: Laptop },
+  { title: 'Library Orientation', description: 'Overview of library objectives, facilities, and services.', icon: Info },
+  { title: 'Library Instruction', description: 'Guides students in effectively using library resources.', icon: Users },
+  { title: 'Book Display / New Arrival', description: 'Newly acquired books displayed for faculty and students.', icon: Book },
+  { title: 'Bibliographic Assistance', description: 'Librarians prepare subject-based bibliographies upon request.', icon: List },
+]
 </script>
 
 <style scoped>
 .font-poppins {
   font-family: 'Poppins', sans-serif;
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
+
+/* --- REVEAL ANIMATION STYLES --- */
+.reveal-card {
   opacity: 0;
+  transform: translateY(50px); /* Sugod sa ubos gamay */
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
 }
 
-:deep(.csu-ribbon-wrap .page-inner) {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding-left: 0;
-  padding-right: 0;
-  padding-bottom: 30px;
+.reveal-card.show-card {
+  opacity: 1;
+  transform: translateY(0); /* Mobalik sa original position */
+}
+
+/* Optional: Staggered Delay (mag sunod-sunod silag gawas) */
+@media (min-width: 640px) {
+  .reveal-card:nth-child(3n+2) { transition-delay: 150ms; }
+  .reveal-card:nth-child(3n+3) { transition-delay: 300ms; }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

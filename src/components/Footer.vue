@@ -20,7 +20,7 @@
                 </div>
                 <div>
                   <p class="text-[9px] text-slate-400 font-bold uppercase">Saturday</p>
-                  <p class="text-xs text-white">8:00 AM - 12:00 PM</p>
+                  <p class="text-xs text-white">8:00 AM - 5:00 PM</p>
                 </div>
                 <p class="text-[9px] italic text-[#f9a825] bg-[#fbc02d]/10 py-0.5 px-2 rounded-md inline-block">No Noon Break</p>
               </div>
