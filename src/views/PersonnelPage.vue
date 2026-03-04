@@ -1,9 +1,14 @@
 <template>
   <div class="w-full bg-[#f7f5f0] min-h-screen">
-
     <!-- ===== HERO ===== -->
     <div class="personnel-hero">
       <div class="absolute inset-0 hero-overlay"></div>
+
+      <!-- Decorative corner lines -->
+      <div class="absolute top-8 left-8 corner-tl"></div>
+      <div class="absolute top-8 right-8 corner-tr"></div>
+      <div class="absolute bottom-8 left-8 corner-bl"></div>
+      <div class="absolute bottom-8 right-8 corner-br"></div>
 
       <div class="relative z-10 flex flex-col items-center gap-3">
         <p class="hero-eyebrow">Caraga State University</p>
@@ -15,23 +20,22 @@
           <span class="hero-line"></span>
           <span class="hero-dot gold"></span>
         </div>
+        <p class="hero-sub">The people behind your library experience</p>
       </div>
     </div>
 
     <!-- ===== MAIN CONTENT ===== -->
     <div class="px-6 sm:px-10 lg:px-16 py-20 max-w-6xl mx-auto">
-
       <!-- ===== FEATURED (HEAD) ===== -->
       <div v-if="featuredStaff" class="featured-wrapper mb-24">
-
         <!-- Label -->
-        <div class="flex items-center gap-3 mb-10 justify-center">
+        <div class="sr-item flex items-center gap-3 mb-10 justify-center">
           <div class="label-line"></div>
           <span class="label-text">University Librarian</span>
           <div class="label-line"></div>
         </div>
 
-        <div class="featured-card">
+        <div class="sr-item featured-card">
           <!-- Left accent bar -->
           <div class="featured-accent-bar"></div>
 
@@ -39,13 +43,9 @@
           <div class="featured-photo-wrap">
             <div
               class="absolute inset-0 rounded-full border-4 shadow-md"
-              style="background-color: #0d2b0f; border-color: #66bb6a;"
+              style="background-color: #0d2b0f; border-color: #66bb6a"
             ></div>
-            <img
-              :src="featuredStaff.image"
-              :alt="featuredStaff.name"
-              class="featured-photo"
-            />
+            <img :src="featuredStaff.image" :alt="featuredStaff.name" class="featured-photo" />
           </div>
 
           <!-- Info -->
@@ -58,13 +58,11 @@
               {{ featuredStaff.position }}
             </p>
           </div>
-
-
         </div>
       </div>
 
       <!-- ===== STAFF SECTION LABEL ===== -->
-      <div class="flex items-center gap-3 mb-12">
+      <div class="sr-item flex items-center gap-3 mb-12">
         <div class="label-line"></div>
         <span class="label-text">Library Staff</span>
         <div class="label-line flex-1"></div>
@@ -75,19 +73,16 @@
         <div
           v-for="(person, index) in otherStaff"
           :key="person.id"
-          class="staff-card"
+          class="sr-card staff-card"
+          :style="{ transitionDelay: (index % 2) * 0.12 + 's' }"
         >
-<!-- Photo — original circular style -->
+          <!-- Photo — original circular style -->
           <div class="staff-photo-wrap">
             <div
               class="absolute inset-0 rounded-full border-4 shadow-md"
-              style="background-color: #0d2b0f; border-color: #66bb6a;"
+              style="background-color: #0d2b0f; border-color: #66bb6a"
             ></div>
-            <img
-              :src="person.image"
-              :alt="person.name"
-              class="staff-photo"
-            />
+            <img :src="person.image" :alt="person.name" class="staff-photo" />
           </div>
 
           <!-- Info -->
@@ -97,15 +92,33 @@
             <p class="staff-subtitle">{{ person.subtitle }}</p>
             <p v-if="person.position" class="staff-position">{{ person.position }}</p>
           </div>
+
+          <!-- Bottom hover line -->
+          <div class="staff-bottom-line"></div>
         </div>
       </div>
-
     </div>
   </div>
+
+  <!-- SCROLL TO TOP -->
+  <Transition name="fade">
+    <button
+      v-if="showScrollTop"
+      @click="scrollToTop"
+      class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
+      style="background: #0d2b0f"
+      aria-label="Scroll to top"
+    >
+      <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+      </svg>
+    </button>
+  </Transition>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 import cora from '@/assets/images/personnelpage/cora.png'
 import mercy from '@/assets/images/personnelpage/mercy.png'
@@ -127,12 +140,33 @@ interface StaffMember {
 }
 
 const staff = ref<StaffMember[]>([
-  { id: 1, name: 'MARIA CORAZON L. TERCERA, RL', subtitle: 'University Librarian', position: 'Head, Library Services', image: cora },
+  {
+    id: 1,
+    name: 'MARIA CORAZON L. TERCERA, RL',
+    subtitle: 'University Librarian',
+    position: 'Head, Library Services',
+    image: cora,
+  },
   { id: 2, name: 'MERCY G. REYES, RL', subtitle: 'Technical Librarian I', image: mercy },
-  { id: 3, name: 'ANN MARIE MONTE DE RAMOS, RL', subtitle: 'Readers Services Librarian', image: marie },
+  {
+    id: 3,
+    name: 'ANN MARIE MONTE DE RAMOS, RL',
+    subtitle: 'Readers Services Librarian',
+    image: marie,
+  },
   { id: 4, name: 'JEHOVENN T. BERONGOY', subtitle: 'Audio-Visual Technician', image: berongoy },
-  { id: 5, name: 'JORGE V. BAUTISTA', subtitle: 'Public Assistance & Complaints Desk Officer', image: jorge },
-  { id: 6, name: 'JOHN WARREN S. BATONDO, LPT', subtitle: 'Administrative Aide VI Clerk III', image: warren },
+  {
+    id: 5,
+    name: 'JORGE V. BAUTISTA',
+    subtitle: 'Public Assistance & Complaints Desk Officer',
+    image: jorge,
+  },
+  {
+    id: 6,
+    name: 'JOHN WARREN S. BATONDO, LPT',
+    subtitle: 'Administrative Aide VI Clerk III',
+    image: warren,
+  },
   { id: 7, name: 'MALYN C. TRAYA', subtitle: 'Technical Service Staff', image: malyn },
   { id: 8, name: 'SABRENA MAE ELLEVERA', subtitle: 'Periodical Service Staff', image: sabrena },
   { id: 9, name: 'JASMIN D. PADILLA', subtitle: 'Library Learning Spaces Staff', image: jasmin },
@@ -141,6 +175,44 @@ const staff = ref<StaffMember[]>([
 
 const featuredStaff = computed(() => staff.value[0])
 const otherStaff = computed(() => staff.value.slice(1))
+
+const showScrollTop = ref(false)
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 300
+}
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+let observer: IntersectionObserver | null = null
+
+function initObserver() {
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view')
+        } else {
+          entry.target.classList.remove('in-view')
+        }
+      })
+    },
+    { threshold: 0.1 },
+  )
+  document.querySelectorAll('.sr-item, .sr-card').forEach((el) => {
+    observer!.observe(el)
+  })
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+  setTimeout(initObserver, 100)
+})
+
+onUnmounted(() => {
+  if (observer) observer.disconnect()
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -165,20 +237,35 @@ const otherStaff = computed(() => staff.value.slice(1))
   background: linear-gradient(
     to bottom,
     rgba(4, 16, 5, 0.72) 0%,
-    rgba(13, 43, 15, 0.80) 60%,
-    rgba(4, 16, 5, 0.90) 100%
+    rgba(13, 43, 15, 0.8) 60%,
+    rgba(4, 16, 5, 0.9) 100%
   );
 }
 
-.corner-tl, .corner-tr, .corner-bl, .corner-br {
+.corner-tl,
+.corner-tr,
+.corner-bl,
+.corner-br {
   width: 28px;
   height: 28px;
   opacity: 0.5;
 }
-.corner-tl { border-top: 1.5px solid #f9a825; border-left: 1.5px solid #f9a825; }
-.corner-tr { border-top: 1.5px solid #f9a825; border-right: 1.5px solid #f9a825; }
-.corner-bl { border-bottom: 1.5px solid #f9a825; border-left: 1.5px solid #f9a825; }
-.corner-br { border-bottom: 1.5px solid #f9a825; border-right: 1.5px solid #f9a825; }
+.corner-tl {
+  border-top: 1.5px solid #f9a825;
+  border-left: 1.5px solid #f9a825;
+}
+.corner-tr {
+  border-top: 1.5px solid #f9a825;
+  border-right: 1.5px solid #f9a825;
+}
+.corner-bl {
+  border-bottom: 1.5px solid #f9a825;
+  border-left: 1.5px solid #f9a825;
+}
+.corner-br {
+  border-bottom: 1.5px solid #f9a825;
+  border-right: 1.5px solid #f9a825;
+}
 
 .hero-eyebrow {
   font-size: 0.65rem;
@@ -211,18 +298,22 @@ const otherStaff = computed(() => staff.value.slice(1))
   border-radius: 50%;
   display: inline-block;
 }
-.hero-dot.gold { background: #f9a825; }
-.hero-dot.green { background: #66bb6a; }
+.hero-dot.gold {
+  background: #f9a825;
+}
+.hero-dot.green {
+  background: #66bb6a;
+}
 .hero-line {
   width: 40px;
   height: 1px;
-  background: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.3);
   display: inline-block;
 }
 
 .hero-sub {
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.55);
   letter-spacing: 0.15em;
   font-style: italic;
 }
@@ -233,7 +324,7 @@ const otherStaff = computed(() => staff.value.slice(1))
 .label-line {
   height: 1px;
   width: 40px;
-  background: linear-gradient(to right, #0d2b0f, rgba(13,43,15,0.15));
+  background: linear-gradient(to right, #0d2b0f, rgba(13, 43, 15, 0.15));
 }
 .label-text {
   font-size: 0.65rem;
@@ -247,9 +338,6 @@ const otherStaff = computed(() => staff.value.slice(1))
 /* ================================
    FEATURED CARD
 ================================ */
-.featured-wrapper {
-  animation: fadeUp 0.7s ease both;
-}
 
 .featured-card {
   position: relative;
@@ -339,7 +427,7 @@ const otherStaff = computed(() => staff.value.slice(1))
 .featured-divider {
   width: 48px;
   height: 2px;
-  background: linear-gradient(to right, #f9a825, rgba(249,168,37,0.2));
+  background: linear-gradient(to right, #f9a825, rgba(249, 168, 37, 0.2));
   border-radius: 2px;
 }
 
@@ -350,7 +438,6 @@ const otherStaff = computed(() => staff.value.slice(1))
   text-transform: uppercase;
   color: rgba(13, 43, 15, 0.5);
 }
-
 
 /* ================================
    STAFF GRID
@@ -370,12 +457,13 @@ const otherStaff = computed(() => staff.value.slice(1))
   background: #ffffff;
   border: 1px solid rgba(13, 43, 15, 0.07);
   border-radius: 4px;
-  padding: 24px 28px;
+  padding: 24px 28px 24px 36px;
   box-shadow: 0 2px 16px rgba(13, 43, 15, 0.05);
-  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
-  overflow: hidden;
-
-  margin-top: 8px; /* <-- add this */
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease,
+    border-color 0.3s ease;
+  overflow: visible;
 }
 
 .staff-card:hover {
@@ -383,7 +471,6 @@ const otherStaff = computed(() => staff.value.slice(1))
   transform: translateY(-3px);
   border-color: rgba(249, 168, 37, 0.35);
 }
-
 
 /* Circular — staff */
 .staff-photo-wrap {
@@ -401,7 +488,7 @@ const otherStaff = computed(() => staff.value.slice(1))
   left: 50%;
   transform: translateX(-50%);
   width: 96px;
-  height: 106px;
+  height: 112px;
   object-fit: cover;
   border-radius: 50%;
   z-index: 1;
@@ -432,7 +519,7 @@ const otherStaff = computed(() => staff.value.slice(1))
 .staff-rule {
   width: 28px;
   height: 1.5px;
-  background: linear-gradient(to right, #f9a825, rgba(249,168,37,0.2));
+  background: linear-gradient(to right, #f9a825, rgba(249, 168, 37, 0.2));
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -456,38 +543,79 @@ const otherStaff = computed(() => staff.value.slice(1))
   color: rgba(13, 43, 15, 0.45);
 }
 
-/* Bottom gold-green line on hover */
-.staff-card::after {
-  content: '';
+/* Bottom gold-green line on hover via inner div */
+.staff-card .staff-bottom-line {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 2px;
   background: linear-gradient(to right, #f9a825, #1b5e20);
+  border-radius: 0 0 4px 4px;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s ease;
 }
 
-.staff-card:hover::after {
+.staff-card:hover .staff-bottom-line {
   transform: scaleX(1);
 }
 
+/* Scroll to top transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 /* ================================
-   ANIMATIONS
+   SCROLL REVEAL
 ================================ */
+.sr-item {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.sr-card {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.sr-item.in-view,
+.sr-card.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ================================
    RESPONSIVE
 ================================ */
 @media (max-width: 768px) {
-  .personnel-hero { height: 280px; }
-  .hero-title { font-size: 1.8rem; }
+  .personnel-hero {
+    height: 280px;
+  }
+  .hero-title {
+    font-size: 1.8rem;
+  }
 
   .featured-card {
     flex-direction: column;
@@ -495,8 +623,12 @@ const otherStaff = computed(() => staff.value.slice(1))
     padding: 36px 28px;
     gap: 28px;
   }
-  .featured-info { align-items: center; }
-  .featured-badge { align-self: center; }
+  .featured-info {
+    align-items: center;
+  }
+  .featured-badge {
+    align-self: center;
+  }
 
   .staff-grid {
     grid-template-columns: 1fr;
