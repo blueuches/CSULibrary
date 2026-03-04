@@ -1617,26 +1617,18 @@
     </div>
   </div>
 
-
   <!-- FEATURES SECTION -->
-  <div class="w-full py-20 px-6" style="background: #f9faf9">
-    <div class="max-w-7xl mx-auto">
-      <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4">
+  <div class="w-full py-16 px-6" style="background: #f4f6f4">
+    <div class="max-[100%] mx-auto">
+      <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
         <div>
-          <div class="flex items-center gap-3 mb-4">
-            <div
-              style="
-                width: 40px;
-                height: 4px;
-                background: linear-gradient(90deg, #f9a825, #fbc02d);
-                border-radius: 2px;
-              "
-            ></div>
+          <div class="flex items-center gap-3 mb-3">
+            <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
             <span
               style="
-                font-size: 0.7rem;
+                font-size: 0.68rem;
                 font-weight: 800;
-                letter-spacing: 0.28em;
+                letter-spacing: 0.25em;
                 color: #1b5e20;
                 text-transform: uppercase;
               "
@@ -1645,93 +1637,48 @@
           </div>
           <h2
             style="
-              font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+              font-size: clamp(2rem, 4vw, 3rem);
               font-weight: 900;
               color: #0d2b0f;
-              line-height: 1.1;
+              line-height: 1;
               letter-spacing: -0.02em;
-              margin-bottom: 0.75rem;
             "
           >
-            FEATURES
+            See It For Yourself
           </h2>
-          <p
-            style="
-              font-size: 1rem;
-              color: #5a6a5a;
-              line-height: 1.6;
-              max-width: 500px;
-              font-weight: 500;
-            "
-          >
-            Experience our library through interactive video guides and tutorials
-          </p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
         <!-- VIRTUAL TOUR -->
-        <!-- CARDS -->
         <div
-          class="sr-card relative rounded-xl overflow-hidden cursor-pointer animate-fade-in-up"
-          style="
-            background: white;
-            box-shadow: 0 4px 24px rgba(13, 43, 15, 0.08);
-            border: 1px solid rgba(13, 43, 15, 0.06);
-            animation-delay: 0s;
-          "
+          class="sr-card group relative rounded-2xl overflow-hidden cursor-pointer"
+          style="box-shadow: 0 4px 32px rgba(13, 43, 15, 0.12)"
           @click="isModalOpen = true"
         >
-          <!-- Thumbnail Section -->
           <div class="relative overflow-hidden" style="aspect-ratio: 16/9">
-            <!-- Background Image -->
             <div
-              class="absolute inset-0 bg-cover bg-center"
+              class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
               style="background-image: url('https://img.youtube.com/vi/Lv0URTSBniY/hqdefault.jpg')"
             ></div>
-            
-            <!-- Gradient Overlay -->
             <div
               class="absolute inset-0"
-              style="
-                background: linear-gradient(
-                  to top,
-                  rgba(0, 0, 0, 0.65) 0%,
-                  rgba(0, 0, 0, 0.2) 40%,
-                  transparent 70%
-                );
-              "
+              style="background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 35%)"
             ></div>
-
-            <!-- Duration Badge -->
-            <div
-              class="absolute top-4 right-4 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5"
-              style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px)"
-            >
-              <svg class="w-3.5 h-3.5" fill="white" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"
-                />
-              </svg>
-              <span style="font-size: 0.75rem; color: white; font-weight: 700; letter-spacing: 0.02em; font-family: 'Poppins', sans-serif"
-                >3:45</span
-              >
-            </div>
-
-            <!-- Play Button -->
             <div class="absolute inset-0 flex items-center justify-center">
               <div
-                class="flex items-center justify-center rounded-full"
+                class="flex items-center justify-center rounded-full transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl"
                 style="
-                  width: 72px;
-                  height: 72px;
-                  background: linear-gradient(135deg, rgba(249, 168, 37, 0.95), rgba(251, 192, 45, 0.95));
-                  box-shadow: 0 8px 32px rgba(249, 168, 37, 0.4);
+                  width: 68px;
+                  height: 68px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border: 2px solid rgba(255, 255, 255, 0.6);
+                  backdrop-filter: blur(6px);
                 "
               >
                 <svg
-                  class="w-8 h-8 text-white"
-                  style="margin-left: 4px"
+                  class="w-7 h-7 text-white"
+                  style="margin-left: 5px"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -1739,121 +1686,83 @@
                 </svg>
               </div>
             </div>
-          </div>
-
-          <!-- Content Section -->
-          <div class="p-7">
-            <h3
+            <div
+              class="absolute bottom-4 left-4 flex items-center gap-1.5"
               style="
-                font-size: 1.35rem;
-                font-weight: 800;
-                color: #0d2b0f;
-                line-height: 1.3;
-                letter-spacing: -0.01em;
-                font-family: 'Poppins', sans-serif;
-                margin-bottom: 0.75rem;
+                background: rgba(0, 0, 0, 0.55);
+                padding: 4px 10px;
+                border-radius: 6px;
+                backdrop-filter: blur(4px);
               "
+            >
+              <svg class="w-3.5 h-3.5" fill="#FF0000" viewBox="0 0 24 24">
+                <path
+                  d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                />
+              </svg>
+              <span style="font-size: 0.7rem; color: white; font-weight: 600"
+                >Watch on YouTube</span
+              >
+            </div>
+          </div>
+          <div class="p-6" style="background: #0d2b0f">
+            <h3
+              style="font-size: 1.25rem; font-weight: 900; color: white; line-height: 1.2"
+              class="mb-2"
             >
               Virtual Tour
             </h3>
-
-            <p
-              style="
-                font-size: 0.9rem;
-                color: #4a5f4a;
-                line-height: 1.7;
-                margin-bottom: 1.25rem;
-                font-family: 'Poppins', sans-serif;
-              "
-            >
-              Explore our modern facilities and collection areas from the comfort of your device
-              with an immersive 360° experience.
+            <p style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.5); line-height: 1.65">
+              Explore our modern facilities and collection areas from the comfort of your device.
             </p>
-
-            <div class="flex items-center justify-between pt-4" style="border-top: 1px solid #e8ebe8">
-              <div class="flex items-center gap-2.5">
-                <div
-                  class="w-9 h-9 rounded-full flex items-center justify-center"
-                  style="background: linear-gradient(135deg, #1b5e20, #2e7d32)"
-                >
-                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <div style="font-size: 0.7rem; color: #6b7b6b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Poppins', sans-serif">
-                    CSU Library
-                  </div>
-                  <div style="font-size: 0.75rem; color: #8a9a8a; font-weight: 500; font-family: 'Poppins', sans-serif">Official Video</div>
-                </div>
-              </div>
+            <div
+              class="mt-5 pt-4 flex items-center gap-2"
+              style="border-top: 1px solid rgba(255, 255, 255, 0.07)"
+            >
+              <div style="width: 20px; height: 2px; background: #f9a825; border-radius: 2px"></div>
+              <span
+                style="
+                  font-size: 0.65rem;
+                  font-weight: 700;
+                  color: rgba(255, 255, 255, 0.3);
+                  letter-spacing: 0.1em;
+                  text-transform: uppercase;
+                "
+                >Caraga State University Library</span
+              >
             </div>
           </div>
         </div>
 
         <!-- LIBRARY ORIENTATION -->
         <div
-          class="sr-card relative rounded-xl overflow-hidden cursor-pointer animate-fade-in-up"
-          style="
-            background: white;
-            box-shadow: 0 4px 24px rgba(13, 43, 15, 0.08);
-            border: 1px solid rgba(13, 43, 15, 0.06);
-            animation-delay: 0.4s;
-          "
+          class="sr-card group relative rounded-2xl overflow-hidden cursor-pointer"
+          style="box-shadow: 0 4px 32px rgba(13, 43, 15, 0.12); transition-delay: 0.12s"
           @click="isOrientationModalOpen = true"
         >
-          <!-- Thumbnail Section -->
           <div class="relative overflow-hidden" style="aspect-ratio: 16/9">
-            <!-- Background Image -->
             <div
-              class="absolute inset-0 bg-cover bg-center"
+              class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
               style="background-image: url('https://img.youtube.com/vi/HAEPrH2aYpc/hqdefault.jpg')"
             ></div>
-            
-            <!-- Gradient Overlay -->
             <div
               class="absolute inset-0"
-              style="
-                background: linear-gradient(
-                  to top,
-                  rgba(0, 0, 0, 0.65) 0%,
-                  rgba(0, 0, 0, 0.2) 40%,
-                  transparent 70%
-                );
-              "
+              style="background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 35%)"
             ></div>
-
-            <!-- Duration Badge -->
-            <div
-              class="absolute top-4 right-4 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5"
-              style="background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px)"
-            >
-              <svg class="w-3.5 h-3.5" fill="white" viewBox="0 0 24 24">
-                <path
-                  d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"
-                />
-              </svg>
-              <span style="font-size: 0.75rem; color: white; font-weight: 700; letter-spacing: 0.02em; font-family: 'Poppins', sans-serif"
-                >5:20</span
-              >
-            </div>
-
-            <!-- Play Button -->
             <div class="absolute inset-0 flex items-center justify-center">
               <div
-                class="flex items-center justify-center rounded-full"
+                class="flex items-center justify-center rounded-full transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl"
                 style="
-                  width: 72px;
-                  height: 72px;
-                  background: linear-gradient(135deg, rgba(249, 168, 37, 0.95), rgba(251, 192, 45, 0.95));
-                  box-shadow: 0 8px 32px rgba(249, 168, 37, 0.4);
+                  width: 68px;
+                  height: 68px;
+                  background: rgba(255, 255, 255, 0.15);
+                  border: 2px solid rgba(255, 255, 255, 0.6);
+                  backdrop-filter: blur(6px);
                 "
               >
                 <svg
-                  class="w-8 h-8 text-white"
-                  style="margin-left: 4px"
+                  class="w-7 h-7 text-white"
+                  style="margin-left: 5px"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -1861,56 +1770,51 @@
                 </svg>
               </div>
             </div>
-          </div>
-
-          <!-- Content Section -->
-          <div class="p-7">
-            <h3
+            <div
+              class="absolute bottom-4 left-4 flex items-center gap-1.5"
               style="
-                font-size: 1.35rem;
-                font-weight: 800;
-                color: #0d2b0f;
-                line-height: 1.3;
-                letter-spacing: -0.01em;
-                font-family: 'Poppins', sans-serif;
-                margin-bottom: 0.75rem;
+                background: rgba(0, 0, 0, 0.55);
+                padding: 4px 10px;
+                border-radius: 6px;
+                backdrop-filter: blur(4px);
               "
+            >
+              <svg class="w-3.5 h-3.5" fill="#FF0000" viewBox="0 0 24 24">
+                <path
+                  d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                />
+              </svg>
+              <span style="font-size: 0.7rem; color: white; font-weight: 600"
+                >Watch on YouTube</span
+              >
+            </div>
+          </div>
+          <div class="p-6" style="background: #0d2b0f">
+            <h3
+              style="font-size: 1.25rem; font-weight: 900; color: white; line-height: 1.2"
+              class="mb-2"
             >
               Library Orientation
             </h3>
-
-            <p
-              style="
-                font-size: 0.9rem;
-                color: #4a5f4a;
-                line-height: 1.7;
-                margin-bottom: 1.25rem;
-                font-family: 'Poppins', sans-serif;
-              "
-            >
-              First time here? Learn how to navigate our physical and digital resources with this
-              comprehensive step-by-step guide.
+            <p style="font-size: 0.82rem; color: rgba(255, 255, 255, 0.5); line-height: 1.65">
+              First time here? Learn how to navigate our physical and digital resources before your
+              visit.
             </p>
-
-            <div class="flex items-center justify-between pt-4" style="border-top: 1px solid #e8ebe8">
-              <div class="flex items-center gap-2.5">
-                <div
-                  class="w-9 h-9 rounded-full flex items-center justify-center"
-                  style="background: linear-gradient(135deg, #1b5e20, #2e7d32)"
-                >
-                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <div style="font-size: 0.7rem; color: #6b7b6b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Poppins', sans-serif">
-                    CSU Library
-                  </div>
-                  <div style="font-size: 0.75rem; color: #8a9a8a; font-weight: 500; font-family: 'Poppins', sans-serif">Official Video</div>
-                </div>
-              </div>
+            <div
+              class="mt-5 pt-4 flex items-center gap-2"
+              style="border-top: 1px solid rgba(255, 255, 255, 0.07)"
+            >
+              <div style="width: 20px; height: 2px; background: #f9a825; border-radius: 2px"></div>
+              <span
+                style="
+                  font-size: 0.65rem;
+                  font-weight: 700;
+                  color: rgba(255, 255, 255, 0.3);
+                  letter-spacing: 0.1em;
+                  text-transform: uppercase;
+                "
+                >Caraga State University Library</span
+              >
             </div>
           </div>
         </div>
@@ -1924,33 +1828,30 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
     @click.self="isModalOpen = false"
   >
-    <div class="relative">
+    <div
+      class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
+    >
       <button
         @click="isModalOpen = false"
-        class="absolute -top-12 right-0 z-10 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-white hover:text-black"
+        class="absolute top-4 right-4 z-10 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-white/20"
         style="
-          width: 40px;
-          height: 40px;
-          background: rgba(255, 255, 255, 0.15);
+          width: 36px;
+          height: 36px;
+          background: rgba(255, 255, 255, 0.1);
           color: white;
-          font-size: 1.3rem;
+          font-size: 1.1rem;
           font-weight: 700;
         "
       >
         ✕
       </button>
-      <div
-        class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
-        style="width: 80vw; max-width: 1280px;"
-      >
-        <iframe
-          class="w-full h-full"
-          src="https://www.youtube.com/embed/Lv0URTSBniY?autoplay=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
-      </div>
+      <iframe
+        class="w-full h-full"
+        src="https://www.youtube.com/embed/Lv0URTSBniY?autoplay=1"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
     </div>
   </div>
 
@@ -1960,33 +1861,30 @@
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
     @click.self="isOrientationModalOpen = false"
   >
-    <div class="relative">
+    <div
+      class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
+    >
       <button
         @click="isOrientationModalOpen = false"
-        class="absolute -top-12 right-0 z-10 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-white hover:text-black"
+        class="absolute top-4 right-4 z-10 flex items-center justify-center rounded-full transition-all duration-200 hover:bg-white/20"
         style="
-          width: 40px;
-          height: 40px;
-          background: rgba(255, 255, 255, 0.15);
+          width: 36px;
+          height: 36px;
+          background: rgba(255, 255, 255, 0.1);
           color: white;
-          font-size: 1.3rem;
+          font-size: 1.1rem;
           font-weight: 700;
         "
       >
         ✕
       </button>
-      <div
-        class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl"
-        style="width: 80vw; max-width: 1280px;"
-      >
-        <iframe
-          class="w-full h-full"
-          src="https://www.youtube.com/embed/HAEPrH2aYpc?autoplay=1"
-          frameborder="0"
-          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
-      </div>
+      <iframe
+        class="w-full h-full"
+        src="https://www.youtube.com/embed/HAEPrH2aYpc?autoplay=1"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
     </div>
   </div>
 
@@ -2010,7 +1908,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 import photo1 from '@/assets/images/img.jpg'
-import photo2 from '@/assets/images/img0.jpg'
+import photo2 from '@/assets/images/lib.jpg'
 import photo3 from '@/assets/images/img1.jpg'
 import photo4 from '@/assets/images/img2.jpg'
 import photo5 from '@/assets/images/img3.jpg'

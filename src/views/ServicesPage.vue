@@ -3,21 +3,18 @@
     class="relative w-full pb-16 font-poppins antialiased text-white 
            flex flex-col items-center overflow-x-hidden"
   >
-    <Ribbon class="mt-5">SERVICES</Ribbon>
+    <div class="mt-5 mb-4 group text-center reveal-header">
+      <h2 class="text-3xl md:text-4xl font-black text-[#0d2b0f] tracking-wider uppercase transition-all duration-1000 group-[.show-header]:tracking-[0.2em]">
+        Services
+      </h2>
+      <div class="h-1.5 w-1/1 bg-gradient-to-r from-yellow-500 to-green-700 mx-auto rounded-full mt-1 transition-all duration-300 group-hover:w-full"></div>
+    </div>
 
-    <div class="relative mt-5 mx-auto px-8 w-full max-w-7xl">
-
-      <p
-        class="text-black text-lg md:text-xl font-semibold text-center mb-16 max-w-3xl mx-auto"
-      >
-        The
-        <span class="font-black text-green-800 mx-1">
-          CSU Library
-        </span>
-        proudly offers a wide range of academic and research services
-        designed to support learning and innovation.
+    <div class="relative mt-3 mx-auto px-8 w-full max-w-7xl">
+      <p class="text-gray-700 text-lg md:text-xl font-medium text-center mb-16 max-w-3xl mx-auto leading-relaxed">
+        The <span class="font-black text-green-800">CSU Library</span> 
+        proudly offers a wide range of academic and research services designed to support learning and innovation.
       </p>
-
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <div
           v-for="(service, index) in libraryServices"
