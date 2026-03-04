@@ -63,7 +63,7 @@ const router = createRouter({
     { path: '/admin/announcement', name: 'announcement', component: AnnouncementOverview },
     { path: '/admin/announcement/general', name: 'announcement-general', component: GeneralInput },
     { path: '/admin/announcement/event', name: 'announcement-event', component: EventInput },
-    { path: '/admin/personnel', name: 'personnel', component: PersonnelOverview },
+    { path: '/admin/personnel', name: 'admin-personnel', component: PersonnelOverview },
     { path: '/admin/personnel/input', name: 'personnel-input', component: PersonnelInput },
     { path: '/admin/analytics', name: 'analytics', component: RAOverview },
     { path: '/admin/analytics/display', name: 'analytics-display', component: ReportDisplay },
