@@ -64,11 +64,13 @@
             <div
               class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"
             ></div>
-            <img
-              src="@/assets/images/recordpage/folder-upload-icon.png"
-              alt="Data Upload"
-              class="h-20 object-contain relative z-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-md"
-            />
+            <div
+              class="relative z-10 p-5 rounded-2xl bg-[#1b5e20]/10 backdrop-blur-sm border border-[#1b5e20]/20 group-hover:bg-[#1b5e20] group-hover:rotate-6 transition-all duration-500"
+            >
+              <Upload
+                class="w-10 h-10 text-[#1b5e20] group-hover:text-white transition-colors duration-500"
+              />
+            </div>
             <div
               class="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-[#1b5e20]/30 rounded-tr-sm"
             ></div>
@@ -121,11 +123,13 @@
             <div
               class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"
             ></div>
-            <img
-              src="@/assets/images/recordpage/folder-download-icon.png"
-              alt="CD-ROM Download"
-              class="h-20 object-contain relative z-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-md"
-            />
+            <div
+              class="relative z-10 p-5 rounded-2xl bg-[#1b5e20]/10 backdrop-blur-sm border border-[#1b5e20]/20 group-hover:bg-[#1b5e20] group-hover:rotate-6 transition-all duration-500"
+            >
+              <Disc3
+                class="w-10 h-10 text-[#1b5e20] group-hover:text-white transition-colors duration-500"
+              />
+            </div>
             <div
               class="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-[#1b5e20]/30 rounded-tr-sm"
             ></div>
@@ -181,11 +185,13 @@
             <div
               class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"
             ></div>
-            <img
-              src="@/assets/images/recordpage/download-book-icon.png"
-              alt="E-books Gdrive"
-              class="h-20 object-contain relative z-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-md"
-            />
+            <div
+              class="relative z-10 p-5 rounded-2xl bg-[#1b5e20]/10 backdrop-blur-sm border border-[#1b5e20]/20 group-hover:bg-[#1b5e20] group-hover:rotate-6 transition-all duration-500"
+            >
+              <BookOpen
+                class="w-10 h-10 text-[#1b5e20] group-hover:text-white transition-colors duration-500"
+              />
+            </div>
             <div
               class="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-[#1b5e20]/30 rounded-tr-sm"
             ></div>
@@ -238,11 +244,13 @@
             <div
               class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"
             ></div>
-            <img
-              src="@/assets/images/recordpage/find-book-icon.png"
-              alt="E-Resources"
-              class="h-20 object-contain relative z-10 group-hover:scale-110 transition-transform duration-300 drop-shadow-md"
-            />
+            <div
+              class="relative z-10 p-5 rounded-2xl bg-[#1b5e20]/10 backdrop-blur-sm border border-[#1b5e20]/20 group-hover:bg-[#1b5e20] group-hover:rotate-6 transition-all duration-500"
+            >
+              <Database
+                class="w-10 h-10 text-[#1b5e20] group-hover:text-white transition-colors duration-500"
+              />
+            </div>
             <div
               class="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-[#1b5e20]/30 rounded-tr-sm"
             ></div>
@@ -353,6 +361,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Upload, Disc3, BookOpen, Database } from 'lucide-vue-next'
 
 const isModalOpen = ref(false)
 const isOrientationModalOpen = ref(false)
