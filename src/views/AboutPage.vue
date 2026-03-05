@@ -93,7 +93,7 @@ onBeforeUnmount(() => {
       <div class="section-title section-title-center">
         <span class="section-kicker">
           <span class="kicker-line"></span>
-          <span class="kicker-text">LATEST FROM THE LIBRARY</span>
+          <span class="kicker-text">INTRODUCING CSU LIBRARY</span>
         </span>
         <h1 class="section-headline">ABOUT CSU LIBRARY</h1>
       </div>
@@ -133,20 +133,19 @@ onBeforeUnmount(() => {
         <div class="icon-wrap icon-mt">
           <div class="icon-pill">
             <img :src="iconGif1" alt="Animated idea icon" class="gif-icon" loading="lazy" />
-          </div>
-          <div class="icon-pill">
-            <img
-              :src="iconGif2"
-              alt="Animated opportunities icon"
-              class="gif-icon"
-              loading="lazy"
-            />
+            <span>Discovery</span>
           </div>
           <div class="icon-pill">
             <img :src="iconGif3" alt="Animated student icon" class="gif-icon" loading="lazy" />
+            <span>Learning</span>
+          </div>
+          <div class="icon-pill">
+            <img :src="iconGif2" alt="Animated opportunities icon" class="gif-icon" loading="lazy" />
+            <span>knowledge</span>
           </div>
           <div class="icon-pill">
             <img :src="iconGif4" alt="Animated social-life icon" class="gif-icon" loading="lazy" />
+            <span>Networking</span>
           </div>
         </div>
       </div>
@@ -497,7 +496,7 @@ onBeforeUnmount(() => {
 }
 
 .green-heading {
-  color: #2e7d32;
+  color: #0d2b0f;
   font-weight: 900;
   font-size: 2rem;
   line-height: 1.1;
