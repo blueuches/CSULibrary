@@ -80,13 +80,12 @@
             </div>
           </div>
 
-          <button
+         <button
             type="submit"
-            class="w-full bg-gradient-to-r from-green-600 to-green-500 
-                   hover:from-green-500 hover:to-green-400
-                   text-white font-bold py-4 rounded-2xl
-                   shadow-xl shadow-green-900/20 
-                   active:scale-[0.98] transition-all duration-200"
+            class="w-full bg-[#1b5e20] hover:bg-[#257a2b] text-white font-bold py-4 rounded-2xl
+                  shadow-xl shadow-[#1b5e20]/20 
+                  active:scale-[0.98] transition-all duration-300
+                  border border-white/10 uppercase tracking-widest text-sm"
           >
             Log In
           </button>
@@ -95,12 +94,12 @@
         <div class="mt-8 text-center">
           <p class="text-white/60 text-sm">
             No Account?
-            <RouterLink
-              to="/admin/signin"
-              class="text-green-400 font-bold hover:text-green-300 hover:underline transition"
-            >
-              Register Here
-            </RouterLink>
+           <RouterLink
+  to="/admin/signin"
+  class="text-[#00bf63] font-black hover:underline transition-colors duration-200"
+>
+  Register Here
+</RouterLink>
           </p>
         </div>
       </div>

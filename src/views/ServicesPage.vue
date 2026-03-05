@@ -140,7 +140,7 @@ onMounted(() => {
       } else {
         entry.target.classList.remove('show-card')
       }
-    })
+    });
   }, observerOptions)
 
   document.querySelectorAll('.reveal-card').forEach((card) => observer?.observe(card))
