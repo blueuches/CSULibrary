@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { onBeforeUnmount, type DirectiveBinding } from 'vue'
+
+const heroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
+const iconGif1 = new URL('@/assets/icons/idea.gif', import.meta.url).href
+const iconGif2 = new URL('@/assets/icons/opportunities.gif', import.meta.url).href
+const iconGif3 = new URL('@/assets/icons/student.gif', import.meta.url).href
+const iconGif4 = new URL('@/assets/icons/social-life.gif', import.meta.url).href
+
 const objectives = [
   '1. Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;',
   '2. Effect a universally-accepted library system of organization and circulation;',
@@ -16,26 +24,96 @@ const rules = [
   '7. Walk quietly into the library.',
   '8. Never run around the hallway outside the library premises.',
 ]
+
+// scroll
+let io: IntersectionObserver | null = null
+
+const ensureObserver = (): IntersectionObserver | null => {
+  if (io) return io
+
+  const reduceMotion =
+    typeof window !== 'undefined' &&
+    !!window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  if (reduceMotion) {
+    io = null
+    return null
+  }
+
+  io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-in')
+          io?.unobserve(entry.target)
+        }
+      }
+    },
+    {
+      threshold: 0.12,
+      rootMargin: '0px 0px -10% 0px',
+    }
+  )
+
+  return io
+}
+
+type RevealBinding = DirectiveBinding<number | string | undefined>
+
+const vReveal = {
+  mounted(el: HTMLElement, binding: RevealBinding) {
+    const delay = Number(binding.value ?? 0)
+    if (delay > 0) el.style.setProperty('--reveal-delay', `${delay}ms`)
+
+    el.classList.add('reveal')
+
+    const obs = ensureObserver()
+    if (!obs) {
+      el.classList.add('reveal-in')
+      return
+    }
+    obs.observe(el)
+  },
+  unmounted(el: HTMLElement) {
+    io?.unobserve(el)
+  },
+}
+
+onBeforeUnmount(() => {
+  io?.disconnect()
+  io = null
+})
 </script>
 
 <template>
   <section class="about-page">
-    <!-- Ribbon -->
-    <div class="csu-ribbon-wrap">
-      <div class="page-inner">
-        <div class="csu-ribbon">
-          <span class="csu-ribbon-title">ABOUT CSU LIBRARY</span>
-        </div>
+    <!-- Title -->
+    <div class="page-inner" v-reveal>
+      <div class="section-title section-title-center">
+        <span class="section-kicker">
+          <span class="kicker-line"></span>
+          <span class="kicker-text">LATEST FROM THE LIBRARY</span>
+        </span>
+        <h1 class="section-headline">ABOUT CSU LIBRARY</h1>
       </div>
     </div>
+
+    <!-- HERO -->
+    <div class="hero-bleed" v-reveal="80">
+      <div class="hero-wrap hero-overlay">
+        <img :src="heroSrc" alt="CSU Library" class="hero-img" loading="lazy" />
+      </div>
+    </div>
+
     <!-- Content area -->
     <div class="about-content page-inner">
-      <div class="intro-text">
+      <!-- Intro -->
+      <div class="intro-text" v-reveal>
         <p class="mt-5">
           Libraries play a very crucial role in supporting the academic programs of any university
           as it identifies, evaluates, procures, processes, and then makes these learning resources
-          available to the faculty and student for their teaching, learning and research
-          assignments.
+          available to the faculty and student for their teaching, learning and research assignments.
         </p>
 
         <p class="mt-4">
@@ -44,16 +122,32 @@ const rules = [
           materials and services. It has a program of selection, acquisition, collection maintenance
           and stocking, circulation of relevant materials, and provision of physical facilities and
           professional manpower. It positions itself to respond to the changing expectations faced
-          by the University which paves way to the changing needs of its clientele, and the
-          curricular offerings.
+          by the University which paves way to the changing needs of its clientele, and the curricular
+          offerings.
         </p>
       </div>
 
-      <h2 class="vmg-title">Vision, Mission, Goal</h2>
+      <!-- GIF icons -->
+      <div class="page-inner" v-reveal>
+        <div class="icon-wrap icon-mt">
+          <div class="icon-pill">
+            <img :src="iconGif1" alt="Animated idea icon" class="gif-icon" loading="lazy" />
+          </div>
+          <div class="icon-pill">
+            <img :src="iconGif2" alt="Animated opportunities icon" class="gif-icon" loading="lazy" />
+          </div>
+          <div class="icon-pill">
+            <img :src="iconGif3" alt="Animated student icon" class="gif-icon" loading="lazy" />
+          </div>
+          <div class="icon-pill">
+            <img :src="iconGif4" alt="Animated social-life icon" class="gif-icon" loading="lazy" />
+          </div>
+        </div>
+      </div>
 
+      <!-- Row 1: 3 cards -->
       <div class="cards-grid">
-        <!-- Vision -->
-        <div class="grid-item">
+        <div class="grid-item" v-reveal>
           <div class="content-box fixed-card">
             <div class="section-block no-top-space">
               <h3 class="green-heading with-accent">Vision</h3>
@@ -68,8 +162,7 @@ const rules = [
           </div>
         </div>
 
-        <!-- Mission -->
-        <div class="grid-item">
+        <div class="grid-item" v-reveal="80">
           <div class="content-box fixed-card">
             <div class="section-block no-top-space">
               <h3 class="green-heading with-accent">Mission</h3>
@@ -84,8 +177,7 @@ const rules = [
           </div>
         </div>
 
-        <!-- Goal -->
-        <div class="grid-item">
+        <div class="grid-item" v-reveal="160">
           <div class="content-box fixed-card">
             <div class="section-block no-top-space">
               <h3 class="green-heading with-accent">Goal</h3>
@@ -99,14 +191,16 @@ const rules = [
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Objectives -->
-        <div class="grid-item">
-          <div class="content-box fixed-card list-card">
+      <!-- Row 2: 2 wider cards (hover same as top cards) -->
+      <div class="cards-grid-bottom">
+        <div class="grid-item" v-reveal>
+          <div class="content-box fixed-card">
             <div class="section-block no-top-space">
               <h3 class="green-heading with-accent">Objectives</h3>
-              <div class="card-body">
-                <ol class="custom-list">
+              <div class="card-body no-scroll">
+                <ol class="custom-list list-tight">
                   <li v-for="(item, i) in objectives" :key="i">{{ item }}</li>
                 </ol>
               </div>
@@ -114,44 +208,34 @@ const rules = [
           </div>
         </div>
 
-        <!-- Rules and Regulation -->
-        <div class="grid-item">
-          <div class="content-box fixed-card list-card">
+        <div class="grid-item" v-reveal="80">
+          <div class="content-box fixed-card">
             <div class="section-block no-top-space">
               <h3 class="green-heading with-accent">Rules and Regulation</h3>
-              <div class="card-body">
-                <ol class="custom-list">
+              <div class="card-body no-scroll">
+                <ol class="custom-list list-tight">
                   <li v-for="(item, i) in rules" :key="i">{{ item }}</li>
                 </ol>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="grid-item ghost-item" aria-hidden="true">
-          <div class="content-box fixed-card"></div>
-        </div>
       </div>
+      <!-- /Row 2 -->
     </div>
   </section>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap;');
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
-/* =========================
-   Page
-========================= */
 .about-page {
   font-family: 'Poppins', sans-serif;
 
   --page-bg: #f3f4f6;
   --ribbon-green: #0d2b0f;
-  --ribbon-green-dark: #0d2b0f;
   --accent-orange: #fbc02d;
   --text-color: #1f1f1f;
-  --card-border: #d8d8d8;
   --float-shadow-green: 13, 43, 15;
 
   width: 100%;
@@ -160,102 +244,125 @@ const rules = [
   background: var(--page-bg);
 }
 
-/* extra safety: force poppins on key parts */
-.csu-ribbon-title,
-.vmg-title,
-.green-heading,
-.intro-text,
-.section-paragraph,
-.custom-list,
-.card-body {
-  font-family: 'Poppins', sans-serif;
-}
-
 .page-inner {
-  width: 100vw !important;
+  width: 100% !important;
   max-width: none !important;
   margin: 0 !important;
   padding: 0 32px !important;
   box-sizing: border-box !important;
 }
 
-/* =========================
-   Ribbon (aligned to content)
-========================= */
-.csu-ribbon-wrap {
-  width: 100%;
-  padding: 12px 0 8px;
-  position: relative;
+/* scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 520ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
-.csu-ribbon {
-  position: relative;
+/* Title */
+.section-title {
   width: min(100%, 1500px);
-  margin: 0 auto;
-  background: var(--ribbon-green);
-  display: flex;
+  margin: 8px auto 14px;
+}
+.section-title-center { text-align: center; }
+
+.section-kicker {
+  display: inline-flex;
   align-items: center;
+  gap: 14px;
+}
+.kicker-line {
+  width: 54px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent-orange);
+  display: inline-block;
+}
+.kicker-text {
+  font-weight: 900;
+  letter-spacing: 6px;
+  font-size: 0.70rem;
+  color: var(--ribbon-green);
+  text-transform: uppercase;
+}
+.section-headline {
+  margin: 10px 0 0;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 5vw, 3.3rem);
+  line-height: 1.02;
+  color: var(--ribbon-green);
+}
+
+/* Icons */
+.icon-mt { margin-top: 32px; }
+.icon-wrap {
+  width: min(100%, 1500px);
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
   justify-content: center;
+  gap: 16px;
 }
-
-.csu-ribbon::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 34px;
-  height: 48px;
-  background: var(--page-bg);
-  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+.icon-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.06);
 }
+.gif-icon { width: 46px; height: 46px; object-fit: contain; display: block; }
 
-.csu-ribbon::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -10px;
-  width: 0;
-  height: 0;
-  border-top: 10px solid var(--ribbon-green-dark);
-  border-right: 12px solid transparent;
+/* Hero */
+.hero-bleed { width: 100%; padding: 0 !important; margin: 10px 0 0; }
+.hero-wrap {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border-radius: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10), 0 18px 34px rgba(0, 0, 0, 0.08);
 }
-
-.csu-ribbon-title {
-  position: absolute;
-  left: 0;
-  right: 0;
-  z-index: 2;
-  margin: 0;
-  text-align: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.2rem;
-  line-height: 48px;
-  letter-spacing: 0.3px;
-}
-
-.csu-ribbon-title::before {
-  content: '';
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-120px);
-  width: 4px;
-  height: 10px;
-  /* background: #ff5a36; */
-  border-radius: 1px;
-}
-
-/* =========================
-   Content
-========================= */
-.about-content {
+.hero-img {
   width: 100%;
-  padding-top: 10px;
-  padding-bottom: 32px;
-  box-sizing: border-box;
+  height: 370px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  position: relative;
+  z-index: 0;
+  filter: brightness(0.92) contrast(1.03);
+}
+.hero-overlay { position: relative; }
+.hero-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(13, 43, 15, 0.40), rgba(13, 43, 15, 0.68));
 }
 
+/* Content */
+.about-content { width: 100%; padding-top: 10px; padding-bottom: 32px; box-sizing: border-box; }
 .intro-text {
   color: var(--text-color);
   line-height: 1.45;
@@ -264,44 +371,32 @@ const rules = [
   margin: 0 auto;
   text-align: center;
 }
+.intro-text .mt-4 { margin-top: 14px; }
 
-.intro-text .mt-4 {
-  margin-top: 14px;
-}
-
-.vmg-title {
-  margin: 34px 0 20px;
-  font-weight: 900;
-  font-size: 3rem;
-  color: #2e7d32;
-  text-align: center;
-  line-height: 1.1;
-}
-
-/* =========================
-   3-column cards grid
-========================= */
+/* Cards */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
   align-items: stretch;
   perspective: 1200px;
+  margin-top: 22px;
 }
-
-.grid-item {
-  min-width: 0;
-  display: flex;
+.cards-grid-bottom {
+  width: min(100%, 1500px);
+  margin: 20px auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
   perspective: 1200px;
 }
+.grid-item { min-width: 0; display: flex; perspective: 1200px; }
 
-/* =========================
-   Card + 3D Hover Effect
-========================= */
+/* Card */
 .content-box {
   width: 100%;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfbfb 100%);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: linear-gradient(180deg, #ffffff 50%, #ffffff 100%);
   border-radius: 16px;
   padding: 18px 20px;
   box-sizing: border-box;
@@ -312,16 +407,10 @@ const rules = [
     0 2px 4px rgba(var(--float-shadow-green), 0.10);
 
   position: relative;
-
-  /* no 3D behavior */
-  transform-style: flat;
-  backface-visibility: hidden;
   transform: translateY(0);
-
   transition:
     transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.24s ease;
+    box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform, box-shadow;
 }
 
@@ -340,51 +429,23 @@ const rules = [
   transition: opacity 0.24s ease;
   pointer-events: none;
 }
-
 .content-box::after {
   content: '';
   position: absolute;
   inset: -1px;
   border-radius: inherit;
   border: 1px solid rgba(var(--float-shadow-green), 0.16);
-  box-shadow: 0 0 0 0 rgba(var(--float-shadow-green), 0);
   opacity: 0.5;
-  transition:
-    opacity 0.24s ease,
-    box-shadow 0.24s ease,
-    border-color 0.24s ease;
   pointer-events: none;
 }
 
-/* POP-UP hover only (no rotate/tilt) */
-.grid-item:hover .content-box,
-.grid-item:nth-child(even):hover .content-box {
+/* ✅ Hover behavior (applies to both top + bottom cards) */
+.grid-item:hover .content-box {
   transform: translateY(-10px) scale(1.02);
-  border-color: rgba(var(--float-shadow-green), 0.28);
   box-shadow:
     0 18px 34px rgba(var(--float-shadow-green), 0.28),
     0 28px 48px rgba(var(--float-shadow-green), 0.20),
     0 10px 20px rgba(var(--float-shadow-green), 0.16);
-}
-
-.grid-item:hover .content-box::before {
-  opacity: 0.75;
-}
-
-.grid-item:hover .content-box::after {
-  opacity: 1;
-  border-color: rgba(var(--float-shadow-green), 0.32);
-  box-shadow: 0 0 0 4px rgba(var(--float-shadow-green), 0.08);
-}
-
-.ghost-item:hover .content-box {
-  transform: none !important;
-  box-shadow: none !important;
-  border-color: transparent !important;
-}
-.ghost-item .content-box::before,
-.ghost-item .content-box::after {
-  display: none;
 }
 
 .fixed-card {
@@ -393,16 +454,11 @@ const rules = [
   flex-direction: column;
   overflow: hidden;
 }
-
 .no-top-space {
   margin-top: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.section-block {
-  margin-top: 10px;
 }
 
 .green-heading {
@@ -412,16 +468,8 @@ const rules = [
   line-height: 1.1;
   margin: 0;
   flex-shrink: 0;
-
-  transition: none;
-  transform: none;
 }
-
-.with-accent {
-  position: relative;
-  padding-left: 22px;
-}
-
+.with-accent { position: relative; padding-left: 22px; }
 .with-accent::before {
   content: '';
   position: absolute;
@@ -433,15 +481,8 @@ const rules = [
   border-radius: 1px;
 }
 
-.card-body {
-  margin-top: 12px;
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
-
-  transition: none;
-  transform: none;
-}
+.card-body { margin-top: 12px; flex: 1; overflow-y: auto; padding-right: 4px; }
+.no-scroll { overflow-y: visible !important; padding-right: 0 !important; }
 
 .section-paragraph {
   margin: 0 0 0 34px;
@@ -454,178 +495,35 @@ const rules = [
   margin: 0 0 0 34px;
   padding-left: 20px;
   color: var(--text-color);
-  line-height: 1.5;
-  font-size: 1rem;
+  line-height: 1.32;
+  font-size: 0.98rem;
 }
+.custom-list li { margin-bottom: 8px; }
+.list-tight { line-height: 1.30; }
+.list-tight li { margin-bottom: 8px; }
 
-.custom-list li {
-  margin-bottom: 10px;
-}
-
-.ghost-item {
-  visibility: hidden;
-  pointer-events: none;
-}
-
-/* =========================
-   List Cards (Objectives + Rules)
-========================= */
-.list-card {
-  height: auto !important;
-  min-height: 390px;
-}
-
-.list-card .card-body {
-  overflow-y: visible;
-  padding-right: 0;
-}
-
-/* =========================
-   Responsive
-========================= */
-@media (max-width: 1400px) {
-  .vmg-title {
-    font-size: 2.5rem;
-  }
-
-  .green-heading {
-    font-size: 1.75rem;
-  }
-
-  .fixed-card {
-    height: 330px;
-  }
-
-  .list-card {
-    min-height: 400px;
-  }
-
-  .with-accent::before {
-    height: 34px;
-  }
-}
-
+/* Responsive */
 @media (max-width: 1100px) {
-  .page-inner {
-    padding: 0 24px;
-  }
-
-  .cards-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-  }
-
-  .ghost-item {
-    display: none;
-  }
-
-  .fixed-card {
-    height: 320px;
-  }
-
-  .list-card {
-    height: auto !important;
-    min-height: 360px;
-  }
-
-  .vmg-title {
-    font-size: 2.1rem;
-  }
+  .page-inner { padding: 0 24px !important; }
+  .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .cards-grid-bottom { grid-template-columns: 1fr; gap: 16px; }
+  .hero-img { height: 280px; }
 }
-
 @media (max-width: 768px) {
-  .page-inner {
-    width: 100%;
-    padding: 0 14px;
-  }
+  .page-inner { padding: 0 14px !important; width: 100% !important; }
+  .kicker-text { letter-spacing: 4px; font-size: 0.85rem; }
+  .kicker-line { width: 38px; height: 4px; }
+  .hero-img { height: 210px; }
 
-  .csu-ribbon {
-    height: 42px;
-  }
+  .cards-grid { grid-template-columns: 1fr; gap: 14px; }
+  .fixed-card { height: auto; min-height: 220px; }
 
-  .csu-ribbon::after {
-    width: 26px;
-    height: 42px;
-  }
-
-  .csu-ribbon-title {
-    font-size: 1rem;
-    line-height: 42px;
-  }
-
-  .csu-ribbon-title::before {
-    top: -12px;
-    transform: translateX(-82px);
-    height: 8px;
-  }
-
-  .intro-text {
-    font-size: 0.96rem;
-  }
-
-  .vmg-title {
-    margin-top: 22px;
-    margin-bottom: 14px;
-    font-size: 1.5rem;
-  }
-
-  .cards-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .content-box {
-    padding: 16px;
-    border-radius: 14px;
-  }
-
-  .fixed-card {
-    height: auto;
-    min-height: 220px;
-  }
-
-  .list-card {
-    min-height: 220px;
-  }
-
-  .green-heading {
-    font-size: 1.45rem;
-  }
-
-  .with-accent::before {
-    top: 3px;
-    height: 28px;
-  }
-
-  .section-paragraph,
-  .custom-list {
-    margin-left: 28px;
-  }
-
-  .grid-item:hover .content-box,
-  .grid-item:nth-child(even):hover .content-box {
+  /* hover off on mobile */
+  .grid-item:hover .content-box {
     transform: none;
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.03),
-      0 8px 18px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 8px 18px rgba(0, 0, 0, 0.04);
   }
-
-  .grid-item:hover .green-heading,
-  .grid-item:hover .card-body {
-    transform: none;
-  }
-
   .content-box::before,
-  .content-box::after {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .content-box,
-  .green-heading,
-  .card-body {
-    transition: none !important;
-  }
+  .content-box::after { display: none; }
 }
 </style>
