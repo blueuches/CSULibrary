@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import HomePage from '../views/HomePage.vue'
 import AboutPage from '../views/AboutPage.vue'
-import AnnouncementPage from '../views/AnnouncementPage.vue' 
+import AnnouncementPage from '../views/AnnouncementPage.vue'
 import GalleryPage from '../views/GalleryPage.vue'
 import PersonnelPage from '../views/PersonnelPage.vue'
 import RecordPage from '../views/RecordPage.vue'
@@ -28,7 +28,6 @@ import PersonnelOverview from '@/views/Admin/PersonnelManagement/PersonnelOvervi
 import PersonnelInput from '@/views/Admin/PersonnelManagement/PersonnelInput.vue'
 import RAOverview from '@/views/Admin/Reports&Analytics/RAOverview.vue'
 import ReportDisplay from '@/views/Admin/Reports&Analytics/ReportDisplay.vue'
-import ReportEditInput from '@/views/Admin/Reports&Analytics/ReportEditInput.vue'
 import ReportAddInput from '@/views/Admin/Reports&Analytics/ReportAddInput.vue'
 import AttendanceOverview from '@/views/Admin/AttendanceManagement/AttendanceOverview.vue'
 import AttendanceLogs from '@/views/Admin/AttendanceManagement/AttendanceLogs.vue'
@@ -67,7 +66,6 @@ const router = createRouter({
     { path: '/admin/personnel/input', name: 'personnel-input', component: PersonnelInput },
     { path: '/admin/analytics', name: 'analytics', component: RAOverview },
     { path: '/admin/analytics/display', name: 'analytics-display', component: ReportDisplay },
-    { path: '/admin/analytics/edit', name: 'analytics-edit', component: ReportEditInput },
     { path: '/admin/analytics/add', name: 'analytics-add', component: ReportAddInput },
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs },
