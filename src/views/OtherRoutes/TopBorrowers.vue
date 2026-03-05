@@ -241,7 +241,7 @@
             <svg class="w-5 h-5" style="color: #f9a825" viewBox="0 0 24 24" fill="currentColor">
               <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm2.7 2h8.6l.9 2H6.8l.9-2z" />
             </svg>
-            Hall of Fame
+            Top Students
           </h3>
           <div class="flex flex-col gap-3">
             <div

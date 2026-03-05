@@ -53,7 +53,7 @@ const ensureObserver = (): IntersectionObserver | null => {
     {
       threshold: 0.12,
       rootMargin: '0px 0px -10% 0px',
-    }
+    },
   )
 
   return io
@@ -113,7 +113,8 @@ onBeforeUnmount(() => {
         <p class="mt-5">
           Libraries play a very crucial role in supporting the academic programs of any university
           as it identifies, evaluates, procures, processes, and then makes these learning resources
-          available to the faculty and student for their teaching, learning and research assignments.
+          available to the faculty and student for their teaching, learning and research
+          assignments.
         </p>
 
         <p class="mt-4">
@@ -122,8 +123,8 @@ onBeforeUnmount(() => {
           materials and services. It has a program of selection, acquisition, collection maintenance
           and stocking, circulation of relevant materials, and provision of physical facilities and
           professional manpower. It positions itself to respond to the changing expectations faced
-          by the University which paves way to the changing needs of its clientele, and the curricular
-          offerings.
+          by the University which paves way to the changing needs of its clientele, and the
+          curricular offerings.
         </p>
       </div>
 
@@ -134,7 +135,12 @@ onBeforeUnmount(() => {
             <img :src="iconGif1" alt="Animated idea icon" class="gif-icon" loading="lazy" />
           </div>
           <div class="icon-pill">
-            <img :src="iconGif2" alt="Animated opportunities icon" class="gif-icon" loading="lazy" />
+            <img
+              :src="iconGif2"
+              alt="Animated opportunities icon"
+              class="gif-icon"
+              loading="lazy"
+            />
           </div>
           <div class="icon-pill">
             <img :src="iconGif3" alt="Animated student icon" class="gif-icon" loading="lazy" />
@@ -279,12 +285,15 @@ onBeforeUnmount(() => {
   width: min(100%, 1500px);
   margin: 8px auto 14px;
 }
-.section-title-center { text-align: center; }
+.section-title-center {
+  text-align: center;
+}
 
 .section-kicker {
   display: inline-flex;
   align-items: center;
   gap: 14px;
+  margin-top: 2.5%;
 }
 .kicker-line {
   width: 54px;
@@ -296,7 +305,7 @@ onBeforeUnmount(() => {
 .kicker-text {
   font-weight: 900;
   letter-spacing: 6px;
-  font-size: 0.70rem;
+  font-size: 0.7rem;
   color: var(--ribbon-green);
   text-transform: uppercase;
 }
@@ -309,7 +318,9 @@ onBeforeUnmount(() => {
 }
 
 /* Icons */
-.icon-mt { margin-top: 32px; }
+.icon-mt {
+  margin-top: 32px;
+}
 .icon-wrap {
   width: min(100%, 1500px);
   margin-left: auto;
@@ -327,10 +338,19 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.06);
 }
-.gif-icon { width: 46px; height: 46px; object-fit: contain; display: block; }
+.gif-icon {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  display: block;
+}
 
 /* Hero */
-.hero-bleed { width: 100%; padding: 0 !important; margin: 10px 0 0; }
+.hero-bleed {
+  width: 100%;
+  padding: 0 !important;
+  margin: 10px 0 0;
+}
 .hero-wrap {
   width: 100% !important;
   max-width: none !important;
@@ -339,7 +359,9 @@ onBeforeUnmount(() => {
   overflow: hidden;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10), 0 18px 34px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.1),
+    0 18px 34px rgba(0, 0, 0, 0.08);
 }
 .hero-img {
   width: 100%;
@@ -351,18 +373,25 @@ onBeforeUnmount(() => {
   z-index: 0;
   filter: brightness(0.92) contrast(1.03);
 }
-.hero-overlay { position: relative; }
+.hero-overlay {
+  position: relative;
+}
 .hero-overlay::after {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(13, 43, 15, 0.40), rgba(13, 43, 15, 0.68));
+  background: linear-gradient(to bottom, rgba(13, 43, 15, 0.4), rgba(13, 43, 15, 0.68));
 }
 
 /* Content */
-.about-content { width: 100%; padding-top: 10px; padding-bottom: 32px; box-sizing: border-box; }
+.about-content {
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 32px;
+  box-sizing: border-box;
+}
 .intro-text {
   color: var(--text-color);
   line-height: 1.45;
@@ -371,7 +400,9 @@ onBeforeUnmount(() => {
   margin: 0 auto;
   text-align: center;
 }
-.intro-text .mt-4 { margin-top: 14px; }
+.intro-text .mt-4 {
+  margin-top: 14px;
+}
 
 /* Cards */
 .cards-grid {
@@ -391,7 +422,11 @@ onBeforeUnmount(() => {
   align-items: stretch;
   perspective: 1200px;
 }
-.grid-item { min-width: 0; display: flex; perspective: 1200px; }
+.grid-item {
+  min-width: 0;
+  display: flex;
+  perspective: 1200px;
+}
 
 /* Card */
 .content-box {
@@ -404,7 +439,7 @@ onBeforeUnmount(() => {
   box-shadow:
     0 6px 14px rgba(var(--float-shadow-green), 0.16),
     0 14px 28px rgba(var(--float-shadow-green), 0.12),
-    0 2px 4px rgba(var(--float-shadow-green), 0.10);
+    0 2px 4px rgba(var(--float-shadow-green), 0.1);
 
   position: relative;
   transform: translateY(0);
@@ -444,7 +479,7 @@ onBeforeUnmount(() => {
   transform: translateY(-10px) scale(1.02);
   box-shadow:
     0 18px 34px rgba(var(--float-shadow-green), 0.28),
-    0 28px 48px rgba(var(--float-shadow-green), 0.20),
+    0 28px 48px rgba(var(--float-shadow-green), 0.2),
     0 10px 20px rgba(var(--float-shadow-green), 0.16);
 }
 
@@ -469,7 +504,10 @@ onBeforeUnmount(() => {
   margin: 0;
   flex-shrink: 0;
 }
-.with-accent { position: relative; padding-left: 22px; }
+.with-accent {
+  position: relative;
+  padding-left: 22px;
+}
 .with-accent::before {
   content: '';
   position: absolute;
@@ -481,8 +519,16 @@ onBeforeUnmount(() => {
   border-radius: 1px;
 }
 
-.card-body { margin-top: 12px; flex: 1; overflow-y: auto; padding-right: 4px; }
-.no-scroll { overflow-y: visible !important; padding-right: 0 !important; }
+.card-body {
+  margin-top: 12px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.no-scroll {
+  overflow-y: visible !important;
+  padding-right: 0 !important;
+}
 
 .section-paragraph {
   margin: 0 0 0 34px;
@@ -498,32 +544,69 @@ onBeforeUnmount(() => {
   line-height: 1.32;
   font-size: 0.98rem;
 }
-.custom-list li { margin-bottom: 8px; }
-.list-tight { line-height: 1.30; }
-.list-tight li { margin-bottom: 8px; }
+.custom-list li {
+  margin-bottom: 8px;
+}
+.list-tight {
+  line-height: 1.3;
+}
+.list-tight li {
+  margin-bottom: 8px;
+}
 
 /* Responsive */
 @media (max-width: 1100px) {
-  .page-inner { padding: 0 24px !important; }
-  .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .cards-grid-bottom { grid-template-columns: 1fr; gap: 16px; }
-  .hero-img { height: 280px; }
+  .page-inner {
+    padding: 0 24px !important;
+  }
+  .cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .cards-grid-bottom {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .hero-img {
+    height: 280px;
+  }
 }
 @media (max-width: 768px) {
-  .page-inner { padding: 0 14px !important; width: 100% !important; }
-  .kicker-text { letter-spacing: 4px; font-size: 0.85rem; }
-  .kicker-line { width: 38px; height: 4px; }
-  .hero-img { height: 210px; }
+  .page-inner {
+    padding: 0 14px !important;
+    width: 100% !important;
+  }
+  .kicker-text {
+    letter-spacing: 4px;
+    font-size: 0.85rem;
+  }
+  .kicker-line {
+    width: 38px;
+    height: 4px;
+  }
+  .hero-img {
+    height: 210px;
+  }
 
-  .cards-grid { grid-template-columns: 1fr; gap: 14px; }
-  .fixed-card { height: auto; min-height: 220px; }
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .fixed-card {
+    height: auto;
+    min-height: 220px;
+  }
 
   /* hover off on mobile */
   .grid-item:hover .content-box {
     transform: none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 8px 18px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.03),
+      0 8px 18px rgba(0, 0, 0, 0.04);
   }
   .content-box::before,
-  .content-box::after { display: none; }
+  .content-box::after {
+    display: none;
+  }
 }
 </style>
