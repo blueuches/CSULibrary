@@ -496,7 +496,7 @@ onBeforeUnmount(() => {
 }
 
 .green-heading {
-  color: #2e7d32;
+  color: #0d2b0f;
   font-weight: 900;
   font-size: 2rem;
   line-height: 1.1;
