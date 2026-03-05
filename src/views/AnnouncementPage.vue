@@ -1,17 +1,20 @@
 <template>
   <section class="py-12 bg-white min-h-screen overflow-hidden">
     <div class="max-w-7xl mx-auto px-4">
-      
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-        <div class="header-reveal">
-          <h2 class="text-3xl font-light text-gray-900 tracking-tight">
-            Upcoming <span class="font-bold text-green-900">Events</span>
-          </h2>
-          <div class="w-16 h-1 bg-yellow-500 mt-2 rounded-full line-expand"></div>
-          <p class="text-gray-500 mt-2 sub-header-reveal">Explore what's happening this year.</p>
-        </div>
 
-        <nav class="flex items-center gap-1 overflow-x-auto pb-2 scrollbar-hide nav-reveal">
+      <!-- Title -->
+    <div class="page-inner" v-reveal>
+      <div class="section-title section-title-center">
+        <span class="section-kicker title-container">
+          <span class="kicker-line"></span>
+          <span class="kicker-text">WHAT’S HAPPENING AT CSU LIBRARY</span>
+        </span>
+        <h1 class="section-headline title-headline"><span>UPCOMING </span>EVENTS</h1>
+      </div>
+    </div>
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+        <nav class="flex items-center gap-1 overflow-x-auto mx-auto pb-2 scrollbar-hide nav-reveal">
           <button
             v-for="(month, index) in months"
             :key="month"
@@ -124,21 +127,91 @@ section {
   font-family: 'Poppins', sans-serif;
 }
 
-/*  INITIAL PAGE LOAD ANIMATIONS */
-.header-reveal {
-  animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+/* ===== Title Styling ===== */
+.section-title {
+  width: min(100%, 1500px);
+  margin: 8px auto 14px;
+}
+.section-title-center { text-align: center; }
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.kicker-line {
+  width: 54px;
+  height: 4px;
+  border-radius: 999px;
+  background: #fbc02d;
+}
+.kicker-text {
+  font-weight: 900;
+  letter-spacing: 6px;
+  font-size: 0.70rem;
+  color: #0d2b0f;
+  text-transform: uppercase;
+}
+.section-headline {
+  margin: 10px 0 0;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 5vw, 3.3rem);
+  line-height: 1.02;
+  color: #0d2b0f;
 }
 
-.line-expand {
-  width: 0;
-  animation: expandWidth 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-}
-
-.sub-header-reveal {
+/* Container animation */
+.title-container {
   opacity: 0;
-  animation: fadeIn 0.8s ease-out 0.4s forwards;
+  transform: translateY(30px);
+  animation: fadeSlideUp 0.9s ease forwards;
 }
 
+/* Kicker slight delay */
+.title-kicker {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideUp 0.8s ease forwards;
+  animation-delay: 0.2s;
+}
+
+.title-headline {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: fadeSlideUp 1s ease forwards;
+  animation-delay: 0.4s;
+}
+
+/* Animation Keyframes */
+@keyframes fadeSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kicker-line {
+  display: inline-block;
+  height: 3px;
+  width: 60px;
+  background: linear-gradient(90deg, #dfb753, #fbc02d);
+
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: lineReveal 0.9s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes lineReveal {
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/*  INITIAL PAGE LOAD ANIMATIONS */
 .pill-entrance {
   opacity: 0;
   transform: translateY(10px);
