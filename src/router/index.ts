@@ -25,16 +25,12 @@ import AnnouncementOverview from '@/views/Admin/Announcements/AnnouncementOvervi
 import GeneralInput from '@/views/Admin/Announcements/GeneralInput.vue'
 import EventInput from '@/views/Admin/Announcements/EventInput.vue'
 import PersonnelOverview from '@/views/Admin/PersonnelManagement/PersonnelOverview.vue'
-import PersonnelInput from '@/views/Admin/PersonnelManagement/PersonnelInput.vue'
 import RAOverview from '@/views/Admin/Reports&Analytics/RAOverview.vue'
 import ReportDisplay from '@/views/Admin/Reports&Analytics/ReportDisplay.vue'
-import ReportEditInput from '@/views/Admin/Reports&Analytics/ReportEditInput.vue'
 import ReportAddInput from '@/views/Admin/Reports&Analytics/ReportAddInput.vue'
 import AttendanceOverview from '@/views/Admin/AttendanceManagement/AttendanceOverview.vue'
 import AttendanceLogs from '@/views/Admin/AttendanceManagement/AttendanceLogs.vue'
-import ExportLogs from '@/views/Admin/AttendanceManagement/ExportLogs.vue'
 import ImportRecord from '@/views/Admin/AttendanceManagement/ImportRecord.vue'
-import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.pBASE_URL),
@@ -56,7 +52,6 @@ const router = createRouter({
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage },
     { path: '/starbooks', name: 'starbooks', component: Starbooks },
     { path: '/e-resources', name: 'eresources', component: EResources },
-    { path: '/developers', name: 'developers', component: Developers },
 
     //admin
     { path: '/admin', name: 'admin', component: Dashboard },
@@ -66,14 +61,11 @@ const router = createRouter({
     { path: '/admin/announcement/general', name: 'announcement-general', component: GeneralInput },
     { path: '/admin/announcement/event', name: 'announcement-event', component: EventInput },
     { path: '/admin/personnel', name: 'admin-personnel', component: PersonnelOverview },
-    { path: '/admin/personnel/input', name: 'personnel-input', component: PersonnelInput },
     { path: '/admin/analytics', name: 'analytics', component: RAOverview },
     { path: '/admin/analytics/display', name: 'analytics-display', component: ReportDisplay },
-    { path: '/admin/analytics/edit', name: 'analytics-edit', component: ReportEditInput },
     { path: '/admin/analytics/add', name: 'analytics-add', component: ReportAddInput },
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs },
-    { path: '/admin/attendance/export', name: 'attendance-export', component: ExportLogs },
     { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord },
   ],
 })
