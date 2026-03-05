@@ -6,22 +6,22 @@
     <div class="absolute inset-0 bg-black/10"></div>
 
     <div class="w-full max-w-md mx-auto relative z-10 p-4">
-      <div class="bg-white/20 backdrop-blur-md p-8 md:p-12 rounded-3xl border border-white/30 shadow-2xl">
-        <div class="mb-10 text-center">
+      <div class="bg-white/20 backdrop-blur-md p-8 md:p-8 rounded-3xl border border-white/30 shadow-2xl">
+        <div class="mb-5 text-center">
           <h2 class="text-3xl font-bold text-white">Sign Up</h2>
         </div>
 
-        <form @submit.prevent="handleSignup" class="space-y-6">
+        <form @submit.prevent="handleSignup" class="space-y-4">
           
           <!-- Full Name -->
           <div>
-            <label class="block text-sm font-semibold text-white mb-2">
+            <label class="block text-sm font-semibold text-white mb-1">
               Full Name
             </label>
             <input
               type="text"
               placeholder="Juan Dela Cruz"
-              class="w-full px-4 py-3 rounded-xl
+              class="w-full px-3 py-2 rounded-xl
                      border border-white/40 bg-white/10
                      text-white placeholder-white/60
                      focus:ring-2 focus:ring-green-400
@@ -33,13 +33,13 @@
 
           <!-- Email -->
           <div>
-            <label class="block text-sm font-semibold text-white mb-2">
+            <label class="block text-sm font-semibold text-white mb-1">
               Email Address
             </label>
             <input
               type="email"
               placeholder="admin@email.com"
-              class="w-full px-4 py-3 rounded-xl
+              class="w-full px-3 py-2 rounded-xl
                      border border-white/40 bg-white/10
                      text-white placeholder-white/60
                      focus:ring-2 focus:ring-green-400
@@ -51,7 +51,7 @@
 
           <!-- Password -->
           <div>
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex justify-between items-center mb-1">
               <label class="text-sm font-semibold text-white">
                 Password
               </label>
@@ -59,7 +59,7 @@
             <input
               :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-xl
+              class="w-full px-3 py-2 rounded-xl
                      border border-white/40 bg-white/10
                      text-white placeholder-white/60
                      focus:ring-2 focus:ring-green-400
@@ -71,13 +71,13 @@
 
           <!-- Confirm Password -->
           <div>
-            <label class="block text-sm font-semibold text-white mb-2">
+            <label class="block text-sm font-semibold text-white mb-1">
               Confirm Password
             </label>
             <input
               :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-xl
+              class="w-full px-3 py-2 rounded-xl
                      border border-white/40 bg-white/10
                      text-white placeholder-white/60
                      focus:ring-2 focus:ring-green-400
@@ -88,13 +88,13 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-white mb-2">
+            <label class="block text-sm font-semibold text-white mb-1">
               Staff Code
             </label>
             <input
               :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
-              class="w-full px-4 py-3 rounded-xl
+              class="w-full px-3 py-2 rounded-xl
                      border border-white/40 bg-white/10
                      text-white placeholder-white/60
                      focus:ring-2 focus:ring-green-400
