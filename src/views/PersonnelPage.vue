@@ -267,7 +267,7 @@ onUnmounted(() => {
 
 .hero-title {
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-size: clamp(1rem, 4vw, 2.0rem);
   font-weight: 700;
   color: #ffffff;
   letter-spacing: 0.06em;
