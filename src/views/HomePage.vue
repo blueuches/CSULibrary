@@ -170,7 +170,7 @@
         <p class="text-white/80 text-base leading-relaxed mb-6" style="text-align: justify">
           The CSU Library Service Unit aims to support and achieve the educational objectives of
           CSU. It seeks relevant materials and services; and provide these to fulfull the
-          vision,mission goals and objectives of the State College to respond to the changing needs
+          vision, mission goals and objectives of the State College to respond to the changing needs
           of the clientele and the curricular offerings.
         </p>
         <div class="grid grid-cols-3 gap-4 mt-2">
