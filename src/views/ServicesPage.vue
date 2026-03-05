@@ -49,17 +49,19 @@
           :key="index"
           class="reveal-card group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 border border-gray-100"
         >
-          <div class="h-44 flex items-center justify-center relative overflow-hidden bg-[#0d2b0f]">
+          <div
+            class="h-44 flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9]"
+          >
             <div
-              class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"
+              class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"
             ></div>
 
             <div
-              class="relative z-10 p-5 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 group-hover:bg-yellow-500 group-hover:rotate-6 transition-all duration-500"
+              class="relative z-10 p-5 rounded-2xl bg-[#1b5e20]/10 backdrop-blur-sm border border-[#1b5e20]/20 group-hover:bg-[#1b5e20] group-hover:rotate-6 transition-all duration-500"
             >
               <component
                 :is="service.icon"
-                class="w-10 h-10 text-white group-hover:text-[#0d2b0f] transition-colors duration-500"
+                class="w-10 h-10 text-[#1b5e20] group-hover:text-white transition-colors duration-500"
               />
             </div>
           </div>
@@ -216,15 +218,6 @@ const libraryServices = [
 .reveal-card.show-card {
   opacity: 1;
   transform: translateY(0);
-}
-
-@media (min-width: 640px) {
-  .reveal-card:nth-child(3n + 2) {
-    transition-delay: 100ms;
-  }
-  .reveal-card:nth-child(3n + 3) {
-    transition-delay: 200ms;
-  }
 }
 
 /* --- BACKGROUND BLOBS --- */
