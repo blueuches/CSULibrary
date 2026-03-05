@@ -34,6 +34,7 @@ import AttendanceOverview from '@/views/Admin/AttendanceManagement/AttendanceOve
 import AttendanceLogs from '@/views/Admin/AttendanceManagement/AttendanceLogs.vue'
 import ExportLogs from '@/views/Admin/AttendanceManagement/ExportLogs.vue'
 import ImportRecord from '@/views/Admin/AttendanceManagement/ImportRecord.vue'
+import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.pBASE_URL),
@@ -55,6 +56,7 @@ const router = createRouter({
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage },
     { path: '/starbooks', name: 'starbooks', component: Starbooks },
     { path: '/e-resources', name: 'eresources', component: EResources },
+    { path: '/developers', name: 'developers', component: Developers },
 
     //admin
     { path: '/admin', name: 'admin', component: Dashboard },
