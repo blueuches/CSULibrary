@@ -53,7 +53,7 @@ const router = createRouter({
     { path: '/nbwc', name: 'nbwcpage', component: NBWCPage },
     { path: '/starbooks', name: 'starbooks', component: Starbooks },
     { path: '/e-resources', name: 'eresources', component: EResources },
-  { path: '/admin/developers', name: 'developers', component: Developers },
+  { path: '/developers', name: 'developers', component: Developers },
 
     //admin
     { path: '/admin', name: 'admin', component: Dashboard },
