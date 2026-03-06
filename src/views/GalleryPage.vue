@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="w-[100%] py-6 relative min-h-screen overflow-y-auto flex flex-col items-center bg-white"
-  >
+  <div class="w-full relative min-h-screen overflow-y-auto flex flex-col items-center bg-white">
     <!-- HERO HEADER -->
     <div class="gallery-hero sr-item">
       <div class="hero-eyebrow">
@@ -11,38 +9,40 @@
       <h1 class="hero-title">Library Section</h1>
     </div>
 
-    <div class="w-[100%] sticky top-0 z-30 px-6 mt-3">
+    <!-- STICKY NAV -->
+    <div class="w-full sticky top-0 z-30 px-8 mt-3">
       <div
-        class="w-full backdrop-blur-md bg-white/40 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-3xl shadow-lg"
+        class="w-full backdrop-blur-md bg-white/40 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-2xl shadow-lg"
       >
         <div class="flex gap-4">
           <button
-            v-for="floor in floors"
+            v-for="(floor, i) in floors"
             :key="floor.id"
             @click="activeFloor = floor.id"
             :class="[
-              'px-8 py-2.5 rounded-full font-black transition-all duration-300 text-xs uppercase tracking-widest border-2',
+              'px-8 py-2.5 rounded-2xl font-black transition-all duration-300 text-xs uppercase tracking-widest border-2 nav-btn',
               activeFloor === floor.id && !searchQuery
-                ? 'bg-[#0d2b0f] border-[#0d2b0f] text-white scale-100 shadow-md'
+                ? 'bg-[#0d2b0f] border-[#0d2b0f] text-white shadow-md'
                 : 'bg-transparent border-[#0d2b0f] text-[#0d2b0f] hover:bg-[#1b5e20] hover:border-[#1b5e20] hover:text-white',
             ]"
+            :style="{ animationDelay: `${i * 0.12}s` }"
           >
             {{ floor.name }}
           </button>
         </div>
-
-        <div class="relative w-full max-w-[320px]">
+        <div class="relative w-full max-w-[320px] nav-search">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search Section..."
-            class="w-full pl-6 pr-4 py-3 rounded-xl bg-gray-50 border-2 border-[#0d2b0f] text-[#0d2b0f] font-bold text-sm focus:outline-none focus:ring-4 focus:ring-[#1b5e20]/10 transition-all shadow-inner"
+            class="w-full pl-6 pr-4 py-3 rounded-2xl bg-gray-50 border-2 border-[#0d2b0f] text-[#0d2b0f] font-bold text-sm focus:outline-none focus:ring-4 focus:ring-[#1b5e20]/10 transition-all shadow-inner"
           />
         </div>
       </div>
     </div>
 
-    <div class="w-[100%] px-4 flex flex-col items-center mt-12 relative z-10">
+    <!-- CARDS SECTION -->
+    <div class="w-full px-8 flex flex-col items-center mt-12 relative z-10">
       <transition-group name="fade" tag="div" class="w-full">
         <div
           v-for="floor in searchQuery ? filteredFloors : activeFloorData"
@@ -62,12 +62,12 @@
               ></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               <div
                 v-for="(section, idx) in wing.sections"
                 :key="section.title"
                 @click="openGallery(section)"
-                class="sr-item group relative h-96 rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl transition-all duration-500 hover:-translate-y-3 bg-gray-100 border border-gray-200"
+                class="sr-item group relative h-96 rounded-2xl overflow-hidden cursor-pointer shadow-xl transition-all duration-500 hover:-translate-y-3 bg-gray-100 border border-gray-200"
                 :style="[
                   section.images.length > 0
                     ? {
@@ -83,24 +83,31 @@
                   class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500"
                 ></div>
 
+                <!-- Floor badge -->
+                <div class="absolute top-3 right-3">
+                  <div
+                    class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase shadow-sm"
+                    style="background: #0d2b0f; color: #fff"
+                  >
+                    {{ floor.name }}
+                  </div>
+                </div>
+
                 <div class="absolute inset-0 p-8 flex flex-col justify-end">
                   <div
                     class="w-10 h-1 bg-[#1b5e20] mb-4 rounded-full transition-all group-hover:w-20"
                   ></div>
-
                   <h4
                     class="text-white font-black text-2xl leading-tight uppercase group-hover:text-yellow-500 transition-colors duration-300"
                   >
                     {{ section.title }}
                   </h4>
-
                   <p
                     v-if="section.note"
                     class="text-[#66bb6a] text-[10px] font-bold uppercase mt-1 tracking-widest"
                   >
                     {{ section.note }}
                   </p>
-
                   <p class="text-white/80 text-sm mt-4 leading-relaxed line-clamp-3">
                     {{ section.description }}
                   </p>
@@ -112,6 +119,7 @@
       </transition-group>
     </div>
 
+    <!-- MODAL -->
     <div
       v-if="showModal"
       class="fixed inset-0 z-50 bg-[#0d2b0f]/90 flex items-center justify-center p-4 backdrop-blur-sm"
@@ -123,11 +131,9 @@
       >
         &times;
       </button>
-
-      <div class="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl relative">
+      <div class="w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl relative">
         <div v-if="selectedSection" class="flex flex-col">
           <div class="relative min-h-[400px] flex items-center justify-center bg-gray-200">
-            <!-- prev button -->
             <button
               v-if="selectedSection.images.length > 1"
               @click="prevImg"
@@ -142,14 +148,11 @@
                 />
               </svg>
             </button>
-
             <img
               v-if="selectedSection.images.length > 0"
               :src="selectedSection.images[currentImgIndex]"
               class="w-full h-auto max-h-[60vh] object-contain mx-auto"
             />
-
-            <!-- ✅ UPDATED: next button → yellow -->
             <button
               v-if="selectedSection.images.length > 1"
               @click="nextImg"
@@ -171,7 +174,7 @@
               v-for="(img, idx) in selectedSection.images"
               :key="idx"
               @click="currentImgIndex = idx"
-              class="w-20 h-14 rounded-lg cursor-pointer border-2 overflow-hidden flex-shrink-0 transition-all"
+              class="w-20 h-14 rounded-2xl cursor-pointer border-2 overflow-hidden flex-shrink-0 transition-all"
               :class="
                 currentImgIndex === idx
                   ? 'border-[#1b5e20] scale-105 shadow-md'
@@ -191,6 +194,31 @@
         </div>
       </div>
     </div>
+
+    <!-- SCROLL TO TOP -->
+    <Transition name="fade-btn">
+      <button
+        v-if="showScrollTop"
+        @click="scrollToTop"
+        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
+        style="background: #0d2b0f"
+      >
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 11l7-7 7 7"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 17l7-7 7 7"
+          />
+        </svg>
+      </button>
+    </Transition>
   </div>
 </template>
 
@@ -203,12 +231,10 @@ interface Section {
   note?: string
   images: string[]
 }
-
 interface Wing {
   name: string
   sections: Section[]
 }
-
 interface Floor {
   id: string
   name: string
@@ -220,6 +246,7 @@ const searchQuery = ref('')
 const showModal = ref(false)
 const selectedSection = ref<Section | null>(null)
 const currentImgIndex = ref(0)
+const showScrollTop = ref(false)
 
 // ── IntersectionObserver ──
 let observer: IntersectionObserver | null = null
@@ -229,11 +256,8 @@ function initObserver() {
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view')
-        } else {
-          entry.target.classList.remove('in-view')
-        }
+        if (entry.isIntersecting) entry.target.classList.add('in-view')
+        else entry.target.classList.remove('in-view')
       })
     },
     { threshold: 0.1 },
@@ -241,9 +265,20 @@ function initObserver() {
   document.querySelectorAll('.sr-item').forEach((el) => observer!.observe(el))
 }
 
-onMounted(() => setTimeout(initObserver, 100))
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 300
+}
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+onMounted(() => {
+  setTimeout(initObserver, 100)
+  window.addEventListener('scroll', handleScroll)
+})
 onUnmounted(() => {
   if (observer) observer.disconnect()
+  window.removeEventListener('scroll', handleScroll)
 })
 
 watch([activeFloor, searchQuery], () => {
@@ -256,16 +291,13 @@ const openGallery = (section: Section) => {
   currentImgIndex.value = 0
   showModal.value = true
 }
-
 const closeModal = () => {
   showModal.value = false
 }
-
 const nextImg = () => {
   if (selectedSection.value)
     currentImgIndex.value = (currentImgIndex.value + 1) % selectedSection.value.images.length
 }
-
 const prevImg = () => {
   if (selectedSection.value)
     currentImgIndex.value =
@@ -276,7 +308,6 @@ const prevImg = () => {
 
 // ── Computed ──
 const activeFloorData = computed(() => floors.filter((f) => f.id === activeFloor.value))
-
 const filteredFloors = computed(() => {
   if (!searchQuery.value) return []
   const q = searchQuery.value.toLowerCase()
@@ -315,17 +346,6 @@ const floors: Floor[] = [
             images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
           },
           {
-            title: 'Award and Recognition Area',
-            description: 'Showcasing the excellence and achievements of the university community.',
-            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
-          },
-          {
-            title: 'Natural Science Museum',
-            description:
-              'A collection of biological and physical science specimens for educational display.',
-            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
-          },
-          {
             title: 'PWD Section',
             description:
               'Inclusive learning area specifically designed for persons with disabilities.',
@@ -337,16 +357,22 @@ const floors: Floor[] = [
               'Honoring the notable contributors and distinguished alumni of the institution.',
             images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
           },
+          {
+            title: 'Award and Recognition Area',
+            description: 'Showcasing the excellence and achievements of the university community.',
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
+          },
+          {
+            title: 'Natural Science Museum',
+            description:
+              'A collection of biological and physical science specimens for educational display.',
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
+          },
         ],
       },
       {
         name: 'Administrative Wing',
         sections: [
-          {
-            title: 'Office of the University Librarian',
-            description: 'The administrative heart of the library system.',
-            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
-          },
           {
             title: 'Technical Room',
             description: 'IT infrastructure and server management area.',
@@ -355,6 +381,11 @@ const floors: Floor[] = [
           {
             title: 'Board Room',
             description: 'Executive meeting space for library board and faculty committees.',
+            images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
+          },
+          {
+            title: 'Office of the University Librarian',
+            description: 'The administrative heart of the library system.',
             images: ['/imgs/Gallery/comlab1.JPG', '/imgs/Gallery/comlab1.JPG'],
           },
         ],
@@ -514,6 +545,7 @@ const floors: Floor[] = [
   padding: 40px 30px 30px;
   width: 100%;
   background: white;
+  margin-top: 1.6%;
 }
 .hero-eyebrow {
   display: flex;
@@ -534,12 +566,12 @@ const floors: Floor[] = [
   color: #0d2b0f;
 }
 .hero-title {
-  font-size: clamp(2.8rem, 7vw, 5rem);
   font-weight: 900;
+  font-size: clamp(1.6rem, 5vw, 3.3rem);
+  line-height: 1.02;
   color: #0d2b0f;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  line-height: 1;
 }
 
 /* ── PAGE TRANSITIONS ── */
@@ -553,6 +585,16 @@ const floors: Floor[] = [
   transform: translateY(20px);
 }
 
+/* ── SCROLL TOP BUTTON ── */
+.fade-btn-enter-active,
+.fade-btn-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-btn-enter-from,
+.fade-btn-leave-to {
+  opacity: 0;
+}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar {
   width: 8px;
@@ -561,9 +603,33 @@ const floors: Floor[] = [
   background: #0d2b0f;
 }
 
-.hero-title {
-  font-weight: 900;
-  font-size: clamp(1.6rem, 5vw, 3.3rem);
-  line-height: 1.02;
+/* ── NAVBAR ANIMATIONS ── */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.nav-btn {
+  opacity: 0;
+  animation: slideInLeft 0.5s ease forwards;
+}
+.nav-search {
+  opacity: 0;
+  animation: slideInRight 0.5s ease 0.36s forwards;
 }
 </style>
