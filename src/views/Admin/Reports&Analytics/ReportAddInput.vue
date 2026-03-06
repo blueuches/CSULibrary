@@ -1,6 +1,5 @@
 <template>
   <div class="app-wrapper">
-    <!-- Background decorative elements -->
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
     <div class="grid-overlay"></div>
@@ -100,75 +99,15 @@
 
         <div class="section-divider"></div>
 
-        <!-- Step 2: Upload Excel -->
+        <!-- Step 2: Display Columns -->
         <section class="form-section">
           <div class="section-label">
             <span class="step-number">02</span>
-            <h2 class="section-title">Upload Data Source</h2>
-          </div>
-
-          <div
-            class="upload-zone"
-            :class="{ 'upload-zone--active': fileName }"
-            @dragover.prevent
-            @drop.prevent="handleDrop"
-            @click="triggerFileInput"
-          >
-            <input
-              ref="fileInputRef"
-              type="file"
-              accept=".xlsx,.xls"
-              @change="handleFileUpload"
-              class="file-input-hidden"
-            />
-            <div class="upload-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-            </div>
-            <div class="upload-text">
-              <span v-if="!fileName">
-                <strong>Drop your Excel file here</strong> or click to browse
-              </span>
-              <span v-else class="upload-success">
-                <strong>✓ {{ fileName }}</strong> — file loaded successfully
-              </span>
-            </div>
-            <div class="upload-hint">Supports .xlsx and .xls formats</div>
-          </div>
-        </section>
-
-        <div class="section-divider"></div>
-
-        <!-- Step 3: Display Columns -->
-        <section class="form-section">
-          <div class="section-label">
-            <span class="step-number">03</span>
             <h2 class="section-title">Display Columns</h2>
           </div>
 
-          <div v-if="availableColumns.length === 0" class="empty-columns">
-            Upload a file to see available columns
-          </div>
-
-          <div v-else class="columns-grid">
-            <label
-              v-for="col in availableColumns"
-              :key="col"
-              class="column-chip"
-              :class="{ 'column-chip--selected': displayColumns.includes(col) }"
-            >
-              <input
-                type="checkbox"
-                :value="col"
-                v-model="displayColumns"
-                class="chip-checkbox"
-              />
-              <span class="chip-check">✓</span>
-              <span class="chip-label">{{ col }}</span>
-            </label>
+          <div class="empty-columns">
+            Column selection will be available once data integration is connected
           </div>
         </section>
 
@@ -177,7 +116,7 @@
         <!-- Submit -->
         <section class="form-section submit-section">
           <div class="submit-info">
-            <span v-if="reportName && groupBy && sortBy && fileName" class="ready-badge">
+            <span v-if="reportName && groupBy && sortBy" class="ready-badge">
               <span class="ready-dot"></span> Ready to create
             </span>
           </div>
@@ -187,38 +126,12 @@
           </button>
         </section>
       </div>
-
-      <!-- Preview Table -->
-      <div v-if="parsedRows.length" class="preview-card">
-        <div class="preview-header">
-          <h3 class="preview-title">
-            <span class="preview-icon">⚡</span>
-            Data Preview
-          </h3>
-          <span class="preview-count">{{ parsedRows.length }} rows total</span>
-        </div>
-        <div class="table-scroll">
-          <table class="preview-table">
-            <thead>
-              <tr>
-                <th v-for="col in availableColumns" :key="col">{{ col }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(row, idx) in parsedRows.slice(0, 5)" :key="idx">
-                <td v-for="col in availableColumns" :key="col">{{ row[col] }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import * as XLSX from "xlsx";
 
 const reportName = ref("");
 const groupBy = ref("");
@@ -226,47 +139,12 @@ const uniqueBy = ref("");
 const sortBy = ref("");
 const sortDirection = ref("desc");
 const limit = ref<number | null>(null);
-const displayColumns = ref<string[]>([]);
-
-const fileName = ref("");
-const fileData = ref<File | null>(null);
-const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const availableColumns = ref<string[]>([]);
-const parsedRows = ref<any[]>([]);
-
-function triggerFileInput() {
-  fileInputRef.value?.click();
-}
-
-function parseExcel(file: File) {
-  fileData.value = file;
-  fileName.value = file.name;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const data = new Uint8Array(e.target?.result as ArrayBuffer);
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-    parsedRows.value = rows as any[];
-    availableColumns.value = Object.keys(rows[0] || {});
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function handleFileUpload(event: Event) {
-  const target = event.target as HTMLInputElement;
-  if (target.files?.[0]) parseExcel(target.files[0]);
-}
-
-function handleDrop(event: DragEvent) {
-  const file = event.dataTransfer?.files[0];
-  if (file) parseExcel(file);
-}
 
 function createReport() {
-  if (!reportName.value || !groupBy.value || !sortBy.value || !fileData.value) {
-    alert("Please fill all required fields and upload an Excel file.");
+  if (!reportName.value || !groupBy.value || !sortBy.value) {
+    alert("Please fill all required fields.");
     return;
   }
   const reportDefinition = {
@@ -276,10 +154,8 @@ function createReport() {
     sortBy: sortBy.value,
     sortDirection: sortDirection.value,
     limit: limit.value || null,
-    displayColumns: displayColumns.value,
   };
   console.log("Report Definition:", reportDefinition);
-  console.log("Parsed Excel Rows:", parsedRows.value);
   alert("Statistic created successfully!");
 }
 </script>
@@ -287,7 +163,6 @@ function createReport() {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
 
-/* ── Root & Background ───────────────────────── */
 .app-wrapper {
   min-height: 100vh;
   background: #0a1a0f;
@@ -323,7 +198,6 @@ function createReport() {
   z-index: 0;
 }
 
-/* ── Layout ───────────────────────────────────── */
 .page-container {
   position: relative; z-index: 1;
   max-width: 860px;
@@ -331,7 +205,6 @@ function createReport() {
   padding: 48px 24px 80px;
 }
 
-/* ── Header ───────────────────────────────────── */
 .page-header { margin-bottom: 40px; }
 
 .header-badge {
@@ -380,7 +253,6 @@ function createReport() {
   background: linear-gradient(90deg, #d4af37, transparent);
   border-radius: 2px;
 }
-
 .page-subtitle {
   color: rgba(240, 237, 228, 0.45);
   font-size: 15px;
@@ -388,7 +260,6 @@ function createReport() {
   margin: 0;
 }
 
-/* ── Main Card ────────────────────────────────── */
 .main-card {
   background: rgba(14, 32, 18, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.07);
@@ -398,7 +269,6 @@ function createReport() {
   box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.05);
 }
 
-/* ── Form Section ─────────────────────────────── */
 .form-section { padding: 36px 40px; }
 
 .section-label {
@@ -432,7 +302,6 @@ function createReport() {
   margin: 0 40px;
 }
 
-/* ── Fields ───────────────────────────────────── */
 .fields-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -491,7 +360,6 @@ function createReport() {
   pointer-events: none;
 }
 
-/* Toggle Group */
 .toggle-group {
   display: flex;
   background: rgba(255,255,255,0.04);
@@ -516,51 +384,6 @@ function createReport() {
   color: #d4af37;
 }
 
-/* ── Upload Zone ──────────────────────────────── */
-.file-input-hidden { display: none; }
-
-.upload-zone {
-  border: 2px dashed rgba(255,255,255,0.1);
-  border-radius: 14px;
-  padding: 40px 24px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.25s;
-  background: rgba(255,255,255,0.02);
-}
-.upload-zone:hover {
-  border-color: rgba(212, 175, 55, 0.35);
-  background: rgba(212, 175, 55, 0.04);
-}
-.upload-zone--active {
-  border-color: rgba(34, 139, 34, 0.5);
-  background: rgba(34, 139, 34, 0.05);
-}
-
-.upload-icon {
-  color: rgba(212,175,55,0.5);
-  margin-bottom: 14px;
-  display: flex;
-  justify-content: center;
-}
-.upload-zone--active .upload-icon { color: #5cba6e; }
-
-.upload-text {
-  font-size: 14px;
-  color: rgba(240,237,228,0.5);
-  margin-bottom: 8px;
-}
-.upload-text strong { color: #f0ede4; }
-.upload-success strong { color: #5cba6e; }
-
-.upload-hint {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: rgba(240,237,228,0.2);
-  letter-spacing: 0.05em;
-}
-
-/* ── Columns ──────────────────────────────────── */
 .empty-columns {
   font-size: 13px;
   color: rgba(240,237,228,0.25);
@@ -568,54 +391,6 @@ function createReport() {
   padding: 8px 0;
 }
 
-.columns-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.column-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 100px;
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-}
-.column-chip:hover {
-  border-color: rgba(212,175,55,0.3);
-  background: rgba(212,175,55,0.05);
-}
-.column-chip--selected {
-  background: rgba(212,175,55,0.12);
-  border-color: rgba(212,175,55,0.45);
-}
-
-.chip-checkbox { display: none; }
-.chip-check {
-  font-size: 11px;
-  color: #d4af37;
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.15s;
-}
-.column-chip--selected .chip-check {
-  opacity: 1;
-  transform: scale(1);
-}
-.chip-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: rgba(240,237,228,0.6);
-  transition: color 0.2s;
-}
-.column-chip--selected .chip-label { color: #d4af37; }
-
-/* ── Submit ───────────────────────────────────── */
 .submit-section {
   display: flex;
   align-items: center;
@@ -667,77 +442,6 @@ function createReport() {
 }
 .submit-btn:hover .btn-arrow { transform: translateX(3px); }
 
-/* ── Preview Table ────────────────────────────── */
-.preview-card {
-  margin-top: 24px;
-  background: rgba(14, 32, 18, 0.85);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 20px;
-  overflow: hidden;
-  backdrop-filter: blur(20px);
-}
-
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 28px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.preview-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  font-weight: 700;
-  color: #f0ede4;
-  margin: 0;
-}
-.preview-icon { font-size: 16px; }
-.preview-count {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: rgba(212,175,55,0.6);
-  background: rgba(212,175,55,0.08);
-  border: 1px solid rgba(212,175,55,0.15);
-  padding: 4px 10px;
-  border-radius: 100px;
-  letter-spacing: 0.05em;
-}
-
-.table-scroll { overflow-x: auto; }
-
-.preview-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-.preview-table th {
-  padding: 12px 16px;
-  text-align: left;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  color: rgba(212,175,55,0.7);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  white-space: nowrap;
-  background: rgba(212,175,55,0.03);
-}
-.preview-table td {
-  padding: 11px 16px;
-  color: rgba(240,237,228,0.65);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  white-space: nowrap;
-}
-.preview-table tbody tr:hover td {
-  background: rgba(212,175,55,0.04);
-  color: rgba(240,237,228,0.9);
-}
-.preview-table tbody tr:last-child td { border-bottom: none; }
-
-/* ── Responsive ───────────────────────────────── */
 @media (max-width: 640px) {
   .form-section { padding: 28px 20px; }
   .section-divider { margin: 0 20px; }
