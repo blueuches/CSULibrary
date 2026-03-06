@@ -126,7 +126,9 @@
     }"
   >
     <div class="absolute inset-0" style="background: rgba(13, 43, 15, 0.88)"></div>
-    <div class="w-[100%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
+    <div
+      class="w-[100%] px-3 mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10"
+    >
       <!-- Left: Image -->
       <div class="sr-left w-full h-full flex justify-center">
         <img
@@ -136,7 +138,7 @@
         />
       </div>
       <!-- Right: Text -->
-      <div class="sr-right flex flex-col text-white px-4 relative">
+      <div class="sr-right flex flex-col text-white relative">
         <div style="width: 60px; height: 4px; background: #f9a825; margin-bottom: 16px"></div>
         <div class="mb-4">
           <span
@@ -169,9 +171,9 @@
         </div>
         <p class="text-white/80 text-base leading-relaxed mb-6" style="text-align: justify">
           The CSU Library Service Unit aims to support and achieve the educational objectives of
-          CSU. It seeks relevant materials and services; and provide these to fulfull the
-          vision, mission goals and objectives of the State College to respond to the changing needs
-          of the clientele and the curricular offerings.
+          CSU. It seeks relevant materials and services; and provide these to fulfull the vision,
+          mission goals and objectives of the State College to respond to the changing needs of the
+          clientele and the curricular offerings.
         </p>
         <div class="grid grid-cols-3 gap-4 mt-2">
           <div
@@ -243,7 +245,7 @@
 
   <!-- READ LEARN DISCOVER SECTION -->
   <div class="w-full overflow-hidden" style="background: #ffffff; position: relative">
-    <div class="w-[100%] mx-auto px-6 py-20 relative z-10">
+    <div class="w-[100%] mx-auto px-8 py-20 relative z-10">
       <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
         <div>
           <p
@@ -692,7 +694,7 @@
   </div>
 
   <!-- CAMPUS UPDATES SECTION -->
-  <div class="w-full px-6 py-16" style="background: #f4f6f4">
+  <div class="w-full px-8 py-16" style="background: #f4f6f4">
     <div class="w-[100%] mx-auto">
       <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
         <div>
@@ -1150,7 +1152,7 @@
 
   <!-- USEFUL LINKS SECTION -->
   <div
-    class="w-[100%] px-6 py-16"
+    class="w-[100%] px-8 py-16"
     style="background: #0d2b0f; position: relative; overflow: hidden"
   >
     <div
@@ -1618,7 +1620,7 @@
   </div>
 
   <!-- FEATURES SECTION -->
-  <div class="w-full py-16 px-6" style="background: #f4f6f4">
+  <div class="w-full py-16 px-8" style="background: #f4f6f4">
     <div class="max-[100%] mx-auto">
       <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
         <div>
