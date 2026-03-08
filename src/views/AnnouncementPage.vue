@@ -72,7 +72,6 @@
       </transition-group>
 
       <div v-if="filteredEvents.length === 0" class="text-center py-32 animate-fade-in">
-        <!-- Font Awesome Icon with bounce -->
         <div class="flex justify-center mb-4 text-gray-300 text-6xl no-events-icon">
           <i class="fas fa-book-open"></i>
         </div>
