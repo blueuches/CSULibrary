@@ -79,7 +79,7 @@ const router = createRouter({
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs },
     { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord },
-    { path: '/admin/services', name: 'services', component: ServicesOverview },
+    { path: '/admin/services', name: 'admin-services', component: ServicesOverview },
     { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation },
     { path: '/admin/services/records', name: 'services-records', component: ManageRecords },
     { path: '/admin/services/gallery', name: 'services-gallery', component: ManageGallery },
