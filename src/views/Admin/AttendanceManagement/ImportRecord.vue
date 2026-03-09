@@ -1,270 +1,450 @@
 <template>
-  <div class="app-wrapper">
-    <div class="bg-orb orb-1"></div>
-    <div class="bg-orb orb-2"></div>
-    <div class="grid-overlay"></div>
+<div class="app-wrapper">
 
-    <div class="page-container">
+  <div class="page-container">
 
-      <!-- Header -->
-      <header class="page-header">
-        <div class="header-badge">
-          <span class="badge-dot"></span>
-          CSU STUDENT MANAGEMENT
+    <!-- HEADER -->
+    <header class="page-header">
+
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        CSU STUDENT MANAGEMENT
+      </div>
+
+      <h1 class="page-title">
+        Import <span class="title-accent">Student Records</span>
+      </h1>
+
+      <p class="page-subtitle">
+        Upload a student dataset and synchronize it with the CSU student database
+      </p>
+
+    </header>
+
+
+    <!-- STEPS -->
+    <div class="stepper">
+
+      <div
+        v-for="(step,i) in steps"
+        :key="i"
+        class="step"
+        :class="{active:currentStep===i}"
+      >
+
+        <div class="step-circle">{{ i+1 }}</div>
+
+        <div class="step-text">
+          <span class="step-title">{{ step.title }}</span>
+          <span class="step-sub">{{ step.sub }}</span>
         </div>
-        <h1 class="page-title">Import <span class="title-accent">Student Records</span></h1>
-        <p class="page-subtitle">Upload an Excel file to sync student data with the database</p>
-      </header>
 
-      <!-- Upload Card -->
-      <div class="main-card">
-        <div class="card-inner-header">
-          <div class="section-label">
-            <span class="step-number">01</span>
-            <h2 class="section-title">Upload Excel File</h2>
-          </div>
-        </div>
-
-        <!-- Drop Zone (UI only) -->
-        <div class="upload-zone">
-          <div class="upload-visual">
-            <div class="upload-icon-ring">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-            </div>
-          </div>
-
-          <div class="upload-content">
-            <p class="upload-main-text">
-              <strong>Drag & drop</strong> your Excel file here
-            </p>
-            <p class="upload-sub-text">
-              or click to browse — .xlsx, .xls supported
-            </p>
-          </div>
-
-          <button class="browse-btn">
-            Browse Files
-          </button>
-        </div>
       </div>
 
     </div>
+
+
+
+    <!-- MAIN CARD -->
+    <div class="main-card">
+
+      <!-- Upload -->
+      <div v-if="currentStep===0">
+
+        <div class="section-header">
+          <span class="step-number">STEP 01</span>
+          <h2 class="section-title">Upload Student Dataset</h2>
+        </div>
+
+
+        <label class="upload-zone">
+
+          <input
+            type="file"
+            hidden
+            @change="handleFileUpload"
+          >
+
+          <div class="upload-icon">
+            ⬆
+          </div>
+
+          <p class="upload-main">
+            <strong>Drag & drop</strong> Excel file here
+          </p>
+
+          <p class="upload-sub">
+            Supported formats: .xlsx, .xls
+          </p>
+
+          <button class="browse-btn">
+            Browse File
+          </button>
+
+        </label>
+
+      </div>
+
+
+
+      <!-- Validation -->
+      <div v-if="currentStep===1">
+
+        <div class="section-header">
+          <span class="step-number">STEP 02</span>
+          <h2 class="section-title">Validate Dataset</h2>
+        </div>
+
+
+        <div class="dataset-summary">
+
+          <div class="summary-item">
+            <span class="summary-label">File Name</span>
+            <span class="summary-value">{{ fileName }}</span>
+          </div>
+
+          <div class="summary-item">
+            <span class="summary-label">Detected Records</span>
+            <span class="summary-value">{{ recordCount }}</span>
+          </div>
+
+          <div class="summary-item">
+            <span class="summary-label">Status</span>
+            <span class="status success">Ready for Import</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Import -->
+      <div v-if="currentStep===2">
+
+        <div class="section-header">
+          <span class="step-number">STEP 03</span>
+          <h2 class="section-title">Sync with Database</h2>
+        </div>
+
+
+        <p class="import-description">
+          This will update the <strong>students</strong> table with the records
+          from the uploaded dataset.
+        </p>
+
+        <button
+          class="import-btn"
+          @click="importStudents"
+        >
+          Import Students
+        </button>
+
+      </div>
+
+
+      <!-- NAVIGATION -->
+      <div class="step-controls">
+
+        <button
+          v-if="currentStep>0"
+          class="nav-btn"
+          @click="currentStep--"
+        >
+          Back
+        </button>
+
+        <button
+          v-if="currentStep<2"
+          class="nav-btn primary"
+          @click="currentStep++"
+        >
+          Continue
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
+
+</div>
 </template>
 
+
 <script setup lang="ts">
-// File upload functionality will be connected later
+import { ref } from "vue"
+
+const currentStep = ref(0)
+
+const steps = [
+  { title:"Upload", sub:"Select dataset" },
+  { title:"Validate", sub:"Check records" },
+  { title:"Sync", sub:"Update database" }
+]
+
+const fileName = ref("")
+const recordCount = ref(0)
+
+function handleFileUpload(e:any){
+  const file = e.target.files[0]
+
+  if(!file) return
+
+  fileName.value = file.name
+  recordCount.value = 420 // placeholder
+}
+
+function importStudents(){
+  console.log("Importing students to database")
+}
 </script>
 
+
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
 
-/* ── Base ─────────────────────────────────────── */
-.app-wrapper {
-  min-height: 100vh;
-  background: #0a1a0f;
-  font-family: 'Syne', sans-serif;
-  position: relative;
-  overflow-x: hidden;
+.app-wrapper{
+  min-height:100vh;
+  background:#0b1f13;
+  font-family:'Syne',sans-serif;
 }
 
-.bg-orb {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(90px);
-  pointer-events: none;
-  z-index: 0;
-}
-.orb-1 {
-  width: 560px; height: 560px;
-  background: radial-gradient(circle, rgba(20,78,38,0.55), transparent 70%);
-  top: -120px; left: -160px;
-}
-.orb-2 {
-  width: 420px; height: 420px;
-  background: radial-gradient(circle, rgba(212,175,55,0.1), transparent 70%);
-  bottom: -60px; right: -100px;
-}
-.grid-overlay {
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
+.page-container{
+  max-width:900px;
+  margin:auto;
+  padding:60px 24px;
 }
 
-/* ── Layout ───────────────────────────────────── */
-.page-container {
-  position: relative; z-index: 1;
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
+
+
+/* HEADER */
+
+.page-header{
+  margin-bottom:40px;
 }
 
-/* ── Header ───────────────────────────────────── */
-.page-header { margin-bottom: 40px; }
-
-.header-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  color: #d4af37;
-  background: rgba(212,175,55,0.08);
-  border: 1px solid rgba(212,175,55,0.2);
-  padding: 6px 14px;
-  border-radius: 100px;
-  margin-bottom: 20px;
-}
-.badge-dot {
-  width: 6px; height: 6px;
-  background: #d4af37;
-  border-radius: 50%;
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0%,100% { opacity:1; transform:scale(1); }
-  50% { opacity:0.4; transform:scale(0.65); }
+.header-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:11px;
+  letter-spacing:.12em;
+  color:#d4af37;
+  border:1px solid rgba(212,175,55,.3);
+  padding:6px 12px;
+  border-radius:40px;
 }
 
-.page-title {
-  font-size: 42px;
-  font-weight: 800;
-  color: #f0ede4;
-  line-height: 1.1;
-  margin: 0 0 12px;
-  letter-spacing: -0.02em;
-}
-.title-accent {
-  color: #d4af37;
-  position: relative;
-}
-.title-accent::after {
-  content: '';
-  position: absolute;
-  bottom: 2px; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #d4af37, transparent);
-  border-radius: 2px;
-}
-.page-subtitle {
-  color: rgba(240,237,228,0.42);
-  font-size: 15px;
-  margin: 0;
+.badge-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#d4af37;
 }
 
-/* ── Card ─────────────────────────────────────── */
-.main-card {
-  background: rgba(14,32,18,0.88);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 20px;
-  backdrop-filter: blur(20px);
-  overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 0 0 1px rgba(212,175,55,0.04);
-  padding: 32px 36px;
+.page-title{
+  font-size:40px;
+  font-weight:800;
+  color:#f3efe4;
+  margin:12px 0 8px;
 }
 
-.card-inner-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
+.title-accent{
+  color:#d4af37;
 }
 
-.section-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.step-number {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  color: #d4af37;
-  background: rgba(212,175,55,0.1);
-  border: 1px solid rgba(212,175,55,0.25);
-  padding: 3px 8px;
-  border-radius: 6px;
-  letter-spacing: 0.05em;
-}
-.section-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #f0ede4;
-  margin: 0;
+.page-subtitle{
+  color:rgba(255,255,255,.4);
 }
 
-/* ── Upload Zone ──────────────────────────────── */
-.upload-zone {
-  border: 2px dashed rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 48px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  background: rgba(255,255,255,0.02);
-  text-align: center;
+
+
+/* STEPPER */
+
+.stepper{
+  display:flex;
+  gap:30px;
+  margin-bottom:30px;
 }
 
-.upload-icon-ring {
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(212,175,55,0.25);
-  background: rgba(212,175,55,0.07);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(212,175,55,0.7);
+.step{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  opacity:.4;
 }
 
-.upload-main-text {
-  font-size: 15px;
-  color: rgba(240,237,228,0.55);
-  margin: 0;
-}
-.upload-main-text strong { color: #f0ede4; }
-
-.upload-sub-text {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: rgba(240,237,228,0.25);
-  margin: 0;
-  letter-spacing: 0.03em;
+.step.active{
+  opacity:1;
 }
 
-.browse-btn {
-  background: rgba(212,175,55,0.1);
-  border: 1px solid rgba(212,175,55,0.3);
-  color: #d4af37;
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 10px 22px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-top: 4px;
-}
-.browse-btn:hover {
-  background: rgba(212,175,55,0.18);
-  border-color: rgba(212,175,55,0.55);
+.step-circle{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#1d3a27;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#d4af37;
+  font-weight:700;
 }
 
-/* ── Responsive ───────────────────────────────── */
-@media (max-width: 600px) {
-  .page-title { font-size: 30px; }
-  .main-card { padding: 24px 18px; }
-  .card-inner-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+.step-title{
+  display:block;
+  font-size:14px;
+  color:#f0ede4;
 }
+
+.step-sub{
+  font-size:12px;
+  color:rgba(255,255,255,.4);
+}
+
+
+
+/* CARD */
+
+.main-card{
+  background:#0f2a1a;
+  border-radius:18px;
+  padding:36px;
+  border:1px solid rgba(255,255,255,.06);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+
+
+/* SECTION */
+
+.section-header{
+  margin-bottom:20px;
+}
+
+.step-number{
+  font-size:11px;
+  letter-spacing:.08em;
+  color:#d4af37;
+}
+
+.section-title{
+  font-size:20px;
+  font-weight:700;
+  color:#f3efe4;
+}
+
+
+
+/* UPLOAD */
+
+.upload-zone{
+  border:2px dashed rgba(255,255,255,.1);
+  border-radius:14px;
+  padding:50px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.upload-zone:hover{
+  border-color:#d4af37;
+}
+
+.upload-icon{
+  font-size:34px;
+  margin-bottom:10px;
+  color:#d4af37;
+}
+
+.upload-main{
+  color:#f3efe4;
+}
+
+.upload-sub{
+  font-size:13px;
+  color:rgba(255,255,255,.4);
+}
+
+.browse-btn{
+  margin-top:12px;
+  background:#d4af37;
+  border:none;
+  color:#1c1c1c;
+  padding:10px 18px;
+  border-radius:8px;
+  font-weight:700;
+}
+
+
+
+/* SUMMARY */
+
+.dataset-summary{
+  display:grid;
+  gap:16px;
+}
+
+.summary-item{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding-bottom:10px;
+}
+
+.summary-label{
+  color:rgba(255,255,255,.5);
+}
+
+.summary-value{
+  color:#f3efe4;
+}
+
+.status.success{
+  color:#22c55e;
+}
+
+
+
+/* BUTTON */
+
+.import-btn{
+  margin-top:20px;
+  background:#d4af37;
+  border:none;
+  color:#1a1a1a;
+  padding:14px 26px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.import-btn:hover{
+  opacity:.9;
+}
+
+
+
+/* NAV */
+
+.step-controls{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:30px;
+}
+
+.nav-btn{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.15);
+  color:#f3efe4;
+  padding:10px 18px;
+  border-radius:8px;
+}
+
+.nav-btn.primary{
+  background:#d4af37;
+  color:#1c1c1c;
+  border:none;
+}
+
 </style>
