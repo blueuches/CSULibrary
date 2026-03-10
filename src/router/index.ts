@@ -24,13 +24,21 @@ import Signin from '@/views/Admin/Signin.vue'
 import AnnouncementOverview from '@/views/Admin/Announcements/AnnouncementOverview.vue'
 import GeneralInput from '@/views/Admin/Announcements/GeneralInput.vue'
 import EventInput from '@/views/Admin/Announcements/EventInput.vue'
+import NewsInput from '@/views/Admin/Announcements/NewsInput.vue'
 import PersonnelOverview from '@/views/Admin/PersonnelManagement/PersonnelOverview.vue'
 import RAOverview from '@/views/Admin/Reports&Analytics/RAOverview.vue'
 import ReportDisplay from '@/views/Admin/Reports&Analytics/ReportDisplay.vue'
 import ReportAddInput from '@/views/Admin/Reports&Analytics/ReportAddInput.vue'
+import ReportBooks from '@/views/Admin/Reports&Analytics/ReportBooks.vue'
 import AttendanceOverview from '@/views/Admin/AttendanceManagement/AttendanceOverview.vue'
 import AttendanceLogs from '@/views/Admin/AttendanceManagement/AttendanceLogs.vue'
 import ImportRecord from '@/views/Admin/AttendanceManagement/ImportRecord.vue'
+import ServicesOverview from '@/views/Admin/ServicesManagement/ServicesOverview.vue'
+import RoomReservation from '@/views/Admin/ServicesManagement/RoomReservation.vue'
+import ManageRecords from '@/views/Admin/ServicesManagement/ManageRecords.vue'
+import ManageGallery from '@/views/Admin/ServicesManagement/ManageGallery.vue'
+import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
+import WebsiteImages from '@/views/Admin/WebsiteManagement/WebsiteImages.vue'
 import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
@@ -62,13 +70,21 @@ const router = createRouter({
     { path: '/admin/announcement', name: 'announcement', component: AnnouncementOverview },
     { path: '/admin/announcement/general', name: 'announcement-general', component: GeneralInput },
     { path: '/admin/announcement/event', name: 'announcement-event', component: EventInput },
+    { path: '/admin/announcement/news', name: 'announcement-news', component: NewsInput },
     { path: '/admin/personnel', name: 'admin-personnel', component: PersonnelOverview },
     { path: '/admin/analytics', name: 'analytics', component: RAOverview },
     { path: '/admin/analytics/display', name: 'analytics-display', component: ReportDisplay },
     { path: '/admin/analytics/add', name: 'analytics-add', component: ReportAddInput },
+    { path: '/admin/analytics/books', name: 'announcement-books', component: ReportBooks },
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs },
     { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord },
+    { path: '/admin/services', name: 'admin-services', component: ServicesOverview },
+    { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation },
+    { path: '/admin/services/records', name: 'services-records', component: ManageRecords },
+    { path: '/admin/services/gallery', name: 'services-gallery', component: ManageGallery },
+    { path: '/admin/website', name: 'website', component: WebsiteOverview },
+    { path: '/admin/website/images', name: 'website-images', component: WebsiteImages },
 
   ],
 })
