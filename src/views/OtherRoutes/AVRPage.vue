@@ -1,6 +1,6 @@
 <template>
   <div class="w-full py-6 px-4 max-w-7xl mx-auto">
-    <!-- Back Button + Tags (full width, outside grid) -->
+    <!-- Back Button + Tags -->
     <div class="flex items-center gap-3 mb-3">
       <button
         @click="$router.back()"
@@ -39,9 +39,9 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- LEFT: Calendar (2/3) -->
+      <!-- LEFT: Calendar  -->
       <div class="lg:col-span-2 flex flex-col gap-6">
-        <!-- Page Header (inside left col, aligns with sidebar) -->
+        <!-- Page Header  -->
         <div>
           <h1
             style="font-size: 2.2rem; font-weight: 900; color: #0d2b0f; line-height: 1.2"
