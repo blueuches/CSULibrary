@@ -47,18 +47,18 @@ function surnameOf(fullName: string): string {
   const cleaned = (fullName ?? '').trim()
   if (!cleaned) return ''
   const parts = cleaned.split(/\s+/)
-  return parts[parts.length - 1] ?? '' 
+  return parts[parts.length - 1] ?? ''
 }
 
 const rows = computed(() =>
   logs.value.map((r, idx) => ({
     ...r,
     status: deriveStatus(r.timeOut),
-    _rowKey: `${idx}-${r.id}-${r.date}-${r.timeIn}-${r.timeOut}`, // ✅ unique per row
+    _rowKey: `${idx}-${r.id}-${r.date}-${r.timeIn}-${r.timeOut}`,
   })),
 )
 
-const surnameLetter = ref<string>('') 
+const surnameLetter = ref<string>('')
 const alphabetOptions = computed(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''))
 
 const searchTerm = ref<string>('')
@@ -120,13 +120,6 @@ function nextPage() {
   page.value = Math.min(totalPages.value, page.value + 1)
 }
 
-function removeRow(id: string) {
-  const ok = confirm('Delete this attendance log?')
-  if (!ok) return
-  logs.value = logs.value.filter((x) => x.id !== id)
-  if (page.value > totalPages.value) page.value = totalPages.value
-}
-
 function exportCSV() {
   const exportRows = filteredRows.value
   const header = ['ID', 'Name', 'Department', 'Date', 'Time In', 'Time Out', 'Status', 'Remarks']
@@ -183,7 +176,7 @@ function statusPillClass(s: AttendanceStatus) {
                 </select>
               </div>
 
-              <!--  Search bar -->
+              <!-- Search bar -->
               <div class="searchGroup">
                 <span class="filterLabel">Search</span>
                 <input
@@ -197,7 +190,6 @@ function statusPillClass(s: AttendanceStatus) {
                   ✕
                 </button>
               </div>
-
             </div>
           </div>
 
@@ -230,7 +222,6 @@ function statusPillClass(s: AttendanceStatus) {
                   <th>Time In</th>
                   <th>Time Out</th>
                   <th>Status</th>
-                  <th class="thActions">Actions</th>
                 </tr>
               </thead>
 
@@ -245,27 +236,10 @@ function statusPillClass(s: AttendanceStatus) {
                   <td data-label="Status">
                     <span :class="statusPillClass(row.status)">{{ row.status }}</span>
                   </td>
-
-                  <td class="actions" data-label="Actions">
-                    <button class="iconBtn" title="Delete" @click="removeRow(row.id)">
-                      <svg class="ico" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 6h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        <path d="M8 6V4h8v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        <path
-                          d="M7 6l1 14h8l1-14"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                        <path d="M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                      </svg>
-                    </button>
-                  </td>
                 </tr>
 
                 <tr v-if="paged.length === 0">
-                  <td class="empty" colspan="8">
+                  <td class="empty" colspan="7">
                     {{ emptyMessage }}
                     <div class="emptyHint">Try selecting a different letter, clear filters, or adjust your search.</div>
                   </td>
@@ -484,12 +458,11 @@ function statusPillClass(s: AttendanceStatus) {
 .tbl {
   width: 100%;
   border-collapse: collapse;
-    background: transparent;
-
+  background: transparent;
 }
 
 .tbl tbody tr {
-  background: #ffffff; 
+  background: #ffffff;
 }
 
 .tbl thead tr {
@@ -526,32 +499,6 @@ function statusPillClass(s: AttendanceStatus) {
 .strong {
   font-weight: 900;
   color: rgba(13, 43, 15, 0.92);
-}
-
-.thActions,
-.actions {
-  text-align: center;
-}
-
-.iconBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: #ffffff;
-  color: rgba(13, 43, 15, 0.7);
-  cursor: pointer;
-  transition: 160ms ease;
-  margin: 0 auto;
-}
-
-.iconBtn:hover {
-  background: rgba(211, 47, 47, 0.08);
-  color: var(--danger);
-  border-color: rgba(211, 47, 47, 0.22);
 }
 
 .pill {
@@ -668,16 +615,6 @@ function statusPillClass(s: AttendanceStatus) {
     letter-spacing: 0.12em;
     font-size: 10px;
     line-height: 1.2;
-  }
-
-  .actions,
-  .thActions {
-    text-align: left;
-  }
-
-  .iconBtn {
-    width: 42px;
-    height: 42px;
   }
 }
 </style>
