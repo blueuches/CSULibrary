@@ -8,15 +8,16 @@
     />
 
     <!-- Header and sub-head -->
+  <transition name="page-intro">
     <main class="report-root flex-1 overflow-y-auto">
-      <header class="report-header">
+      <header class="report-header intro-header">
         <div class="header-left ">
           <div class="header-breadcrumb">
             <span>Admin</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7" /></svg>
             <span>User Analytics</span>
           </div>
-          <h1 class="header-title">Library <span class="text-yellow-500">Analytics</span></h1>
+          <h1 class="header-title intro-title">Library <span class="text-yellow-500">Analytics</span></h1>
           <p class="header-sub">Comprehensive overview of institutional engagement and borrowing patterns</p>
         </div>
         <div class="header-right">
@@ -208,6 +209,7 @@
         </div>
       </div>
     </main>
+  </transition>
   </div>
 </template>
 

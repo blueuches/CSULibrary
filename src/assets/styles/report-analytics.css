@@ -62,7 +62,6 @@
 .panel-title { font-size: 1.1rem; font-weight: 900; margin: 0 0 4px; color: var(--ink); }
 .panel-sub { font-size: 0.8rem; color: rgba(13, 43, 15, 0.4); margin: 0; }
 
-/* Modified: Donut Header alignment to center filters */
 .panel-head--center {
   flex-direction: column;
   align-items: center;
@@ -132,3 +131,106 @@
 /* ── RESPONSIVE ───────────────────────────────────── */
 @media (max-width: 1100px) { .main-grid { grid-template-columns: 1fr; } .kpi-strip { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .kpi-strip { grid-template-columns: 1fr; } }
+
+
+
+
+/* PAGE INTRO */
+
+.intro-header {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: headerSlide 0.7s ease forwards;
+}
+
+@keyframes headerSlide {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.intro-title {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: titleFade 0.6s ease forwards;
+  animation-delay: .2s;
+}
+
+@keyframes titleFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-intro-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.page-intro-enter-active {
+  transition: all 0.6s ease;
+}
+
+.page-intro-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kpi-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: kpiReveal 0.5s ease forwards;
+}
+
+@keyframes kpiReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bar {
+  transform-origin: bottom;
+  animation: barGrow 0.8s ease forwards;
+  transform: scaleY(0);
+}
+
+@keyframes barGrow {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.donut-segment {
+  animation: donutDraw 1s ease forwards;
+  opacity: 0;
+}
+
+@keyframes donutDraw {
+  from {
+    stroke-dashoffset: 377;
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.panel {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: panelFade 0.6s ease forwards;
+}
+
+.panel:nth-child(1){animation-delay:.1s;}
+.panel:nth-child(2){animation-delay:.2s;}
+.panel:nth-child(3){animation-delay:.3s;}
+
+@keyframes panelFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
