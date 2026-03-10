@@ -5,14 +5,14 @@
       <div class="absolute inset-0 hero-overlay"></div>
 
       <div class="relative z-10 flex flex-col items-center gap-3">
-        <p class="hero-eyebrow">Caraga State University</p>
-        <h1 class="hero-title">Library Personnel</h1>
-        <div class="hero-divider">
-          <span class="hero-dot gold"></span>
-          <span class="hero-line"></span>
-          <span class="hero-dot green"></span>
-          <span class="hero-line"></span>
-          <span class="hero-dot gold"></span>
+        <p class="hero-eyebrow anim-eyebrow">Caraga State University</p>
+        <h1 class="hero-title anim-title">Library Personnel</h1>
+        <div class="hero-divider anim-divider">
+          <span class="hero-dot gold anim-dot-1"></span>
+          <span class="hero-line anim-line-1"></span>
+          <span class="hero-dot green anim-dot-2"></span>
+          <span class="hero-line anim-line-2"></span>
+          <span class="hero-dot gold anim-dot-3"></span>
         </div>
       </div>
     </div>
@@ -21,7 +21,6 @@
     <div class="px-6 sm:px-10 lg:px-16 py-20 max-w-6xl mx-auto">
       <!-- ===== FEATURED (HEAD) ===== -->
       <div v-if="featuredStaff" class="featured-wrapper mb-24">
-        <!-- Label -->
         <div class="sr-item flex items-center gap-3 mb-10 justify-center">
           <div class="label-line"></div>
           <span class="label-text">University Librarian</span>
@@ -29,10 +28,7 @@
         </div>
 
         <div class="sr-item featured-card">
-          <!-- Left accent bar -->
           <div class="featured-accent-bar"></div>
-
-          <!-- Photo — original circular style -->
           <div class="featured-photo-wrap">
             <div
               class="absolute inset-0 rounded-full border-4 shadow-md"
@@ -40,8 +36,6 @@
             ></div>
             <img :src="featuredStaff.image" :alt="featuredStaff.name" class="featured-photo" />
           </div>
-
-          <!-- Info -->
           <div class="featured-info">
             <span class="featured-badge">Head of Library Services</span>
             <h2 class="featured-name">{{ featuredStaff.name }}</h2>
@@ -69,7 +63,6 @@
           class="sr-card staff-card"
           :style="{ transitionDelay: (index % 2) * 0.12 + 's' }"
         >
-          <!-- Photo — original circular style -->
           <div class="staff-photo-wrap">
             <div
               class="absolute inset-0 rounded-full border-4 shadow-md"
@@ -77,8 +70,6 @@
             ></div>
             <img :src="person.image" :alt="person.name" class="staff-photo" />
           </div>
-
-          <!-- Info -->
           <div class="staff-info">
             <h3 class="staff-name">{{ person.name }}</h3>
             <div class="staff-rule"></div>
@@ -206,6 +197,88 @@ onUnmounted(() => {
 
 <style scoped>
 /* ================================
+   HERO ENTRY ANIMATIONS
+================================ */
+@keyframes heroFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroScaleIn {
+  from {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes heroDotPop {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* eyebrow — slides down from above */
+.anim-eyebrow {
+  opacity: 0;
+  animation: heroFadeDown 0.6s ease 0.1s forwards;
+}
+
+/* title — slides up from below, slightly delayed */
+.anim-title {
+  opacity: 0;
+  animation: heroFadeUp 0.7s ease 0.35s forwards;
+}
+
+/* divider container — scales in from center */
+.anim-divider {
+  opacity: 0;
+  animation: heroScaleIn 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.75s forwards;
+}
+
+/* individual dots pop in sequence */
+.anim-divider .hero-dot:nth-child(1) {
+  opacity: 0;
+  animation: heroDotPop 0.4s ease 0.9s forwards;
+}
+.anim-divider .hero-dot:nth-child(3) {
+  opacity: 0;
+  animation: heroDotPop 0.4s ease 1.05s forwards;
+}
+.anim-divider .hero-dot:nth-child(5) {
+  opacity: 0;
+  animation: heroDotPop 0.4s ease 1.2s forwards;
+}
+
+/* ================================
    HERO
 ================================ */
 .personnel-hero {
@@ -231,31 +304,6 @@ onUnmounted(() => {
   );
 }
 
-.corner-tl,
-.corner-tr,
-.corner-bl,
-.corner-br {
-  width: 28px;
-  height: 28px;
-  opacity: 0.5;
-}
-.corner-tl {
-  border-top: 1.5px solid #f9a825;
-  border-left: 1.5px solid #f9a825;
-}
-.corner-tr {
-  border-top: 1.5px solid #f9a825;
-  border-right: 1.5px solid #f9a825;
-}
-.corner-bl {
-  border-bottom: 1.5px solid #f9a825;
-  border-left: 1.5px solid #f9a825;
-}
-.corner-br {
-  border-bottom: 1.5px solid #f9a825;
-  border-right: 1.5px solid #f9a825;
-}
-
 .hero-eyebrow {
   font-size: 0.65rem;
   font-weight: 700;
@@ -267,7 +315,7 @@ onUnmounted(() => {
 
 .hero-title {
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(1rem, 4vw, 2.0rem);
+  font-size: clamp(1rem, 4vw, 2rem);
   font-weight: 700;
   color: #ffffff;
   letter-spacing: 0.06em;
@@ -298,13 +346,6 @@ onUnmounted(() => {
   height: 1px;
   background: rgba(255, 255, 255, 0.3);
   display: inline-block;
-}
-
-.hero-sub {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.55);
-  letter-spacing: 0.15em;
-  font-style: italic;
 }
 
 /* ================================
@@ -354,7 +395,6 @@ onUnmounted(() => {
   background: linear-gradient(to bottom, #f9a825, #1b5e20);
 }
 
-/* Circular — featured */
 .featured-photo-wrap {
   position: relative;
   flex-shrink: 0;
@@ -376,7 +416,6 @@ onUnmounted(() => {
   z-index: 1;
   transition: transform 0.3s ease;
 }
-
 .featured-photo:hover {
   transform: translateX(-50%) scale(1.05);
 }
@@ -456,8 +495,7 @@ onUnmounted(() => {
     transform 0.3s ease,
     border-color 0.3s ease;
   overflow: hidden;
-
-  margin-top: 8px; /* <-- add this */
+  margin-top: 8px;
 }
 
 .staff-card:hover {
@@ -466,7 +504,6 @@ onUnmounted(() => {
   border-color: rgba(249, 168, 37, 0.35);
 }
 
-/* Circular — staff */
 .staff-photo-wrap {
   position: relative;
   flex-shrink: 0;
@@ -488,7 +525,6 @@ onUnmounted(() => {
   z-index: 1;
   transition: transform 0.3s ease;
 }
-
 .staff-card:hover .staff-photo {
   transform: translateX(-50%) scale(1.05);
 }
@@ -517,7 +553,6 @@ onUnmounted(() => {
   border-radius: 2px;
   transition: width 0.3s ease;
 }
-
 .staff-card:hover .staff-rule {
   width: 48px;
 }
@@ -537,7 +572,6 @@ onUnmounted(() => {
   color: rgba(13, 43, 15, 0.45);
 }
 
-/* Bottom gold-green line on hover */
 .staff-card::after {
   content: '';
   position: absolute;
@@ -550,7 +584,6 @@ onUnmounted(() => {
   transform-origin: left;
   transition: transform 0.4s ease;
 }
-
 .staff-card:hover::after {
   transform: scaleX(1);
 }
@@ -566,7 +599,6 @@ onUnmounted(() => {
     opacity 0.6s ease,
     transform 0.6s ease;
 }
-
 .sr-item.in-view,
 .sr-card.in-view {
   opacity: 1;
@@ -609,7 +641,6 @@ onUnmounted(() => {
   .hero-title {
     font-size: 1.8rem;
   }
-
   .featured-card {
     flex-direction: column;
     text-align: center;
@@ -622,7 +653,6 @@ onUnmounted(() => {
   .featured-badge {
     align-self: center;
   }
-
   .staff-grid {
     grid-template-columns: 1fr;
   }

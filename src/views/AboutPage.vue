@@ -140,7 +140,12 @@ onBeforeUnmount(() => {
             <span>Learning</span>
           </div>
           <div class="icon-pill">
-            <img :src="iconGif2" alt="Animated opportunities icon" class="gif-icon" loading="lazy" />
+            <img
+              :src="iconGif2"
+              alt="Animated opportunities icon"
+              class="gif-icon"
+              loading="lazy"
+            />
             <span>knowledge</span>
           </div>
           <div class="icon-pill">
@@ -310,6 +315,7 @@ onBeforeUnmount(() => {
 }
 .section-headline {
   margin: 10px 0 0;
+  margin-bottom: 3%;
   font-weight: 900;
   font-size: clamp(1.6rem, 5vw, 3.3rem);
   line-height: 1.02;
