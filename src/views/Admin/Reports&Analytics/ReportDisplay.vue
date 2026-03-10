@@ -1,28 +1,57 @@
 <template>
-  <div class="report-root">
-    <!-- PAGE HEADER -->
-    <header class="report-header">
-      <div class="header-left">
-        <div class="header-breadcrumb">
+  <div class="rp-root">
+    <!-- ░░ NOISE GRAIN OVERLAY ░░ -->
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- ░░ FLOATING SHAPES ░░ -->
+    <div class="shape shape-a" aria-hidden="true"></div>
+    <div class="shape shape-b" aria-hidden="true"></div>
+
+    <!-- ══════════════════════════════════════════
+         HEADER
+    ══════════════════════════════════════════ -->
+    <header class="rp-header">
+      <div class="rp-header__left">
+        <nav class="crumb">
           <span>Admin</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-          <span>Reports & Analytics</span>
+          <span class="crumb-sep">›</span>
+          <span>Reports &amp; Analytics</span>
+        </nav>
+        <div class="rp-title-wrap">
+          <h1 class="rp-title">
+            <span class="rp-title--dark">Report</span> <span class="rp-title--gold">Display</span>
+          </h1>
+          <div class="rp-title-tag">
+            <span class="dot"></span>
+            Library borrowing rankings — <strong>{{ currentPeriod }}</strong>
+          </div>
         </div>
-        <h1 class="header-title">Report Display</h1>
-        <p class="header-sub">Library borrowing rankings — {{ currentPeriod }}</p>
       </div>
-      <div class="header-right">
-        <div class="date-badge">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+      <div class="rp-header__right">
+        <div class="date-pill">
+          <svg
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <rect x="3" y="4" width="18" height="18" rx="2" />
             <path d="M16 2v4M8 2v4M3 10h18" />
           </svg>
-          <span>{{ currentDate }}</span>
+          {{ currentDate }}
         </div>
-        <button class="export-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="export-btn" @click="exportReport">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -34,228 +63,120 @@
       </div>
     </header>
 
-    <!-- STEPPER -->
-    <div class="stepper-wrap">
-      <div
-        v-for="(step, i) in steps"
+    <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+    <div class="tab-bar">
+      <button
+        v-for="(tab, i) in tabs"
         :key="i"
-        class="stepper-item"
-        :class="{ 'stepper-item--active': activeStep === i, 'stepper-item--done': activeStep > i }"
-        @click="activeStep = i"
+        class="tab-btn"
+        :class="{ 'tab-btn--on': activeTab === i }"
+        @click="setTab(i)"
       >
-        <div class="stepper-circle">
-          <span>{{ i + 1 }}</span>
-        </div>
-        <div class="stepper-label">
-          <span class="stepper-title">{{ step.title }}</span>
-          <span class="stepper-sub">{{ step.sub }}</span>
-        </div>
-        <div v-if="i < steps.length - 1" class="stepper-line"></div>
-      </div>
+        <span class="tab-num">0{{ i + 1 }}</span>
+        <span class="tab-label">{{ tab.label }}</span>
+        <span class="tab-sub">{{ tab.sub }}</span>
+        <span
+          class="tab-underline"
+          :style="activeTab === i ? `background:${tab.accent}` : ''"
+        ></span>
+      </button>
     </div>
 
-    <!-- STEP 1: TOP BORROWERS -->
-    <div v-if="activeStep === 0" class="rank-panel">
-      <div class="panel-head">
-        <div class="panel-icon" style="background: rgba(13, 43, 15, 0.08); color: #0d2b0f">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
+    <!-- ══════════════════════════════════════════
+         CONTENT PANEL
+    ══════════════════════════════════════════ -->
+    <div class="panel" :key="activeTab">
+      <!-- panel kicker -->
+      <template v-if="activeTabData">
+        <div class="panel-kicker">
+          <div
+            class="pk-icon"
+            :style="`background:${activeTabData.accent}18; color:${activeTabData.accent}`"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              v-html="activeTabData.icon"
+            ></svg>
+          </div>
+          <div class="pk-text">
+            <h2 class="pk-title">{{ activeTabData.label }}</h2>
+            <p class="pk-desc">{{ activeTabData.desc }}</p>
+          </div>
+          <div
+            class="pk-count"
+            :style="`color:${activeTabData.accent};border-color:${activeTabData.accent}33`"
+          >
+            {{ activeTabData.countLabel }}
+          </div>
         </div>
-        <div>
-          <h2 class="panel-title">Top Borrowers</h2>
-          <p class="panel-sub">Students with most borrowed books</p>
-        </div>
-        <span
-          class="panel-badge"
-          style="
-            color: #1b5e20;
-            background: rgba(27, 94, 32, 0.08);
-            border-color: rgba(27, 94, 32, 0.15);
-          "
-        >
-          {{ topBorrowers.length }} students
-        </span>
-      </div>
-      <div class="rank-list">
-        <div
-          v-for="(item, i) in topBorrowers"
-          :key="item.name"
-          class="rank-row"
-          :style="`animation-delay: ${i * 0.05}s`"
-        >
-          <div class="rank-medal" :class="medalClass(i)">
-            <svg v-if="i < 3" viewBox="0 0 24 24" fill="currentColor" class="medal-ico">
-              <path
-                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-              />
-            </svg>
-            <span v-else>{{ i + 1 }}</span>
-          </div>
-          <div class="rank-avatar" :style="`background: ${borrowerColor(item.course)}`">
-            {{ initials(item.name) }}
-          </div>
-          <div class="rank-info">
-            <span class="rank-name">{{ item.name }}</span>
-            <span class="rank-detail">{{ item.course }} · {{ item.year }}</span>
-          </div>
-          <div class="rank-right">
-            <span class="rank-count">{{ item.books }}</span>
-            <span class="rank-unit">books</span>
-            <div class="rank-bar-wrap">
-              <div
-                class="rank-bar"
-                :style="`width:${(item.books / (topBorrowers[0]?.books ?? 1)) * 100}%; background: ${borrowerColor(item.course)}`"
-              ></div>
+
+        <!-- rank rows -->
+        <div class="rank-list">
+          <div
+            v-for="(row, i) in currentRows"
+            :key="row.name"
+            class="rank-row"
+            :class="`rank-row--${tier(i)}`"
+            :style="`--i:${i}; --accent:${activeTabData.accent}; --bar:${barPct(row)}`"
+          >
+            <!-- left accent strip -->
+            <div class="row-strip" :style="i < 3 ? `background:${tierColor(i)}` : ''"></div>
+
+            <!-- rank badge -->
+            <div class="row-rank" :class="`row-rank--${tier(i)}`">
+              <svg v-if="i === 0" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                />
+              </svg>
+              <span v-else>{{ i + 1 }}</span>
+            </div>
+
+            <!-- avatar / emblem -->
+            <div class="row-avatar" :style="`background:${row.color ?? activeTabData.accent}`">
+              {{ row.initials }}
+            </div>
+
+            <!-- info -->
+            <div class="row-info">
+              <span class="row-name">{{ row.name }}</span>
+              <div class="row-tags">
+                <span v-for="tag in row.tags" :key="tag" class="rtag">{{ tag }}</span>
+              </div>
+            </div>
+
+            <!-- progress + count -->
+            <div class="row-metric">
+              <div class="row-bar-track">
+                <div
+                  class="row-bar-fill"
+                  :style="`width:var(--bar); background:${activeTabData.accent}`"
+                ></div>
+              </div>
+              <div class="row-count-wrap">
+                <span class="row-count">{{ row.books.toLocaleString() }}</span>
+                <span class="row-unit">books</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
-
-    <!-- STEP 2: TOP COLLEGES -->
-    <div v-if="activeStep === 1" class="rank-panel">
-      <div class="panel-head">
-        <div class="panel-icon" style="background: rgba(249, 168, 37, 0.1); color: #c8930a">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-            />
-          </svg>
-        </div>
-        <div>
-          <h2 class="panel-title">Top Colleges</h2>
-          <p class="panel-sub">Colleges with highest library usage</p>
-        </div>
-        <span
-          class="panel-badge"
-          style="
-            color: #c8930a;
-            background: rgba(249, 168, 37, 0.08);
-            border-color: rgba(249, 168, 37, 0.2);
-          "
-        >
-          {{ topColleges.length }} colleges
-        </span>
-      </div>
-      <div class="rank-list">
-        <div
-          v-for="(item, i) in topColleges"
-          :key="item.name"
-          class="rank-row"
-          :style="`animation-delay: ${i * 0.05}s`"
-        >
-          <div class="rank-medal" :class="medalClass(i)">
-            <svg v-if="i < 3" viewBox="0 0 24 24" fill="currentColor" class="medal-ico">
-              <path
-                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-              />
-            </svg>
-            <span v-else>{{ i + 1 }}</span>
-          </div>
-          <div class="rank-emblem" :style="`background: ${collegeColor(item.abbr)}`">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
-            </svg>
-          </div>
-          <div class="rank-info">
-            <span class="rank-name">{{ item.name }}</span>
-            <span class="rank-detail">{{ item.abbr }} · {{ item.students }} students</span>
-          </div>
-          <div class="rank-right">
-            <span class="rank-count">{{ item.books }}</span>
-            <span class="rank-unit">books</span>
-            <div class="rank-bar-wrap">
-              <div
-                class="rank-bar"
-                :style="`width:${(item.books / (topColleges[0]?.books ?? 1)) * 100}%; background: ${collegeColor(item.abbr)}`"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STEP 3: TOP DEPARTMENTS -->
-    <div v-if="activeStep === 2" class="rank-panel">
-      <div class="panel-head">
-        <div class="panel-icon" style="background: rgba(2, 119, 189, 0.1); color: #0277bd">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-            />
-          </svg>
-        </div>
-        <div>
-          <h2 class="panel-title">Top Departments</h2>
-          <p class="panel-sub">Departments with highest library usage</p>
-        </div>
-        <span
-          class="panel-badge"
-          style="
-            color: #0277bd;
-            background: rgba(2, 119, 189, 0.08);
-            border-color: rgba(2, 119, 189, 0.18);
-          "
-        >
-          {{ topDepartments.length }} depts
-        </span>
-      </div>
-      <div class="rank-list">
-        <div
-          v-for="(item, i) in topDepartments"
-          :key="item.name"
-          class="rank-row"
-          :style="`animation-delay: ${i * 0.05}s`"
-        >
-          <div class="rank-medal" :class="medalClass(i)">
-            <svg v-if="i < 3" viewBox="0 0 24 24" fill="currentColor" class="medal-ico">
-              <path
-                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-              />
-            </svg>
-            <span v-else>{{ i + 1 }}</span>
-          </div>
-          <div class="rank-emblem" :style="`background: ${collegeColor(item.college)}`">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              />
-            </svg>
-          </div>
-          <div class="rank-info">
-            <span class="rank-name">{{ item.name }}</span>
-            <span class="rank-detail">{{ item.college }}</span>
-          </div>
-          <div class="rank-right">
-            <span class="rank-count">{{ item.books }}</span>
-            <span class="rank-unit">books</span>
-            <div class="rank-bar-wrap">
-              <div
-                class="rank-bar"
-                :style="`width:${(item.books / (topDepartments[0]?.books ?? 1)) * 100}%; background: ${collegeColor(item.college)}`"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- /panel -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
+/* ─── DATE ─── */
 const currentDate = computed(() =>
   new Date().toLocaleDateString('en-PH', {
     weekday: 'long',
@@ -264,28 +185,56 @@ const currentDate = computed(() =>
     day: 'numeric',
   }),
 )
-
 const currentPeriod = 'February 2026'
 
-const activeStep = ref(0)
+/* ─── TABS ─── */
+const activeTab = ref(0)
+const setTab = (i: number) => {
+  activeTab.value = i
+}
 
-const steps = [
-  { title: 'Top Borrowers', sub: 'Students' },
-  { title: 'Top Colleges', sub: 'College' },
-  { title: 'Top Departments', sub: 'Department' },
+const tabs = [
+  {
+    label: 'Top Borrowers',
+    sub: 'Students',
+    desc: 'Students with the most borrowed books this period',
+    countLabel: '10 students',
+    accent: '#1b5e20',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>',
+  },
+  {
+    label: 'Top Colleges',
+    sub: 'Colleges',
+    desc: 'Colleges ranked by total library borrowing activity',
+    countLabel: '7 colleges',
+    accent: '#c8930a',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>',
+  },
+  {
+    label: 'Top Departments',
+    sub: 'Departments',
+    desc: 'Departments ranked by total library borrowing activity',
+    countLabel: '12 depts',
+    accent: '#0277bd',
+    icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>',
+  },
 ]
 
-/* ── HELPERS ── */
-const initials = (name: string) =>
-  name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
+/* ─── HELPERS ─── */
+const tier = (i: number) => ['gold', 'silver', 'bronze', 'plain'][Math.min(i, 3)]
+const tierColor = (i: number) =>
+  ['#f9a825', 'rgba(13,43,15,0.22)', 'rgba(180,90,40,0.45)'][i] ?? 'transparent'
 
-const courseCollege: Record<string, string> = {
+const CC: Record<string, string> = {
+  CCIS: '#e65100',
+  CEGS: '#7b1c2e',
+  CMNS: '#c62828',
+  CHASS: '#6a1b9a',
+  CAA: '#c8930a',
+  COFES: '#1b5e20',
+  CED: '#0277bd',
+}
+const courseCC: Record<string, string> = {
   BSCS: 'CCIS',
   BSIT: 'CCIS',
   BSIS: 'CCIS',
@@ -297,64 +246,46 @@ const courseCollege: Record<string, string> = {
   BSECE: 'CEGS',
   BSEd: 'CED',
   BSMATH: 'CED',
-  BSMath: 'CED',
   BSPSYCH: 'CHASS',
   BSABSOCIO: 'CHASS',
   BSF: 'COFES',
-  BSN: 'CAA',
+  BSA: 'CAA',
   BSBA: 'CMNS',
-  BSEE: 'CEGS',
 }
 
-const collegeColors: Record<string, string> = {
-  CCIS: '#e65100',
-  CEGS: '#7b1c2e',
-  CMNS: '#c62828',
-  CHASS: '#6a1b9a',
-  CAA: '#f9a825',
-  COFES: '#1b5e20',
-  CED: '#0277bd',
+const initials = (n: string) =>
+  n
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((x) => x[0])
+    .join('')
+    .toUpperCase()
+
+function exportReport() {
+  alert('Export coming soon!')
 }
 
-const avatarColors = [
-  '#1b5e20',
-  '#f9a825',
-  '#0277bd',
-  '#6a1b9a',
-  '#c62828',
-  '#2e7d32',
-  '#e65100',
-  '#1565c0',
-]
-const avatarColor = (i: number) => avatarColors[i % avatarColors.length]
-const borrowerColor = (course: string) => collegeColors[courseCollege[course] ?? ''] ?? '#0d2b0f'
-const collegeColor = (abbr: string) => collegeColors[abbr] ?? '#0d2b0f'
-
-const barColors = ['#1b5e20', '#f9a825', '#c8930a', 'rgba(13,43,15,0.35)']
-const barColor = (i: number) => (i < 3 ? barColors[i] : barColors[3])
-
-const medalClass = (i: number) => {
-  if (i === 0) return 'medal--gold'
-  if (i === 1) return 'medal--silver'
-  if (i === 2) return 'medal--bronze'
-  return 'medal--plain'
-}
-
-/* ── DATA ── */
-const topBorrowers = [
+/* ─── DATA ─── */
+const borrowers = [
   { name: 'Maria Santos', course: 'BSCS', year: '3rd Year', books: 48 },
   { name: 'Juan dela Cruz', course: 'BSEd', year: '4th Year', books: 43 },
   { name: 'Ana Reyes', course: 'BSIT', year: '2nd Year', books: 39 },
   { name: 'Carlo Mendoza', course: 'BSCE', year: '3rd Year', books: 35 },
-  { name: 'Liza Navarro', course: 'BSN', year: '4th Year', books: 31 },
+  { name: 'Liza Navarro', course: 'BSA', year: '4th Year', books: 31 },
   { name: 'Mark Villanueva', course: 'BSBA', year: '2nd Year', books: 28 },
-  { name: 'Rosa Catalan', course: 'BSEE', year: '3rd Year', books: 25 },
+  { name: 'Rosa Catalan', course: 'BSECE', year: '3rd Year', books: 25 },
   { name: 'Jerome Bautista', course: 'BSME', year: '1st Year', books: 22 },
   { name: 'Trisha Abad', course: 'BSF', year: '4th Year', books: 20 },
   { name: 'Nino Espiritu', course: 'BSMATH', year: '3rd Year', books: 18 },
-]
+].map((b) => ({
+  ...b,
+  initials: initials(b.name),
+  color: CC[courseCC[b.course] ?? ''] ?? '#0d2b0f',
+  tags: [b.course, b.year],
+}))
 
-const topColleges = [
+const colleges = [
   {
     name: 'College of Computing and Information Sciences',
     abbr: 'CCIS',
@@ -372,475 +303,627 @@ const topColleges = [
     books: 495,
   },
   { name: 'College of Mathematics and Natural Sciences', abbr: 'CMNS', students: 480, books: 420 },
-]
+].map((c) => ({
+  ...c,
+  initials: c.abbr.slice(0, 2),
+  color: CC[c.abbr] ?? '#0d2b0f',
+  tags: [c.abbr, `${c.students.toLocaleString()} students`],
+}))
 
-const topDepartments = [
-  { name: 'BS Information Technology', college: 'CCIS', members: 18, books: 680 },
-  { name: 'BS Computer Science', college: 'CCIS', members: 15, books: 560 },
-  { name: 'BS Information Systems', college: 'CCIS', members: 14, books: 490 },
-  { name: 'BS Civil Engineering', college: 'CEGS', members: 16, books: 445 },
-  { name: 'BS Mechanical Engineering', college: 'CEGS', members: 13, books: 390 },
-  { name: 'BS Geodetic Engineering', college: 'CEGS', members: 11, books: 350 },
-  { name: 'BS Electronics & Comm. Engineering', college: 'CEGS', members: 12, books: 320 },
-  { name: 'BS Geology', college: 'CEGS', members: 10, books: 295 },
-  { name: 'BS Agricultural & Biosystems Engineering', college: 'CEGS', members: 9, books: 260 },
-  { name: 'BS Mathematics', college: 'CED', members: 14, books: 230 },
-  { name: 'BS Psychology', college: 'CHASS', members: 11, books: 210 },
-  { name: 'BS Sociology', college: 'CHASS', members: 8, books: 185 },
-]
+const departments = [
+  { name: 'BS Information Technology', college: 'CCIS', books: 680 },
+  { name: 'BS Computer Science', college: 'CCIS', books: 560 },
+  { name: 'BS Information Systems', college: 'CCIS', books: 490 },
+  { name: 'BS Civil Engineering', college: 'CEGS', books: 445 },
+  { name: 'BS Mechanical Engineering', college: 'CEGS', books: 390 },
+  { name: 'BS Geodetic Engineering', college: 'CEGS', books: 350 },
+  { name: 'BS Electronics & Comm. Engineering', college: 'CEGS', books: 320 },
+  { name: 'BS Geology', college: 'CEGS', books: 295 },
+  { name: 'BS Agricultural & Biosystems Engr.', college: 'CEGS', books: 260 },
+  { name: 'BS Mathematics', college: 'CED', books: 230 },
+  { name: 'BS Psychology', college: 'CHASS', books: 210 },
+  { name: 'BS Sociology', college: 'CHASS', books: 185 },
+].map((d) => ({
+  ...d,
+  initials: d.college.slice(0, 2),
+  color: CC[d.college] ?? '#0d2b0f',
+  tags: [d.college],
+}))
+
+const allRows = [borrowers, colleges, departments] as const
+const currentRows = computed(() => allRows[activeTab.value] ?? [])
+const barPct = (row: any) => {
+  const top = currentRows.value[0]?.books ?? 1
+  return `${Math.round((row.books / top) * 100)}%`
+}
+
+const activeTabData = computed(() => tabs[activeTab.value] ?? tabs[0])
 </script>
 
 <style scoped>
-/* ── ROOT ─────────────────────────────────────────── */
-.report-root {
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ══════════════════════════════════════════════
+   ROOT & TOKENS
+══════════════════════════════════════════════ */
+.rp-root {
+  --ink: #0a200b;
+  --ink-60: rgba(10, 32, 11, 0.6);
+  --ink-30: rgba(10, 32, 11, 0.3);
+  --ink-10: rgba(10, 32, 11, 0.08);
+  --surface: #ffffff;
+  --cream: #f4f1ea;
+  --gold: #f9a825;
+  --r-lg: 22px;
+  --r-md: 14px;
+  --r-sm: 8px;
+  --sh: 0 4px 32px rgba(10, 32, 11, 0.08);
+
+  position: relative;
   min-height: 100vh;
-  background: #f5f3ef;
-  font-family: 'Poppins', sans-serif;
-  color: #0d2b0f;
-  padding: 32px 36px 80px;
+  background: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  padding: 36px 44px 88px;
+  overflow-x: hidden;
+  isolation: isolate;
 }
 
-/* ── HEADER ───────────────────────────────────────── */
-.report-header {
+/* ── GRAIN ── */
+.grain {
+  position: fixed;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* ── SHAPES ── */
+.shape {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+}
+.shape-a {
+  width: 640px;
+  height: 640px;
+  background: radial-gradient(circle, rgba(27, 94, 32, 0.065) 0%, transparent 70%);
+  top: -180px;
+  right: -180px;
+  filter: blur(60px);
+}
+.shape-b {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(249, 168, 37, 0.055) 0%, transparent 70%);
+  bottom: -100px;
+  left: -80px;
+  filter: blur(70px);
+}
+
+/* all real content above backdrop */
+.rp-header,
+.tab-bar,
+.panel {
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════════ */
+.rp-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 28px;
-  gap: 16px;
+  gap: 20px;
+  margin-bottom: 36px;
   flex-wrap: wrap;
 }
 
-.header-breadcrumb {
+.crumb {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.4);
-  margin-bottom: 8px;
+  color: var(--ink-30);
+  margin-bottom: 12px;
 }
-.header-breadcrumb svg {
-  width: 12px;
-  height: 12px;
+.crumb-sep {
+  opacity: 0.4;
 }
 
-.header-title {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
+.rp-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rp-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 900;
-  color: #0d2b0f;
-  letter-spacing: -0.03em;
   line-height: 1;
-  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+  display: inline-block;
+}
+.rp-title--dark {
+  color: #0d2b0f;
+  display: inline-block;
+}
+.rp-title--dark::after {
+  content: '';
+  display: block;
+  height: 4px;
+  width: 100%;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #0d2b0f, #f9a825);
+}
+.rp-title--gold {
+  color: #f9a825;
 }
 
-.header-sub {
-  font-size: 0.8rem;
-  color: rgba(13, 43, 15, 0.45);
-  margin: 0;
-}
-
-.header-right {
+.rp-title-tag {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--ink-60);
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4caf50;
+  animation: blink 2.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.06);
+  }
+}
+
+.rp-header__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   flex-shrink: 0;
 }
 
-.date-badge {
+.date-pill {
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 8px 14px;
-  background: white;
-  border: 1px solid rgba(13, 43, 15, 0.09);
-  border-radius: 10px;
-  font-size: 0.73rem;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--ink-10);
+  border-radius: var(--r-sm);
+  font-size: 0.7rem;
   font-weight: 600;
-  color: rgba(13, 43, 15, 0.55);
-  box-shadow: 0 2px 8px rgba(13, 43, 15, 0.05);
-}
-.date-badge svg {
-  width: 14px;
-  height: 14px;
+  color: var(--ink-60);
+  box-shadow: var(--sh);
+  white-space: nowrap;
 }
 
 .export-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 18px;
-  background: #0d2b0f;
-  color: white;
+  padding: 10px 20px;
+  background: var(--ink);
+  color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 0.73rem;
+  border-radius: var(--r-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
-  font-family: inherit;
+  box-shadow: 0 6px 20px rgba(10, 32, 11, 0.22);
   transition:
     background 0.2s,
-    transform 0.2s;
+    transform 0.18s,
+    box-shadow 0.2s;
 }
 .export-btn:hover {
   background: #1b5e20;
-  transform: translateY(-1px);
-}
-.export-btn svg {
-  width: 15px;
-  height: 15px;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(10, 32, 11, 0.28);
 }
 
-/* ── STEPPER ──────────────────────────────────────── */
-.stepper-wrap {
+/* ══════════════════════════════════════════════
+   TAB BAR
+══════════════════════════════════════════════ */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--ink-10);
+  border-radius: var(--r-lg);
+  padding: 8px;
+  margin-bottom: 20px;
+  box-shadow: var(--sh);
+  overflow: hidden;
+}
+
+.tab-btn {
+  position: relative;
+  flex: 1;
   display: flex;
   align-items: center;
-  background: white;
-  border: 1px solid rgba(13, 43, 15, 0.08);
-  border-radius: 16px;
-  padding: 20px 28px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 12px rgba(13, 43, 15, 0.05);
-  gap: 0;
+  gap: 10px;
+  padding: 14px 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--r-md);
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s;
+  overflow: hidden;
+  text-align: left;
+}
+.tab-btn:hover {
+  background: var(--ink-10);
+}
+.tab-btn--on {
+  background: var(--ink) !important;
 }
 
-.stepper-item {
+.tab-num {
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: var(--ink-30);
+  transition: color 0.2s;
+  font-family: 'Playfair Display', serif;
+}
+.tab-btn--on .tab-num {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.tab-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.tab-btn--on .tab-label {
+  color: #fff;
+}
+
+.tab-sub {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--ink-30);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: color 0.2s;
+}
+.tab-btn--on .tab-sub {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.tab-underline {
+  position: absolute;
+  bottom: 0;
+  left: 18px;
+  right: 18px;
+  height: 2.5px;
+  border-radius: 2px 2px 0 0;
+  opacity: 0;
+  transition:
+    opacity 0.25s,
+    background 0.25s;
+}
+.tab-btn:not(.tab-btn--on):hover .tab-underline {
+  opacity: 0.3;
+  background: var(--ink) !important;
+}
+
+/* ══════════════════════════════════════════════
+   PANEL
+══════════════════════════════════════════════ */
+@keyframes panelSlide {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--ink-10);
+  border-radius: var(--r-lg);
+  padding: 28px 28px 16px;
+  box-shadow: 0 8px 48px rgba(10, 32, 11, 0.09);
+  animation: panelSlide 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─ KICKER ─ */
+.panel-kicker {
   display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 18px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--ink-10);
+  flex-wrap: wrap;
+}
+.pk-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pk-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 3px;
+  letter-spacing: -0.01em;
+}
+.pk-desc {
+  font-size: 0.68rem;
+  color: var(--ink-30);
+  margin: 0;
+  font-weight: 500;
+}
+.pk-count {
+  margin-left: auto;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════
+   RANK ROWS
+══════════════════════════════════════════════ */
+@keyframes rowReveal {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.rank-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 4px 32px 38px 1fr auto;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
-  flex: 1;
-  min-width: 0;
+  padding: 11px 10px 11px 0;
+  border-radius: 10px;
+  transition: background 0.16s;
+  animation: rowReveal 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 0.055s);
+}
+.rank-row:hover {
+  background: rgba(10, 32, 11, 0.024);
 }
 
-.stepper-item:last-child {
-  flex: 0 0 auto;
+/* ─ STRIP ─ */
+.row-strip {
+  width: 4px;
+  height: 36px;
+  border-radius: 2px;
+  background: transparent;
+  flex-shrink: 0;
+}
+.rank-row--gold .row-strip {
+  background: #f9a825;
+  box-shadow: 0 0 8px rgba(249, 168, 37, 0.4);
+}
+.rank-row--silver .row-strip {
+  background: rgba(10, 32, 11, 0.22);
+}
+.rank-row--bronze .row-strip {
+  background: rgba(180, 90, 40, 0.42);
 }
 
-.stepper-circle {
+/* ─ RANK BADGE ─ */
+.row-rank {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  font-family: 'Playfair Display', serif;
+}
+.row-rank--gold {
+  background: var(--gold);
+  color: #5a3400;
+  box-shadow: 0 3px 10px rgba(249, 168, 37, 0.45);
+}
+.row-rank--silver {
+  background: rgba(10, 32, 11, 0.1);
+  color: rgba(10, 32, 11, 0.5);
+}
+.row-rank--bronze {
+  background: rgba(180, 90, 40, 0.12);
+  color: #7a3a10;
+}
+.row-rank--plain {
+  background: #ede9e1;
+  color: var(--ink-30);
+}
+
+/* ─ AVATAR ─ */
+.row-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.62rem;
   font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.04em;
   flex-shrink: 0;
-  background: #f0ede7;
-  color: rgba(13, 43, 15, 0.35);
-  border: 2px solid transparent;
-  transition: all 0.25s ease;
 }
 
-.stepper-item--active .stepper-circle {
-  background: #0d2b0f;
-  color: white;
-  border-color: #0d2b0f;
-  box-shadow: 0 4px 12px rgba(13, 43, 15, 0.25);
-}
-
-.stepper-label {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+/* ─ INFO ─ */
+.row-info {
   min-width: 0;
-}
-
-.stepper-title {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: rgba(13, 43, 15, 0.35);
-  white-space: nowrap;
-  transition: color 0.25s ease;
-}
-
-.stepper-item--active .stepper-title {
-  color: #0d2b0f;
-}
-
-.stepper-sub {
-  font-size: 0.65rem;
-  color: rgba(13, 43, 15, 0.3);
-  white-space: nowrap;
-}
-
-.stepper-item--active .stepper-sub {
-  color: rgba(13, 43, 15, 0.5);
-}
-
-.stepper-line {
-  flex: 1;
-  height: 1px;
-  background: rgba(13, 43, 15, 0.1);
-  margin: 0 16px;
-}
-
-/* ── PANEL ────────────────────────────────────────── */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.rank-panel {
-  background: white;
-  border: 1px solid rgba(13, 43, 15, 0.08);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 2px 20px rgba(13, 43, 15, 0.06);
-  animation: fadeUp 0.35s ease both;
-}
-
-.panel-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(13, 43, 15, 0.07);
-  flex-wrap: wrap;
-}
-
-.panel-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.panel-icon svg {
-  width: 19px;
-  height: 19px;
-}
-
-.panel-title {
-  font-size: 0.92rem;
-  font-weight: 900;
-  color: #0d2b0f;
-  letter-spacing: -0.01em;
-  margin: 0 0 3px;
-}
-
-.panel-sub {
-  font-size: 0.68rem;
-  color: rgba(13, 43, 15, 0.4);
-  margin: 0;
-}
-
-.panel-badge {
-  margin-left: auto;
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-  border: 1px solid;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* ── RANK LIST ────────────────────────────────────── */
-.rank-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-
-.rank-list--horizontal {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
   gap: 4px;
 }
-
-.rank-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 8px;
-  border-radius: 10px;
-  transition: background 0.18s;
-  animation: fadeUp 0.4s ease both;
-}
-.rank-row:hover {
-  background: rgba(13, 43, 15, 0.025);
-}
-
-/* ── MEDAL ────────────────────────────────────────── */
-.rank-medal {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.68rem;
-  font-weight: 900;
-  flex-shrink: 0;
-}
-
-.medal--gold {
-  background: #f9a825;
-  color: #0d2b0f;
-  box-shadow: 0 2px 8px rgba(249, 168, 37, 0.4);
-}
-.medal--silver {
-  background: rgba(13, 43, 15, 0.12);
-  color: #0d2b0f;
-}
-.medal--bronze {
-  background: rgba(180, 90, 40, 0.14);
-  color: #7a3a10;
-}
-.medal--plain {
-  background: #f0ede7;
-  color: rgba(13, 43, 15, 0.4);
-}
-
-.medal-ico {
-  width: 13px;
-  height: 13px;
-}
-
-/* ── AVATAR / EMBLEM ──────────────────────────────── */
-.rank-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.68rem;
-  font-weight: 900;
-  color: white;
-  flex-shrink: 0;
-  letter-spacing: 0.03em;
-}
-
-.rank-emblem {
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-.rank-emblem svg {
-  width: 16px;
-  height: 16px;
-  stroke: white;
-  stroke-width: 2;
-}
-
-/* ── RANK INFO ────────────────────────────────────── */
-.rank-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.rank-name {
-  font-size: 0.8rem;
+.row-name {
+  font-size: 0.82rem;
   font-weight: 800;
-  color: #0d2b0f;
+  color: var(--ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.rank-detail {
-  font-size: 0.64rem;
-  color: rgba(13, 43, 15, 0.42);
-  font-weight: 600;
+.row-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.rtag {
+  font-size: 0.58rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  background: var(--ink-10);
+  color: var(--ink-60);
+  border-radius: 4px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* ── RANK RIGHT ───────────────────────────────────── */
-.rank-right {
+/* ─ METRIC ─ */
+.row-metric {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
-  flex-shrink: 0;
-  min-width: 64px;
+  gap: 5px;
+  min-width: 86px;
 }
-
-.rank-count {
-  font-size: 0.95rem;
-  font-weight: 900;
-  color: #0d2b0f;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.rank-unit {
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.35);
-  margin-top: -2px;
-}
-
-.rank-bar-wrap {
-  width: 60px;
+.row-bar-track {
+  width: 80px;
   height: 4px;
-  background: #f0ede7;
-  border-radius: 4px;
+  background: #ede9e1;
+  border-radius: 3px;
   overflow: hidden;
 }
-
-.rank-bar {
+.row-bar-fill {
   height: 100%;
-  border-radius: 4px;
-  transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 3px;
+  transition: width 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.row-count-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.row-count {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.row-unit {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-30);
 }
 
-/* ── RESPONSIVE ───────────────────────────────────── */
-@media (max-width: 900px) {
-  .rank-list--horizontal {
-    grid-template-columns: repeat(2, 1fr);
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .rp-root {
+    padding: 24px 20px 60px;
   }
-  .stepper-line {
-    margin: 0 8px;
+  .tab-btn {
+    padding: 12px 12px;
+    gap: 6px;
   }
-}
-
-@media (max-width: 768px) {
-  .report-root {
-    padding: 20px 16px 60px;
+  .tab-sub {
+    display: none;
   }
-  .rank-list--horizontal {
-    grid-template-columns: 1fr;
-  }
-  .report-header {
+  .rp-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  .header-right {
+  .rp-header__right {
     width: 100%;
-    justify-content: flex-start;
     flex-wrap: wrap;
   }
-  .stepper-sub {
+  .panel {
+    padding: 20px 16px 12px;
+  }
+  .rank-row {
+    grid-template-columns: 4px 28px 34px 1fr auto;
+    gap: 8px;
+  }
+  .row-bar-track {
+    width: 56px;
+  }
+}
+
+@media (max-width: 560px) {
+  .rank-row {
+    grid-template-columns: 4px 28px 1fr auto;
+  }
+  .row-avatar {
     display: none;
+  }
+  .tab-label {
+    font-size: 0.72rem;
   }
 }
 </style>

@@ -106,11 +106,12 @@
           <!-- Submit -->
           <button
             type="submit"
-            class="w-full bg-green-600 hover:bg-green-500
-                   text-white font-bold py-3 rounded-xl
-                   shadow-lg transition duration-200"
+            class="w-full bg-[#1b5e20] hover:bg-[#257a2b] text-white font-bold py-4 rounded-2xl
+                  shadow-xl shadow-[#1b5e20]/20 
+                  active:scale-[0.98] transition-all duration-300
+                  border border-white/10 uppercase tracking-widest text-sm"
           >
-            Create Account
+            Sign In
           </button>
         </form>
 
