@@ -1850,24 +1850,32 @@ function setCover(i: number) {
 .viewer-close:hover {
   color: #f9a825;
 }
-.viewer-action-btn { 
-  font-size:0.68rem; 
-  padding:8px 14px; 
-  backdrop-filter:blur(12px);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+.viewer-action-btn {
+  font-size: 0.68rem;
+  padding: 8px 14px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
-.ac-btn--edit { 
-  background: rgba(30, 30, 30, 0.75);  /* darker background */
-  color: white; 
-  border: 1.5px solid rgba(255,255,255,0.25);
+.ac-btn--edit {
+  background: rgba(30, 30, 30, 0.75); /* darker background */
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
 }
-.ac-btn--edit:hover { background:#f9a825; color:#5a3400; border-color:#f9a825; }
+.ac-btn--edit:hover {
+  background: #f9a825;
+  color: #5a3400;
+  border-color: #f9a825;
+}
 
-.ac-btn--del { 
-  background: rgba(30, 30, 30, 0.75);  /* darker background */
-  color: white; 
-  border: 1.5px solid rgba(255,255,255,0.25);
+.ac-btn--del {
+  background: rgba(30, 30, 30, 0.75); /* darker background */
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
 }
-.ac-btn--del:hover { background:#c62828; color:white; border-color:#c62828; }
+.ac-btn--del:hover {
+  background: #c62828;
+  color: white;
+  border-color: #c62828;
+}
 </style>
