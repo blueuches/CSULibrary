@@ -229,9 +229,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Base Fonts & Transitions */
-section { font-family: 'Poppins', sans-serif; }
 
+section { font-family: 'Poppins', sans-serif; }
 .section-title { width: min(100%, 1500px); margin: 8px auto 14px; text-align: center; }
 .section-kicker { display: inline-flex; align-items: center; gap: 14px; }
 .kicker-text { font-weight: 800; letter-spacing: 6px; font-size: 0.7rem; color: #0d2b0f; text-transform: uppercase; }
