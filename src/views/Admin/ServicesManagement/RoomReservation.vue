@@ -1,6 +1,7 @@
 <template>
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
-    
+    <Sidebar 
+    />
 
     <main class="reservation-root flex-1 overflow-y-auto">
       <!-- HEADER -->
@@ -352,7 +353,6 @@
 import { ref, computed } from "vue"
 import '@/assets/styles/avr-reservation.css'
 import Sidebar from "@/components/Sidebar.vue"
-
 
 
 const showEquipmentModal = ref(false)

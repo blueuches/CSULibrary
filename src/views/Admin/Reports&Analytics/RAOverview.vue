@@ -3,7 +3,6 @@
     
     <Sidebar 
       :activeTab="activeTab" 
-      :menuItems="navigationItems"
       @updateActiveTab="handleTabChange"
     />
 
@@ -231,13 +230,7 @@ const activeTab = ref('REPORTS')
 const activeChartTab = ref<ChartTab>('Monthly')
 const chartTabs: ChartTab[] = ['Weekly', 'Monthly', 'Yearly']
 
-const navigationItems = [
-  { name: 'DASHBOARD', icon: '📊' },
-  { name: 'REPORTS', icon: '📈' },
-  { name: 'BOOKS', icon: '📖' },
-  { name: 'MEMBERS', icon: '👥' },
-  { name: 'SETTINGS', icon: '⚙️' },
-]
+
 
 const handleTabChange = (tab: string) => { activeTab.value = tab }
 
