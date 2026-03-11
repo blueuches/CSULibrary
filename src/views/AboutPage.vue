@@ -1,11 +1,48 @@
 <script setup lang="ts">
-import { onBeforeUnmount, type DirectiveBinding } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, type DirectiveBinding } from 'vue'
 
-const heroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
-const iconGif1 = new URL('@/assets/icons/idea.gif', import.meta.url).href
-const iconGif2 = new URL('@/assets/icons/opportunities.gif', import.meta.url).href
-const iconGif3 = new URL('@/assets/icons/student.gif', import.meta.url).href
-const iconGif4 = new URL('@/assets/icons/social-life.gif', import.meta.url).href
+type MediaType = 'image' | 'video'
+type PageType = 'homepage' | 'aboutpage'
+
+type MediaItem = {
+  id: string
+  title: string
+  type: MediaType
+  page: PageType
+  section: string
+  order: number
+  category: string
+  src: string
+  externalLink?: string
+  embedUrl?: string
+  thumbnail?: string
+}
+
+const STORAGE_KEY = 'website-media-v11'
+const defaultHeroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
+
+const defaultIconMedia = [
+  {
+    id: 'default-icon-1',
+    title: 'Discovery Icon',
+    src: new URL('@/assets/icons/idea.gif', import.meta.url).href,
+  },
+  {
+    id: 'default-icon-2',
+    title: 'Learning Icon',
+    src: new URL('@/assets/icons/student.gif', import.meta.url).href,
+  },
+  {
+    id: 'default-icon-3',
+    title: 'Knowledge Icon',
+    src: new URL('@/assets/icons/opportunities.gif', import.meta.url).href,
+  },
+  {
+    id: 'default-icon-4',
+    title: 'Networking Icon',
+    src: new URL('@/assets/icons/social-life.gif', import.meta.url).href,
+  },
+]
 
 const objectives = [
   '1. Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;',
@@ -25,7 +62,38 @@ const rules = [
   '8. Never run around the hallway outside the library premises.',
 ]
 
-// scroll
+const mediaItems = ref<MediaItem[]>([])
+
+function loadMedia() {
+  try {
+    mediaItems.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+  } catch {
+    mediaItems.value = []
+  }
+}
+
+const heroMedia = computed(() =>
+  mediaItems.value
+    .filter((item) => item.page === 'aboutpage' && item.section === 'hero' && item.type === 'image')
+    .sort((a, b) => a.order - b.order),
+)
+
+const iconMedia = computed(() => {
+  const icons = mediaItems.value
+    .filter((item) => item.page === 'aboutpage' && item.section === 'icons' && item.type === 'image')
+    .sort((a, b) => a.order - b.order)
+
+  return icons.length ? icons : defaultIconMedia
+})
+
+const heroImageSrc = computed(() => {
+  return heroMedia.value[0]?.src || defaultHeroSrc
+})
+
+function handleMediaUpdated() {
+  loadMedia()
+}
+
 let io: IntersectionObserver | null = null
 
 const ensureObserver = (): IntersectionObserver | null => {
@@ -80,15 +148,20 @@ const vReveal = {
   },
 }
 
+onMounted(() => {
+  loadMedia()
+  window.addEventListener('website-media-updated', handleMediaUpdated)
+})
+
 onBeforeUnmount(() => {
   io?.disconnect()
   io = null
+  window.removeEventListener('website-media-updated', handleMediaUpdated)
 })
 </script>
 
 <template>
   <section class="about-page">
-    <!-- Title -->
     <div class="page-inner" v-reveal>
       <div class="section-title section-title-center">
         <span class="section-kicker">
@@ -99,16 +172,18 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <!-- HERO -->
     <div class="hero-bleed" v-reveal="80">
       <div class="hero-wrap hero-overlay">
-        <img :src="heroSrc" alt="CSU Library" class="hero-img" loading="lazy" />
+        <img
+          :src="heroImageSrc"
+          alt="CSU Library"
+          class="hero-img"
+          loading="lazy"
+        />
       </div>
     </div>
 
-    <!-- Content area -->
     <div class="about-content page-inner">
-      <!-- Intro -->
       <div class="intro-text" v-reveal>
         <p class="mt-5">
           Libraries play a very crucial role in supporting the academic programs of any university
@@ -122,40 +197,19 @@ onBeforeUnmount(() => {
           the University specifically the educational objectives endeavors to provide relevant
           materials and services. It has a program of selection, acquisition, collection maintenance
           and stocking, circulation of relevant materials, and provision of physical facilities and
-          professional manpower. It positions itself to respond to the changing expectations faced
-          by the University which paves way to the changing needs of its clientele, and the
-          curricular offerings.
+          professional manpower.
         </p>
       </div>
 
-      <!-- GIF icons -->
       <div class="page-inner" v-reveal>
         <div class="icon-wrap icon-mt">
-          <div class="icon-pill">
-            <img :src="iconGif1" alt="Animated idea icon" class="gif-icon" loading="lazy" />
-            <span>Discovery</span>
-          </div>
-          <div class="icon-pill">
-            <img :src="iconGif3" alt="Animated student icon" class="gif-icon" loading="lazy" />
-            <span>Learning</span>
-          </div>
-          <div class="icon-pill">
-            <img
-              :src="iconGif2"
-              alt="Animated opportunities icon"
-              class="gif-icon"
-              loading="lazy"
-            />
-            <span>knowledge</span>
-          </div>
-          <div class="icon-pill">
-            <img :src="iconGif4" alt="Animated social-life icon" class="gif-icon" loading="lazy" />
-            <span>Networking</span>
+          <div class="icon-pill" v-for="icon in iconMedia" :key="icon.id">
+            <img :src="icon.src" :alt="icon.title" class="gif-icon" loading="lazy" />
+            <span>{{ icon.title.replace(' Icon', '') }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Row 1: 3 cards -->
       <div class="cards-grid">
         <div class="grid-item" v-reveal>
           <div class="content-box fixed-card">
@@ -203,7 +257,6 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <!-- Row 2: 2 wider cards (hover same as top cards) -->
       <div class="cards-grid-bottom">
         <div class="grid-item" v-reveal>
           <div class="content-box fixed-card">
@@ -231,7 +284,6 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
-      <!-- /Row 2 -->
     </div>
   </section>
 </template>
@@ -241,19 +293,16 @@ onBeforeUnmount(() => {
 
 .about-page {
   font-family: 'Poppins', sans-serif;
-
   --page-bg: #f3f4f6;
   --ribbon-green: #0d2b0f;
   --accent-orange: #fbc02d;
   --text-color: #1f1f1f;
   --float-shadow-green: 13, 43, 15;
-
   width: 100%;
   min-height: 100vh;
   padding: 24px 0 40px;
   background: var(--page-bg);
 }
-
 .page-inner {
   width: 100% !important;
   max-width: none !important;
@@ -261,8 +310,6 @@ onBeforeUnmount(() => {
   padding: 0 32px !important;
   box-sizing: border-box !important;
 }
-
-/* scroll */
 .reveal {
   opacity: 0;
   transform: translateY(16px);
@@ -276,15 +323,6 @@ onBeforeUnmount(() => {
   opacity: 1;
   transform: translateY(0);
 }
-@media (prefers-reduced-motion: reduce) {
-  .reveal {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-}
-
-/* Title */
 .section-title {
   width: min(100%, 1500px);
   margin: 8px auto 14px;
@@ -292,7 +330,6 @@ onBeforeUnmount(() => {
 .section-title-center {
   text-align: center;
 }
-
 .section-kicker {
   display: inline-flex;
   align-items: center;
@@ -304,7 +341,6 @@ onBeforeUnmount(() => {
   height: 4px;
   border-radius: 999px;
   background: var(--accent-orange);
-  display: inline-block;
 }
 .kicker-text {
   font-weight: 900;
@@ -321,8 +357,6 @@ onBeforeUnmount(() => {
   line-height: 1.02;
   color: var(--ribbon-green);
 }
-
-/* Icons */
 .icon-mt {
   margin-top: 32px;
 }
@@ -333,10 +367,12 @@ onBeforeUnmount(() => {
   display: flex;
   justify-content: center;
   gap: 16px;
+  flex-wrap: wrap;
 }
 .icon-pill {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   padding: 10px 16px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.92);
@@ -349,8 +385,6 @@ onBeforeUnmount(() => {
   object-fit: contain;
   display: block;
 }
-
-/* Hero */
 .hero-bleed {
   width: 100%;
   padding: 0 !important;
@@ -389,8 +423,6 @@ onBeforeUnmount(() => {
   pointer-events: none;
   background: linear-gradient(to bottom, rgba(13, 43, 15, 0.4), rgba(13, 43, 15, 0.68));
 }
-
-/* Content */
 .about-content {
   width: 100%;
   padding-top: 10px;
@@ -408,8 +440,6 @@ onBeforeUnmount(() => {
 .intro-text .mt-4 {
   margin-top: 14px;
 }
-
-/* Cards */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -432,54 +462,22 @@ onBeforeUnmount(() => {
   display: flex;
   perspective: 1200px;
 }
-
-/* Card */
 .content-box {
   width: 100%;
   background: linear-gradient(180deg, #ffffff 50%, #ffffff 100%);
   border-radius: 16px;
   padding: 18px 20px;
   box-sizing: border-box;
-
   box-shadow:
     0 6px 14px rgba(var(--float-shadow-green), 0.16),
     0 14px 28px rgba(var(--float-shadow-green), 0.12),
     0 2px 4px rgba(var(--float-shadow-green), 0.1);
-
   position: relative;
   transform: translateY(0);
   transition:
     transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
-  will-change: transform, box-shadow;
 }
-
-.content-box::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.75) 0%,
-    rgba(255, 255, 255, 0.22) 35%,
-    rgba(255, 255, 255, 0) 62%
-  );
-  opacity: 0.35;
-  transition: opacity 0.24s ease;
-  pointer-events: none;
-}
-.content-box::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  border: 1px solid rgba(var(--float-shadow-green), 0.16);
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-/* ✅ Hover behavior (applies to both top + bottom cards) */
 .grid-item:hover .content-box {
   transform: translateY(-10px) scale(1.02);
   box-shadow:
@@ -487,7 +485,6 @@ onBeforeUnmount(() => {
     0 28px 48px rgba(var(--float-shadow-green), 0.2),
     0 10px 20px rgba(var(--float-shadow-green), 0.16);
 }
-
 .fixed-card {
   height: 350px;
   display: flex;
@@ -500,7 +497,6 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
 }
-
 .green-heading {
   color: #0d2b0f;
   font-weight: 900;
@@ -523,7 +519,6 @@ onBeforeUnmount(() => {
   background: var(--accent-orange);
   border-radius: 1px;
 }
-
 .card-body {
   margin-top: 12px;
   flex: 1;
@@ -534,14 +529,12 @@ onBeforeUnmount(() => {
   overflow-y: visible !important;
   padding-right: 0 !important;
 }
-
 .section-paragraph {
   margin: 0 0 0 34px;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--text-color);
 }
-
 .custom-list {
   margin: 0 0 0 34px;
   padding-left: 20px;
@@ -558,8 +551,6 @@ onBeforeUnmount(() => {
 .list-tight li {
   margin-bottom: 8px;
 }
-
-/* Responsive */
 @media (max-width: 1100px) {
   .page-inner {
     padding: 0 24px !important;
@@ -592,7 +583,6 @@ onBeforeUnmount(() => {
   .hero-img {
     height: 210px;
   }
-
   .cards-grid {
     grid-template-columns: 1fr;
     gap: 14px;
@@ -601,17 +591,11 @@ onBeforeUnmount(() => {
     height: auto;
     min-height: 220px;
   }
-
-  /* hover off on mobile */
   .grid-item:hover .content-box {
     transform: none;
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.03),
       0 8px 18px rgba(0, 0, 0, 0.04);
-  }
-  .content-box::before,
-  .content-box::after {
-    display: none;
   }
 }
 </style>
