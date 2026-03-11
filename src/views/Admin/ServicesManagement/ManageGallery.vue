@@ -1,68 +1,676 @@
 <template>
-  <div class="w-full relative min-h-screen overflow-y-auto flex flex-col items-center bg-white">
-    <!-- ══ ADMIN BANNER ══ -->
-    <div class="admin-banner">
-      <div class="admin-banner__left">
-        <span class="admin-dot"></span>
-        <span>Admin Mode</span>
-        <span class="admin-sep">·</span>
-        <span class="admin-dim">Changes are live — visitors will see them instantly</span>
-      </div>
-      <button class="btn-new" @click="openAdd()">
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-        New Section
-      </button>
-    </div>
-
-    <!-- ══ HERO — same as LibraryGallery ══ -->
-    <div class="gallery-hero">
-      <div class="hero-eyebrow">
-        <span class="hero-line"></span>
-        <span class="hero-label">Manage the CSU Library Gallery</span>
-      </div>
-      <h1 class="hero-title">Library <span class="hero-title--gold">Sections</span></h1>
-      <p class="hero-stats">
-        <span>{{ totalSections }} sections</span>
-        <span class="hero-dot">·</span>
-        <span>{{ totalPhotos }} photos</span>
-        <span class="hero-dot">·</span>
-        <span>{{ floors.length }} floors</span>
-      </p>
-    </div>
-
-    <!-- ══ STICKY NAV — same as LibraryGallery ══ -->
-    <div class="w-full sticky top-0 z-30 px-8 mt-3">
-      <div
-        class="w-full backdrop-blur-md bg-white/80 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-2xl shadow-lg"
-      >
-        <div class="flex gap-4">
-          <button
-            v-for="(floor, i) in floors"
-            :key="floor.id"
-            @click="activeFloor = floor.id"
-            :class="[
-              'px-8 py-2.5 rounded-2xl font-black transition-all duration-300 text-xs uppercase tracking-widest border-2 nav-btn',
-              activeFloor === floor.id && !searchQuery
-                ? 'bg-[#0d2b0f] border-[#0d2b0f] text-white shadow-md'
-                : 'bg-transparent border-[#0d2b0f] text-[#0d2b0f] hover:bg-[#1b5e20] hover:border-[#1b5e20] hover:text-white',
-            ]"
-            :style="{ animationDelay: `${i * 0.12}s` }"
+  <div class="page-layout">
+    <Sidebar :activeTab="'GALLERY'" />
+    <div class="w-full relative overflow-y-auto flex flex-col items-center bg-white">
+      <!-- ══ HERO — Report Display style ══ -->
+      <div class="gallery-hero">
+        <p class="hero-breadcrumb">
+          Admin <span class="hero-breadcrumb-sep">›</span> Library Gallery
+        </p>
+        <h1 class="hero-title">
+          <span class="hero-title--underlined">Library</span>
+          <span class="hero-title--gold"> Sections</span>
+        </h1>
+        <p class="hero-subtitle">
+          <span class="hero-dot-green"></span>
+          Manage the CSU Library Gallery —
+          <strong
+            >{{ totalSections }} sections · {{ totalPhotos }} photos ·
+            {{ floors.length }} floors</strong
           >
-            {{ floor.name }}
-          </button>
+        </p>
+      </div>
+
+      <!-- ══ STICKY NAV ══ -->
+      <div class="w-full sticky top-0 z-30 px-8 mt-3">
+        <div
+          class="w-full backdrop-blur-md bg-white/80 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-2xl shadow-lg"
+        >
+          <div class="flex gap-4">
+            <button
+              v-for="(floor, i) in floors"
+              :key="floor.id"
+              @click="activeFloor = floor.id"
+              :class="[
+                'px-8 py-2.5 rounded-2xl font-black transition-all duration-300 text-xs uppercase tracking-widest border-2 nav-btn',
+                activeFloor === floor.id && !searchQuery
+                  ? 'bg-[#0d2b0f] border-[#0d2b0f] text-white shadow-md'
+                  : 'bg-transparent border-[#0d2b0f] text-[#0d2b0f] hover:bg-[#1b5e20] hover:border-[#1b5e20] hover:text-white',
+              ]"
+              :style="{ animationDelay: `${i * 0.12}s` }"
+            >
+              {{ floor.name }}
+            </button>
+          </div>
+
+          <!-- Search + New Section button -->
+          <div class="nav-right">
+            <div class="relative nav-search">
+              <svg
+                class="nav-search__icon"
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search Section..."
+                class="w-full pl-9 pr-4 py-3 rounded-2xl bg-gray-50 border-2 border-[#0d2b0f] text-[#0d2b0f] font-bold text-sm focus:outline-none focus:ring-4 focus:ring-[#1b5e20]/10 transition-all shadow-inner"
+              />
+            </div>
+            <button class="btn-new-nav" @click="openAdd()">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              New Section
+            </button>
+          </div>
         </div>
-        <div class="relative nav-search">
+      </div>
+
+      <!-- ══ CARDS SECTION ══ -->
+      <div class="w-full px-8 flex flex-col items-center mt-12 relative z-10 pb-20">
+        <transition-group name="fade" tag="div" class="w-full">
+          <div
+            v-for="floor in searchQuery ? filteredFloors : activeFloorData"
+            :key="floor.id"
+            class="w-full mb-12"
+          >
+            <div v-for="wing in floor.wings" :key="wing.name" class="mb-20">
+              <!-- Wing header -->
+              <div class="wing-header mb-10">
+                <div class="flex items-center gap-6 flex-1">
+                  <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{
+                    floor.name
+                  }}</span>
+                  <h3 class="text-4xl font-black text-[#0d2b0f] uppercase tracking-tighter">
+                    {{ wing.name }}
+                  </h3>
+                  <div
+                    class="h-[2px] flex-grow max-w-[150px] bg-gradient-to-r from-[#0d2b0f] to-yellow-500"
+                  ></div>
+                </div>
+                <button class="btn-wing-add" @click="openAdd(floor.id, wing.name)">
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add to {{ wing.name }}
+                </button>
+              </div>
+
+              <!-- Cards grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div
+                  v-for="(section, idx) in wing.sections"
+                  :key="section.title + idx"
+                  class="group relative h-96 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 bg-gray-100 border-2 cursor-pointer"
+                  :class="[
+                    editTarget?.title === section.title &&
+                    editTarget?.floorId === floor.id &&
+                    editTarget?.wingName === wing.name
+                      ? 'border-[#f9a825] shadow-[0_0_0_4px_rgba(249,168,37,0.18)]'
+                      : 'border-transparent hover:-translate-y-3',
+                  ]"
+                  :style="
+                    section.images.length > 0
+                      ? {
+                          backgroundImage: `url(${section.images[0]})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          transitionDelay: `${(idx % 4) * 0.08}s`,
+                        }
+                      : { transitionDelay: `${(idx % 4) * 0.08}s` }
+                  "
+                  @click="openViewer(section, floor.id, wing.name)"
+                >
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500"
+                  ></div>
+
+                  <!-- Admin controls -->
+                  <div class="admin-ctrl" @click.stop>
+                    <button
+                      class="ac-btn ac-btn--edit"
+                      @click="openEdit(section, floor.id, wing.name)"
+                    >
+                      <svg
+                        width="11"
+                        height="11"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                      Edit
+                    </button>
+                    <button
+                      class="ac-btn ac-btn--del"
+                      @click="askDelete(section, floor.id, wing.name)"
+                    >
+                      <svg
+                        width="11"
+                        height="11"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                      Delete
+                    </button>
+                  </div>
+
+                  <!-- Floor badge -->
+                  <div class="absolute top-3 left-3 z-10">
+                    <div
+                      class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase shadow-sm bg-[#0d2b0f] text-white"
+                    >
+                      {{ floor.name }}
+                    </div>
+                  </div>
+
+                  <!-- Card body -->
+                  <div class="absolute inset-0 p-8 flex flex-col justify-end">
+                    <div
+                      class="w-10 h-1 bg-[#1b5e20] mb-4 rounded-full transition-all group-hover:w-20"
+                    ></div>
+                    <h4
+                      class="text-white font-black text-2xl leading-tight uppercase group-hover:text-yellow-500 transition-colors duration-300"
+                    >
+                      {{ section.title }}
+                    </h4>
+                    <p
+                      v-if="section.note"
+                      class="text-[#66bb6a] text-[10px] font-bold uppercase mt-1 tracking-widest"
+                    >
+                      {{ section.note }}
+                    </p>
+                    <p
+                      class="text-white/80 text-sm mt-4 leading-relaxed"
+                      style="
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                      "
+                    >
+                      {{ section.description }}
+                    </p>
+                    <div class="flex items-center gap-1.5 mt-3">
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.4)"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                        />
+                        <circle cx="12" cy="13" r="3" />
+                      </svg>
+                      <span class="text-white/38 text-[10px] font-semibold"
+                        >{{ section.images.length }} photo{{
+                          section.images.length !== 1 ? 's' : ''
+                        }}</span
+                      >
+                      <span
+                        v-if="!section.images.length"
+                        class="text-yellow-400/60 text-[10px] font-bold"
+                        >· No cover yet</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Add section slot -->
+                <button
+                  class="relative h-96 rounded-2xl border-2 border-dashed border-[#0d2b0f]/20 bg-transparent flex flex-col items-center justify-center gap-4 cursor-pointer transition-all duration-300 hover:border-[#1b5e20] hover:bg-[#f4f9f4] group/add"
+                  @click="openAdd(floor.id, wing.name)"
+                >
+                  <div
+                    class="w-14 h-14 rounded-2xl bg-[#0d2b0f]/05 flex items-center justify-center group-hover/add:bg-[#1b5e20]/10 transition-all"
+                  >
+                    <svg
+                      width="26"
+                      height="26"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      class="text-[#0d2b0f]/25 group-hover/add:text-[#1b5e20] transition-colors"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                  <div class="text-center px-4">
+                    <p
+                      class="text-[#0d2b0f]/30 group-hover/add:text-[#1b5e20] text-[11px] font-black uppercase tracking-widest transition-colors"
+                    >
+                      Add Section
+                    </p>
+                    <p class="text-[#0d2b0f]/20 text-[10px] mt-1 font-medium">to {{ wing.name }}</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </transition-group>
+      </div>
+
+      <!-- ══ PHOTO VIEWER MODAL ══ -->
+      <Transition name="modal">
+        <div
+          v-if="viewerOpen"
+          class="fixed inset-0 z-50 bg-[#0d2b0f]/90 flex items-center justify-center p-4 backdrop-blur-sm"
+          @click.self="closeViewer"
+        >
+          <div class="absolute top-6 right-6 z-[60] flex items-center gap-3">
+            <button class="ac-btn ac-btn--edit viewer-action-btn" @click="openEditFromViewer">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              Edit Section
+            </button>
+            <button class="ac-btn ac-btn--del viewer-action-btn" @click="askDeleteFromViewer">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+              Delete
+            </button>
+            <button @click="closeViewer" class="viewer-close">&times;</button>
+          </div>
+
+          <div class="w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl relative">
+            <div v-if="viewerSection" class="flex flex-col">
+              <div class="relative min-h-[400px] flex items-center justify-center bg-gray-200">
+                <button
+                  v-if="viewerSection.images.length > 1"
+                  @click="prevImg"
+                  class="absolute left-4 z-10 p-3 rounded-full bg-black/50 text-white hover:bg-[#f9a825] hover:text-[#0d2b0f] transition-all"
+                >
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <div
+                  v-if="!viewerSection.images.length"
+                  class="flex flex-col items-center justify-center gap-4 p-16 text-gray-400"
+                >
+                  <svg
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path d="M21 15l-5-5L5 21" />
+                  </svg>
+                  <p class="font-bold text-sm">No photos yet — click Edit Section to add some</p>
+                </div>
+                <img
+                  v-else
+                  :src="viewerSection.images[viewerImgIndex]"
+                  class="w-full h-auto max-h-[60vh] object-contain mx-auto"
+                />
+                <button
+                  v-if="viewerSection.images.length > 1"
+                  @click="nextImg"
+                  class="absolute right-4 z-10 p-3 rounded-full bg-black/50 text-white hover:bg-[#f9a825] hover:text-[#0d2b0f] transition-all"
+                >
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="3"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div
+                v-if="viewerSection.images.length > 1"
+                class="flex justify-center gap-3 p-4 bg-gray-50 overflow-x-auto"
+              >
+                <div
+                  v-for="(img, idx) in viewerSection.images"
+                  :key="idx"
+                  @click="viewerImgIndex = idx"
+                  class="w-20 h-14 rounded-2xl cursor-pointer border-2 overflow-hidden flex-shrink-0 transition-all"
+                  :class="
+                    viewerImgIndex === idx
+                      ? 'border-[#1b5e20] scale-105 shadow-md'
+                      : 'border-transparent opacity-60'
+                  "
+                >
+                  <img :src="img" class="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div class="p-8 text-center border-t border-gray-100">
+                <h2 class="text-[#0d2b0f] text-3xl font-black uppercase mb-2">
+                  {{ viewerSection.title }}
+                </h2>
+                <p
+                  v-if="viewerSection.note"
+                  class="text-[#66bb6a] text-xs font-bold uppercase tracking-widest mb-2"
+                >
+                  {{ viewerSection.note }}
+                </p>
+                <p class="text-yellow-600 max-w-2xl mx-auto">{{ viewerSection.description }}</p>
+                <p class="text-gray-400 text-xs mt-3 font-semibold">
+                  {{ viewerSection.images.length }} photo{{
+                    viewerSection.images.length !== 1 ? 's' : ''
+                  }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+      <!-- ══ EDIT / ADD MODAL ══ -->
+      <Transition name="modal">
+        <div v-if="formOpen" class="modal-bg" @click.self="closeForm">
+          <div class="modal-sheet">
+            <div class="modal-head">
+              <div>
+                <p class="modal-mode">{{ isAdding ? '✦ New Section' : '✦ Edit Section' }}</p>
+                <h3 class="modal-title">
+                  {{ isAdding ? 'Add to Gallery' : form.title || 'Edit Section' }}
+                </h3>
+              </div>
+              <button class="icon-btn" @click="closeForm">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <div class="fg-section">Location</div>
+              <div class="fg-row-2">
+                <div class="fg">
+                  <label>Floor</label>
+                  <select v-model="form.floorId" @change="onFloorChange">
+                    <option v-for="f in floors" :key="f.id" :value="f.id">{{ f.name }}</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>Wing</label>
+                  <select v-model="form.wingName">
+                    <option v-for="w in formWings" :key="w.name" :value="w.name">
+                      {{ w.name }}
+                    </option>
+                    <option value="__new__">+ New Wing…</option>
+                  </select>
+                </div>
+              </div>
+              <div v-if="form.wingName === '__new__'" class="fg">
+                <label>New Wing Name</label>
+                <input v-model="form.newWingName" placeholder="e.g. South Wing" />
+              </div>
+
+              <div class="fg-section">Section Info</div>
+              <div class="fg">
+                <label>Title <span class="req">*</span></label>
+                <input v-model="form.title" placeholder="e.g. Quiet Room for PWD" />
+              </div>
+              <div class="fg">
+                <label>Description <span class="req">*</span></label>
+                <textarea
+                  v-model="form.description"
+                  rows="3"
+                  placeholder="Brief description shown on the gallery card…"
+                ></textarea>
+              </div>
+              <div class="fg">
+                <label
+                  >Note
+                  <span class="opt"
+                    >· optional · shows as green label e.g. "Female", "1, 2, 3"</span
+                  ></label
+                >
+                <input v-model="form.note" placeholder="e.g. Female Only" />
+              </div>
+
+              <div class="fg-section">
+                Photos
+                <span class="photo-pill">{{ form.images.length }} / 10</span>
+              </div>
+              <div class="photo-grid">
+                <div
+                  v-for="(img, i) in form.images"
+                  :key="i"
+                  class="ptile"
+                  :class="{ 'ptile--cover': i === 0 }"
+                >
+                  <img :src="img" :alt="`Photo ${i + 1}`" />
+                  <div class="ptile-over">
+                    <span v-if="i === 0" class="cover-badge">Cover</span>
+                    <div class="ptile-btns">
+                      <button
+                        v-if="i > 0"
+                        class="pb pb--star"
+                        @click="setCover(i)"
+                        title="Set as cover"
+                      >
+                        ★
+                      </button>
+                      <button class="pb pb--del" @click="removePhoto(i)" title="Remove">✕</button>
+                    </div>
+                  </div>
+                </div>
+                <label v-if="form.images.length < 10" class="photo-slot">
+                  <input type="file" accept="image/*" multiple hidden @change="onPhotoUpload" />
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Upload</span>
+                </label>
+              </div>
+              <p class="photo-hint">
+                First photo = cover shown on gallery card. Click ★ to change cover.
+              </p>
+
+              <div class="fg-section">Preview · as shown on the public gallery</div>
+              <div
+                class="live-preview"
+                :style="form.images[0] ? `background-image:url(${form.images[0]})` : ''"
+              >
+                <div class="lp-gradient"></div>
+                <div class="absolute top-3 left-3">
+                  <span
+                    class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase bg-[#0d2b0f] text-white"
+                  >
+                    {{ floors.find((f) => f.id === form.floorId)?.name ?? '1st Floor' }}
+                  </span>
+                </div>
+                <div class="lp-body">
+                  <div class="lp-bar"></div>
+                  <p class="lp-title">{{ form.title || 'Section Title' }}</p>
+                  <p v-if="form.note" class="lp-note">{{ form.note }}</p>
+                  <p class="lp-desc">{{ form.description || 'Description will appear here.' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-foot">
+              <button class="btn-ghost" @click="closeForm">Cancel</button>
+              <button
+                class="btn-save"
+                :disabled="!form.title.trim() || !form.description.trim()"
+                @click="save"
+              >
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                {{ isAdding ? 'Add to Gallery' : 'Save Changes' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+      <!-- ══ DELETE CONFIRM ══ -->
+      <Transition name="modal">
+        <div v-if="delTarget" class="modal-bg" @click.self="delTarget = null">
+          <div class="del-modal">
+            <div class="del-icon">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                />
+              </svg>
+            </div>
+            <h3>Delete "{{ delTarget.sec.title }}"?</h3>
+            <p>
+              This section and all its photos will be permanently removed from the public gallery.
+            </p>
+            <div class="del-actions">
+              <button class="btn-ghost" @click="delTarget = null">Cancel</button>
+              <button class="btn-danger" @click="doDelete">Yes, Delete</button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+      <!-- ══ SCROLL TO TOP ══ -->
+      <Transition name="fade-btn">
+        <button
+          v-if="showScrollTop"
+          @click="scrollToTop"
+          class="fixed bottom-6 right-6 z-50 rounded-lg p-3 hover:scale-110 transition-all"
+          style="background: #0d2b0f"
+        >
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M5 11l7-7 7 7"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M5 17l7-7 7 7"
+            />
+          </svg>
+        </button>
+      </Transition>
+
+      <!-- ══ TOAST ══ -->
+      <Transition name="toast">
+        <div v-if="toast" class="toast" :class="`toast--${toast.type}`">
           <svg
-            class="nav-search__icon"
+            v-if="toast.type === 'success'"
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <svg
+            v-else
             width="13"
             height="13"
             viewBox="0 0 24 24"
@@ -70,626 +678,17 @@
             stroke="currentColor"
             stroke-width="2"
           >
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
+            <path d="M6 18L18 6M6 6l12 12" />
           </svg>
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search Section..."
-            class="w-full pl-9 pr-4 py-3 rounded-2xl bg-gray-50 border-2 border-[#0d2b0f] text-[#0d2b0f] font-bold text-sm focus:outline-none focus:ring-4 focus:ring-[#1b5e20]/10 transition-all shadow-inner"
-          />
+          {{ toast.msg }}
         </div>
-      </div>
+      </Transition>
     </div>
-
-    <!-- ══ CARDS SECTION — same structure as LibraryGallery ══ -->
-    <div class="w-full px-8 flex flex-col items-center mt-12 relative z-10 pb-20">
-      <transition-group name="fade" tag="div" class="w-full">
-        <div
-          v-for="floor in searchQuery ? filteredFloors : activeFloorData"
-          :key="floor.id"
-          class="w-full mb-12"
-        >
-          <div v-for="wing in floor.wings" :key="wing.name" class="mb-20">
-            <!-- Wing header — same as LibraryGallery + Add button -->
-            <div class="wing-header mb-10">
-              <div class="flex items-center gap-6 flex-1">
-                <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{
-                  floor.name
-                }}</span>
-                <h3 class="text-4xl font-black text-[#0d2b0f] uppercase tracking-tighter">
-                  {{ wing.name }}
-                </h3>
-                <div
-                  class="h-[2px] flex-grow max-w-[150px] bg-gradient-to-r from-[#0d2b0f] to-yellow-500"
-                ></div>
-              </div>
-              <button class="btn-wing-add" @click="openAdd(floor.id, wing.name)">
-                <svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path d="M12 4v16m8-8H4" />
-                </svg>
-                Add to {{ wing.name }}
-              </button>
-            </div>
-
-            <!-- Cards grid — same h-96 cards as LibraryGallery -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              <div
-                v-for="(section, idx) in wing.sections"
-                :key="section.title + idx"
-                class="group relative h-96 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 bg-gray-100 border-2 cursor-pointer"
-                :class="[
-                  editTarget?.title === section.title &&
-                  editTarget?.floorId === floor.id &&
-                  editTarget?.wingName === wing.name
-                    ? 'border-[#f9a825] shadow-[0_0_0_4px_rgba(249,168,37,0.18)]'
-                    : 'border-transparent hover:-translate-y-3',
-                ]"
-                :style="
-                  section.images.length > 0
-                    ? {
-                        backgroundImage: `url(${section.images[0]})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        transitionDelay: `${(idx % 4) * 0.08}s`,
-                      }
-                    : { transitionDelay: `${(idx % 4) * 0.08}s` }
-                "
-                @click="openViewer(section, floor.id, wing.name)"
-              >
-                <!-- Same gradient overlay as public page -->
-                <div
-                  class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500"
-                ></div>
-
-                <!-- Admin controls — appear on hover, click.stop so they don't open viewer -->
-                <div class="admin-ctrl" @click.stop>
-                  <button
-                    class="ac-btn ac-btn--edit"
-                    @click="openEdit(section, floor.id, wing.name)"
-                  >
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      />
-                    </svg>
-                    Edit
-                  </button>
-                  <button
-                    class="ac-btn ac-btn--del"
-                    @click="askDelete(section, floor.id, wing.name)"
-                  >
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                    Delete
-                  </button>
-                </div>
-
-                <!-- Floor badge top-left (same as public, moved left to not clash with controls) -->
-                <div class="absolute top-3 left-3 z-10">
-                  <div
-                    class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase shadow-sm bg-[#0d2b0f] text-white"
-                  >
-                    {{ floor.name }}
-                  </div>
-                </div>
-
-                <!-- Card body content — same as public page -->
-                <div class="absolute inset-0 p-8 flex flex-col justify-end">
-                  <div
-                    class="w-10 h-1 bg-[#1b5e20] mb-4 rounded-full transition-all group-hover:w-20"
-                  ></div>
-                  <h4
-                    class="text-white font-black text-2xl leading-tight uppercase group-hover:text-yellow-500 transition-colors duration-300"
-                  >
-                    {{ section.title }}
-                  </h4>
-                  <p
-                    v-if="section.note"
-                    class="text-[#66bb6a] text-[10px] font-bold uppercase mt-1 tracking-widest"
-                  >
-                    {{ section.note }}
-                  </p>
-                  <p
-                    class="text-white/80 text-sm mt-4 leading-relaxed"
-                    style="
-                      display: -webkit-box;
-                      -webkit-line-clamp: 3;
-                      line-clamp: 3;
-                      -webkit-box-orient: vertical;
-                      overflow: hidden;
-                    "
-                  >
-                    {{ section.description }}
-                  </p>
-                  <!-- Photo count (admin-only info) -->
-                  <div class="flex items-center gap-1.5 mt-3">
-                    <svg
-                      width="10"
-                      height="10"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.4)"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                      />
-                      <circle cx="12" cy="13" r="3" />
-                    </svg>
-                    <span class="text-white/38 text-[10px] font-semibold"
-                      >{{ section.images.length }} photo{{
-                        section.images.length !== 1 ? 's' : ''
-                      }}</span
-                    >
-                    <span
-                      v-if="!section.images.length"
-                      class="text-yellow-400/60 text-[10px] font-bold"
-                      >· No cover yet</span
-                    >
-                  </div>
-                </div>
-              </div>
-
-              <!-- Add section slot — same h-96 as other cards -->
-              <button
-                class="relative h-96 rounded-2xl border-2 border-dashed border-[#0d2b0f]/20 bg-transparent flex flex-col items-center justify-center gap-4 cursor-pointer transition-all duration-300 hover:border-[#1b5e20] hover:bg-[#f4f9f4] group/add"
-                @click="openAdd(floor.id, wing.name)"
-              >
-                <div
-                  class="w-14 h-14 rounded-2xl bg-[#0d2b0f]/05 flex items-center justify-center group-hover/add:bg-[#1b5e20]/10 transition-all"
-                >
-                  <svg
-                    width="26"
-                    height="26"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    class="text-[#0d2b0f]/25 group-hover/add:text-[#1b5e20] transition-colors"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                </div>
-                <div class="text-center px-4">
-                  <p
-                    class="text-[#0d2b0f]/30 group-hover/add:text-[#1b5e20] text-[11px] font-black uppercase tracking-widest transition-colors"
-                  >
-                    Add Section
-                  </p>
-                  <p class="text-[#0d2b0f]/20 text-[10px] mt-1 font-medium">to {{ wing.name }}</p>
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      </transition-group>
-    </div>
-
-    <!-- ══ PHOTO VIEWER MODAL — same as public LibraryGallery ══ -->
-    <Transition name="modal">
-      <div
-        v-if="viewerOpen"
-        class="fixed inset-0 z-50 bg-[#0d2b0f]/90 flex items-center justify-center p-4 backdrop-blur-sm"
-        @click.self="closeViewer"
-      >
-        <!-- Top-right action buttons -->
-        <div class="absolute top-6 right-6 z-[60] flex items-center gap-3">
-          <button class="ac-btn ac-btn--edit viewer-action-btn" @click="openEditFromViewer">
-            <svg
-              width="13"
-              height="13"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            Edit Section
-          </button>
-          <button class="ac-btn ac-btn--del viewer-action-btn" @click="askDeleteFromViewer">
-            <svg
-              width="13"
-              height="13"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
-            Delete
-          </button>
-          <button @click="closeViewer" class="viewer-close">&times;</button>
-        </div>
-
-        <div class="w-full max-w-5xl overflow-hidden rounded-2xl bg-white shadow-2xl relative">
-          <div v-if="viewerSection" class="flex flex-col">
-            <div class="relative min-h-[400px] flex items-center justify-center bg-gray-200">
-              <button
-                v-if="viewerSection.images.length > 1"
-                @click="prevImg"
-                class="absolute left-4 z-10 p-3 rounded-full bg-black/50 text-white hover:bg-[#f9a825] hover:text-[#0d2b0f] transition-all"
-              >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="3"
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-              <div
-                v-if="!viewerSection.images.length"
-                class="flex flex-col items-center justify-center gap-4 p-16 text-gray-400"
-              >
-                <svg
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.2"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <circle cx="8.5" cy="8.5" r="1.5" />
-                  <path d="M21 15l-5-5L5 21" />
-                </svg>
-                <p class="font-bold text-sm">No photos yet — click Edit Section to add some</p>
-              </div>
-              <img
-                v-else
-                :src="viewerSection.images[viewerImgIndex]"
-                class="w-full h-auto max-h-[60vh] object-contain mx-auto"
-              />
-              <button
-                v-if="viewerSection.images.length > 1"
-                @click="nextImg"
-                class="absolute right-4 z-10 p-3 rounded-full bg-black/50 text-white hover:bg-[#f9a825] hover:text-[#0d2b0f] transition-all"
-              >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="3"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div
-              v-if="viewerSection.images.length > 1"
-              class="flex justify-center gap-3 p-4 bg-gray-50 overflow-x-auto"
-            >
-              <div
-                v-for="(img, idx) in viewerSection.images"
-                :key="idx"
-                @click="viewerImgIndex = idx"
-                class="w-20 h-14 rounded-2xl cursor-pointer border-2 overflow-hidden flex-shrink-0 transition-all"
-                :class="
-                  viewerImgIndex === idx
-                    ? 'border-[#1b5e20] scale-105 shadow-md'
-                    : 'border-transparent opacity-60'
-                "
-              >
-                <img :src="img" class="w-full h-full object-cover" />
-              </div>
-            </div>
-            <div class="p-8 text-center border-t border-gray-100">
-              <h2 class="text-[#0d2b0f] text-3xl font-black uppercase mb-2">
-                {{ viewerSection.title }}
-              </h2>
-              <p
-                v-if="viewerSection.note"
-                class="text-[#66bb6a] text-xs font-bold uppercase tracking-widest mb-2"
-              >
-                {{ viewerSection.note }}
-              </p>
-              <p class="text-yellow-600 max-w-2xl mx-auto">{{ viewerSection.description }}</p>
-              <p class="text-gray-400 text-xs mt-3 font-semibold">
-                {{ viewerSection.images.length }} photo{{
-                  viewerSection.images.length !== 1 ? 's' : ''
-                }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Transition>
-
-    <!-- ══ EDIT / ADD MODAL ══ -->
-    <Transition name="modal">
-      <div v-if="formOpen" class="modal-bg" @click.self="closeForm">
-        <div class="modal-sheet">
-          <div class="modal-head">
-            <div>
-              <p class="modal-mode">{{ isAdding ? '✦ New Section' : '✦ Edit Section' }}</p>
-              <h3 class="modal-title">
-                {{ isAdding ? 'Add to Gallery' : form.title || 'Edit Section' }}
-              </h3>
-            </div>
-            <button class="icon-btn" @click="closeForm">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <div class="modal-body">
-            <div class="fg-section">Location</div>
-            <div class="fg-row-2">
-              <div class="fg">
-                <label>Floor</label>
-                <select v-model="form.floorId" @change="onFloorChange">
-                  <option v-for="f in floors" :key="f.id" :value="f.id">{{ f.name }}</option>
-                </select>
-              </div>
-              <div class="fg">
-                <label>Wing</label>
-                <select v-model="form.wingName">
-                  <option v-for="w in formWings" :key="w.name" :value="w.name">{{ w.name }}</option>
-                  <option value="__new__">+ New Wing…</option>
-                </select>
-              </div>
-            </div>
-            <div v-if="form.wingName === '__new__'" class="fg">
-              <label>New Wing Name</label>
-              <input v-model="form.newWingName" placeholder="e.g. South Wing" />
-            </div>
-
-            <div class="fg-section">Section Info</div>
-            <div class="fg">
-              <label>Title <span class="req">*</span></label>
-              <input v-model="form.title" placeholder="e.g. Quiet Room for PWD" />
-            </div>
-            <div class="fg">
-              <label>Description <span class="req">*</span></label>
-              <textarea
-                v-model="form.description"
-                rows="3"
-                placeholder="Brief description shown on the gallery card…"
-              ></textarea>
-            </div>
-            <div class="fg">
-              <label
-                >Note
-                <span class="opt"
-                  >· optional · shows as green label e.g. "Female", "1, 2, 3"</span
-                ></label
-              >
-              <input v-model="form.note" placeholder="e.g. Female Only" />
-            </div>
-
-            <div class="fg-section">
-              Photos
-              <span class="photo-pill">{{ form.images.length }} / 10</span>
-            </div>
-            <div class="photo-grid">
-              <div
-                v-for="(img, i) in form.images"
-                :key="i"
-                class="ptile"
-                :class="{ 'ptile--cover': i === 0 }"
-              >
-                <img :src="img" :alt="`Photo ${i + 1}`" />
-                <div class="ptile-over">
-                  <span v-if="i === 0" class="cover-badge">Cover</span>
-                  <div class="ptile-btns">
-                    <button
-                      v-if="i > 0"
-                      class="pb pb--star"
-                      @click="setCover(i)"
-                      title="Set as cover"
-                    >
-                      ★
-                    </button>
-                    <button class="pb pb--del" @click="removePhoto(i)" title="Remove">✕</button>
-                  </div>
-                </div>
-              </div>
-              <label v-if="form.images.length < 10" class="photo-slot">
-                <input type="file" accept="image/*" multiple hidden @change="onPhotoUpload" />
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Upload</span>
-              </label>
-            </div>
-            <p class="photo-hint">
-              First photo = cover shown on gallery card. Click ★ to change cover.
-            </p>
-
-            <!-- Live preview — exactly as it appears on the public gallery page -->
-            <div class="fg-section">Preview · as shown on the public gallery</div>
-            <div
-              class="live-preview"
-              :style="form.images[0] ? `background-image:url(${form.images[0]})` : ''"
-            >
-              <div class="lp-gradient"></div>
-              <div class="absolute top-3 left-3">
-                <span
-                  class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase bg-[#0d2b0f] text-white"
-                >
-                  {{ floors.find((f) => f.id === form.floorId)?.name ?? '1st Floor' }}
-                </span>
-              </div>
-              <div class="lp-body">
-                <div class="lp-bar"></div>
-                <p class="lp-title">{{ form.title || 'Section Title' }}</p>
-                <p v-if="form.note" class="lp-note">{{ form.note }}</p>
-                <p class="lp-desc">{{ form.description || 'Description will appear here.' }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="modal-foot">
-            <button class="btn-ghost" @click="closeForm">Cancel</button>
-            <button
-              class="btn-save"
-              :disabled="!form.title.trim() || !form.description.trim()"
-              @click="save"
-            >
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
-              {{ isAdding ? 'Add to Gallery' : 'Save Changes' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-
-    <!-- ══ DELETE CONFIRM ══ -->
-    <Transition name="modal">
-      <div v-if="delTarget" class="modal-bg" @click.self="delTarget = null">
-        <div class="del-modal">
-          <div class="del-icon">
-            <svg
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-              />
-            </svg>
-          </div>
-          <h3>Delete "{{ delTarget.sec.title }}"?</h3>
-          <p>
-            This section and all its photos will be permanently removed from the public gallery.
-          </p>
-          <div class="del-actions">
-            <button class="btn-ghost" @click="delTarget = null">Cancel</button>
-            <button class="btn-danger" @click="doDelete">Yes, Delete</button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-
-    <!-- ══ SCROLL TO TOP ══ -->
-    <Transition name="fade-btn">
-      <button
-        v-if="showScrollTop"
-        @click="scrollToTop"
-        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 hover:scale-110 transition-all"
-        style="background: #0d2b0f"
-      >
-        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M5 11l7-7 7 7"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M5 17l7-7 7 7"
-          />
-        </svg>
-      </button>
-    </Transition>
-
-    <!-- ══ TOAST ══ -->
-    <Transition name="toast">
-      <div v-if="toast" class="toast" :class="`toast--${toast.type}`">
-        <svg
-          v-if="toast.type === 'success'"
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-        <svg
-          v-else
-          width="13"
-          height="13"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M6 18L18 6M6 6l12 12" />
-        </svg>
-        {{ toast.msg }}
-      </div>
-    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
+import Sidebar from '@/components/Sidebar.vue'
 import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
 
 interface Section {
@@ -717,7 +716,6 @@ const editTarget = ref<(Section & { floorId: string; wingName: string }) | null>
 const delTarget = ref<{ sec: Section; floorId: string; wingName: string } | null>(null)
 const toast = ref<{ msg: string; type: 'success' | 'error' } | null>(null)
 
-// ── Photo viewer (same as public LibraryGallery) ──
 const viewerOpen = ref(false)
 const viewerSection = ref<Section | null>(null)
 const viewerImgIndex = ref(0)
@@ -983,7 +981,6 @@ function findWing(floorId: string, wingName: string) {
   return floors.value.find((f) => f.id === floorId)?.wings.find((w) => w.name === wingName)
 }
 
-// ── Viewer functions ──
 function openViewer(sec: Section, floorId: string, wingName: string) {
   viewerSection.value = sec
   viewerImgIndex.value = 0
@@ -1157,76 +1154,79 @@ function setCover(i: number) {
   color: rgba(255, 255, 255, 0.38);
   font-weight: 500;
 }
-.btn-new {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  font-size: 0.68rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.btn-new:hover {
-  background: #f9a825;
-  color: #0d2b0f;
-  border-color: #f9a825;
-}
+
+/* ── POPPINS FONT ── */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
 /* ── HERO ── */
 .gallery-hero {
-  text-align: center;
-  padding: 36px 30px 24px;
   width: 100%;
+  padding: 36px 40px 28px;
+  text-align: left;
+  font-family: 'Poppins', sans-serif;
 }
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.hero-line {
-  width: 36px;
-  height: 2px;
-  background: #f9a825;
-}
-.hero-label {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.32em;
+.hero-breadcrumb {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #0d2b0f;
+  color: rgba(13, 43, 15, 0.45);
+  margin: 0 0 8px;
+}
+.hero-breadcrumb-sep {
+  margin: 0 4px;
+  color: rgba(13, 43, 15, 0.35);
+  font-size: 0.75rem;
 }
 .hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 900;
-  font-size: clamp(1.8rem, 4vw, 3rem);
   line-height: 1;
-  color: #0d2b0f;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 8px;
+  display: inline-block;
 }
 .hero-title--gold {
   color: #f9a825;
+  margin-left: 5px;
 }
-.hero-stats {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: rgba(13, 43, 15, 0.4);
+.hero-title--underlined {
+  position: relative;
+  display: inline-block;
+}
+.hero-title--underlined::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #0d2b0f, #f9a825);
+  border-radius: 3px;
+}
+.hero-subtitle {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.72rem;
+  color: rgba(13, 43, 15, 0.55);
+  margin: 18px 0 0;
 }
-.hero-dot {
-  color: rgba(13, 43, 15, 0.18);
+.hero-subtitle strong {
+  color: #0d2b0f;
+  font-weight: 700;
+}
+.hero-dot-green {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #66bb6a;
+  box-shadow: 0 0 6px #66bb6a;
+  flex-shrink: 0;
 }
 
 /* ── STICKY NAV ── */
@@ -1234,11 +1234,16 @@ function setCover(i: number) {
   opacity: 0;
   animation: slideInLeft 0.5s ease forwards;
 }
-.nav-search {
-  position: relative;
-  width: 280px;
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   opacity: 0;
   animation: slideInRight 0.5s ease 0.3s forwards;
+}
+.nav-search {
+  position: relative;
+  width: 240px;
 }
 .nav-search__icon {
   position: absolute;
@@ -1248,6 +1253,28 @@ function setCover(i: number) {
   color: rgba(13, 43, 15, 0.4);
   pointer-events: none;
   z-index: 1;
+}
+
+/* ── NEW SECTION BUTTON (nav) ── */
+.btn-new-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 16px;
+  border: 2px solid #0d2b0f;
+  background: #0d2b0f;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.btn-new-nav:hover {
+  background: #1b5e20;
+  border-color: #1b5e20;
 }
 
 /* ── WING HEADER ── */
@@ -1807,6 +1834,7 @@ function setCover(i: number) {
   background: #0d2b0f;
   border-radius: 4px;
 }
+
 @keyframes slideInLeft {
   from {
     opacity: 0;
@@ -1827,12 +1855,20 @@ function setCover(i: number) {
     transform: translateX(0);
   }
 }
+
 @media (max-width: 640px) {
   .photo-grid {
     grid-template-columns: repeat(3, 1fr);
   }
   .fg-row-2 {
     grid-template-columns: 1fr;
+  }
+  .nav-right {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .nav-search {
+    width: 100%;
   }
 }
 
@@ -1853,29 +1889,11 @@ function setCover(i: number) {
 .viewer-action-btn {
   font-size: 0.68rem;
   padding: 8px 14px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
-.ac-btn--edit {
-  background: rgba(30, 30, 30, 0.75); /* darker background */
-  color: white;
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-}
-.ac-btn--edit:hover {
-  background: #f9a825;
-  color: #5a3400;
-  border-color: #f9a825;
-}
-
-.ac-btn--del {
-  background: rgba(30, 30, 30, 0.75); /* darker background */
-  color: white;
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-}
-.ac-btn--del:hover {
-  background: #c62828;
-  color: white;
-  border-color: #c62828;
+.page-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>
