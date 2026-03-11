@@ -1856,7 +1856,7 @@
     </div>
   </div>
 
-  <!-- SCROLL TO TOP -->
+  <!-- SCROLL TO TOP --->
   <Transition name="fade">
     <button
       v-if="showScrollTop"

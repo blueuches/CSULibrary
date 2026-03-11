@@ -5,11 +5,11 @@
     :class="[isCollapsed ? 'w-20' : 'w-72']"
     class="bg-[#062009] h-screen flex flex-col shadow-2xl z-20 transition-all duration-300 ease-in-out relative shrink-0"
   >
-    <!-- ── LOGO ── -->
+    <!-- LOGO -->
     <div class="p-6 border-b border-white/5 flex items-center overflow-hidden h-24">
       <div
         class="min-w-[40px] h-10 rounded flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
-        @click="$emit('updateActiveTab', 'DASHBOARD')"
+        @click="goTo('/admin')"
       >
         <svg
           width="26"
@@ -25,6 +25,7 @@
           <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
         </svg>
       </div>
+
       <transition name="fade-fast">
         <h1
           v-if="!isCollapsed"
@@ -35,23 +36,23 @@
       </transition>
     </div>
 
-    <!-- ── NAV ── -->
+    <!-- NAVIGATION -->
     <nav class="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
       <button
         v-for="item in menuItems"
         :key="item.name"
-        @click="$emit('updateActiveTab', item.name)"
+        @click="goTo(item.route)"
         :class="[
-          activeTab === item.name
+          route.path === item.route
             ? 'bg-white font-black shadow-xl scale-105'
             : 'text-white/80 hover:bg-white/10 hover:text-white',
         ]"
         class="w-full flex items-center px-4 py-3.5 rounded-xl transition-all duration-200 outline-none"
       >
-        <!-- Icon — gold always, flips dark on active -->
+        <!-- ICON -->
         <span
           class="min-w-[32px] flex items-center justify-center transition-colors duration-200"
-          :class="activeTab === item.name ? 'text-[#062009]' : 'text-[#f9a825]'"
+          :class="route.path === item.route ? 'text-[#062009]' : 'text-[#f9a825]'"
           v-html="item.icon"
         ></span>
 
@@ -59,7 +60,7 @@
           <span
             v-if="!isCollapsed"
             class="ml-2 whitespace-nowrap uppercase tracking-widest text-[11px] font-bold"
-            :class="activeTab === item.name ? 'text-[#062009]' : 'text-white'"
+            :class="route.path === item.route ? 'text-[#062009]' : 'text-white'"
           >
             {{ item.label }}
           </span>
@@ -67,7 +68,7 @@
       </button>
     </nav>
 
-    <!-- ── USER FOOTER ── -->
+    <!-- USER FOOTER -->
     <div class="p-4 bg-black/20 border-t border-white/5 h-24 flex items-center">
       <div class="flex items-center gap-3">
         <div
@@ -75,6 +76,7 @@
         >
           ADM
         </div>
+
         <transition name="fade-fast">
           <div v-if="!isCollapsed" class="overflow-hidden text-white uppercase">
             <p class="text-[10px] font-black tracking-tight">Administrator</p>
@@ -88,20 +90,22 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
-defineProps<{
-  activeTab: string
-}>()
-
-defineEmits(['updateActiveTab'])
+const router = useRouter()
+const route = useRoute()
 
 const isCollapsed = ref(true)
 
-// ── All menu items defined here — no need to pass from parent ──
+function goTo(path: string) {
+  router.push(path)
+}
+
 const menuItems = [
   {
     name: 'DASHBOARD',
     label: 'Dashboard',
+    route: '/admin',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="3" width="7" height="7" rx="1"/>
       <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -109,16 +113,21 @@ const menuItems = [
       <rect x="14" y="14" width="7" height="7" rx="1"/>
     </svg>`,
   },
+
   {
     name: 'ANNOUNCEMENTS',
     label: 'Announcements',
+    route: '/admin/announcement',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
     </svg>`,
   },
+
   {
     name: 'PERSONNEL',
     label: 'Personnel',
+    route: '/admin/personnel',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
@@ -128,35 +137,42 @@ const menuItems = [
   },
 
   {
-    name: 'REPORTS',
-    label: 'Reports',
+    name: 'ANALYTICS',
+    label: 'Analytics',
+    route: '/admin/analytics',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-      <line x1="16" y1="13" x2="8" y2="13"/>
-      <line x1="16" y1="17" x2="8" y2="17"/>
-      <line x1="10" y1="9" x2="8" y2="9"/>
+      <line x1="18" y1="20" x2="18" y2="10"/>
+      <line x1="12" y1="20" x2="12" y2="4"/>
+      <line x1="6" y1="20" x2="6" y2="14"/>
+      <line x1="2" y1="20" x2="22" y2="20"/>
     </svg>`,
   },
+
   {
     name: 'ATTENDANCE',
     label: 'Attendance',
+    route: '/admin/attendance',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
       <polyline points="16 11 18 13 22 9"/>
     </svg>`,
   },
+
   {
     name: 'SERVICES',
     label: 'Services',
+    route: '/admin/services',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
     </svg>`,
   },
+
   {
     name: 'WEBSITE',
     label: 'Website',
+    route: '/admin/website',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/>
       <line x1="2" y1="12" x2="22" y2="12"/>
