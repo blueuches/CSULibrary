@@ -1,137 +1,206 @@
 <template>
-  <div class="relative w-full min-h-screen pb-20 font-poppins antialiased text-[#0d2b0f] flex flex-col items-center overflow-x-hidden bg-[#f8fafc]">
-    
-    <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-green-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-pulse"></div>
-    <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-yellow-100/50 rounded-full mix-blend-multiply filter blur-[100px] animate-pulse animation-delay-2000"></div>
+  <div class="portal-root">
+    <div class="glow-spot-left"></div>
+    <div class="glow-spot-right"></div>
 
-    <div class="relative z-10 w-full max-w-7xl px-6 pt-16">
+    <div class="dashboard-wrapper">
       
-      <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-        <div>
-          <div class="flex items-center gap-3 mb-3">
-            <span class="h-[2px] w-8 bg-yellow-500"></span>
-            <span class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">System Administrator</span>
+      <header class="dashboard-header">
+        <div class="branding-group">
+          <div class="path-navigation">
+            <span class="root-path">ADMIN</span>
+            <svg class="path-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 18l6-6-6-6"/></svg>
+            <span class="active-path">SERVICES</span>
           </div>
-          <h1 class="text-6xl md:text-8xl font-[1000] uppercase tracking-tighter leading-none">
-            Library<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0d2b0f] to-green-600">Portal</span>
+          
+          <h1 class="portal-main-title">
+            <div class="title-stack">
+              <span class="word-forest">Library</span>
+              <div class="underline-container">
+                <div class="main-bar"></div>
+                <div class="glow-bar"></div>
+                <div class="accent-terminal"></div>
+              </div>
+            </div>
+            <span class="word-mustard">Services</span>
           </h1>
         </div>
-        <div class="bg-white px-6 py-4 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center font-bold text-green-700">AD</div>
-          <div class="text-left">
-            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Server</p>
-            <p class="text-sm font-black text-[#0d2b0f]">Node_Main_01</p>
-          </div>
-        </div>
-      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 h-full">
+        <div class="header-actions-hub">
+          <div class="system-pills">
+            <div class="status-pill">
+              <span class="online-indicator"></span>
+              LIVE_DATA
+            </div>
+            <div class="date-pill">Wednesday, March 11, 2026</div>
+          </div>
+          <button class="nav-btn-primary" @click="navigateTo('settings')">
+            <span>DASHBOARD SETTINGS</span>
+            <div class="icon-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg></div>
+          </button>
+        </div>
+      </header>
+
+      <section class="nav-bento-grid">
         
-        <div @click="goTo('services')" class="md:col-span-2 md:row-span-2 bento-card group bg-[#0d2b0f] text-white p-10 overflow-hidden relative">
-          <div class="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
-            <LayoutGrid :size="180" />
-          </div>
-          <div class="relative z-10 h-full flex flex-col justify-between">
-            <div>
-              <span class="px-4 py-1 rounded-full border border-white/20 text-[10px] font-bold uppercase tracking-widest">Module 01</span>
-              <h2 class="text-4xl font-black uppercase mt-6 mb-4">Manage<br/>Services</h2>
-              <p class="text-white/60 text-sm max-w-xs leading-relaxed">Update your core library offerings, orientation schedules, and digital resource descriptions.</p>
+        <div class="bento-card card-dark card-big">
+          <div class="card-content">
+            <div class="top-meta">
+              <span class="serial-no">01 // NAV</span>
+              <div class="micro-chart">
+                <div class="m-bar" style="height: 40%"></div>
+                <div class="m-bar" style="height: 80%"></div>
+                <div class="m-bar highlight" style="height: 60%"></div>
+              </div>
             </div>
-            <div class="flex items-center gap-3 font-bold text-xs uppercase tracking-[0.2em] group-hover:gap-5 transition-all">
-              Launch Interface <ArrowRight :size="16" class="text-yellow-500" />
+            
+            <h2 class="card-h-title">Room<br/><span class="text-mustard">Reservation</span></h2>
+            <p class="card-p-text">Direct access to campus facility bookings and approval queues.</p>
+            
+            <button class="bento-btn-white" @click="navigateTo('reservations')">
+              <span>MANAGE ROOMS</span>
+              <svg class="arrow-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="bento-card card-white card-wide">
+          <div class="metric-flex-box">
+            <div class="metric-info">
+              <span class="m-label">ACTIVE BORROWERS</span>
+              <div class="m-value">12,840 <span class="m-trend">↑ 2.4%</span></div>
             </div>
+            <button class="fab-nav-btn" @click="navigateTo('borrowers')" title="View All Members">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </button>
           </div>
         </div>
 
-        <div @click="goTo('records')" class="md:col-span-2 bento-card group bg-white p-8 flex items-center gap-8 border border-gray-100 shadow-sm hover:shadow-xl">
-          <div class="w-24 h-24 rounded-3xl bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:bg-yellow-500 group-hover:text-white transition-all duration-500">
-            <Database :size="40" />
-          </div>
-          <div>
-            <h3 class="text-2xl font-black uppercase tracking-tight">Database Records</h3>
-            <p class="text-gray-400 text-xs mt-1">Student logs & Book Inventory</p>
+        <div class="bento-card card-mustard">
+          <div class="sq-nav-content">
+            <div class="nav-icon-box">🗓</div>
+            <h3 class="nav-title">Schedules</h3>
+            <p class="nav-subtitle">12 Upcoming</p>
+            <button class="corner-btn" @click="navigateTo('calendar')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+            </button>
           </div>
         </div>
 
-        <div @click="goTo('gallery')" class="bento-card group bg-white p-8 border border-gray-100 shadow-sm hover:shadow-xl text-center">
-          <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 mx-auto mb-4 flex items-center justify-center group-hover:rotate-12 transition-transform">
-            <ImageIcon :size="28" />
+        <div class="bento-card card-white">
+          <div class="sq-nav-content">
+            <div class="nav-icon-box-forest">🖼</div>
+            <h3 class="nav-title">Gallery</h3>
+            <p class="nav-subtitle">2.4k Assets</p>
+            <button class="corner-btn-forest" @click="navigateTo('media')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+            </button>
           </div>
-          <h3 class="font-black uppercase text-sm tracking-widest">Gallery</h3>
-          <p class="text-[10px] text-gray-400 mt-2">24 New Uploads</p>
         </div>
 
-        <div @click="goTo('rooms')" class="bento-card group bg-gradient-to-br from-green-500 to-green-700 p-8 text-white shadow-lg hover:shadow-green-200">
-          <div class="flex justify-between items-start mb-8">
-            <CalendarCheck :size="24" />
-            <div class="w-2 h-2 rounded-full bg-white animate-ping"></div>
-          </div>
-          <h3 class="font-black uppercase text-sm tracking-widest">Reservations</h3>
-          <p class="text-white/70 text-[10px] mt-2 italic">Live Room Tracking</p>
-        </div>
-
-      </div>
+      </section>
     </div>
-
-    <Transition name="fade">
-      <div v-if="currentView !== 'overview'" class="fixed inset-0 z-[100] bg-[#f8fafc] p-10 flex flex-col items-center">
-        <button @click="currentView = 'overview'" class="absolute top-10 left-10 flex items-center gap-2 font-black uppercase text-xs tracking-widest hover:gap-4 transition-all">
-          <ArrowLeft :size="20" /> Return to Command
-        </button>
-        <div class="mt-20 text-center">
-          <h2 class="text-7xl font-black uppercase tracking-tighter opacity-10 mb-[-40px]">{{ currentView }}</h2>
-          <h2 class="text-5xl font-black uppercase tracking-tighter relative z-10">Active Session: {{ currentView }}</h2>
-          <div class="mt-12 p-20 border-2 border-dashed border-gray-200 rounded-[4rem] text-gray-400">
-            Interface for <b>{{ currentView }}</b> is loading...
-          </div>
-        </div>
-      </div>
-    </Transition>
-
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { 
-  LayoutGrid, 
-  Image as ImageIcon, 
-  Database, 
-  CalendarCheck, 
-  ArrowRight,
-  ArrowLeft
-} from 'lucide-vue-next'
-
-const currentView = ref('overview')
-
-const goTo = (view) => {
-  currentView.value = view
-}
+const navigateTo = (page) => {
+  console.log(`Routing to: ${page}`);
+  // Your router link logic here
+};
 </script>
 
 <style scoped>
-.bento-card {
-  border-radius: 40px;
-  cursor: pointer;
-  transition: all 0.5s cubic-bezier(0.2, 1, 0.2, 1);
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap');
+
+.portal-root {
+  width: 100%; min-height: 100vh; background-color: #f9fbfb;
+  font-family: 'Poppins', sans-serif; color: #0d2b0f;
+  display: flex; justify-content: center; position: relative; overflow-x: hidden;
 }
 
-.bento-card:hover {
-  transform: scale(0.98);
-}
+.dashboard-wrapper { width: 100%; max-width: 1400px; padding: 4rem 3rem; z-index: 10; }
 
-.fade-enter-active, .fade-leave-active {
-  transition: all 0.5s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
+/* --- HEADER ENHANCEMENTS --- */
+.dashboard-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 5rem; }
 
-/* Animations */
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.5; }
+.path-navigation { display: flex; align-items: center; gap: 10px; margin-bottom: 1.2rem; }
+.root-path { font-size: 11px; font-weight: 800; color: #94a3b8; letter-spacing: 0.15em; }
+.path-chevron { width: 12px; height: 12px; color: #cbd5e1; }
+.active-path { font-size: 11px; font-weight: 800; color: #0d2b0f; }
+
+.portal-main-title { font-size: 5.2rem; font-weight: 900; line-height: 0.85; letter-spacing: -0.04em; display: flex; }
+.word-mustard { color: #facc15; margin-left: 1.5rem; text-shadow: 0 10px 30px rgba(250, 204, 21, 0.15); }
+
+.underline-container { margin-top: 10px; position: relative; display: flex; align-items: center; width: 100%; }
+.main-bar { height: 10px; flex-grow: 1; background: #0d2b0f; border-radius: 5px; }
+.glow-bar { position: absolute; height: 10px; width: 40%; right: 0; background: linear-gradient(90deg, transparent, #facc15); border-radius: 5px; filter: blur(4px); opacity: 0.6; }
+.accent-terminal { width: 10px; height: 10px; background: #cbd5e1; border-radius: 50%; margin-left: 15px; }
+
+/* Header Buttons */
+.header-actions-hub { display: flex; flex-direction: column; align-items: flex-end; gap: 20px; }
+.system-pills { display: flex; gap: 12px; }
+.status-pill { background: white; padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 800; color: #16a34a; border: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px; }
+.online-indicator { width: 6px; height: 6px; background: #16a34a; border-radius: 50%; box-shadow: 0 0 10px #16a34a; }
+.date-pill { background: white; padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 700; color: #64748b; border: 1px solid #f1f5f9; }
+
+.nav-btn-primary {
+  background: #0d2b0f; color: white; border: none; padding: 0 6px 0 24px; height: 54px;
+  border-radius: 18px; font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 15px;
+  cursor: pointer; transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.animation-delay-2000 { animation-delay: 2s; }
+.nav-btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(13, 43, 15, 0.2); background: #154218; }
+.icon-wrap { width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+
+/* --- GRID & NAVIGATION BUTTONS --- */
+.nav-bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 240px; gap: 30px; }
+
+.bento-card { border-radius: 40px; position: relative; transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1); overflow: hidden; }
+.bento-card:hover { transform: translateY(-8px); }
+
+.card-dark { background: #0d2b0f; color: white; padding: 45px; display: flex; flex-direction: column; }
+.card-white { background: white; border: 1.5px solid #edf2f5; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+.card-mustard { background: #facc15; padding: 40px; }
+
+.card-big { grid-column: span 2; grid-row: span 2; }
+.card-wide { grid-column: span 2; }
+
+/* CARD 1 BUTTON: The Massive Action */
+.bento-btn-white {
+  margin-top: auto; background: white; color: #0d2b0f; border: none; height: 70px;
+  padding: 0 30px; border-radius: 22px; font-weight: 900; font-size: 15px;
+  display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s;
+}
+.bento-btn-white:hover { background: #facc15; transform: scale(1.02); }
+.arrow-svg { transition: 0.3s; }
+.bento-btn-white:hover .arrow-svg { transform: translateX(5px); }
+
+/* CARD 2 BUTTON: The FAB Icon */
+.metric-flex-box { display: flex; justify-content: space-between; align-items: center; height: 100%; }
+.m-value { font-size: 2.8rem; font-weight: 900; line-height: 1; }
+.m-label { font-size: 11px; font-weight: 800; color: #94a3b8; }
+.fab-nav-btn {
+  width: 70px; height: 70px; border-radius: 24px; background: #f0fdf4; color: #0d2b0f;
+  border: none; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex; align-items: center; justify-content: center;
+}
+.fab-nav-btn:hover { background: #0d2b0f; color: white; transform: rotate(-10deg) scale(1.1); }
+
+/* CARD 3 & 4 BUTTONS: The Corner Links */
+.sq-nav-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
+.nav-icon-box { width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 15px; }
+.nav-icon-box-forest { width: 60px; height: 60px; background: #0d2b0f; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 15px; }
+.nav-title { font-size: 20px; font-weight: 800; }
+
+.corner-btn, .corner-btn-forest {
+  position: absolute; top: 25px; right: 25px; width: 44px; height: 44px; border: none;
+  border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s;
+}
+.corner-btn { background: #0d2b0f; color: white; }
+.corner-btn-forest { background: #f8fafb; color: #0d2b0f; }
+.corner-btn:hover, .corner-btn-forest:hover { transform: scale(1.1); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+
+/* ORBS */
+.glow-spot-left { position: absolute; top: -100px; left: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(13,43,15,0.03), transparent); z-index: 1; }
+.glow-spot-right { position: absolute; bottom: -100px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(250,204,21,0.05), transparent); z-index: 1; }
 </style>
