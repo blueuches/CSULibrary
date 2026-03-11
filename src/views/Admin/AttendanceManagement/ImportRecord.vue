@@ -215,12 +215,19 @@ function importStudents(){
   min-height:100vh;
   background:#0b1f13;
   font-family:'Syne',sans-serif;
+
+  display:flex; /* IMPORTANT */
 }
 
+/* container for page content */
 .page-container{
   max-width:900px;
   margin:auto;
+
   padding:60px 24px;
+
+  margin-left:260px; /* adjust if sidebar width differs */
+  width:100%;
 }
 
 
