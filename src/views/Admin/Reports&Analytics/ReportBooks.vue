@@ -1,7 +1,11 @@
 <template>
-  <div
-    class="w-full min-h-screen font-['Poppins'] bg-[#f7f5f0] pb-20 pt-[40px] relative overflow-hidden"
-  >
+<div class="w-full min-h-screen font-['Poppins'] bg-[#f7f5f0] flex">
+
+  <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
+
+  <!-- Main content -->
+  <div class="flex-1 pb-20 pt-[40px] relative overflow-hidden">
+
     <!-- Decorative background -->
     <div class="absolute inset-0 pointer-events-none">
       <div class="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#1b5e20]/5 blur-[120px] translate-x-1/3 -translate-y-1/3"></div>
@@ -298,19 +302,15 @@
             <div class="flex justify-center mb-5">
               <svg width="140" height="140" viewBox="0 0 140 140">
                 <circle cx="70" cy="70" r="50" fill="none" stroke="#e8f5e9" stroke-width="22" />
-                <!-- English 72% → dash 226.2 -->
                 <circle cx="70" cy="70" r="50" fill="none" stroke="#1b5e20" stroke-width="22"
                   stroke-dasharray="226 88" stroke-dashoffset="-78.5"
                   class="donut-seg" style="animation-delay:0s" />
-                <!-- Filipino 15% → 47.1 -->
                 <circle cx="70" cy="70" r="50" fill="none" stroke="#66bb6a" stroke-width="22"
                   stroke-dasharray="47 267" stroke-dashoffset="-304.5"
                   class="donut-seg" style="animation-delay:0.1s" />
-                <!-- Spanish 8% → 25.1 -->
                 <circle cx="70" cy="70" r="50" fill="none" stroke="#a5d6a7" stroke-width="22"
                   stroke-dasharray="25 289" stroke-dashoffset="-351.5"
                   class="donut-seg" style="animation-delay:0.18s" />
-                <!-- Others 5% → 15.7 -->
                 <circle cx="70" cy="70" r="50" fill="none" stroke="#f9a825" stroke-width="22"
                   stroke-dasharray="16 298" stroke-dashoffset="-376.5"
                   class="donut-seg" style="animation-delay:0.24s" />
@@ -360,10 +360,19 @@
 
     </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
+
+const activeTab = ref('ANALYTICS')
+
+const handleTabChange = (name: string) => {
+  activeTab.value = name
+}
+
 import {
   Upload, FileSpreadsheet, BookOpen, BookPlus, BookX,
   TrendingUp, PieChart, CalendarDays, Languages, Library
@@ -492,7 +501,6 @@ const languages = [
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* SVG bar grow */
 .chart-bar {
   transform-origin: bottom;
   transform-box: fill-box;
@@ -504,7 +512,6 @@ const languages = [
   to   { transform: scaleY(1); opacity: 1; }
 }
 
-/* Horizontal progress bar fill */
 .bar-fill {
   width: 0;
   animation: fillBar 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -518,7 +525,6 @@ const languages = [
   animation: fadeUp 0.35s ease forwards;
 }
 
-/* Donut segments */
 .donut-seg {
   opacity: 0;
   animation: donutFade 0.6s ease forwards;
@@ -527,7 +533,6 @@ const languages = [
   to { opacity: 1; }
 }
 
-/* Scrollbar */
 .overflow-y-auto::-webkit-scrollbar       { width: 4px; }
 .overflow-y-auto::-webkit-scrollbar-track { background: transparent; }
 .overflow-y-auto::-webkit-scrollbar-thumb { background: #c8e6c9; border-radius: 4px; }

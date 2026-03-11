@@ -28,7 +28,7 @@
     </header>
 
     <!-- ===== MAIN CONTENT ===== -->
-    <div class="px-6 sm:px-10 lg:px-16 py-20 max-w-6xl mx-auto">
+    <div class="px-6 sm:px-10 lg:px-16 py-10 pb-20 max-w-6xl mx-auto">
 
       <!-- ===== FEATURED (HEAD) ===== -->
       <div v-if="featuredStaff" class="featured-wrapper mb-24">
