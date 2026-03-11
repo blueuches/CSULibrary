@@ -1,51 +1,23 @@
 <template>
-  <div class="w-full" style="font-family: 'Poppins', sans-serif; background: #f5f3ef; min-height: 100vh">
-    <!-- Header Section -->
-    <div class="relative py-16 px-4 text-[#0B2010] overflow-hidden">
-      <!-- Decorative Background Elements -->
-      <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style="background: #FDBE33; filter: blur(80px); transform: translate(100px, -100px)"></div>
-      <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10" style="background: #F28500; filter: blur(80px); transform: translate(-80px, 80px)"></div>
+  <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
+    <Sidebar />
 
-      <!-- Header Content -->
-      <div class="max-w-4xl mx-auto relative z-10">
-        <div class="flex items-center gap-4 mb-6">
-          <button
-            @click="goBack"
-            class="p-3 hover:bg-black/5 rounded-lg transition-all duration-300"
-            style="color: #0B2010"
-          >
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <div>
-            <div class="flex items-center gap-3 mb-3">
-              <div style="width: 50px; height: 4px; background: #FDBE33; border-radius: 2px"></div>
-              <span
-                style="
-                  font-size: 0.75rem;
-                  font-weight: 700;
-                  letter-spacing: 0.4em;
-                  color: #FDBE33;
-                  text-transform: uppercase;
-                  font-family: 'Poppins', sans-serif;
-                "
-              >Create Announcement</span>
-            </div>
-            <h1 class="text-5xl font-bold mb-2" style="font-family: 'Poppins', sans-serif">
-              {{ isEditing ? 'Edit General Announcement' : 'New General Announcement' }}
-            </h1>
-            <p class="text-gray-700 text-lg" style="font-family: 'Poppins', sans-serif">
-              {{ isEditing ? 'Update your announcement information' : 'Create a new announcement to share with the community' }}
-            </p>
+    <main class="report-root flex-1 overflow-y-auto">
+      <header class="report-header intro-header">
+        <div class="header-left">
+          <div class="header-breadcrumb !mb-0">
+            <RouterLink to="/admin/announcement" class="breadcrumb-back">Back</RouterLink>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 19l-7-7 7-7" /></svg>
+            <span>Announcement Management</span>
           </div>
+          <h1 class="header-title intro-title">Library <span class="text-yellow-500">Announcements</span></h1>
+          <p class="header-sub">Create a new general announcement to share with the community.</p>
         </div>
-      </div>
-    </div>
+      </header>
 
-    <!-- Form Section -->
-    <div class="max-w-4xl mx-auto px-4 py-12">
-      <form @submit.prevent="submitForm" class="space-y-6">
+      <!-- Form Section -->
+      <div class="max-w-4xl mx-auto px-4 pb-16">
+        <form @submit.prevent="submitForm" class="space-y-6">
 
         <!-- Announcement Title -->
         <div class="bg-white rounded-2xl p-8 shadow-lg">
@@ -193,13 +165,16 @@
           </button>
         </div>
       </form>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import Sidebar from '@/components/Sidebar.vue'
+import '@/assets/styles/report-analytics.css'
 
 const router = useRouter()
 const isEditing = ref(false)
@@ -248,8 +223,14 @@ const goBack = () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-* {
-  font-family: 'Poppins', sans-serif;
+.breadcrumb-back {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 700;
+  transition: opacity 0.15s ease;
+}
+.breadcrumb-back:hover {
+  opacity: 0.7;
 }
 
 .input-field:focus {
