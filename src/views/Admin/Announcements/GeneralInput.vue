@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full" style="font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #0B2010 0%, #0D210E 50%, #2D7231 100%); min-height: 100vh">
+  <div class="w-full" style="font-family: 'Poppins', sans-serif; background: #f5f3ef; min-height: 100vh">
     <!-- Header Section -->
-    <div class="relative py-16 px-4 text-white overflow-hidden">
+    <div class="relative py-16 px-4 text-[#0B2010] overflow-hidden">
       <!-- Decorative Background Elements -->
       <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style="background: #FDBE33; filter: blur(80px); transform: translate(100px, -100px)"></div>
       <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10" style="background: #F28500; filter: blur(80px); transform: translate(-80px, 80px)"></div>
@@ -11,8 +11,8 @@
         <div class="flex items-center gap-4 mb-6">
           <button
             @click="goBack"
-            class="p-3 hover:bg-white/20 rounded-lg transition-all duration-300"
-            style="color: white"
+            class="p-3 hover:bg-black/5 rounded-lg transition-all duration-300"
+            style="color: #0B2010"
           >
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -35,7 +35,7 @@
             <h1 class="text-5xl font-bold mb-2" style="font-family: 'Poppins', sans-serif">
               {{ isEditing ? 'Edit General Announcement' : 'New General Announcement' }}
             </h1>
-            <p class="text-gray-200 text-lg" style="font-family: 'Poppins', sans-serif">
+            <p class="text-gray-700 text-lg" style="font-family: 'Poppins', sans-serif">
               {{ isEditing ? 'Update your announcement information' : 'Create a new announcement to share with the community' }}
             </p>
           </div>
