@@ -1,182 +1,447 @@
 <template>
-  <section class="py-5">
-    <div class="px-6">
+  <section class="py-12 bg-white min-h-screen overflow-hidden">
+    <div class="max-[100%] mx-auto px-8">
+      <!-- Title -->
+      <div class="page-inner" v-reveal>
+        <div class="section-title section-title-center">
+          <span class="section-kicker title-container">
+            <span class="kicker-line"></span>
+            <span class="kicker-text">WHAT'S HAPPENING AT CSU LIBRARY</span>
+          </span>
+          <h1 class="section-headline title-headline"><span>UPCOMING </span>EVENTS</h1>
+        </div>
+      </div>
 
-      <!-- Carousel -->
-      <!-- <Carousel :items="images" /> -->
-
-      <!-- <Ribbon class="uppercase">
-        Announcements
-      </Ribbon> -->
-
-      <card>
-
-      </card>
-
-      <!-- ================= MONTHLY EVENTS ================= -->
-      <section class="mt-5 mb-10">
-        <h2 class="text-3xl tracking-normal text-center font-extrabold text-[#1B5E20] uppercase">
-          Monthly Events
-        </h2>
-        <div class="w-50 h-1 bg-yellow-500 mx-auto mt-1 mb-8 rounded-full"></div>
-
-        <!-- ================= MONTH OVAL FILTER ================= -->
-        <div class="flex flex-wrap justify-center gap-2 mb-8">
-
-          <button v-for="month in months" :key="month" @click="selectedEventMonth = month" :class="[
-            'px-5 py-2 rounded-full border transition',
-            selectedEventMonth === month
-              ? 'bg-green-700 text-white border-green-700'
-              : 'bg-white text-gray-600 border-gray-300 hover:bg-green-100'
-          ]">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+        <nav class="flex items-center gap-1 overflow-x-auto mx-auto pb-2 scrollbar-hide nav-reveal">
+          <button
+            v-for="(month, index) in months"
+            :key="month"
+            @click="selectedEventMonth = month"
+            :style="{ '--p-i': index }"
+            :class="[
+              'pill-entrance whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-all duration-300',
+              selectedEventMonth === month
+                ? 'bg-green-900 text-white shadow-lg scale-105'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+            ]"
+          >
             {{ month }}
           </button>
-        </div>
+        </nav>
+      </div>
 
-        <!-- ================= EVENTS GRID ================= -->
-        <div class="grid md:grid-cols-1 lg:grid-cols-3 gap-6">
-          <div v-for="event in filteredEvents" :key="event.id" class="bg-white rounded-xl shadow overflow-hidden">
-            <img :src="event.image" class="w-full h-48 object-cover" />
-
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2">
-                {{ event.title }}
-              </h3>
-
-              <p class="text-sm text-gray-500 mb-2">
-                {{ event.date }} • {{ event.time }} • {{ event.location }}
-              </p>
-
-              <p class="text-gray-600 text-sm">
-                {{ event.description }}
-              </p>
+      <transition-group
+        name="shuffle"
+        tag="div"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+      >
+        <div
+          v-for="(event, index) in filteredEvents"
+          :key="event.id"
+          class="group cursor-pointer event-card"
+          :style="{ '--i': index }"
+        >
+          <div
+            class="relative aspect-[16/10] overflow-hidden rounded-2xl mb-4 bg-gray-100 shadow-sm group-hover:shadow-xl transition-shadow duration-500"
+          >
+            <img
+              :src="event.image"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            <div class="absolute top-3 right-3">
+              <div
+                class="backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase shadow-sm"
+                :style="{ background: event.color, color: '#fff' }"
+              >
+                {{ event.month }} '{{ event.year.slice(-2) }}
+              </div>
             </div>
           </div>
 
-          <p v-if="filteredEvents.length === 0" class="text-center col-span-3 text-gray-500" style="padding: 100px;">
-            No events available.
-          </p>
-
+          <div
+            class="space-y-2 transform transition-transform duration-500 group-hover:translate-x-1"
+          >
+            <div
+              class="flex items-center gap-2 text-yellow-600 text-xs font-bold uppercase tracking-wider"
+            >
+              <span>{{ event.location }}</span>
+              <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+              <span class="text-gray-500 font-medium capitalize">{{ event.time }}</span>
+            </div>
+            <h3
+              class="event-card-title text-xl font-semibold transition-colors"
+              :style="{ color: '#1a1a1a' }"
+              @mouseenter="(e) => ((e.currentTarget as HTMLElement).style.color = event.color)"
+              @mouseleave="(e) => ((e.currentTarget as HTMLElement).style.color = '#1a1a1a')"
+            >
+              {{ event.title }}
+            </h3>
+            <p class="event-card-desc text-gray-500 text-sm leading-relaxed line-clamp-2">
+              {{ event.description }}
+            </p>
+          </div>
         </div>
+      </transition-group>
 
-        <div class="text-center mt-6">
-          <router-link to="/top-borrowers" class="text-green-700 hover:underline text-center font-semibold">
-           Go to Top Borrowers
-          </router-link>
+      <div v-if="filteredEvents.length === 0" class="text-center py-32 animate-fade-in">
+        <div class="flex justify-center mb-4 text-gray-300 text-6xl no-events-icon">
+          <i class="fas fa-book-open"></i>
         </div>
-      
+        <p class="text-gray-400 font-medium italic text-lg">
+          No events scheduled for {{ selectedEventMonth }}.
+        </p>
+      </div>
 
-
-      </section>
-
+      <div class="flex justify-center mt-12">
+        <router-link
+          to="/top-borrowers"
+          class="inline-block bg-green-900 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-green-700 hover:scale-105 transition transform duration-300 animate-pop-in cta-btn"
+        >
+          Go to Top Borrowers
+        </router-link>
+      </div>
     </div>
-  </section>
 
+    <!-- SCROLL TO TOP -->
+    <Transition name="fade">
+      <button
+        v-if="showScrollTop"
+        @click="scrollToTop"
+        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
+        style="background: #0d2b0f"
+      >
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 11l7-7 7 7"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 17l7-7 7 7"
+          />
+        </svg>
+      </button>
+    </Transition>
+  </section>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue"
-import Carousel from "@/components/Announcement/Carousel.vue"
-import Ribbon from "@/components/Ribbon.vue"
-
-/* ================= CAROUSEL DATA ================= */
-
-const images = [
-  {
-    src: "/imgs/a1.jpg",
-    text: "Book Fair Month",
-    span: "Explore a wide selection of books."
-  },
-  {
-    src: "/imgs/a6.jpg",
-    text: "Facilities Offer",
-    span: "Try our available facilities."
-  },
-  {
-    src: "/imgs/a3.png",
-    text: "Other Announcement & Updates",
-    span: "Stay informed about updates."
-  }
-]
-
-/* ================= FILTER DATA ================= */
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import announcement_pic from '@/assets/images/announcementpage/a1.jpg'
+import announcement_pic2 from '@/assets/images/announcementpage/a14.jpg'
+import announcement_pic3 from '@/assets/images/announcementpage/a15.jpg'
+import announcement_pic4 from '@/assets/images/announcementpage/a16.jpg'
+import announcement_pic5 from '@/assets/images/announcementpage/a17.jpg'
 
 const months = [
-  "All",
-  "Jan", "Feb", "March", "April",
-  "May", "June", "July", "Aug",
-  "Sep", "Oct", "Nov", "Dec"
+  'All',
+  'Jan',
+  'Feb',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ]
+const selectedEventMonth = ref('All')
+const showScrollTop = ref(false)
 
-const selectedEventMonth = ref("All")
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 300
+}
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
-/* ================= EVENTS DATA ================= */
+onMounted(() => window.addEventListener('scroll', handleScroll))
+onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
 const events = [
   {
     id: 1,
-    title: "Book Fair 2026",
-    month: "March",
-    year: "2026",
-    date: "March 18, 2026",
-    time: "10:00 AM",
-    location: "Main Hall",
-    description: "Explore a diverse collection of books.",
-    image: "/imgs/a8.jpg"
+    title: 'Book Fair 2026',
+    month: 'March',
+    year: '2026',
+    time: '10:00 AM',
+    location: 'Main Hall',
+    description: 'Explore a diverse collection of books and meet local authors.',
+    image: announcement_pic,
+    color: '#0d2b0f',
   },
   {
     id: 2,
-    title: "Reading Workshop",
-    month: "Jan",
-    year: "2026",
-    date: "January 12, 2026",
-    time: "1:00 PM",
-    location: "Conference Room",
-    description: "Improve reading skills.",
-    image: "/imgs/a9.jpg"
+    title: 'Reading Workshop',
+    month: 'Jan',
+    year: '2026',
+    time: '1:00 PM',
+    location: 'Conference Room',
+    description: 'Improve reading speed and comprehension with our expert-led session.',
+    image: announcement_pic2,
+    color: '#0d2b0f',
   },
   {
     id: 3,
-    title: "Science Fair 2027",
-    month: "March",
-    year: "2027",
-    date: "March 10, 2027",
-    time: "9:00 AM",
-    location: "Auditorium",
-    description: "Student science project showcase.",
-    image: "/imgs/a6.jpg"
+    title: 'Storytelling Session',
+    month: 'March',
+    year: '2027',
+    time: '9:00 AM',
+    location: 'Storytelling Room',
+    description: 'Interactive storytelling for kids with crafts and fun learning activities.',
+    image: announcement_pic3,
+    color: '#0d2b0f',
   },
   {
     id: 4,
-    title: "Science Fair 2027",
-    month: "June",
-    year: "2027",
-    date: "March 10, 2027",
-    time: "9:00 AM",
-    location: "Auditorium",
-    description: "Student science project showcase.",
-    image: "/imgs/a11.jpg"
+    title: 'Art Exhibition',
+    month: 'June',
+    year: '2027',
+    time: '9:00 AM',
+    location: 'Exhibit Area',
+    description: 'A celebration of local talent and contemporary visual arts.',
+    image: announcement_pic4,
+    color: '#0d2b0f',
   },
   {
     id: 5,
-    title: "Reading Workshop",
-    month: "Aug",
-    year: "2026",
-    date: "January 12, 2026",
-    time: "1:00 PM",
-    location: "Conference Room",
-    description: "Improve reading skills.",
-    image: "/imgs/a13.jpg"
+    title: 'Art & Literature Exhibition',
+    month: 'Aug',
+    year: '2026',
+    time: '1:00 PM',
+    location: 'Library Garden',
+    description: 'Display of student artwork inspired by literary works, open for public viewing.',
+    image: announcement_pic5,
+    color: '#0d2b0f',
   },
 ]
 
-/* ================= FILTER LOGIC ================= */
-
 const filteredEvents = computed(() => {
-  return events.filter(event =>
-    (selectedEventMonth.value === "All" || event.month === selectedEventMonth.value)
+  return events.filter(
+    (e) => selectedEventMonth.value === 'All' || e.month === selectedEventMonth.value,
   )
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+/* ── FONT BASE: match homepage ── */
+section {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ===== Title Styling ===== */
+.section-title {
+  width: min(100%, 1500px);
+  margin: 8px auto 14px;
+}
+.section-title-center {
+  text-align: center;
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.kicker-text {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  letter-spacing: 6px;
+  font-size: 0.7rem;
+  color: #0d2b0f;
+  text-transform: uppercase;
+}
+
+/* ── HEADLINE: match homepage hero style ── */
+.section-headline {
+  margin: 10px 0 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 5vw, 3.3rem);
+  line-height: 1.02;
+  margin-bottom: 3%;
+  letter-spacing: -0.03em;
+  color: #0d2b0f;
+  text-transform: uppercase;
+}
+
+/* ── EVENT CARD TEXT: match homepage card style ── */
+.event-card-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.event-card-desc {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+}
+
+/* ── CTA BUTTON ── */
+.cta-btn {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* ── PILL BUTTONS ── */
+.pill-entrance {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+/* ── CONTAINER / TITLE ANIMATIONS ── */
+.title-container {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeSlideUp 0.9s ease forwards;
+}
+
+.title-headline {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: fadeSlideUp 1s ease forwards;
+  animation-delay: 0.4s;
+}
+
+@keyframes fadeSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kicker-line {
+  display: inline-block;
+  height: 3px;
+  width: 60px;
+  background: linear-gradient(90deg, #dfb753, #fbc02d);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: lineReveal 0.9s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes lineReveal {
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* ── PILL ENTRANCE ── */
+.pill-entrance {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: pillPop 0.5s ease-out calc(var(--p-i) * 0.05s + 0.4s) forwards;
+}
+
+@keyframes pillPop {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── EVENT CARDS ── */
+.event-card {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.1s + 0.5s) forwards;
+}
+
+@keyframes cardIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── SHUFFLE TRANSITION ── */
+.shuffle-move {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.shuffle-enter-active {
+  transition: opacity 0.3s ease;
+}
+.shuffle-enter-from {
+  opacity: 0;
+}
+.shuffle-leave-active {
+  display: none;
+  position: absolute;
+}
+
+/* ── MISC ── */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-events-icon {
+  animation: floatBounce 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes floatBounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pop-in {
+  animation: popIn 0.8s ease-out forwards;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
