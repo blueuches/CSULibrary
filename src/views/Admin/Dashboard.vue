@@ -34,7 +34,6 @@
                     Welcome, <span class="text-[#f9a825]">Admin</span>.
                   </h2>
                 </div>
-                <div class="h-1 w-32 bg-[#1b5e20] mx-auto rounded-full shadow-sm"></div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
