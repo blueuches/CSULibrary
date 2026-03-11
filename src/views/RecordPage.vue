@@ -21,7 +21,7 @@
       </svg>
     </div>
 
-    <div class="w-full px-4 sm:px-8 lg:px-12 relative z-10">
+    <div class="w-full px-2 sm:px-4 lg:px-8 relative z-10">
       <!-- Page Header -->
       <div class="page-header mb-14 text-center">
         <!-- Eyebrow -->
