@@ -27,7 +27,7 @@
       </h1>
     </div>
 
-    <div class="relative z-10 mt-1 mx-auto px-6 w-full max-w-7xl">
+    <div class="relative z-10 mt-1 mx-auto px-8 w-full">
       <div class="relative mb-20 text-center">
         <div
           class="inline-block p-8 md:p-10 rounded-[2rem] bg-white/40 backdrop-blur-md border border-white/40 shadow-xl max-w-4xl mx-auto"
