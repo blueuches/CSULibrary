@@ -1651,6 +1651,7 @@
   </div>
 
   <!-- FEATURES SECTION -->
+<<<<<<< HEAD
   <div class="w-full py-16 px-6" style="background: #f4f6f4">
     <div class="max-[100%] mx-auto">
       <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
@@ -1658,26 +1659,67 @@
           <div class="flex items-center gap-3 mb-3">
             <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
             <span
+=======
+  <div class="w-full py-20 px-6" style="background: #ffffff">
+    <div class="w-[100%] mx-auto">
+      <!-- VIDEOS SECTION -->
+      <div>
+        <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 pb-6" style="border-bottom: 1px solid rgba(13, 43, 15, 0.12)">
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+              <span
+                style="
+                  font-size: 0.68rem;
+                  font-weight: 800;
+                  letter-spacing: 0.25em;
+                  color: #1b5e20;
+                  text-transform: uppercase;
+                "
+                >Library Features</span
+              >
+            </div>
+            <h2
+>>>>>>> development
               style="
-                font-size: 0.68rem;
-                font-weight: 800;
-                letter-spacing: 0.25em;
-                color: #1b5e20;
-                text-transform: uppercase;
+                font-size: clamp(2rem, 4vw, 3rem);
+                font-weight: 900;
+                color: #0d2b0f;
+                line-height: 1;
+                letter-spacing: -0.02em;
               "
             >
+<<<<<<< HEAD
               Watch & Explore
             </span>
+=======
+              Experience Our Library
+            </h2>
+>>>>>>> development
           </div>
-          <h2
-            style="
-              font-size: clamp(2rem, 4vw, 3rem);
-              font-weight: 900;
-              color: #0d2b0f;
-              line-height: 1;
-              letter-spacing: -0.02em;
-            "
+          <div>
+            <p
+              style="
+                font-size: 0.9rem;
+                color: rgba(13, 43, 15, 0.5);
+                max-width: 300px;
+                line-height: 1.7;
+              "
+            >
+              Watch our comprehensive video guides to explore our facilities and learn how to use our resources.
+            </p>
+          </div>
+        </div>
+
+        <!-- VIDEOS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- VIRTUAL TOUR VIDEO -->
+          <div
+            class="sr-card group relative rounded-2xl overflow-hidden cursor-pointer"
+            style="box-shadow: 0 4px 32px rgba(13, 43, 15, 0.12)"
+            @click="isModalOpen = true"
           >
+<<<<<<< HEAD
             See It For Yourself
           </h2>
         </div>
@@ -1699,6 +1741,12 @@
               <div
                 class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                 :style="{ backgroundImage: `url('${getFeatureThumbnail(feature)}')` }"
+=======
+            <div class="relative overflow-hidden" style="aspect-ratio: 16/9">
+              <div
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style="background-image: url('https://i.ytimg.com/vi/Lv0URTSBniY/0.jpg')"
+>>>>>>> development
               ></div>
               <div
                 class="absolute inset-0"
@@ -1712,7 +1760,10 @@
                     height: 68px;
                     background: rgba(255, 255, 255, 0.15);
                     border: 2px solid rgba(255, 255, 255, 0.6);
+<<<<<<< HEAD
                     backdrop-filter: blur(6px);
+=======
+>>>>>>> development
                   "
                 >
                   <svg
@@ -1724,6 +1775,7 @@
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </div>
+<<<<<<< HEAD
               </div>
               <div
                 class="absolute bottom-4 left-4 flex items-center gap-1.5"
@@ -1783,14 +1835,148 @@
               >
                 Caraga State University Library
               </span>
+=======
+              </div>
+              <div class="absolute top-4 left-4">
+                <span
+                  style="
+                    font-size: 0.65rem;
+                    font-weight: 800;
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    background: rgba(249, 168, 37, 0.85);
+                    color: #0d2b0f;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    backdrop-filter: blur(4px);
+                  "
+                  >Tour</span
+                >
+              </div>
+              <div
+                class="absolute bottom-4 left-4 flex items-center gap-1.5"
+                style="
+                  background: rgba(0, 0, 0, 0.55);
+                  padding: 4px 10px;
+                  border-radius: 6px;
+                  backdrop-filter: blur(4px);
+                "
+              >
+                <svg class="w-3.5 h-3.5" fill="#FF0000" viewBox="0 0 24 24">
+                  <path
+                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                  />
+                </svg>
+                <span style="font-size: 0.7rem; color: white; font-weight: 600"
+                  >5:47</span
+                >
+              </div>
+            </div>
+            <div class="p-5" style="background: #0d2b0f">
+              <h3
+                style="font-size: 1rem; font-weight: 900; color: white; line-height: 1.2"
+                class="mb-1"
+              >
+                Virtual Tour
+              </h3>
+              <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6">
+                Explore our previous library facilities and collection areas before recent updates.
+              </p>
+            </div>
+          </div>
+
+          <!-- LIBRARY ORIENTATION VIDEO -->
+          <div
+            class="sr-card group relative rounded-2xl overflow-hidden cursor-pointer"
+            style="box-shadow: 0 4px 32px rgba(13, 43, 15, 0.12)"
+            @click="isOrientationModalOpen = true"
+          >
+            <div class="relative overflow-hidden" style="aspect-ratio: 16/9">
+              <div
+                class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                style="background-image: url('https://img.youtube.com/vi/HAEPrH2aYpc/maxresdefault.jpg')"
+              ></div>
+              <div
+                class="absolute inset-0"
+                style="background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 35%)"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div
+                  class="flex items-center justify-center rounded-full transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl"
+                  style="
+                    width: 68px;
+                    height: 68px;
+                    background: rgba(255, 255, 255, 0.15);
+                    border: 2px solid rgba(255, 255, 255, 0.6);
+                  "
+                >
+                  <svg
+                    class="w-7 h-7 text-white"
+                    style="margin-left: 5px"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="absolute top-4 left-4">
+                <span
+                  style="
+                    font-size: 0.65rem;
+                    font-weight: 800;
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    background: rgba(27, 94, 32, 0.85);
+                    color: white;
+                    padding: 4px 10px;
+                    border-radius: 20px;
+                    backdrop-filter: blur(4px);
+                  "
+                  >Orientation</span
+                >
+              </div>
+              <div
+                class="absolute bottom-4 left-4 flex items-center gap-1.5"
+                style="
+                  background: rgba(0, 0, 0, 0.55);
+                  padding: 4px 10px;
+                  border-radius: 6px;
+                  backdrop-filter: blur(4px);
+                "
+              >
+                <svg class="w-3.5 h-3.5" fill="#FF0000" viewBox="0 0 24 24">
+                  <path
+                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+                  />
+                </svg>
+                <span style="font-size: 0.7rem; color: white; font-weight: 600"
+                  >4:32</span
+                >
+              </div>
+            </div>
+            <div class="p-5" style="background: #0d2b0f">
+              <h3
+                style="font-size: 1rem; font-weight: 900; color: white; line-height: 1.2"
+                class="mb-1"
+              >
+                Library Orientation
+              </h3>
+              <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); line-height: 1.6">
+                Learn how to navigate our resources and find what you need.
+              </p>
+>>>>>>> development
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+<<<<<<< HEAD
 
   <!-- FEATURE MODAL -->
+=======
+>>>>>>> development
   <div
     v-if="activeFeatureModal"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
