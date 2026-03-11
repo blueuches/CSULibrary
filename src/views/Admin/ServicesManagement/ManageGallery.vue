@@ -1120,6 +1120,7 @@ function setCover(i: number) {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 /* ── ADMIN BANNER ── */
 .admin-banner {
   width: 100%;
@@ -1154,9 +1155,6 @@ function setCover(i: number) {
   color: rgba(255, 255, 255, 0.38);
   font-weight: 500;
 }
-
-/* ── POPPINS FONT ── */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
 /* ── HERO ── */
 .gallery-hero {
