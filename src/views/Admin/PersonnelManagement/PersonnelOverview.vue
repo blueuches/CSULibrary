@@ -1,29 +1,31 @@
 <template>
-  <div class="w-full bg-[#f7f5f0] min-h-screen">
+  <div class="flex h-screen w-full overflow-hidden bg-[#f7f5f0]">
 
-    <!-- ===== HERO ===== -->
-    <div class="personnel-hero">
-      <div class="absolute inset-0 hero-overlay"></div>
-      <div class="relative z-10 flex flex-col items-center gap-3">
-        <p class="hero-eyebrow">Caraga State University</p>
-        <h1 class="hero-title">Library Personnel</h1>
-        <div class="hero-divider">
-          <span class="hero-dot gold"></span>
-          <span class="hero-line"></span>
-          <span class="hero-dot green"></span>
-          <span class="hero-line"></span>
-          <span class="hero-dot gold"></span>
+    <Sidebar />
+
+    <main class="flex-1 overflow-y-auto">
+
+    <!-- ===== HEADER ===== -->
+    <header class="page-header">
+      <div class="header-left">
+        <div class="header-breadcrumb">
+          <span>Admin</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7" /></svg>
+          <span>Personnel</span>
         </div>
-        <!-- Admin indicator pill — visible when admin is logged in -->
-        <span v-if="isAdmin" class="admin-hero-pill">
+        <h1 class="header-title">Library <span class="text-yellow-500">Personnel</span></h1>
+        <p class="header-sub">Manage and view library staff information and assignments</p>
+      </div>
+      <div class="header-right" v-if="isAdmin">
+        <span class="admin-hero-pill">
           <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
-          Admin View — Edit Mode Active
+          Edit Mode Active
         </span>
       </div>
-    </div>
+    </header>
 
     <!-- ===== MAIN CONTENT ===== -->
     <div class="px-6 sm:px-10 lg:px-16 py-20 max-w-6xl mx-auto">
@@ -210,6 +212,8 @@
       </div>
 
     </div>
+
+    </main>
   </div>
 
   <!-- ===== SCROLL TO TOP ===== -->
@@ -339,6 +343,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
 
 // ─── Static local images ──────────────────────────────────────────────────────
 import cora     from '@/assets/images/personnelpage/cora.png'
@@ -372,8 +377,8 @@ interface MergedStaff {
   name:         string
   subtitle:     string
   position?:    string
-  image:        string        // static fallback
-  imageUrl?:    string        // Firestore uploaded URL (overrides image)
+  image:        string
+  imageUrl?:    string
   role:         'head' | 'staff'
   order:        number
 }
@@ -402,11 +407,9 @@ const STATIC_STAFF: Omit<MergedStaff, 'firestoreId' | 'storagePath' | 'imageUrl'
     image: lagaras,  role: 'staff', order: 8 },
 ]
 
-// ─── Default avatar (base64 SVG placeholder) ─────────────────────────────────
 const defaultAvatar =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzBkMmIwZiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMzgiIHI9IjE4IiBmaWxsPSIjNjZiYjZhIi8+PHBhdGggZD0iTTEwIDkwIGMwLTIyIDEzLTM1IDQwLTM1czQwIDEzIDQwIDM1IiBmaWxsPSIjNjZiYjZhIi8+PC9zdmc+'
 
-// ─── State ────────────────────────────────────────────────────────────────────
 const staff         = ref<MergedStaff[]>([...STATIC_STAFF] as MergedStaff[])
 const isAdmin       = ref(false)
 const saving        = ref(false)
@@ -426,7 +429,6 @@ const toast = ref({ show: false, message: '', type: 'success' as 'success' | 'er
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 let unsubscribeFirestore: (() => void) | null = null
 
-// ─── Computed ─────────────────────────────────────────────────────────────────
 const featuredStaff = computed<MergedStaff | undefined>(() =>
   staff.value.find((s) => s.role === 'head'),
 )
@@ -434,15 +436,11 @@ const otherStaff = computed<MergedStaff[]>(() =>
   staff.value.filter((s) => s.role === 'staff').sort((a, b) => a.order - b.order),
 )
 
-// ─── Merge: static + Firestore ────────────────────────────────────────────────
-// Static staff are matched by role+order; unmatched Firestore docs are appended.
 function mergeWithFirestore(docs: { id: string; data: any }[]) {
   const merged: MergedStaff[] = STATIC_STAFF.map((s) => ({ ...s } as MergedStaff))
-
   for (const d of docs) {
     const match = merged.find((m) => m.role === d.data.role && m.order === d.data.order)
     if (match) {
-      // Override static values with whatever is saved in Firestore
       match.firestoreId = d.id
       match.name        = d.data.name        ?? match.name
       match.subtitle    = d.data.subtitle    ?? match.subtitle
@@ -450,7 +448,6 @@ function mergeWithFirestore(docs: { id: string; data: any }[]) {
       match.imageUrl    = d.data.imageUrl    || undefined
       match.storagePath = d.data.storagePath || undefined
     } else {
-      // New staff added via admin panel — appended after static entries
       merged.push({
         localId:     d.id,
         firestoreId: d.id,
@@ -468,7 +465,6 @@ function mergeWithFirestore(docs: { id: string; data: any }[]) {
   staff.value = merged
 }
 
-// ─── Firebase: real-time listener ────────────────────────────────────────────
 function subscribeToStaff() {
   const q = query(collection(db, 'personnel'), orderBy('order'))
   unsubscribeFirestore = onSnapshot(q, (snap) => {
@@ -476,13 +472,7 @@ function subscribeToStaff() {
   })
 }
 
-// ─── Firebase Auth ────────────────────────────────────────────────────────────
-// isAdmin = true for any signed-in Firebase user.
-// Also detects admin via route path (e.g. /admin/...) as fallback.
-// To restrict to specific admins only, replace !!user with:
-//   ['admin@yourdomain.com'].includes(user?.email ?? '')
 function checkAuth() {
-  // Route-based fallback: if URL contains /admin, treat as admin view
   if (window.location.pathname.includes('/admin')) {
     isAdmin.value = true
   }
@@ -491,14 +481,9 @@ function checkAuth() {
   })
 }
 
-// ─── Edit helpers ─────────────────────────────────────────────────────────────
 function startEdit(person: MergedStaff) {
   editingId.value = person.localId
-  editForm.value  = {
-    name:     person.name,
-    subtitle: person.subtitle,
-    position: person.position ?? '',
-  }
+  editForm.value  = { name: person.name, subtitle: person.subtitle, position: person.position ?? '' }
 }
 function cancelEdit() { editingId.value = null }
 
@@ -516,7 +501,6 @@ async function saveEdit(person: MergedStaff) {
     if (person.firestoreId) {
       await updateDoc(doc(db, 'personnel', person.firestoreId), payload)
     } else {
-      // Static staff being edited for the first time — create a Firestore doc
       await addDoc(collection(db, 'personnel'), { ...payload, imageUrl: '', storagePath: '' })
     }
     editingId.value = null
@@ -528,9 +512,6 @@ async function saveEdit(person: MergedStaff) {
   }
 }
 
-// ─── Add staff ────────────────────────────────────────────────────────────────
-// Static staff use orders 0–8. New admin-added staff get order 1000+
-// so they always appear after the original staff.
 async function addStaff() {
   modalError.value = ''
   if (!newForm.value.name.trim() || !newForm.value.subtitle.trim()) {
@@ -541,24 +522,18 @@ async function addStaff() {
   try {
     let imageUrl = '', storagePath = ''
     if (newForm.value.file) {
-      const res = await uploadPhoto(
-        newForm.value.file,
-        `personnel/${Date.now()}_${newForm.value.file.name}`,
-      )
+      const res = await uploadPhoto(newForm.value.file, `personnel/${Date.now()}_${newForm.value.file.name}`)
       imageUrl = res.url
       storagePath = res.path
     }
-    const newEntryCount = staff.value.filter(
-      (s) => s.role === newForm.value.role && s.order >= 1000,
-    ).length
+    const newEntryCount = staff.value.filter((s) => s.role === newForm.value.role && s.order >= 1000).length
     await addDoc(collection(db, 'personnel'), {
       name:     newForm.value.name.trim().toUpperCase(),
       subtitle: newForm.value.subtitle.trim(),
       position: newForm.value.position.trim(),
       role:     newForm.value.role,
       order:    1000 + newEntryCount,
-      imageUrl,
-      storagePath,
+      imageUrl, storagePath,
     })
     closeAddModal()
     showToast('Staff member added.')
@@ -569,7 +544,6 @@ async function addStaff() {
   }
 }
 
-// ─── Delete staff ─────────────────────────────────────────────────────────────
 function confirmDelete(person: MergedStaff) { deleteTarget.value = person }
 
 async function deleteStaff() {
@@ -594,7 +568,6 @@ async function deleteStaff() {
   }
 }
 
-// ─── Photo upload ─────────────────────────────────────────────────────────────
 async function uploadPhoto(file: File, path: string) {
   const ref = storageRef(storage, path)
   await uploadBytes(ref, file)
@@ -616,14 +589,9 @@ async function handlePhotoUpload(event: Event, person: MergedStaff) {
     if (person.firestoreId) {
       await updateDoc(doc(db, 'personnel', person.firestoreId), payload)
     } else {
-      // Static staff — create Firestore doc on first photo upload
       await addDoc(collection(db, 'personnel'), {
-        name:     person.name,
-        subtitle: person.subtitle,
-        position: person.position ?? '',
-        role:     person.role,
-        order:    person.order,
-        ...payload,
+        name: person.name, subtitle: person.subtitle, position: person.position ?? '',
+        role: person.role, order: person.order, ...payload,
       })
     }
     showToast('Photo updated.')
@@ -642,7 +610,6 @@ function handleNewPhotoSelect(event: Event) {
   newForm.value.previewUrl = URL.createObjectURL(file)
 }
 
-// ─── Modal helpers ────────────────────────────────────────────────────────────
 function openAddModal() {
   newForm.value    = { name: '', subtitle: '', position: '', role: 'staff', previewUrl: '', file: null }
   modalError.value = ''
@@ -653,32 +620,26 @@ function closeAddModal() {
   if (newForm.value.previewUrl) URL.revokeObjectURL(newForm.value.previewUrl)
 }
 
-// ─── Toast ────────────────────────────────────────────────────────────────────
 function showToast(message: string, type: 'success' | 'error' = 'success') {
   if (toastTimer) clearTimeout(toastTimer)
   toast.value = { show: true, message, type }
   toastTimer  = setTimeout(() => { toast.value.show = false }, 3200)
 }
 
-// ─── Scroll ───────────────────────────────────────────────────────────────────
 function handleScroll() { showScrollTop.value = window.scrollY > 300 }
 function scrollToTop()  { window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
-// ─── IntersectionObserver (scroll-reveal) ────────────────────────────────────
 let observer: IntersectionObserver | null = null
 function initObserver() {
   observer = new IntersectionObserver(
     (entries) => entries.forEach((e) => {
-      e.isIntersecting
-        ? e.target.classList.add('in-view')
-        : e.target.classList.remove('in-view')
+      e.isIntersecting ? e.target.classList.add('in-view') : e.target.classList.remove('in-view')
     }),
     { threshold: 0.1 },
   )
   document.querySelectorAll('.sr-item, .sr-card').forEach((el) => observer!.observe(el))
 }
 
-// ─── Lifecycle ────────────────────────────────────────────────────────────────
 onMounted(() => {
   subscribeToStaff()
   checkAuth()
@@ -694,50 +655,37 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* ================================
-   HERO
-================================ */
-.personnel-hero {
-  width: 100%; height: 380px;
-  background-image: url('@/assets/images/personnelpage/csu-background.png');
-  background-size: cover; background-position: center; background-repeat: no-repeat;
-  display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
+.page-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 36px 40px 28px;
+  border-bottom: 1px solid rgba(13,43,15,0.08);
+  background: #f5f3ef;
 }
-.hero-overlay {
-  background: linear-gradient(
-    to bottom,
-    rgba(4,16,5,0.72) 0%,
-    rgba(13,43,15,0.8) 60%,
-    rgba(4,16,5,0.9) 100%
-  );
+.header-left { display: flex; flex-direction: column; gap: 6px; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-top: 8px; }
+.header-breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(13,43,15,0.4);
 }
-.hero-eyebrow {
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.35em;
-  color: #f9a825; text-transform: uppercase; opacity: 0.85;
-}
-.hero-title {
+.header-breadcrumb svg { width: 12px; height: 12px; opacity: 0.4; }
+.header-title {
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(1rem, 4vw, 2.0rem); font-weight: 700;
-  color: #ffffff; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1;
+  font-size: 2.5rem; font-weight: 900;
+  color: #0d2b0f; line-height: 1.1; letter-spacing: -0.01em;
 }
-.hero-divider { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
-.hero-dot     { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
-.hero-dot.gold  { background: #f9a825; }
-.hero-dot.green { background: #66bb6a; }
-.hero-line { width: 40px; height: 1px; background: rgba(255,255,255,0.3); display: inline-block; }
+.header-sub {
+  font-size: 0.82rem; color: rgba(13,43,15,0.5); font-weight: 400; margin-top: 2px;
+}
 
 .admin-hero-pill {
-  display: inline-flex; align-items: center; gap: 5px; margin-top: 6px;
+  display: inline-flex; align-items: center; gap: 5px;
   font-size: 0.58rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
   color: #0d2b0f; background: #f9a825;
-  padding: 4px 12px; border-radius: 20px;
+  padding: 6px 14px; border-radius: 20px;
   box-shadow: 0 2px 8px rgba(249,168,37,0.4);
 }
 
-/* ================================
-   LABELS
-================================ */
 .label-line {
   height: 1px; width: 40px;
   background: linear-gradient(to right, #0d2b0f, rgba(13,43,15,0.15));
@@ -747,9 +695,6 @@ onUnmounted(() => {
   color: #0d2b0f; text-transform: uppercase; white-space: nowrap;
 }
 
-/* ================================
-   FEATURED CARD
-================================ */
 .featured-wrapper { animation: fadeUp 0.7s ease both; }
 .featured-card {
   position: relative;
@@ -799,9 +744,6 @@ onUnmounted(() => {
   text-transform: uppercase; color: rgba(13,43,15,0.5);
 }
 
-/* ================================
-   STAFF GRID
-================================ */
 .staff-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 .staff-card {
   position: relative;
@@ -809,8 +751,7 @@ onUnmounted(() => {
   background: #ffffff; border: 1px solid rgba(13,43,15,0.07); border-radius: 4px;
   padding: 24px 28px; box-shadow: 0 2px 16px rgba(13,43,15,0.05);
   transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease, border-bottom-color 0.4s ease;
-  overflow: visible;
-  margin-top: 8px;
+  overflow: visible; margin-top: 8px;
 }
 .staff-card:hover {
   box-shadow: 0 8px 32px rgba(13,43,15,0.12);
@@ -819,8 +760,7 @@ onUnmounted(() => {
 }
 .staff-photo-wrap {
   position: relative; flex-shrink: 0;
-  width: 80px; height: 80px; border-radius: 50%; overflow: visible;
-  margin-top: 4px;
+  width: 80px; height: 80px; border-radius: 50%; overflow: visible; margin-top: 4px;
 }
 .staff-photo {
   position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
@@ -847,9 +787,6 @@ onUnmounted(() => {
 .staff-card { border-bottom: 2px solid transparent; }
 .staff-card:hover { border-bottom-color: #f9a825; }
 
-/* ================================
-   PHOTO OVERLAY
-================================ */
 .photo-overlay {
   position: absolute; inset: 0; border-radius: 50%; z-index: 2;
   background: rgba(13,43,15,0.58);
@@ -862,15 +799,11 @@ onUnmounted(() => {
 .featured-photo-wrap:hover .photo-overlay,
 .staff-photo-wrap:hover .photo-overlay { opacity: 1; }
 
-/* ================================
-   ADMIN BUTTONS
-================================ */
 .btn-add {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 0.65rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
   color: #fff; background: #0d2b0f;
-  padding: 7px 14px; border-radius: 3px;
-  border: none; cursor: pointer; white-space: nowrap;
+  padding: 7px 14px; border-radius: 3px; border: none; cursor: pointer; white-space: nowrap;
   transition: background 0.2s, transform 0.15s;
 }
 .btn-add:hover { background: #1b5e20; transform: translateY(-1px); }
@@ -883,7 +816,6 @@ onUnmounted(() => {
 }
 .btn-edit-inline:hover { background: #0d2b0f; color: #fff; border-color: #0d2b0f; }
 
-/* card-actions — always visible (no hover needed) */
 .card-actions { display: flex; gap: 6px; margin-top: 6px; }
 .btn-icon {
   display: inline-flex; align-items: center; gap: 4px;
@@ -895,9 +827,6 @@ onUnmounted(() => {
 .btn-icon-danger { color: #b71c1c; border-color: rgba(183,28,28,0.2); }
 .btn-icon-danger:hover { background: #b71c1c; color: #fff; border-color: #b71c1c; }
 
-/* ================================
-   INLINE EDIT INPUTS
-================================ */
 .edit-fields { display: flex; flex-direction: column; gap: 8px; }
 .edit-input {
   font-size: 0.82rem; color: #0d2b0f; border: 1px solid rgba(13,43,15,0.25);
@@ -937,9 +866,6 @@ onUnmounted(() => {
 .btn-delete:hover:not(:disabled) { background: #c62828; }
 .btn-delete:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ================================
-   MODAL
-================================ */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 100; background: rgba(4,16,5,0.65);
   display: flex; align-items: center; justify-content: center; padding: 16px;
@@ -1004,9 +930,6 @@ onUnmounted(() => {
 .delete-confirm-text { font-size: 0.84rem; color: #4a5568; line-height: 1.6; }
 .delete-confirm-text strong { color: #0d2b0f; }
 
-/* ================================
-   TOAST
-================================ */
 .toast {
   position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
   z-index: 200; display: flex; align-items: center; gap: 8px;
@@ -1017,27 +940,18 @@ onUnmounted(() => {
 .toast-success { background: #0d2b0f; color: #fff; }
 .toast-error   { background: #b71c1c; color: #fff; }
 
-/* ================================
-   LOADER SPINNER
-================================ */
 .loader-sm {
   display: inline-block; width: 12px; height: 12px;
   border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff;
   border-radius: 50%; animation: spin 0.6s linear infinite;
 }
 
-/* ================================
-   SCROLL REVEAL
-================================ */
 .sr-item, .sr-card {
   opacity: 0; transform: translateY(32px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .sr-item.in-view, .sr-card.in-view { opacity: 1; transform: translateY(0); }
 
-/* ================================
-   TRANSITIONS
-================================ */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
 .fade-enter-from,   .fade-leave-to     { opacity: 0; }
 
@@ -1053,15 +967,9 @@ onUnmounted(() => {
 .toast-enter-active, .toast-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(10px); }
 
-/* ================================
-   ANIMATIONS
-================================ */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes spin   { to   { transform: rotate(360deg); } }
 
-/* ================================
-   RESPONSIVE
-================================ */
 @media (max-width: 768px) {
   .personnel-hero { height: 280px; }
   .hero-title     { font-size: 1.8rem; }

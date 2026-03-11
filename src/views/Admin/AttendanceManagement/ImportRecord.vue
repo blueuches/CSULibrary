@@ -1,5 +1,6 @@
 <template>
 <div class="app-wrapper">
+  <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
 
   <div class="page-container">
 
@@ -173,7 +174,14 @@
 
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, computed } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
+
+const activeTab = ref('DASHBOARD')
+
+const handleTabChange = (name: string) => {
+  activeTab.value = name
+}
 
 const currentStep = ref(0)
 

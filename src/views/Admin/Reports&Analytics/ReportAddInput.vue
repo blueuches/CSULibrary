@@ -1,5 +1,12 @@
 <template>
-<div class="report-root">
+
+<div class="layout">
+
+  <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
+
+  <div class="page-content">
+
+  <div class="report-root">
 
   <!-- HEADER -->
   <header class="report-header">
@@ -228,11 +235,20 @@
   </div>
 
 </div>
+</div>
+</div>
 </template>
 
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
+
+const activeTab = ref('DASHBOARD')
+
+const handleTabChange = (name: string) => {
+  activeTab.value = name
+}
 
 const activeStep = ref(0)
 
@@ -268,6 +284,21 @@ function createReport(){
 
 
 <style scoped>
+
+/* NEW LAYOUT */
+
+.layout{
+  display:flex;
+  min-height:100vh;
+}
+
+.page-content{
+  flex:1;
+  overflow:auto;
+}
+
+
+/* EXISTING PAGE DESIGN */
 
 .report-root{
   padding:40px;
@@ -361,7 +392,6 @@ function createReport(){
 }
 
 
-
 /* PANEL */
 
 .rank-panel{
@@ -402,7 +432,6 @@ function createReport(){
 }
 
 
-
 /* UPLOAD */
 
 .upload-area{
@@ -440,7 +469,6 @@ function createReport(){
 }
 
 
-
 /* INPUTS */
 
 .fields-grid{
@@ -475,7 +503,6 @@ function createReport(){
 }
 
 
-
 /* TOGGLE */
 
 .toggle-group{
@@ -496,7 +523,6 @@ function createReport(){
   color:white;
   border:none;
 }
-
 
 
 /* BUTTON */
