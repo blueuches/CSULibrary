@@ -1,179 +1,367 @@
 <template>
-  <div class="rp-root">
-    <!-- ░░ NOISE GRAIN OVERLAY ░░ -->
-    <div class="grain" aria-hidden="true"></div>
+  <div class="page-layout">
+    <Sidebar :activeTab="'REPORTS'" />
+    <div class="rp-root">
+      <!-- ░░ NOISE GRAIN OVERLAY ░░ -->
+      <div class="grain" aria-hidden="true"></div>
 
-    <!-- ░░ FLOATING SHAPES ░░ -->
-    <div class="shape shape-a" aria-hidden="true"></div>
-    <div class="shape shape-b" aria-hidden="true"></div>
+      <!-- ░░ FLOATING SHAPES ░░ -->
+      <div class="shape shape-a" aria-hidden="true"></div>
+      <div class="shape shape-b" aria-hidden="true"></div>
 
-    <!-- ══════════════════════════════════════════
+      <!-- ══════════════════════════════════════════
          HEADER
     ══════════════════════════════════════════ -->
-    <header class="rp-header">
-      <div class="rp-header__left">
-        <nav class="crumb">
-          <span>Admin</span>
-          <span class="crumb-sep">›</span>
-          <span>Reports &amp; Analytics</span>
-        </nav>
-        <div class="rp-title-wrap">
-          <h1 class="rp-title">
-            <span class="rp-title--dark">Report</span> <span class="rp-title--gold">Display</span>
-          </h1>
-          <div class="rp-title-tag">
-            <span class="dot"></span>
-            Library borrowing rankings — <strong>{{ currentPeriod }}</strong>
+      <header class="rp-header">
+        <div class="rp-header__left">
+          <nav class="crumb">
+            <span>Admin</span>
+            <span class="crumb-sep">›</span>
+            <span>Reports &amp; Analytics</span>
+          </nav>
+          <div class="rp-title-wrap">
+            <h1 class="rp-title">
+              <span class="rp-title--dark">Report</span> <span class="rp-title--gold">Display</span>
+            </h1>
+            <div class="rp-title-tag">
+              <span class="dot"></span>
+              Library borrowing rankings — <strong>{{ currentPeriod }}</strong>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="rp-header__right">
-        <div class="date-pill">
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <path d="M16 2v4M8 2v4M3 10h18" />
-          </svg>
-          {{ currentDate }}
-        </div>
-        <button class="export-btn" @click="exportReport">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"
-            />
-          </svg>
-          Export Report
-        </button>
-      </div>
-    </header>
-
-    <!-- ══════════════════════════════════════════
-         TAB BAR
-    ══════════════════════════════════════════ -->
-    <div class="tab-bar">
-      <button
-        v-for="(tab, i) in tabs"
-        :key="i"
-        class="tab-btn"
-        :class="{ 'tab-btn--on': activeTab === i }"
-        @click="setTab(i)"
-      >
-        <span class="tab-num">0{{ i + 1 }}</span>
-        <span class="tab-label">{{ tab.label }}</span>
-        <span class="tab-sub">{{ tab.sub }}</span>
-        <span
-          class="tab-underline"
-          :style="activeTab === i ? `background:${tab.accent}` : ''"
-        ></span>
-      </button>
-    </div>
-
-    <!-- ══════════════════════════════════════════
-         CONTENT PANEL
-    ══════════════════════════════════════════ -->
-    <div class="panel" :key="activeTab">
-      <!-- panel kicker -->
-      <template v-if="activeTabData">
-        <div class="panel-kicker">
-          <div
-            class="pk-icon"
-            :style="`background:${activeTabData.accent}18; color:${activeTabData.accent}`"
-          >
+        <div class="rp-header__right">
+          <div class="date-pill">
             <svg
-              width="18"
-              height="18"
+              width="13"
+              height="13"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="1.8"
-              v-html="activeTabData.icon"
-            ></svg>
+              stroke-width="2"
+            >
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18" />
+            </svg>
+            {{ currentDate }}
           </div>
-          <div class="pk-text">
-            <h2 class="pk-title">{{ activeTabData.label }}</h2>
-            <p class="pk-desc">{{ activeTabData.desc }}</p>
-          </div>
-          <div
-            class="pk-count"
-            :style="`color:${activeTabData.accent};border-color:${activeTabData.accent}33`"
-          >
-            {{ activeTabData.countLabel }}
-          </div>
+          <button class="edit-btn" @click="openEditModal">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+            Edit Report
+          </button>
+          <button class="export-btn" @click="exportReport">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"
+              />
+            </svg>
+            Export Report
+          </button>
         </div>
+      </header>
 
-        <!-- rank rows -->
-        <div class="rank-list">
-          <div
-            v-for="(row, i) in currentRows"
-            :key="row.name"
-            class="rank-row"
-            :class="`rank-row--${tier(i)}`"
-            :style="`--i:${i}; --accent:${activeTabData.accent}; --bar:${barPct(row)}`"
-          >
-            <!-- left accent strip -->
-            <div class="row-strip" :style="i < 3 ? `background:${tierColor(i)}` : ''"></div>
+      <!-- ══════════════════════════════════════════
+         TAB BAR
+    ══════════════════════════════════════════ -->
+      <div class="tab-bar">
+        <button
+          v-for="(tab, i) in tabs"
+          :key="i"
+          class="tab-btn"
+          :class="{ 'tab-btn--on': activeTab === i }"
+          @click="setTab(i)"
+        >
+          <span class="tab-num">0{{ i + 1 }}</span>
+          <span class="tab-label">{{ tab.label }}</span>
+          <span class="tab-sub">{{ tab.sub }}</span>
+          <span
+            class="tab-underline"
+            :style="activeTab === i ? `background:${tab.accent}` : ''"
+          ></span>
+        </button>
+      </div>
 
-            <!-- rank badge -->
-            <div class="row-rank" :class="`row-rank--${tier(i)}`">
-              <svg v-if="i === 0" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-                />
-              </svg>
-              <span v-else>{{ i + 1 }}</span>
+      <!-- ══════════════════════════════════════════
+         CONTENT PANEL
+    ══════════════════════════════════════════ -->
+      <div class="panel" :key="activeTab">
+        <!-- panel kicker -->
+        <template v-if="activeTabData">
+          <div class="panel-kicker">
+            <div
+              class="pk-icon"
+              :style="`background:${activeTabData.accent}18; color:${activeTabData.accent}`"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                v-html="activeTabData.icon"
+              ></svg>
             </div>
-
-            <!-- avatar / emblem -->
-            <div class="row-avatar" :style="`background:${row.color ?? activeTabData.accent}`">
-              {{ row.initials }}
+            <div class="pk-text">
+              <h2 class="pk-title">{{ activeTabData.label }}</h2>
+              <p class="pk-desc">{{ activeTabData.desc }}</p>
             </div>
+            <div
+              class="pk-count"
+              :style="`color:${activeTabData.accent};border-color:${activeTabData.accent}33`"
+            >
+              {{ activeTabData.countLabel }}
+            </div>
+          </div>
 
-            <!-- info -->
-            <div class="row-info">
-              <span class="row-name">{{ row.name }}</span>
-              <div class="row-tags">
-                <span v-for="tag in row.tags" :key="tag" class="rtag">{{ tag }}</span>
+          <!-- rank rows -->
+          <div class="rank-list">
+            <div
+              v-for="(row, i) in currentRows"
+              :key="row.name"
+              class="rank-row"
+              :class="`rank-row--${tier(i)}`"
+              :style="`--i:${i}; --accent:${activeTabData.accent}; --bar:${barPct(row)}`"
+            >
+              <!-- left accent strip -->
+              <div class="row-strip" :style="i < 3 ? `background:${tierColor(i)}` : ''"></div>
+
+              <!-- rank badge -->
+              <div class="row-rank" :class="`row-rank--${tier(i)}`">
+                <svg v-if="i === 0" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                  />
+                </svg>
+                <span v-else>{{ i + 1 }}</span>
               </div>
-            </div>
 
-            <!-- progress + count -->
-            <div class="row-metric">
-              <div class="row-bar-track">
-                <div
-                  class="row-bar-fill"
-                  :style="`width:var(--bar); background:${activeTabData.accent}`"
-                ></div>
+              <!-- avatar / emblem -->
+              <div class="row-avatar" :style="`background:${row.color ?? activeTabData.accent}`">
+                {{ row.initials }}
               </div>
-              <div class="row-count-wrap">
-                <span class="row-count">{{ row.books.toLocaleString() }}</span>
-                <span class="row-unit">books</span>
+
+              <!-- info -->
+              <div class="row-info">
+                <span class="row-name">{{ row.name }}</span>
+                <div class="row-tags">
+                  <span v-for="tag in row.tags" :key="tag" class="rtag">{{ tag }}</span>
+                </div>
+              </div>
+
+              <!-- progress + count -->
+              <div class="row-metric">
+                <div class="row-bar-track">
+                  <div
+                    class="row-bar-fill"
+                    :style="`width:var(--bar); background:${activeTabData.accent}`"
+                  ></div>
+                </div>
+                <div class="row-count-wrap">
+                  <span class="row-count">{{ row.books.toLocaleString() }}</span>
+                  <span class="row-unit">books</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
+      <!-- /panel -->
+
+      <!-- ══════════════════════════════════════════
+         EDIT MODAL
+    ══════════════════════════════════════════ -->
+      <teleport to="body">
+        <transition name="modal-fade">
+          <div v-if="editModalOpen" class="modal-backdrop" @click.self="closeEditModal">
+            <div class="modal-sheet">
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <div class="modal-header__left">
+                  <div class="modal-icon">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="modal-title">Edit Report</h3>
+                    <p class="modal-sub">Modify period and ranking data</p>
+                  </div>
+                </div>
+                <button class="modal-close" @click="closeEditModal">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Modal Body -->
+              <div class="modal-body">
+                <!-- Period -->
+                <div class="field-group">
+                  <label class="field-label">Report Period</label>
+                  <input
+                    class="field-input"
+                    v-model="editForm.period"
+                    placeholder="e.g. February 2026"
+                  />
+                </div>
+
+                <!-- Tab selector -->
+                <div class="field-group">
+                  <label class="field-label">Editing Tab</label>
+                  <div class="tab-toggle">
+                    <button
+                      v-for="(t, i) in editForm.tabs"
+                      :key="i"
+                      class="tt-btn"
+                      :class="{ 'tt-btn--on': editTab === i }"
+                      @click="editTab = i"
+                    >
+                      {{ t.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Section title editor -->
+                <div class="field-group" v-if="editForm.tabs[editTab]">
+                  <label class="field-label">Section Title</label>
+                  <input
+                    class="field-input"
+                    v-model="editForm.tabs[editTab]!.label"
+                    placeholder="e.g. Top Borrowers"
+                  />
+                </div>
+
+                <!-- Rows editor -->
+                <div class="field-group">
+                  <div class="rows-header">
+                    <label class="field-label" style="margin: 0">
+                      {{ editForm.tabs[editTab]?.label }} Entries
+                    </label>
+                    <button class="add-row-btn" @click="addRow">
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      Add Row
+                    </button>
+                  </div>
+
+                  <div class="edit-rows">
+                    <div v-for="(row, ri) in editRows" :key="ri" class="edit-row">
+                      <span class="er-num">{{ ri + 1 }}</span>
+                      <input class="field-input er-name" v-model="row.name" placeholder="Name" />
+                      <input
+                        class="field-input er-tag"
+                        v-model="row.tag"
+                        placeholder="Tag (course/abbr)"
+                      />
+                      <input
+                        class="field-input er-books"
+                        v-model.number="row.books"
+                        type="number"
+                        min="0"
+                        placeholder="Books"
+                      />
+                      <button class="er-del" @click="removeRow(ri)" title="Remove">
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2.5"
+                          stroke-linecap="round"
+                        >
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
+                    </div>
+                    <p v-if="editRows.length === 0" class="empty-rows">
+                      No entries yet. Click Add Row.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal Footer -->
+              <div class="modal-footer">
+                <button class="modal-cancel" @click="closeEditModal">Cancel</button>
+                <button class="modal-save" @click="saveEdits">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </transition>
+      </teleport>
     </div>
-    <!-- /panel -->
   </div>
 </template>
 
 <script setup lang="ts">
+import Sidebar from '@/components/Sidebar.vue'
 import { ref, computed } from 'vue'
 
 /* ─── DATE ─── */
@@ -185,7 +373,8 @@ const currentDate = computed(() =>
     day: 'numeric',
   }),
 )
-const currentPeriod = 'February 2026'
+const currentPeriodRef = ref('February 2026')
+const currentPeriod = computed(() => currentPeriodRef.value)
 
 /* ─── TABS ─── */
 const activeTab = ref(0)
@@ -244,12 +433,13 @@ const courseCC: Record<string, string> = {
   BSGEO: 'CEGS',
   BSABE: 'CEGS',
   BSECE: 'CEGS',
+  BSEE: 'CEGS',
   BSEd: 'CED',
   BSMATH: 'CED',
   BSPSYCH: 'CHASS',
   BSABSOCIO: 'CHASS',
   BSF: 'COFES',
-  BSA: 'CAA',
+  BSN: 'CAA',
   BSBA: 'CMNS',
 }
 
@@ -258,7 +448,7 @@ const initials = (n: string) =>
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map((x) => x[0])
+    .map((x) => x[0] ?? '')
     .join('')
     .toUpperCase()
 
@@ -272,9 +462,9 @@ const borrowers = [
   { name: 'Juan dela Cruz', course: 'BSEd', year: '4th Year', books: 43 },
   { name: 'Ana Reyes', course: 'BSIT', year: '2nd Year', books: 39 },
   { name: 'Carlo Mendoza', course: 'BSCE', year: '3rd Year', books: 35 },
-  { name: 'Liza Navarro', course: 'BSA', year: '4th Year', books: 31 },
+  { name: 'Liza Navarro', course: 'BSN', year: '4th Year', books: 31 },
   { name: 'Mark Villanueva', course: 'BSBA', year: '2nd Year', books: 28 },
-  { name: 'Rosa Catalan', course: 'BSECE', year: '3rd Year', books: 25 },
+  { name: 'Rosa Catalan', course: 'BSEE', year: '3rd Year', books: 25 },
   { name: 'Jerome Bautista', course: 'BSME', year: '1st Year', books: 22 },
   { name: 'Trisha Abad', course: 'BSF', year: '4th Year', books: 20 },
   { name: 'Nino Espiritu', course: 'BSMATH', year: '3rd Year', books: 18 },
@@ -331,22 +521,111 @@ const departments = [
 }))
 
 const allRows = [borrowers, colleges, departments] as const
-const currentRows = computed(() => allRows[activeTab.value] ?? [])
+
+// After save, currentRows uses mutable sources sorted by books desc
+const currentRows = computed(() => {
+  const src = [mutableBorrowers, mutableColleges, mutableDepts][activeTab.value]
+  if (!src) return []
+  return [...src.value]
+    .filter((r) => r.name)
+    .sort((a, b) => b.books - a.books)
+    .map((r) => ({
+      name: r.name,
+      books: r.books,
+      initials: r.name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((x: string) => x[0] ?? '')
+        .join('')
+        .toUpperCase(),
+      color: '#0d2b0f',
+      tags: [r.tag],
+    }))
+})
 const barPct = (row: any) => {
   const top = currentRows.value[0]?.books ?? 1
   return `${Math.round((row.books / top) * 100)}%`
 }
 
 const activeTabData = computed(() => tabs[activeTab.value] ?? tabs[0])
+
+/* ─── EDIT MODAL ─── */
+const editModalOpen = ref(false)
+const editTab = ref(0)
+
+// Editable copies of period + tab labels
+const editForm = ref({
+  period: 'February 2026',
+  tabs: tabs.map((t) => ({ label: t.label })),
+})
+
+// Mutable data sources
+const mutableBorrowers = ref(
+  borrowers.map((b) => ({ name: b.name, tag: b.tags[0] ?? '', books: b.books })),
+)
+const mutableColleges = ref(
+  colleges.map((c) => ({ name: c.name, tag: c.tags[0] ?? '', books: c.books })),
+)
+const mutableDepts = ref(
+  departments.map((d) => ({ name: d.name, tag: d.tags[0] ?? '', books: d.books })),
+)
+
+const editRowSources = computed(() => [
+  mutableBorrowers.value,
+  mutableColleges.value,
+  mutableDepts.value,
+])
+const editRows = computed(() => editRowSources.value[editTab.value] ?? [])
+
+function openEditModal() {
+  editForm.value.period = currentPeriodRef.value
+  editForm.value.tabs = tabs.map((t) => ({ label: t.label }))
+  editTab.value = activeTab.value
+  editModalOpen.value = true
+}
+
+function closeEditModal() {
+  editModalOpen.value = false
+}
+
+function addRow() {
+  editRows.value.push({ name: '', tag: '', books: 0 })
+}
+
+function removeRow(i: number) {
+  editRows.value.splice(i, 1)
+}
+
+function saveEdits() {
+  currentPeriodRef.value = editForm.value.period
+  // Apply tab label changes back to the live tabs array
+  editForm.value.tabs.forEach((t, i) => {
+    const tab = tabs[i]
+    if (tab) tab.label = t.label
+  })
+  editModalOpen.value = false
+}
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
 /* ══════════════════════════════════════════════
+   PAGE LAYOUT
+══════════════════════════════════════════════ */
+.page-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════
    ROOT & TOKENS
 ══════════════════════════════════════════════ */
 .rp-root {
+  flex: 1;
+  overflow-y: auto;
   --ink: #0a200b;
   --ink-60: rgba(10, 32, 11, 0.6);
   --ink-30: rgba(10, 32, 11, 0.3);
@@ -360,7 +639,6 @@ const activeTabData = computed(() => tabs[activeTab.value] ?? tabs[0])
   --sh: 0 4px 32px rgba(10, 32, 11, 0.08);
 
   position: relative;
-  min-height: 100vh;
   background: var(--cream);
   font-family: 'DM Sans', sans-serif;
   color: var(--ink);
@@ -925,5 +1203,320 @@ const activeTabData = computed(() => tabs[activeTab.value] ?? tabs[0])
   .tab-label {
     font-size: 0.72rem;
   }
+}
+
+/* ══════════════════════════════════════════════
+   EDIT BUTTON
+══════════════════════════════════════════════ */
+.edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #fff;
+  color: #0a200b;
+  border: 1.5px solid rgba(10, 32, 11, 0.15);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(10, 32, 11, 0.07);
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    transform 0.18s;
+}
+.edit-btn:hover {
+  background: #f9f6f0;
+  border-color: rgba(10, 32, 11, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ══════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════ */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.22s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 32, 9, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-sheet {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(6, 32, 9, 0.28);
+  overflow: hidden;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(10, 32, 11, 0.08);
+  flex-shrink: 0;
+}
+.modal-header__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.modal-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(27, 94, 32, 0.1);
+  color: #1b5e20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.modal-title {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #0a200b;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+.modal-sub {
+  font-size: 0.65rem;
+  color: rgba(10, 32, 11, 0.45);
+  margin: 0;
+  font-weight: 500;
+}
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(10, 32, 11, 0.06);
+  color: rgba(10, 32, 11, 0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.modal-close:hover {
+  background: rgba(10, 32, 11, 0.12);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.modal-body::-webkit-scrollbar {
+  width: 4px;
+}
+.modal-body::-webkit-scrollbar-thumb {
+  background: rgba(10, 32, 11, 0.1);
+  border-radius: 4px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.field-label {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(10, 32, 11, 0.45);
+}
+.field-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid rgba(10, 32, 11, 0.12);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #0a200b;
+  background: #fafaf8;
+  outline: none;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  box-sizing: border-box;
+}
+.field-input:focus {
+  border-color: #1b5e20;
+  box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+}
+
+.tab-toggle {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.tt-btn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(10, 32, 11, 0.12);
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(10, 32, 11, 0.5);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.tt-btn--on {
+  background: #0a200b;
+  color: #fff;
+  border-color: #0a200b;
+}
+
+.rows-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.add-row-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 7px;
+  border: 1.5px solid rgba(27, 94, 32, 0.3);
+  background: rgba(27, 94, 32, 0.06);
+  color: #1b5e20;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.add-row-btn:hover {
+  background: rgba(27, 94, 32, 0.12);
+}
+
+.edit-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.edit-rows::-webkit-scrollbar {
+  width: 3px;
+}
+.edit-rows::-webkit-scrollbar-thumb {
+  background: rgba(10, 32, 11, 0.1);
+  border-radius: 3px;
+}
+
+.edit-row {
+  display: grid;
+  grid-template-columns: 22px 1fr 100px 72px 28px;
+  align-items: center;
+  gap: 6px;
+}
+.er-num {
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: rgba(10, 32, 11, 0.3);
+  text-align: center;
+}
+.er-del {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(200, 40, 40, 0.08);
+  color: #c82828;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.er-del:hover {
+  background: rgba(200, 40, 40, 0.18);
+}
+.empty-rows {
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(10, 32, 11, 0.3);
+  padding: 20px 0;
+  margin: 0;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(10, 32, 11, 0.08);
+  flex-shrink: 0;
+}
+.modal-cancel {
+  padding: 9px 20px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(10, 32, 11, 0.12);
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(10, 32, 11, 0.5);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.modal-cancel:hover {
+  background: rgba(10, 32, 11, 0.05);
+}
+.modal-save {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 22px;
+  border-radius: 8px;
+  border: none;
+  background: #0a200b;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+.modal-save:hover {
+  background: #1b5e20;
+  transform: translateY(-1px);
 }
 </style>

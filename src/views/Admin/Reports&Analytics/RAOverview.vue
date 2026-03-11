@@ -3,7 +3,6 @@
     
     <Sidebar 
       :activeTab="activeTab" 
-      :menuItems="navigationItems"
       @updateActiveTab="handleTabChange"
     />
 
@@ -103,11 +102,11 @@
           </div>
 
 
-          <!-- Library Leaderboard -->
+          <!-- Library Analytics -->
           <div class="panel panel--table">
             <div class="panel-head">
               <div>
-                <h2 class="panel-title">Library Leaderboards</h2>
+                <h2 class="panel-title">Library Analytics</h2>
                 <p class="panel-sub">Rankings based on {{ activeRankingTab.toLowerCase() }} activity</p>
               </div>
               <div class="chart-tabs">
@@ -147,11 +146,15 @@
             </div>
             <div class="panel-footer" style="display: flex;">
               <button class="add-section-btn">
-                View Detailed {{ activeRankingTab }} Analytics
+                <RouterLink to="/admin/analytics/display" class="w-full h-full block text-inherit no-underline">
+                  View Detailed {{ activeRankingTab }} Analytics
+                </RouterLink>
               </button>
-              <button class="add-section-btn">
-                Add/Edit Ranking Categories
-              </button>
+                <button class="add-section-btn">
+                  <RouterLink to="/admin/analytics/books" class="w-full h-full block text-inherit no-underline">
+                    Add/Edit Ranking Categories
+                  </RouterLink>
+                </button>
             </div>
           </div>
         </div>
@@ -227,13 +230,7 @@ const activeTab = ref('REPORTS')
 const activeChartTab = ref<ChartTab>('Monthly')
 const chartTabs: ChartTab[] = ['Weekly', 'Monthly', 'Yearly']
 
-const navigationItems = [
-  { name: 'DASHBOARD', icon: '📊' },
-  { name: 'REPORTS', icon: '📈' },
-  { name: 'BOOKS', icon: '📖' },
-  { name: 'MEMBERS', icon: '👥' },
-  { name: 'SETTINGS', icon: '⚙️' },
-]
+
 
 const handleTabChange = (tab: string) => { activeTab.value = tab }
 
