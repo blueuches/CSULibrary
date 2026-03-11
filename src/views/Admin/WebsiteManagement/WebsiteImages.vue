@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Sidebar from '@/components/Sidebar.vue'
 import { computed, ref, watch } from 'vue'
 
 import photo1 from '@/assets/images/img.jpg'
@@ -56,19 +57,16 @@ function makeId() {
 
 function extractYouTubeId(url: string) {
   if (!url) return ''
-
   const patterns = [
     /(?:youtube\.com\/watch\?v=)([^&]+)/,
     /(?:youtu\.be\/)([^?&/]+)/,
     /(?:youtube\.com\/embed\/)([^?&/]+)/,
     /(?:youtube\.com\/shorts\/)([^?&/]+)/,
   ]
-
   for (const pattern of patterns) {
     const match = url.match(pattern)
     if (match?.[1]) return match[1]
   }
-
   return ''
 }
 
@@ -105,9 +103,7 @@ const createAllowedHomepageSections = [
   { value: 'features', label: 'Features' },
 ]
 
-const createAllowedAboutpageSections = [
-  { value: 'icons', label: 'Icons' },
-]
+const createAllowedAboutpageSections = [{ value: 'icons', label: 'Icons' }]
 
 const defaultItems: MediaItem[] = [
   {
@@ -160,7 +156,6 @@ const defaultItems: MediaItem[] = [
     category: 'HomePage Carousel',
     src: photo5,
   },
-
   {
     id: makeId(),
     title: 'Design Background',
@@ -181,7 +176,6 @@ const defaultItems: MediaItem[] = [
     category: 'HomePage Library Section',
     src: photo2,
   },
-
   {
     id: makeId(),
     title: 'Read Card Image',
@@ -212,7 +206,6 @@ const defaultItems: MediaItem[] = [
     category: 'HomePage Read Learn Discover',
     src: tinay,
   },
-
   {
     id: makeId(),
     title: 'BSP Knowledge Resource Network',
@@ -273,7 +266,6 @@ const defaultItems: MediaItem[] = [
     category: 'HomePage Library Updates',
     src: newlyAcquiredBooks,
   },
-
   {
     id: makeId(),
     title: 'Philippine E-Lib',
@@ -340,7 +332,6 @@ const defaultItems: MediaItem[] = [
     src: ebsco,
     externalLink: 'https://login.ebsco.com',
   },
-
   {
     id: makeId(),
     title: 'Virtual Tour',
@@ -367,7 +358,6 @@ const defaultItems: MediaItem[] = [
     embedUrl: 'https://www.youtube.com/embed/HAEPrH2aYpc',
     externalLink: 'https://www.youtube.com/watch?v=HAEPrH2aYpc',
   },
-
   {
     id: makeId(),
     title: 'About Hero Image',
@@ -423,19 +413,15 @@ const defaultItems: MediaItem[] = [
 function loadInitialItems(): MediaItem[] {
   const raw = localStorage.getItem(STORAGE_KEY)
   if (!raw) return defaultItems
-
   try {
     const parsed = JSON.parse(raw) as MediaItem[]
     if (!parsed.length) return defaultItems
-
     const storedMap = new Map(parsed.map((item) => [mediaKey(item), item]))
-    const mergedDefaults = defaultItems.map((defaultItem) => {
-      return storedMap.get(mediaKey(defaultItem)) ?? defaultItem
-    })
-
+    const mergedDefaults = defaultItems.map(
+      (defaultItem) => storedMap.get(mediaKey(defaultItem)) ?? defaultItem,
+    )
     const defaultKeys = new Set(defaultItems.map(mediaKey))
     const extraStored = parsed.filter((item) => !defaultKeys.has(mediaKey(item)))
-
     return [...mergedDefaults, ...extraStored]
   } catch {
     return defaultItems
@@ -463,12 +449,11 @@ const typeFilter = ref<'all' | MediaType>('all')
 const pageFilter = ref<'all' | PageType>('all')
 const categoryFilter = ref('all')
 const selectedFileName = ref('')
-
 const selectedId = ref<string | null>(items.value[0]?.id ?? null)
 
-const selectedItem = computed(() => {
-  return items.value.find((item) => item.id === selectedId.value) ?? null
-})
+const selectedItem = computed(
+  () => items.value.find((item) => item.id === selectedId.value) ?? null,
+)
 
 const categories = computed(() => {
   const unique = Array.from(new Set(items.value.map((item) => item.category))).sort()
@@ -491,7 +476,6 @@ const form = ref<MediaItem>({
 
 const mode = ref<'create' | 'edit'>('create')
 const showMediaModal = ref(false)
-
 const showNoticeModal = ref(false)
 const noticeMode = ref<ModalMode>('alert')
 const noticeTitle = ref('Notice')
@@ -504,7 +488,6 @@ const availableSections = computed(() => {
       ? createAllowedHomepageSections
       : createAllowedAboutpageSections
   }
-
   return form.value.page === 'homepage' ? homepageSections : aboutpageSections
 })
 
@@ -515,7 +498,6 @@ const isVideoAllowedInCurrentSection = computed(() => {
 
 const filteredItems = computed(() => {
   const q = searchTerm.value.trim().toLowerCase()
-
   return items.value
     .filter((item) => {
       const matchesSearch =
@@ -524,11 +506,10 @@ const filteredItems = computed(() => {
         item.category.toLowerCase().includes(q) ||
         item.page.toLowerCase().includes(q) ||
         item.section.toLowerCase().includes(q)
-
       const matchesType = typeFilter.value === 'all' || item.type === typeFilter.value
       const matchesPage = pageFilter.value === 'all' || item.page === pageFilter.value
-      const matchesCategory = categoryFilter.value === 'all' || item.category === categoryFilter.value
-
+      const matchesCategory =
+        categoryFilter.value === 'all' || item.category === categoryFilter.value
       return matchesSearch && matchesType && matchesPage && matchesCategory
     })
     .sort((a, b) => {
@@ -573,10 +554,9 @@ function getNextOrder(page: PageType, section: string) {
 function getDefaultCategory(page: PageType, section: string) {
   const found = items.value.find((item) => item.page === page && item.section === section)
   if (found?.category) return found.category
-
   const sectionLabel =
-    [...homepageSections, ...aboutpageSections].find((item) => item.value === section)?.label ?? section
-
+    [...homepageSections, ...aboutpageSections].find((item) => item.value === section)?.label ??
+    section
   return `${page === 'homepage' ? 'HomePage' : 'AboutPage'} ${sectionLabel}`
 }
 
@@ -616,9 +596,7 @@ function handlePageChange() {
 }
 
 function handleSectionChange() {
-  if (!form.value.id) {
-    form.value.order = getNextOrder(form.value.page, form.value.section)
-  }
+  if (!form.value.id) form.value.order = getNextOrder(form.value.page, form.value.section)
   form.value.category = getDefaultCategory(form.value.page, form.value.section)
   normalizeTypeForSection()
 }
@@ -649,22 +627,18 @@ function validateForm(payload: MediaItem) {
     openAlert('Please fill in the Title field.')
     return false
   }
-
   if (!payload.category.trim()) {
     openAlert('Please fill in the Category field.')
     return false
   }
-
   if (!payload.page.trim()) {
     openAlert('Please select a Page.')
     return false
   }
-
   if (!payload.section.trim()) {
     openAlert('Please select a Section.')
     return false
   }
-
   if (
     mode.value === 'create' &&
     payload.page === 'homepage' &&
@@ -673,21 +647,14 @@ function validateForm(payload: MediaItem) {
     openAlert('New media for HomePage can only be added inside Carousel or Features.')
     return false
   }
-
-  if (
-    mode.value === 'create' &&
-    payload.page === 'aboutpage' &&
-    payload.section !== 'icons'
-  ) {
-    openAlert('New media for AboutPage can only be added inside Icons. Hero image can only be edited or deleted.')
+  if (mode.value === 'create' && payload.page === 'aboutpage' && payload.section !== 'icons') {
+    openAlert('New media for AboutPage can only be added inside Icons.')
     return false
   }
-
   if (payload.page === 'aboutpage' && payload.type === 'video') {
     openAlert('AboutPage only supports images.')
     return false
   }
-
   if (
     payload.page === 'homepage' &&
     !['carousel', 'features'].includes(payload.section) &&
@@ -696,15 +663,13 @@ function validateForm(payload: MediaItem) {
     openAlert('Only HomePage Carousel and Features can use videos.')
     return false
   }
-
   if (!payload.order || Number(payload.order) < 1) {
     openAlert('Please provide a valid Order number.')
     return false
   }
-
   if (payload.type === 'video') {
-    const videoSource = payload.externalLink?.trim() || payload.embedUrl?.trim() || payload.src.trim()
-
+    const videoSource =
+      payload.externalLink?.trim() || payload.embedUrl?.trim() || payload.src.trim()
     if (!videoSource) {
       openAlert('Please provide a video file or an external video link.')
       return false
@@ -715,14 +680,11 @@ function validateForm(payload: MediaItem) {
       return false
     }
   }
-
   return true
 }
 
 function handleSaveMedia() {
-  if (saveItem()) {
-    showMediaModal.value = false
-  }
+  if (saveItem()) showMediaModal.value = false
 }
 
 function saveItem() {
@@ -731,28 +693,22 @@ function saveItem() {
     id: form.value.id || makeId(),
     order: Number(form.value.order) || 1,
   }
-
   if (!validateForm(payload)) return false
-
   if (payload.type === 'video') {
-    const videoSource = payload.externalLink?.trim() || payload.embedUrl?.trim() || payload.src.trim()
-
+    const videoSource =
+      payload.externalLink?.trim() || payload.embedUrl?.trim() || payload.src.trim()
     const youtubeId = extractYouTubeId(videoSource)
-
     if (youtubeId) {
       payload.thumbnail = getYouTubeThumbnail(videoSource)
       payload.embedUrl = getYouTubeEmbed(videoSource)
       payload.externalLink = `https://www.youtube.com/watch?v=${youtubeId}`
       payload.src = payload.externalLink
-    } else if (!payload.src.trim()) {
-      payload.src = videoSource
-    }
+    } else if (!payload.src.trim()) payload.src = videoSource
   } else {
     payload.embedUrl = ''
     payload.thumbnail = ''
     payload.externalLink = payload.externalLink?.trim() || ''
   }
-
   if (mode.value === 'create') {
     items.value.push(payload)
     selectedId.value = payload.id
@@ -763,28 +719,19 @@ function saveItem() {
       selectedId.value = payload.id
     }
   }
-
   resetForm()
   return true
 }
 
 function deleteItem(id: string) {
   const itemToDelete = items.value.find((item) => item.id === id)
-
   if (!itemToDelete) return
-
   openConfirm(
     `Are you sure you want to delete this file: "${itemToDelete.title}"?`,
     () => {
       items.value = items.value.filter((item) => item.id !== id)
-
-      if (selectedId.value === id) {
-        selectedId.value = items.value[0]?.id ?? null
-      }
-
-      if (form.value.id === id) {
-        resetForm()
-      }
+      if (selectedId.value === id) selectedId.value = items.value[0]?.id ?? null
+      if (form.value.id === id) resetForm()
     },
     'Confirm Deletion',
   )
@@ -794,20 +741,16 @@ function handleMainFileChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
-
   selectedFileName.value = file.name
-
   const reader = new FileReader()
   reader.onload = () => {
     form.value.src = String(reader.result ?? '')
-
     if (form.value.type === 'video') {
       form.value.externalLink = ''
       form.value.embedUrl = ''
       form.value.thumbnail = ''
     }
   }
-
   reader.readAsDataURL(file)
 }
 
@@ -816,294 +759,271 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 </script>
 
 <template>
-  <div class="wm-page">
-    <div class="wm-wrap">
-      <div class="wm-header">
-        <div>
-          <p class="wm-eyebrow">ADMIN PANEL</p>
-          <h1 class="wm-title">Website Management</h1>
-          <p class="wm-subtitle">
-            Manage homepage and about page images and videos used in the website.
-          </p>
+  <div class="page-layout">
+    <Sidebar :activeTab="'MEDIA'" />
+    <div class="wm-page">
+      <div class="wm-wrap">
+        <div class="wm-header">
+          <div>
+            <p class="wm-eyebrow">ADMIN PANEL</p>
+            <h1 class="wm-title">Website Management</h1>
+            <p class="wm-subtitle">
+              Manage homepage and about page images and videos used in the website.
+            </p>
+          </div>
+          <button class="wm-btn wm-btn-primary" @click="openAddModal">+ Add New Media</button>
         </div>
 
-        <button class="wm-btn wm-btn-primary" @click="openAddModal">+ Add New Media</button>
-      </div>
-
-      <div class="wm-stats">
-        <div class="wm-stat">
-          <span class="wm-stat-label">Total Media</span>
-          <strong class="wm-stat-value">{{ items.length }}</strong>
-        </div>
-        <div class="wm-stat">
-          <span class="wm-stat-label">Images</span>
-          <strong class="wm-stat-value">{{ totalImages }}</strong>
-        </div>
-        <div class="wm-stat">
-          <span class="wm-stat-label">Videos</span>
-          <strong class="wm-stat-value">{{ totalVideos }}</strong>
-        </div>
-      </div>
-
-      <div class="wm-grid">
-        <div class="wm-left">
-          <div class="wm-card wm-list-card">
-            <div class="wm-toolbar wm-toolbar-4">
-              <input
-                v-model="searchTerm"
-                class="wm-input"
-                type="text"
-                placeholder="Search title, category, page, section..."
-              />
-
-              <select v-model="typeFilter" class="wm-select">
-                <option value="all">All Types</option>
-                <option value="image">Images</option>
-                <option value="video">Videos</option>
-              </select>
-
-              <select v-model="pageFilter" class="wm-select">
-                <option value="all">All Pages</option>
-                <option value="homepage">HomePage</option>
-                <option value="aboutpage">AboutPage</option>
-              </select>
-
-              <select v-model="categoryFilter" class="wm-select">
-                <option v-for="category in categories" :key="category" :value="category">
-                  {{ category === 'all' ? 'All Categories' : category }}
-                </option>
-              </select>
-            </div>
-
-            <div class="wm-list">
-              <div
-                v-for="item in filteredItems"
-                :key="item.id"
-                class="wm-item"
-                :class="{ active: selectedId === item.id }"
-                @click="selectedId = item.id"
-              >
-                <div class="wm-thumb">
-                  <img v-if="item.type === 'image'" :src="item.src" :alt="item.title" />
-                  <img v-else-if="item.thumbnail" :src="item.thumbnail" :alt="item.title" />
-                  <video v-else :src="item.src" muted playsinline preload="metadata"></video>
-                </div>
-
-                <div class="wm-item-body">
-                  <div class="wm-item-top">
-                    <h3>{{ item.title }}</h3>
-                  </div>
-                  <p class="wm-meta">{{ item.category }}</p>
-                  <p class="wm-item-sub">{{ item.page }} • {{ item.section }} • Order {{ item.order }}</p>
-                </div>
-
-                <div class="wm-actions">
-                  <button class="wm-icon-btn" @click.stop="editItem(item)">Edit</button>
-                  <button class="wm-icon-btn danger" @click.stop="deleteItem(item.id)">Delete</button>
-                </div>
-              </div>
-
-              <div v-if="filteredItems.length === 0" class="wm-empty">
-                No media found.
-              </div>
-            </div>
+        <div class="wm-stats">
+          <div class="wm-stat">
+            <span class="wm-stat-label">Total Media</span>
+            <strong class="wm-stat-value">{{ items.length }}</strong>
+          </div>
+          <div class="wm-stat">
+            <span class="wm-stat-label">Images</span>
+            <strong class="wm-stat-value">{{ totalImages }}</strong>
+          </div>
+          <div class="wm-stat">
+            <span class="wm-stat-label">Videos</span>
+            <strong class="wm-stat-value">{{ totalVideos }}</strong>
           </div>
         </div>
 
-        <div class="wm-right">
-          <div class="wm-card wm-preview-card">
-            <div class="wm-card-head">
-              <h2>Preview</h2>
-            </div>
-
-            <div v-if="selectedItem" class="wm-preview">
-              <img
-                v-if="selectedItem.type === 'image'"
-                :src="selectedItem.src"
-                :alt="selectedItem.title"
-                class="wm-preview-media"
-              />
-
-              <div v-else class="wm-video-preview">
-                <iframe
-                  v-if="selectedItem.embedUrl"
-                  :src="selectedItem.embedUrl"
-                  class="wm-preview-media wm-iframe"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen
-                ></iframe>
-
-                <video
-                  v-else
-                  :src="selectedItem.src"
-                  class="wm-preview-media"
-                  controls
-                  preload="metadata"
-                ></video>
+        <div class="wm-grid">
+          <div class="wm-left">
+            <div class="wm-card wm-list-card">
+              <div class="wm-toolbar wm-toolbar-4">
+                <input
+                  v-model="searchTerm"
+                  class="wm-input"
+                  type="text"
+                  placeholder="Search title, category, page, section..."
+                />
+                <select v-model="typeFilter" class="wm-select">
+                  <option value="all">All Types</option>
+                  <option value="image">Images</option>
+                  <option value="video">Videos</option>
+                </select>
+                <select v-model="pageFilter" class="wm-select">
+                  <option value="all">All Pages</option>
+                  <option value="homepage">HomePage</option>
+                  <option value="aboutpage">AboutPage</option>
+                </select>
+                <select v-model="categoryFilter" class="wm-select">
+                  <option v-for="category in categories" :key="category" :value="category">
+                    {{ category === 'all' ? 'All Categories' : category }}
+                  </option>
+                </select>
               </div>
 
-              <div class="wm-preview-info">
-                <h3>{{ selectedItem.title }}</h3>
-                <p><strong>Type:</strong> {{ selectedItem.type }}</p>
-                <p><strong>Page:</strong> {{ selectedItem.page }}</p>
-                <p><strong>Section:</strong> {{ selectedItem.section }}</p>
-                <p><strong>Order:</strong> {{ selectedItem.order }}</p>
-                <p><strong>Category:</strong> {{ selectedItem.category }}</p>
-                <p v-if="selectedItem.externalLink"><strong>Link:</strong> {{ selectedItem.externalLink }}</p>
-                <p v-if="selectedItem.embedUrl"><strong>Embed:</strong> {{ selectedItem.embedUrl }}</p>
-              </div>
-            </div>
-
-            <div v-else class="wm-empty">
-              Select a media item to preview.
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div
-      v-if="showMediaModal"
-      class="wm-modal-overlay"
-      @click.self="showMediaModal = false"
-    >
-      <div class="wm-modal">
-        <div class="wm-modal-head">
-          <h2>{{ mode === 'create' ? 'Add Media' : 'Edit Media' }}</h2>
-          <button class="wm-close" @click="showMediaModal = false">✕</button>
-        </div>
-
-        <div class="wm-form">
-          <div class="wm-field">
-            <label>Title</label>
-            <input v-model="form.title" class="wm-input" type="text" />
-          </div>
-
-          <div class="wm-row wm-row-3">
-            <div class="wm-field">
-              <label>Type</label>
-              <select v-model="form.type" class="wm-select" @change="handleTypeChange">
-                <option value="image">Image</option>
-                <option v-if="isVideoAllowedInCurrentSection" value="video">Video</option>
-              </select>
-            </div>
-
-            <div class="wm-field">
-              <label>Page</label>
-              <select v-model="form.page" class="wm-select" @change="handlePageChange">
-                <option value="homepage">HomePage</option>
-                <option value="aboutpage">AboutPage</option>
-              </select>
-            </div>
-
-            <div class="wm-field">
-              <label>Section</label>
-              <select v-model="form.section" class="wm-select" @change="handleSectionChange">
-                <option
-                  v-for="section in availableSections"
-                  :key="section.value"
-                  :value="section.value"
+              <div class="wm-list">
+                <div
+                  v-for="item in filteredItems"
+                  :key="item.id"
+                  class="wm-item"
+                  :class="{ active: selectedId === item.id }"
+                  @click="selectedId = item.id"
                 >
-                  {{ section.label }}
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="wm-row wm-row-2">
-            <div class="wm-field">
-              <label>Category</label>
-              <input v-model="form.category" class="wm-input" type="text" />
-            </div>
-
-            <div class="wm-field">
-              <label>Order</label>
-              <input v-model.number="form.order" class="wm-input" type="number" min="1" />
-            </div>
-          </div>
-
-          <div class="wm-field">
-            <label>Source URL / Path / Base64</label>
-            <input v-model="form.src" class="wm-input" type="text" />
-          </div>
-
-          <div class="wm-field">
-            <label>Upload Main File</label>
-
-            <label class="wm-upload-card">
-              <input
-                class="wm-file-hidden"
-                type="file"
-                :accept="form.type === 'video' ? 'video/mp4,video/webm,video/ogg' : 'image/*'"
-                @change="handleMainFileChange"
-              />
-
-              <div class="wm-upload-inner">
-                <span class="wm-upload-sub">
-                  {{ selectedFileName || (form.type === 'video' ? 'Upload Video +' : 'Upload Photo +') }}
-                </span>
+                  <div class="wm-thumb">
+                    <img v-if="item.type === 'image'" :src="item.src" :alt="item.title" />
+                    <img v-else-if="item.thumbnail" :src="item.thumbnail" :alt="item.title" />
+                    <video v-else :src="item.src" muted playsinline preload="metadata"></video>
+                  </div>
+                  <div class="wm-item-body">
+                    <div class="wm-item-top">
+                      <h3>{{ item.title }}</h3>
+                    </div>
+                    <p class="wm-meta">{{ item.category }}</p>
+                    <p class="wm-item-sub">
+                      {{ item.page }} • {{ item.section }} • Order {{ item.order }}
+                    </p>
+                  </div>
+                  <div class="wm-actions">
+                    <button class="wm-icon-btn" @click.stop="editItem(item)">Edit</button>
+                    <button class="wm-icon-btn danger" @click.stop="deleteItem(item.id)">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+                <div v-if="filteredItems.length === 0" class="wm-empty">No media found.</div>
               </div>
-            </label>
+            </div>
           </div>
 
-          <template v-if="form.type === 'video'">
-            <div class="wm-field">
-              <label>External Video Link</label>
-              <input
-                v-model="form.externalLink"
-                class="wm-input"
-                type="text"
-                placeholder="https://www.youtube.com/watch?v=..."
-              />
+          <div class="wm-right">
+            <div class="wm-card wm-preview-card">
+              <div class="wm-card-head">
+                <h2>Preview</h2>
+              </div>
+              <div v-if="selectedItem" class="wm-preview">
+                <img
+                  v-if="selectedItem.type === 'image'"
+                  :src="selectedItem.src"
+                  :alt="selectedItem.title"
+                  class="wm-preview-media"
+                />
+                <div v-else class="wm-video-preview">
+                  <iframe
+                    v-if="selectedItem.embedUrl"
+                    :src="selectedItem.embedUrl"
+                    class="wm-preview-media wm-iframe"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                  <video
+                    v-else
+                    :src="selectedItem.src"
+                    class="wm-preview-media"
+                    controls
+                    preload="metadata"
+                  ></video>
+                </div>
+                <div class="wm-preview-info">
+                  <h3>{{ selectedItem.title }}</h3>
+                  <p><strong>Type:</strong> {{ selectedItem.type }}</p>
+                  <p><strong>Page:</strong> {{ selectedItem.page }}</p>
+                  <p><strong>Section:</strong> {{ selectedItem.section }}</p>
+                  <p><strong>Order:</strong> {{ selectedItem.order }}</p>
+                  <p><strong>Category:</strong> {{ selectedItem.category }}</p>
+                  <p v-if="selectedItem.externalLink">
+                    <strong>Link:</strong> {{ selectedItem.externalLink }}
+                  </p>
+                  <p v-if="selectedItem.embedUrl">
+                    <strong>Embed:</strong> {{ selectedItem.embedUrl }}
+                  </p>
+                </div>
+              </div>
+              <div v-else class="wm-empty">Select a media item to preview.</div>
             </div>
-          </template>
+          </div>
+        </div>
+      </div>
 
-          <div class="wm-form-actions">
-            <button class="wm-btn wm-btn-secondary" @click="resetForm">Clear</button>
-            <button class="wm-btn wm-btn-primary" @click="handleSaveMedia">
-              {{ mode === 'create' ? 'Save Media' : 'Update Media' }}
+      <!-- ══ ADD/EDIT MODAL ══ -->
+      <div v-if="showMediaModal" class="wm-modal-overlay" @click.self="showMediaModal = false">
+        <div class="wm-modal">
+          <div class="wm-modal-head">
+            <h2>{{ mode === 'create' ? 'Add Media' : 'Edit Media' }}</h2>
+            <button class="wm-close" @click="showMediaModal = false">✕</button>
+          </div>
+          <div class="wm-form">
+            <div class="wm-field">
+              <label>Title</label>
+              <input v-model="form.title" class="wm-input" type="text" />
+            </div>
+            <div class="wm-row wm-row-3">
+              <div class="wm-field">
+                <label>Type</label>
+                <select v-model="form.type" class="wm-select" @change="handleTypeChange">
+                  <option value="image">Image</option>
+                  <option v-if="isVideoAllowedInCurrentSection" value="video">Video</option>
+                </select>
+              </div>
+              <div class="wm-field">
+                <label>Page</label>
+                <select v-model="form.page" class="wm-select" @change="handlePageChange">
+                  <option value="homepage">HomePage</option>
+                  <option value="aboutpage">AboutPage</option>
+                </select>
+              </div>
+              <div class="wm-field">
+                <label>Section</label>
+                <select v-model="form.section" class="wm-select" @change="handleSectionChange">
+                  <option
+                    v-for="section in availableSections"
+                    :key="section.value"
+                    :value="section.value"
+                  >
+                    {{ section.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="wm-row wm-row-2">
+              <div class="wm-field">
+                <label>Category</label>
+                <input v-model="form.category" class="wm-input" type="text" />
+              </div>
+              <div class="wm-field">
+                <label>Order</label>
+                <input v-model.number="form.order" class="wm-input" type="number" min="1" />
+              </div>
+            </div>
+            <div class="wm-field">
+              <label>Source URL / Path / Base64</label>
+              <input v-model="form.src" class="wm-input" type="text" />
+            </div>
+            <div class="wm-field">
+              <label>Upload Main File</label>
+              <label class="wm-upload-card">
+                <input
+                  class="wm-file-hidden"
+                  type="file"
+                  :accept="form.type === 'video' ? 'video/mp4,video/webm,video/ogg' : 'image/*'"
+                  @change="handleMainFileChange"
+                />
+                <div class="wm-upload-inner">
+                  <span class="wm-upload-sub">{{
+                    selectedFileName ||
+                    (form.type === 'video' ? 'Upload Video +' : 'Upload Photo +')
+                  }}</span>
+                </div>
+              </label>
+            </div>
+            <template v-if="form.type === 'video'">
+              <div class="wm-field">
+                <label>External Video Link</label>
+                <input
+                  v-model="form.externalLink"
+                  class="wm-input"
+                  type="text"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                />
+              </div>
+            </template>
+            <div class="wm-form-actions">
+              <button class="wm-btn wm-btn-secondary" @click="resetForm">Clear</button>
+              <button class="wm-btn wm-btn-primary" @click="handleSaveMedia">
+                {{ mode === 'create' ? 'Save Media' : 'Update Media' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ NOTICE MODAL ══ -->
+      <div v-if="showNoticeModal" class="wm-notice-overlay" @click.self="closeNoticeModal">
+        <div class="wm-notice-card">
+          <div class="wm-notice-head">
+            <h3>{{ noticeTitle }}</h3>
+          </div>
+          <div class="wm-notice-body">
+            <p>{{ noticeMessage }}</p>
+          </div>
+          <div class="wm-notice-actions">
+            <button
+              v-if="noticeMode === 'confirm'"
+              class="wm-btn wm-btn-secondary"
+              @click="closeNoticeModal"
+            >
+              Cancel
+            </button>
+            <button
+              v-if="noticeMode === 'confirm'"
+              class="wm-btn wm-btn-danger"
+              @click="handleNoticeConfirm"
+            >
+              Delete
+            </button>
+            <button
+              v-if="noticeMode === 'alert'"
+              class="wm-btn wm-btn-primary"
+              @click="closeNoticeModal"
+            >
+              OK
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="showNoticeModal" class="wm-notice-overlay" @click.self="closeNoticeModal">
-      <div class="wm-notice-card">
-        <div class="wm-notice-head">
-          <h3>{{ noticeTitle }}</h3>
-        </div>
-
-        <div class="wm-notice-body">
-          <p>{{ noticeMessage }}</p>
-        </div>
-
-        <div class="wm-notice-actions">
-          <button
-            v-if="noticeMode === 'confirm'"
-            class="wm-btn wm-btn-secondary"
-            @click="closeNoticeModal"
-          >
-            Cancel
-          </button>
-
-          <button
-            v-if="noticeMode === 'confirm'"
-            class="wm-btn wm-btn-danger"
-            @click="handleNoticeConfirm"
-          >
-            Delete
-          </button>
-
-          <button
-            v-if="noticeMode === 'alert'"
-            class="wm-btn wm-btn-primary"
-            @click="closeNoticeModal"
-          >
-            OK
-          </button>
         </div>
       </div>
     </div>
@@ -1111,9 +1031,18 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 </template>
 
 <style scoped>
+/* ── LAYOUT (same as AdminGallery) ── */
+.page-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .wm-page {
+  flex: 1;
   min-height: 100vh;
   width: 100%;
+  overflow-y: auto;
   background:
     radial-gradient(circle at top right, rgba(249, 168, 37, 0.08), transparent 25%),
     linear-gradient(180deg, #f6f8f6 0%, #edf2ed 100%);
@@ -1346,12 +1275,10 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 .wm-icon-btn:hover {
   background: #e2ebe2;
 }
-
 .wm-icon-btn.danger {
   background: rgba(211, 47, 47, 0.08);
   color: #b3261e;
 }
-
 .wm-icon-btn.danger:hover {
   background: rgba(211, 47, 47, 0.14);
 }
@@ -1415,11 +1342,9 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   display: grid;
   gap: 12px;
 }
-
 .wm-row-3 {
   grid-template-columns: 0.8fr 1fr 1fr;
 }
-
 .wm-row-2 {
   grid-template-columns: 1.3fr 0.7fr;
 }
@@ -1512,25 +1437,20 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   background: #0d2b0f;
   color: #fff;
 }
-
 .wm-btn-primary:hover {
   background: #174319;
 }
-
 .wm-btn-secondary {
   background: #eef3ee;
   color: #0d2b0f;
 }
-
 .wm-btn-secondary:hover {
   background: #e3ebe3;
 }
-
 .wm-btn-danger {
   background: #b3261e;
   color: #fff;
 }
-
 .wm-btn-danger:hover {
   background: #8f1f19;
 }
@@ -1540,22 +1460,6 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   text-align: center;
   color: rgba(13, 43, 15, 0.48);
   font-weight: 700;
-}
-
-.wm-note {
-  margin-top: 16px;
-  font-size: 0.9rem;
-  color: rgba(13, 43, 15, 0.6);
-}
-
-.wm-section-note {
-  margin: -2px 0 14px;
-  font-size: 0.85rem;
-  color: rgba(13, 43, 15, 0.72);
-  background: #f8fbf8;
-  border: 1px solid rgba(13, 43, 15, 0.08);
-  border-radius: 12px;
-  padding: 10px 12px;
 }
 
 .wm-modal-overlay,
@@ -1658,7 +1562,6 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 .wm-notice-actions .wm-btn-secondary {
   margin-right: auto;
 }
-
 .wm-notice-actions .wm-btn-danger,
 .wm-notice-actions .wm-btn-primary {
   margin-left: auto;
@@ -1669,11 +1572,9 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
     grid-template-columns: 1fr;
     align-items: start;
   }
-
   .wm-list {
     height: 60vh;
   }
-
   .wm-preview {
     min-height: auto;
   }
@@ -1691,47 +1592,37 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   .wm-page {
     padding: 16px;
   }
-
   .wm-header {
     flex-direction: column;
   }
-
   .wm-stats {
     grid-template-columns: 1fr;
   }
-
   .wm-item {
     grid-template-columns: 1fr;
     align-items: flex-start;
   }
-
   .wm-thumb {
     width: 100%;
     height: 180px;
   }
-
   .wm-actions {
     justify-content: flex-start;
   }
-
   .wm-list {
     height: 56vh;
   }
-
   .wm-modal {
     max-height: 94vh;
   }
-
   .wm-modal-overlay,
   .wm-notice-overlay {
     padding: 12px;
   }
-
   .wm-notice-actions {
     flex-direction: row;
     align-items: center;
   }
-
   .wm-notice-actions .wm-btn {
     width: auto;
   }
