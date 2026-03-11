@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sidebar from '@/components/Sidebar.vue'
 import { computed, ref, watch } from 'vue'
+import { Files, Image as ImageIcon, Video } from 'lucide-vue-next'
 
 import photo1 from '@/assets/images/img.jpg'
 import photo2 from '@/assets/images/lib.jpg'
@@ -754,6 +755,10 @@ function handleMainFileChange(event: Event) {
   reader.readAsDataURL(file)
 }
 
+function goBack() {
+  window.history.back()
+}
+
 const totalImages = computed(() => items.value.filter((item) => item.type === 'image').length)
 const totalVideos = computed(() => items.value.filter((item) => item.type === 'video').length)
 </script>
@@ -763,28 +768,63 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
     <Sidebar :activeTab="'MEDIA'" />
     <div class="wm-page">
       <div class="wm-wrap">
-        <div class="wm-header">
-          <div>
-            <p class="wm-eyebrow">ADMIN PANEL</p>
-            <h1 class="wm-title">Website Management</h1>
-            <p class="wm-subtitle">
-              Manage homepage and about page images and videos used in the website.
-            </p>
+        <div class="wm-hero">
+          <button class="wm-back-btn" @click="goBack">
+            <span>Back</span>
+            <span class="wm-back-sep">&gt;</span>
+            <span>Admin</span>
+          </button>
+
+          <div class="wm-hero-main">
+            <div class="wm-hero-copy">
+              <div class="wm-title-row">
+                <span class="wm-title">Website</span>
+                <span class="wm-management">Management</span>
+              </div>
+
+              <div class="wm-title-line"></div>
+
+              <p class="wm-subtitle">
+                Manage homepage and about page images and videos used in the website.
+              </p>
+            </div>
+
+            <div class="wm-hero-action">
+              <button class="wm-btn wm-btn-primary wm-add-btn" @click="openAddModal">
+                + Add New Media
+              </button>
+            </div>
           </div>
-          <button class="wm-btn wm-btn-primary" @click="openAddModal">+ Add New Media</button>
         </div>
 
         <div class="wm-stats">
           <div class="wm-stat">
-            <span class="wm-stat-label">Total Media</span>
+            <div class="wm-stat-top">
+              <span class="wm-stat-icon">
+                <Files class="wm-stat-svg" />
+              </span>
+              <span class="wm-stat-label">Total Media</span>
+            </div>
             <strong class="wm-stat-value">{{ items.length }}</strong>
           </div>
+
           <div class="wm-stat">
-            <span class="wm-stat-label">Images</span>
+            <div class="wm-stat-top">
+              <span class="wm-stat-icon">
+                <ImageIcon class="wm-stat-svg" />
+              </span>
+              <span class="wm-stat-label">Images</span>
+            </div>
             <strong class="wm-stat-value">{{ totalImages }}</strong>
           </div>
+
           <div class="wm-stat">
-            <span class="wm-stat-label">Videos</span>
+            <div class="wm-stat-top">
+              <span class="wm-stat-icon">
+                <Video class="wm-stat-svg" />
+              </span>
+              <span class="wm-stat-label">Videos</span>
+            </div>
             <strong class="wm-stat-value">{{ totalVideos }}</strong>
           </div>
         </div>
@@ -900,7 +940,6 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
         </div>
       </div>
 
-      <!-- ══ ADD/EDIT MODAL ══ -->
       <div v-if="showMediaModal" class="wm-modal-overlay" @click.self="showMediaModal = false">
         <div class="wm-modal">
           <div class="wm-modal-head">
@@ -992,7 +1031,6 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
         </div>
       </div>
 
-      <!-- ══ NOTICE MODAL ══ -->
       <div v-if="showNoticeModal" class="wm-notice-overlay" @click.self="closeNoticeModal">
         <div class="wm-notice-card">
           <div class="wm-notice-head">
@@ -1031,7 +1069,6 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 </template>
 
 <style scoped>
-/* ── LAYOUT (same as AdminGallery) ── */
 .page-layout {
   display: flex;
   height: 100vh;
@@ -1043,46 +1080,106 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   min-height: 100vh;
   width: 100%;
   overflow-y: auto;
-  background:
-    radial-gradient(circle at top right, rgba(249, 168, 37, 0.08), transparent 25%),
-    linear-gradient(180deg, #f6f8f6 0%, #edf2ed 100%);
-  padding: 24px;
+  background: #f5f3ef;
+  padding: 28px 28px 24px;
   box-sizing: border-box;
 }
 
 .wm-wrap {
   width: 100%;
-  max-width: 1600px;
+  max-width: 1680px;
   margin: 0 auto;
 }
 
-.wm-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+.wm-hero {
+  margin-bottom: 22px;
 }
 
-.wm-eyebrow {
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.22em;
-  color: #c68b09;
-  margin-bottom: 6px;
+.wm-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 18px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: rgba(13, 43, 15, 0.4);
+  transition: color 0.2s ease;
+}
+
+.wm-back-btn:hover {
+  color: #0d2b0f;
+}
+
+.wm-back-sep {
+  color: #c3c9bf;
+}
+
+.wm-hero-main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.wm-hero-copy {
+  min-width: 0;
+}
+
+.wm-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .wm-title {
-  font-size: clamp(2rem, 3vw, 3rem);
+  font-size: clamp(3rem, 3vw, 1.7rem);
   font-weight: 900;
-  color: #0d2b0f;
-  line-height: 1;
+  color: #083411;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
   margin: 0;
 }
 
+.wm-management {
+  font-size: clamp(3rem, 3vw, 1.7rem);
+  font-weight: 900;
+  color: #fbc02d;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
 .wm-subtitle {
-  color: rgba(13, 43, 15, 0.65);
-  margin-top: 8px;
+  color: #5f7566;
+  margin: 14px 0 0;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  line-height: 1.45;
+  max-width: 980px;
+}
+
+.wm-title-line {
+  width: 190px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0d2b0f 0%, #c78c06 100%);
+  margin-top: 14px;
+  margin-bottom: 18px;
+}
+
+.wm-hero-action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.wm-add-btn {
+  min-width: 180px;
 }
 
 .wm-stats {
@@ -1093,11 +1190,45 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 }
 
 .wm-stat {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(13, 43, 15, 0.08);
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 16px 18px;
-  box-shadow: 0 10px 30px rgba(13, 43, 15, 0.05);
+  box-shadow: 0 12px 28px rgba(13, 43, 15, 0.05);
+}
+
+.wm-stat-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.wm-stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 43, 15, 0.06);
+  color: #0d2b0f;
+  flex-shrink: 0;
+}
+
+.wm-stat-svg {
+  width: 20px;
+  height: 20px;
+}
+
+.wm-stat:nth-child(2) .wm-stat-icon {
+  background: rgba(251, 192, 45, 0.14);
+  color: #c78c06;
+}
+
+.wm-stat:nth-child(3) .wm-stat-icon {
+  background: rgba(27, 94, 32, 0.1);
+  color: #1b5e20;
 }
 
 .wm-stat-label {
@@ -1107,7 +1238,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   color: rgba(13, 43, 15, 0.55);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  margin-bottom: 6px;
+  margin-bottom: 0;
 }
 
 .wm-stat-value {
@@ -1130,9 +1261,9 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 }
 
 .wm-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(13, 43, 15, 0.08);
-  border-radius: 22px;
+  border-radius: 24px;
   box-shadow: 0 14px 34px rgba(13, 43, 15, 0.06);
   overflow: hidden;
 }
@@ -1275,10 +1406,12 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 .wm-icon-btn:hover {
   background: #e2ebe2;
 }
+
 .wm-icon-btn.danger {
   background: rgba(211, 47, 47, 0.08);
   color: #b3261e;
 }
+
 .wm-icon-btn.danger:hover {
   background: rgba(211, 47, 47, 0.14);
 }
@@ -1342,9 +1475,11 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   display: grid;
   gap: 12px;
 }
+
 .wm-row-3 {
   grid-template-columns: 0.8fr 1fr 1fr;
 }
+
 .wm-row-2 {
   grid-template-columns: 1.3fr 0.7fr;
 }
@@ -1437,20 +1572,25 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   background: #0d2b0f;
   color: #fff;
 }
+
 .wm-btn-primary:hover {
   background: #174319;
 }
+
 .wm-btn-secondary {
   background: #eef3ee;
   color: #0d2b0f;
 }
+
 .wm-btn-secondary:hover {
   background: #e3ebe3;
 }
+
 .wm-btn-danger {
   background: #b3261e;
   color: #fff;
 }
+
 .wm-btn-danger:hover {
   background: #8f1f19;
 }
@@ -1562,19 +1702,27 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 .wm-notice-actions .wm-btn-secondary {
   margin-right: auto;
 }
+
 .wm-notice-actions .wm-btn-danger,
 .wm-notice-actions .wm-btn-primary {
   margin-left: auto;
 }
 
 @media (max-width: 1100px) {
+  .wm-hero-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .wm-grid {
     grid-template-columns: 1fr;
     align-items: start;
   }
+
   .wm-list {
     height: 60vh;
   }
+
   .wm-preview {
     min-height: auto;
   }
@@ -1590,39 +1738,53 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 
 @media (max-width: 760px) {
   .wm-page {
-    padding: 16px;
+    padding: 18px 16px;
   }
-  .wm-header {
-    flex-direction: column;
+
+  .wm-title {
+    font-size: clamp(2.4rem, 10vw, 3.6rem);
   }
+
+  .wm-subtitle {
+    font-size: 1rem;
+  }
+
   .wm-stats {
     grid-template-columns: 1fr;
   }
+
   .wm-item {
     grid-template-columns: 1fr;
     align-items: flex-start;
   }
+
   .wm-thumb {
     width: 100%;
     height: 180px;
   }
+
   .wm-actions {
     justify-content: flex-start;
   }
+
   .wm-list {
     height: 56vh;
   }
+
   .wm-modal {
     max-height: 94vh;
   }
+
   .wm-modal-overlay,
   .wm-notice-overlay {
     padding: 12px;
   }
+
   .wm-notice-actions {
     flex-direction: row;
     align-items: center;
   }
+
   .wm-notice-actions .wm-btn {
     width: auto;
   }
