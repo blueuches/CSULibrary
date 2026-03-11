@@ -30,13 +30,13 @@
                   text-transform: uppercase;
                   font-family: 'Poppins', sans-serif;
                 "
-              >Create Announcement</span>
+              >News Management</span>
             </div>
             <h1 class="text-5xl font-bold mb-2" style="font-family: 'Poppins', sans-serif">
-              {{ isEditing ? 'Edit General Announcement' : 'New General Announcement' }}
+              {{ isEditing ? 'Edit News Article' : 'News Article' }}
             </h1>
             <p class="text-gray-200 text-lg" style="font-family: 'Poppins', sans-serif">
-              {{ isEditing ? 'Update your announcement information' : 'Create a new announcement to share with the community' }}
+              {{ isEditing ? 'Update your news information' : 'Create a new news article for BSP, NBWC, Starbooks, and more' }}
             </p>
           </div>
         </div>
@@ -47,15 +47,15 @@
     <div class="max-w-4xl mx-auto px-4 py-12">
       <form @submit.prevent="submitForm" class="space-y-6">
 
-        <!-- Announcement Title -->
+        <!-- News Title -->
         <div class="bg-white rounded-2xl p-8 shadow-lg">
           <div class="flex items-center gap-3 mb-6">
             <div class="p-3 rounded-lg" style="background: linear-gradient(135deg, #2D7231, #0B2010)">
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: #FDBE33">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
               </svg>
             </div>
-            <h2 class="text-2xl font-bold" style="color: #0B2010; font-family: 'Poppins', sans-serif">Announcement Title</h2>
+            <h2 class="text-2xl font-bold" style="color: #0B2010; font-family: 'Poppins', sans-serif">News Title</h2>
           </div>
           <div style="height: 2px; background: linear-gradient(to right, #2D7231, #FDBE33, transparent); margin-bottom: 24px; border-radius: 2px"></div>
           
@@ -63,7 +63,7 @@
             id="title"
             v-model="formData.title"
             type="text"
-            placeholder="Enter announcement title"
+            placeholder="Enter news title (e.g., BSP Knowledge Resource Network)"
             class="w-full px-6 py-4 border-2 rounded-xl focus:outline-none transition-all input-field"
             style="
               border-color: #2D7231;
@@ -92,7 +92,7 @@
           <textarea
             id="description"
             v-model="formData.description"
-            placeholder="Write your announcement content here..."
+            placeholder="Write your news content here..."
             rows="8"
             class="w-full px-6 py-4 border-2 rounded-xl focus:outline-none transition-all resize-none input-field"
             style="
@@ -103,7 +103,7 @@
             required
           ></textarea>
           <p class="text-xs text-gray-500 mt-3" style="font-family: 'Poppins', sans-serif">
-            Provide detailed information about your announcement (max 2000 characters)
+            Provide detailed information about your news article (max 2000 characters)
           </p>
         </div>
 
@@ -112,7 +112,7 @@
           <div class="flex items-center gap-3 mb-6">
             <div class="p-3 rounded-lg" style="background: linear-gradient(135deg, #2D7231, #0B2010)">
               <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: #FDBE33">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
               </svg>
             </div>
             <h2 class="text-2xl font-bold" style="color: #0B2010; font-family: 'Poppins', sans-serif">Attachment (Optional)</h2>
@@ -129,7 +129,7 @@
             />
             <label for="attachment" class="cursor-pointer block">
               <svg class="w-12 h-12 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: #2D7231">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
               <p class="font-medium" style="color: #0B2010; font-family: 'Poppins', sans-serif">
                 {{ formData.attachment ? formData.attachment.name : 'Click to upload or drag and drop' }}
@@ -166,7 +166,7 @@
             required
           />
           <p class="text-xs text-gray-500 mt-3" style="font-family: 'Poppins', sans-serif">
-            When should this announcement be published?
+            When should this news article be published?
           </p>
         </div>
 
@@ -189,7 +189,7 @@
             class="flex-1 px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 btn-submit"
             style="background-color: #2D7231"
           >
-            {{ isEditing ? 'Update Announcement' : 'Publish Announcement' }}
+            {{ isEditing ? 'Update News' : 'Publish News' }}
           </button>
         </div>
       </form>
@@ -236,7 +236,8 @@ const submitForm = async () => {
     return
   }
 
-  console.log('Saving announcement:', formData.value)
+  console.log('Saving news:', formData.value)
+  // TODO: Add Firebase/database logic here
   router.push('/admin/announcement')
 }
 
@@ -268,5 +269,10 @@ textarea::placeholder {
 
 .btn-submit:hover {
   background-color: #FAA627 !important;
+}
+
+.attachment-zone:hover {
+  border-color: #F28500;
+  background-color: #FFF9E6 !important;
 }
 </style>
