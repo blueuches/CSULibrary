@@ -80,9 +80,7 @@
         <transition name="fade-fast">
           <div v-if="!isCollapsed" class="overflow-hidden text-white uppercase">
             <p class="text-[10px] font-black tracking-tight">Administrator</p>
-            <p class="text-[9px] text-[#f9a825] font-bold italic opacity-90">
-              Session Active
-            </p>
+            <p class="text-[9px] text-[#f9a825] font-bold italic opacity-90">Session Active</p>
           </div>
         </transition>
       </div>
@@ -91,8 +89,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
-import { useRouter, useRoute } from "vue-router"
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -105,11 +103,10 @@ function goTo(path: string) {
 
 const menuItems = [
   {
-    name: "DASHBOARD",
-    label: "Dashboard",
-    route: "/admin",
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
+    name: 'DASHBOARD',
+    label: 'Dashboard',
+    route: '/admin',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="3" width="7" height="7" rx="1"/>
       <rect x="14" y="3" width="7" height="7" rx="1"/>
       <rect x="3" y="14" width="7" height="7" rx="1"/>
@@ -118,67 +115,68 @@ const menuItems = [
   },
 
   {
-    name: "ANNOUNCEMENTS",
-    label: "Announcements",
-    route: "/admin/announcement",
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+    name: 'ANNOUNCEMENTS',
+    label: 'Announcements',
+    route: '/admin/announcement',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
     </svg>`,
   },
 
   {
-    name: "PERSONNEL",
-    label: "Personnel",
-    route: "/admin/personnel",
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
+    name: 'PERSONNEL',
+    label: 'Personnel',
+    route: '/admin/personnel',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
     </svg>`,
   },
 
   {
-    name: "ANALYTICS",
-    label: "Analytics",
-    route: "/admin/analytics",
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
+    name: 'ANALYTICS',
+    label: 'Analytics',
+    route: '/admin/analytics',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <line x1="18" y1="20" x2="18" y2="10"/>
       <line x1="12" y1="20" x2="12" y2="4"/>
       <line x1="6" y1="20" x2="6" y2="14"/>
+      <line x1="2" y1="20" x2="22" y2="20"/>
     </svg>`,
   },
 
   {
-    name: "ATTENDANCE",
-    label: "Attendance",
-    route: "/admin/attendance",
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
+    name: 'ATTENDANCE',
+    label: 'Attendance',
+    route: '/admin/attendance',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
       <circle cx="9" cy="7" r="4"/>
       <polyline points="16 11 18 13 22 9"/>
     </svg>`,
   },
 
   {
-    name: "SERVICES",
-    label: "Services",
-    route: "/admin/services",
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
-      <path d="M14.7 6.3l1.6 1.6 3.77-3.77"/>
+    name: 'SERVICES',
+    label: 'Services',
+    route: '/admin/services',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
     </svg>`,
   },
 
   {
-    name: "WEBSITE",
-    label: "Website",
-    route: "/admin/website",
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" stroke-width="2">
+    name: 'WEBSITE',
+    label: 'Website',
+    route: '/admin/website',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/>
       <line x1="2" y1="12" x2="22" y2="12"/>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
     </svg>`,
   },
 ]

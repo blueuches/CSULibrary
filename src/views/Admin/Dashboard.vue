@@ -26,12 +26,12 @@
               <div class="space-y-4">
                 <div class="space-y-2">
                   <p
-                    class="text-[#1b5e20] uppercase tracking-[0.5em] text-sm font-bold animate-pulse"
+                    class="text-[#0d2b0f] uppercase tracking-[0.5em] text-sm font-bold animate-pulse"
                   >
                     Operational
                   </p>
-                  <h2 class="text-[#1b5e20] text-6xl md:text-7xl font-black tracking-tighter">
-                    Welcome, <span class="text-[#fbc02d]">Admin</span>.
+                  <h2 class="text-[#0d2b0f] text-6xl md:text-7xl font-black tracking-tighter">
+                    Welcome, <span class="text-[#f9a825]">Admin</span>.
                   </h2>
                 </div>
                 <div class="h-1 w-32 bg-[#1b5e20] mx-auto rounded-full shadow-sm"></div>
