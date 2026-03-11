@@ -18,17 +18,17 @@
 
         <div class="header-right">
           <div class="flex flex-col items-end gap-3">
-            <div class="date-badge">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-              {{ currentDate }}
-            </div>
-            <div class="flex gap-3">
-            <RouterLink to="/admin/announcement/general" class="action-btn">
-              New General Announcement
-            </RouterLink>
-            <RouterLink to="/admin/announcement/event" class="action-btn action-btn--alt">
-              New Event Announcement
-            </RouterLink>
+            <div class="relative dropdown-wrapper" ref="dropdownRef">
+              <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
+                <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New Announcement
+              </button>
+              <transition name="dropdown">
+                <div v-if="dropdownOpen" class="dropdown-menu">
+                  <RouterLink to="/admin/announcement/general" class="dropdown-item" @click="dropdownOpen = false">New General Announcement</RouterLink>
+                  <RouterLink to="/admin/announcement/event" class="dropdown-item" @click="dropdownOpen = false">New Event Announcement</RouterLink>
+                  <RouterLink to="/admin/announcement/news" class="dropdown-item" @click="dropdownOpen = false">News</RouterLink>
+                </div>
+              </transition>
             </div>
           </div>
         </div>
@@ -49,9 +49,10 @@
 
           <div v-else class="space-y-4">
             <div
-              v-for="announcement in generalAnnouncements"
+              v-for="(announcement, index) in generalAnnouncements"
               :key="announcement.id"
-              class="rounded-xl border border-[#e7ece7] bg-[#fbfdfb] p-4"
+              class="announcement-card rounded-xl border border-[#e7ece7] bg-[#fbfdfb] p-4"
+              :style="{ animationDelay: `${index * 80}ms` }"
             >
               <h3 class="text-base font-bold text-[#0d2b0f]">{{ announcement.title }}</h3>
               <p class="mt-2 text-sm leading-6 text-[#3f5641]">{{ announcement.content }}</p>
@@ -74,9 +75,10 @@
 
           <div v-else class="space-y-4">
             <div
-              v-for="event in eventAnnouncements"
+              v-for="(event, index) in eventAnnouncements"
               :key="event.id"
-              class="rounded-xl border border-[#e7ece7] bg-[#fbfdfb] p-4"
+              class="announcement-card rounded-xl border border-[#e7ece7] bg-[#fbfdfb] p-4"
+              :style="{ animationDelay: `${index * 80}ms` }"
             >
               <h3 class="text-base font-bold text-[#0d2b0f]">{{ event.title }}</h3>
               <p class="mt-2 text-sm leading-6 text-[#3f5641]">{{ event.description }}</p>
@@ -94,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import '@/assets/styles/report-analytics.css'
 
@@ -148,11 +150,17 @@ const eventAnnouncements = ref<EventAnnouncement[]>([
   },
 ])
 
-const currentDate = computed(() =>
-  new Date().toLocaleDateString('en-PH', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  })
-)
+const dropdownOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
+
+function handleClickOutside(e: MouseEvent) {
+  if (dropdownRef.value && !dropdownRef.value.contains(e.target as Node)) {
+    dropdownOpen.value = false
+  }
+}
+
+onMounted(() => document.addEventListener('mousedown', handleClickOutside))
+onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutside))
 </script>
 
 <style scoped>
@@ -166,6 +174,20 @@ const currentDate = computed(() =>
   padding: 0.7rem 1rem;
   text-decoration: none;
   transition: 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.plus-icon {
+  display: inline-block;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.25s ease;
+}
+
+.plus-icon--open {
+  transform: rotate(45deg);
 }
 
 .action-btn:hover {
@@ -190,5 +212,68 @@ const currentDate = computed(() =>
   font-size: 0.9rem;
   padding: 1rem;
   text-align: center;
+}
+
+/* Give the header a stacking context above the cards section */
+.intro-header {
+  position: relative;
+  z-index: 100;
+}
+
+/* Dropdown */
+.dropdown-wrapper {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 9999;
+  min-width: 14rem;
+  background: #ffffff;
+  border: 1px solid #c8d8ca;
+  border-radius: 0.75rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform-origin: top right;
+  pointer-events: auto;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.65rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0d2b0f;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background: #ebf5ec;
+  color: #1b5e20;
+}
+
+/* Dropdown transition */
+.dropdown-enter-active {
+  animation: dropIn 0.18s ease;
+}
+.dropdown-leave-active {
+  animation: dropIn 0.15s ease reverse;
+}
+@keyframes dropIn {
+  from { opacity: 0; transform: scaleY(0.85) translateY(-6px); }
+  to   { opacity: 1; transform: scaleY(1)   translateY(0); }
+}
+
+/* Card entrance animation */
+.announcement-card {
+  animation: cardFadeIn 0.35s ease both;
+}
+
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 </style>
