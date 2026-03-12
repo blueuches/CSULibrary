@@ -4,25 +4,29 @@
 
     <main
       class="flex-1 overflow-y-auto p-6 md:p-10 bg-gray-50"
-      style="font-family:'Poppins',sans-serif; color: #1a1a1a;"
+      style="font-family: 'Poppins', sans-serif; color: #1a1a1a"
     >
-      <div class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div
+        class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6"
+      >
         <div class="flex items-center gap-6">
-          <button @click="goBack" class="p-4 bg-white hover:bg-gray-100 rounded-2xl border border-gray-300 shadow-sm transition-all group">
-            <svg class="w-6 h-6 text-gray-700 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
           <div class="header-left">
-        <div class="header-breadcrumb">
-          <span>Admin</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7" /></svg>
-          <span>New Event Announcement</span>
-        </div>
-        <h1 class="header-title">New Event <span class="text-yellow-500">Announcement</span></h1>
-        <p class="header-sub">Compose and publish updates for the library community.</p>
-      </div>
+             <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/announcement')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>EVENT ANNOUNCEMENT</span>
+          </div>
+            <h1 class="header-title">
+              New Event <span class="text-yellow-500">Announcement</span>
+            </h1>
+            <p class="header-sub">Compose and publish updates for the library community.</p>
+          </div>
         </div>
 
         <div class="hidden lg:flex gap-4">
@@ -44,7 +48,9 @@
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-200">
               <div class="space-y-6">
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Headline
                   </label>
                   <input
@@ -56,7 +62,9 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Details
                   </label>
                   <textarea
@@ -105,7 +113,7 @@
               <button
                 type="submit"
                 class="flex-[2] py-4 rounded-2xl font-bold text-white shadow-lg hover:brightness-110 active:scale-95 transition-all"
-                style="background: linear-gradient(to right, #F28500, #FDBE33)"
+                style="background: linear-gradient(to right, #f28500, #fdbe33)"
               >
                 {{ isEditing ? 'Update Post' : 'Publish Announcement' }}
               </button>
@@ -119,15 +127,18 @@
               Live Preview
             </p>
 
-            <div class="bg-gray-900 rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200">
+            <div
+              class="bg-gray-900 rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200"
+            >
               <div class="bg-white rounded-[1.8rem] overflow-hidden min-h-[450px]">
-                
                 <div class="h-32 bg-gradient-to-br from-[#2D7231] to-[#0B2010] p-6 flex items-end">
                   <div class="h-10 w-10 bg-white/20 rounded-lg backdrop-blur-md"></div>
                 </div>
 
                 <div class="p-8">
-                  <span class="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold uppercase mb-4 tracking-wider">
+                  <span
+                    class="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold uppercase mb-4 tracking-wider"
+                  >
                     Announcement
                   </span>
 
@@ -141,9 +152,11 @@
 
                   <div class="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                      <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-[#2D7231]">
+                      <div
+                        class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-[#2D7231]"
+                      >
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                          <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
                         </svg>
                       </div>
                       <span class="text-xs font-bold text-gray-500">CSU Admin</span>
@@ -176,7 +189,7 @@ const formData = ref({
   title: '',
   description: '',
   attachment: null as File | null,
-  datePublished: today
+  datePublished: today,
 })
 
 const handleFileUpload = (event: Event) => {
@@ -202,7 +215,8 @@ const goBack = () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-input, textarea {
+input,
+textarea {
   transition: all 0.2s ease-in-out;
 }
 

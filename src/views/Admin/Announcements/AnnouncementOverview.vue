@@ -8,11 +8,15 @@
           <div class="flex items-center justify-between gap-4 flex-wrap">
             <div class="header-breadcrumb !mb-0">
               <span>Admin</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7" /></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
               <span>Announcement Management</span>
             </div>
           </div>
-          <h1 class="header-title intro-title">Library <span class="text-yellow-500">Announcements</span></h1>
+          <h1 class="header-title intro-title">
+            Library <span class="text-yellow-500">Announcements</span>
+          </h1>
           <p class="header-sub">Manage and review all general updates and event posts.</p>
         </div>
 
@@ -20,13 +24,29 @@
           <div class="flex flex-col items-end gap-3">
             <div class="relative dropdown-wrapper" ref="dropdownRef">
               <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
-                <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New Announcement
+                <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New
+                Announcement
               </button>
               <transition name="dropdown">
                 <div v-if="dropdownOpen" class="dropdown-menu">
-                  <RouterLink to="/admin/announcement/general" class="dropdown-item" @click="dropdownOpen = false">New General Announcement</RouterLink>
-                  <RouterLink to="/admin/announcement/event" class="dropdown-item" @click="dropdownOpen = false">New Event Announcement</RouterLink>
-                  <RouterLink to="/admin/announcement/news" class="dropdown-item" @click="dropdownOpen = false">News</RouterLink>
+                  <RouterLink
+                    to="/admin/announcement/general"
+                    class="dropdown-item"
+                    @click="dropdownOpen = false"
+                    >New General Announcement</RouterLink
+                  >
+                  <RouterLink
+                    to="/admin/announcement/event"
+                    class="dropdown-item"
+                    @click="dropdownOpen = false"
+                    >New Event Announcement</RouterLink
+                  >
+                  <RouterLink
+                    to="/admin/announcement/news"
+                    class="dropdown-item"
+                    @click="dropdownOpen = false"
+                    >News</RouterLink
+                  >
                 </div>
               </transition>
             </div>
@@ -56,7 +76,9 @@
             >
               <h3 class="text-base font-bold text-[#0d2b0f]">{{ announcement.title }}</h3>
               <p class="mt-2 text-sm leading-6 text-[#3f5641]">{{ announcement.content }}</p>
-              <p class="mt-3 text-xs font-medium text-[#5b725d]">Published: {{ announcement.date }}</p>
+              <p class="mt-3 text-xs font-medium text-[#5b725d]">
+                Published: {{ announcement.date }}
+              </p>
             </div>
           </div>
         </article>
@@ -82,11 +104,15 @@
             >
               <h3 class="text-base font-bold text-[#0d2b0f]">{{ event.title }}</h3>
               <p class="mt-2 text-sm leading-6 text-[#3f5641]">{{ event.description }}</p>
-              <div class="mt-3 grid grid-cols-1 gap-1 text-xs font-medium text-[#5b725d] sm:grid-cols-2">
+              <div
+                class="mt-3 grid grid-cols-1 gap-1 text-xs font-medium text-[#5b725d] sm:grid-cols-2"
+              >
                 <p>Date: {{ event.eventDate }}</p>
                 <p>Location: {{ event.location }}</p>
               </div>
-              <p class="mt-2 text-xs font-medium text-[#5b725d]">Published: {{ event.createdDate }}</p>
+              <p class="mt-2 text-xs font-medium text-[#5b725d]">
+                Published: {{ event.createdDate }}
+              </p>
             </div>
           </div>
         </article>
@@ -120,13 +146,15 @@ const generalAnnouncements = ref<GeneralAnnouncement[]>([
   {
     id: 1,
     title: 'Library Hours Extended',
-    content: 'The library will now be open until 9 PM on weekdays to accommodate more students studying for exams.',
+    content:
+      'The library will now be open until 9 PM on weekdays to accommodate more students studying for exams.',
     date: 'March 5, 2024',
   },
   {
     id: 2,
     title: 'New Book Collection Available',
-    content: 'We have just added 500 new books to our collection. Check them out in the New Acquisitions section!',
+    content:
+      'We have just added 500 new books to our collection. Check them out in the New Acquisitions section!',
     date: 'March 4, 2024',
   },
 ])
@@ -135,7 +163,8 @@ const eventAnnouncements = ref<EventAnnouncement[]>([
   {
     id: 1,
     title: 'Library Orientation Workshop',
-    description: 'Learn how to use the library resources effectively. This workshop is open to all students.',
+    description:
+      'Learn how to use the library resources effectively. This workshop is open to all students.',
     eventDate: 'March 15, 2024',
     location: 'CSU Library Main Hall',
     createdDate: 'March 5, 2024',
@@ -143,7 +172,8 @@ const eventAnnouncements = ref<EventAnnouncement[]>([
   {
     id: 2,
     title: 'Book Fair 2024',
-    description: 'Annual book fair featuring local and international publications. Special discounts available!',
+    description:
+      'Annual book fair featuring local and international publications. Special discounts available!',
     eventDate: 'March 20, 2024',
     location: 'CSU Campus Grounds',
     createdDate: 'March 1, 2024',
@@ -166,8 +196,8 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutsi
 <style scoped>
 .action-btn {
   border-radius: 0.75rem;
-  border: 1px solid #1b5e20;
-  background: #1b5e20;
+  border: 1px solid #0d2b0f;
+  background: #0d2b0f;
   color: #ffffff;
   font-size: 0.8rem;
   font-weight: 700;
@@ -191,7 +221,7 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutsi
 }
 
 .action-btn:hover {
-  background: #0d2b0f;
+  background: #1b5e20;
 }
 
 .action-btn--alt {
@@ -234,7 +264,9 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutsi
   background: #ffffff;
   border: 1px solid #c8d8ca;
   border-radius: 0.75rem;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.08);
   transform-origin: top right;
   pointer-events: auto;
 }
@@ -263,8 +295,14 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutsi
   animation: dropIn 0.15s ease reverse;
 }
 @keyframes dropIn {
-  from { opacity: 0; transform: scaleY(0.85) translateY(-6px); }
-  to   { opacity: 1; transform: scaleY(1)   translateY(0); }
+  from {
+    opacity: 0;
+    transform: scaleY(0.85) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
 }
 
 /* Card entrance animation */
@@ -273,7 +311,13 @@ onBeforeUnmount(() => document.removeEventListener('mousedown', handleClickOutsi
 }
 
 @keyframes cardFadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

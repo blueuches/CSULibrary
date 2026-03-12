@@ -6,21 +6,14 @@
       <!-- ══ HEADER ══ -->
       <header class="attn-header">
         <div class="space-y-4">
-          <nav
-            class="flex items-center gap-2 text-[10px] font-black tracking-[0.25em] text-slate-400"
-          >
-            <span class="hover:text-[#0d2b0f] cursor-pointer transition-colors">ADMIN</span>
-            <svg
-              class="w-3 h-3 text-slate-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M9 18l6-6-6-6" stroke-width="4" />
-            </svg>
-            <span class="text-[#0d2b0f]">ATTENDANCE</span>
-          </nav>
           <div class="relative group">
+            <div class="header-breadcrumb !mb-2">
+              <span>Admin</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+              <span>SERVICES</span>
+            </div>
             <h1 class="hero-title">
               <span class="hero-word-dark hero-underlined">Library</span>
               <span class="hero-word-gold"> Attendance</span>
@@ -185,6 +178,22 @@
               </svg>
               <span>Attendance Logs</span>
             </button>
+            <button class="sync-btn" @click="$router.push('/admin/attendance/import')">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              >
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+              <span>Add Import Records</span>
+            </button>
           </div>
 
           <!-- ══ EXPORT LOGS TABLE ══ -->
@@ -342,7 +351,7 @@ const handleTabChange = (name: string) => {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: #f4f6f4;
+  background: #edefed;
   font-family: 'DM Sans', sans-serif;
 }
 
