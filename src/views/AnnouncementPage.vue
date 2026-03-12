@@ -357,7 +357,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-<<<<<<< HEAD
 /* Base Fonts & Transitions */
 .section {
   font-family: 'Poppins', sans-serif;
@@ -387,13 +386,33 @@ onUnmounted(() => {
   color: #0d2b0f;
   text-transform: uppercase;
 }
-=======
-.section { font-family: 'Poppins', sans-serif; }
-.section-title { width: min(100%, 1500px); margin: 8px auto 14px; text-align: center; }
-.section-kicker { display: inline-flex; align-items: center; gap: 14px; }
-.kicker-text { font-weight: 800; letter-spacing: 6px; font-size: 0.7rem; color: #0d2b0f; text-transform: uppercase; }
-.section-headline { margin: 10px 0 1%; font-weight: 900; font-size: clamp(1.6rem, 5vw, 3.3rem); color: #0d2b0f; text-transform: uppercase; }
->>>>>>> ff63a37765e30d82db9b496029333ec097e12820
+.section {
+  font-family: 'Poppins', sans-serif;
+}
+.section-title {
+  width: min(100%, 1500px);
+  margin: 8px auto 14px;
+  text-align: center;
+}
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.kicker-text {
+  font-weight: 800;
+  letter-spacing: 6px;
+  font-size: 0.7rem;
+  color: #0d2b0f;
+  text-transform: uppercase;
+}
+.section-headline {
+  margin: 10px 0 1%;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 5vw, 3.3rem);
+  color: #0d2b0f;
+  text-transform: uppercase;
+}
 
 /* Animations */
 @keyframes fadeSlideUp {
