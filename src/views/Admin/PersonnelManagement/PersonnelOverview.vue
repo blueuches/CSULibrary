@@ -3,6 +3,10 @@
     <Sidebar />
 
     <main class="flex-1 overflow-y-auto">
+<<<<<<< HEAD
+=======
+
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
       <!-- ===== HEADER ===== -->
       <header class="page-header">
         <div class="header-left">
@@ -12,6 +16,7 @@
               <path d="M9 5l7 7-7 7" />
             </svg>
             <span>Personnel</span>
+<<<<<<< HEAD
           </div>
           <h1 class="header-title">Library <span class="text-yellow-500">Personnel</span></h1>
           <p class="header-sub">Manage and view library staff information and assignments</p>
@@ -26,8 +31,24 @@
             <div class="label-line"></div>
             <span class="label-text">University Librarian</span>
             <div class="label-line"></div>
+=======
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
           </div>
+          <h1 class="header-title">Library <span class="text-yellow-500">Personnel</span></h1>
+          <p class="header-sub">Manage and view library staff information and assignments</p>
+        </div>
+        <div class="header-right" v-if="isAdmin">
+          <span class="admin-hero-pill">
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Mode Active
+          </span>
+        </div>
+      </header>
 
+<<<<<<< HEAD
           <div class="sr-item featured-card" :class="{ 'admin-card': isAdmin }">
             <div class="featured-accent-bar"></div>
 
@@ -259,21 +280,193 @@
                 </div>
               </template>
             </div>
-          </div>
+=======
+      <!-- ===== MAIN CONTENT ===== -->
+      <div class="px-6 sm:px-10 lg:px-16 py-10 pb-20 max-w-6xl mx-auto">
+
+        <!-- ===== LOADING ===== -->
+        <div v-if="loading" class="flex flex-col items-center justify-center py-32 gap-4">
+          <div class="loader-ring"></div>
+          <p class="loading-text">Loading personnel...</p>
         </div>
+
+        <template v-else>
+          <!-- ===== FEATURED (HEAD) ===== -->
+          <div v-if="featuredStaff" class="featured-wrapper mb-24">
+            <div class="sr-item flex items-center gap-3 mb-10 justify-center">
+              <div class="label-line"></div>
+              <span class="label-text">University Librarian</span>
+              <div class="label-line"></div>
+            </div>
+
+            <div class="sr-item featured-card" :class="{ 'admin-card': isAdmin }">
+              <div class="featured-accent-bar"></div>
+
+              <!-- Photo -->
+              <div class="featured-photo-wrap">
+                <div class="absolute inset-0 rounded-full border-4 shadow-md"
+                  style="background-color: #0d2b0f; border-color: #66bb6a"></div>
+                <img
+                  :src="featuredStaff.image_url || defaultAvatar"
+                  :alt="fullName(featuredStaff)"
+                  class="featured-photo"
+                />
+                <template v-if="isAdmin">
+                  <label class="photo-overlay" :for="`photo-${featuredStaff.id}`" title="Change photo">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="photo-overlay-label">Change Photo</span>
+                  </label>
+                  <input :id="`photo-${featuredStaff.id}`" type="file" accept="image/*" class="hidden"
+                    @change="(e) => handlePhotoUpload(e, featuredStaff!)" />
+                </template>
+              </div>
+
+              <!-- Info -->
+              <div class="featured-info">
+                <span class="featured-badge">Head of Library Services</span>
+
+                <!-- Edit form -->
+                <div v-if="editingId === featuredStaff.id" class="edit-fields">
+                  <input v-model="editForm.first_name" placeholder="First Name" class="edit-input edit-input-lg" />
+                  <input v-model="editForm.last_name" placeholder="Last Name" class="edit-input edit-input-lg" />
+                  <input v-model="editForm.professional_titles" placeholder="Professional Titles (e.g. RL, LPT)" class="edit-input" />
+                  <input v-model="editForm.position" placeholder="Position (optional)" class="edit-input" />
+                  <div class="edit-actions">
+                    <button @click="saveEdit(featuredStaff!)" class="btn-save" :disabled="saving">
+                      <span v-if="saving" class="loader-sm"></span>
+                      <span v-else>Save Changes</span>
+                    </button>
+                    <button @click="cancelEdit" class="btn-cancel">Cancel</button>
+                  </div>
+                </div>
+
+                <!-- Display -->
+                <template v-else>
+                  <h2 class="featured-name">{{ fullName(featuredStaff) }}</h2>
+                  <p class="featured-subtitle">{{ featuredStaff.professional_titles }}</p>
+                  <div class="featured-divider"></div>
+                  <p v-if="featuredStaff.position" class="featured-position">{{ featuredStaff.position }}</p>
+                  <button v-if="isAdmin" @click="startEdit(featuredStaff!)" class="btn-edit-inline mt-3">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit Details
+                  </button>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== STAFF SECTION LABEL ===== -->
+          <div class="sr-item flex items-center gap-3 mb-12">
+            <div class="label-line"></div>
+            <span class="label-text">Library Staff</span>
+            <div class="label-line flex-1"></div>
+            <button v-if="isAdmin" @click="openAddModal" class="btn-add">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+              </svg>
+              Add Staff
+            </button>
+          </div>
+
+          <!-- ===== STAFF GRID ===== -->
+          <div v-if="otherStaff.length > 0" class="staff-grid">
+            <div
+              v-for="(person, index) in otherStaff"
+              :key="person.id"
+              class="sr-card staff-card"
+              :class="{ 'admin-card': isAdmin }"
+              :style="{ transitionDelay: (index % 2) * 0.12 + 's' }"
+            >
+              <!-- Photo -->
+              <div class="staff-photo-wrap">
+                <div class="absolute inset-0 rounded-full border-4 shadow-md"
+                  style="background-color: #0d2b0f; border-color: #66bb6a"></div>
+                <img :src="person.image_url || defaultAvatar" :alt="fullName(person)" class="staff-photo" />
+                <template v-if="isAdmin">
+                  <label class="photo-overlay" :for="`photo-${person.id}`" title="Change photo">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </label>
+                  <input :id="`photo-${person.id}`" type="file" accept="image/*" class="hidden"
+                    @change="(e) => handlePhotoUpload(e, person)" />
+                </template>
+              </div>
+
+              <!-- Info -->
+              <div class="staff-info">
+                <!-- Edit form -->
+                <template v-if="editingId === person.id">
+                  <input v-model="editForm.first_name" placeholder="First Name" class="edit-input edit-input-sm" />
+                  <input v-model="editForm.last_name" placeholder="Last Name" class="edit-input edit-input-sm" />
+                  <input v-model="editForm.professional_titles" placeholder="Professional Titles (e.g. RL)" class="edit-input edit-input-sm" />
+                  <input v-model="editForm.position" placeholder="Position (optional)" class="edit-input edit-input-sm" />
+                  <div class="edit-actions mt-1">
+                    <button @click="saveEdit(person)" class="btn-save btn-save-sm" :disabled="saving">
+                      <span v-if="saving" class="loader-sm"></span>
+                      <span v-else>Save</span>
+                    </button>
+                    <button @click="cancelEdit" class="btn-cancel btn-cancel-sm">Cancel</button>
+                  </div>
+                </template>
+
+                <!-- Display -->
+                <template v-else>
+                  <h3 class="staff-name">{{ fullName(person) }}</h3>
+                  <div class="staff-rule"></div>
+                  <p class="staff-subtitle">{{ person.professional_titles }}</p>
+                  <p v-if="person.position" class="staff-position">{{ person.position }}</p>
+                  <div v-if="isAdmin" class="card-actions">
+                    <button @click="startEdit(person)" class="btn-icon">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      Edit
+                    </button>
+                    <button @click="confirmDelete(person)" class="btn-icon btn-icon-danger">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Delete
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== EMPTY STATE ===== -->
+          <div v-else class="flex flex-col items-center py-20 gap-3 opacity-50">
+            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="#0d2b0f">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+            </svg>
+            <p class="text-sm font-semibold tracking-widest uppercase text-[#0d2b0f]">No staff found</p>
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
+          </div>
+        </template>
       </div>
     </main>
   </div>
 
   <!-- ===== SCROLL TO TOP ===== -->
   <Transition name="fade">
-    <button
-      v-if="showScrollTop"
-      @click="scrollToTop"
+    <button v-if="showScrollTop" @click="scrollToTop"
       class="fixed bottom-6 right-6 z-40 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
-      style="background: #0d2b0f"
-      aria-label="Scroll to top"
-    >
+      style="background: #0d2b0f" aria-label="Scroll to top">
       <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
@@ -326,6 +519,7 @@
                 />
               </svg>
             </label>
+<<<<<<< HEAD
             <input
               id="modal-photo-input"
               type="file"
@@ -333,11 +527,15 @@
               class="hidden"
               @change="handleNewPhotoSelect"
             />
+=======
+            <input id="modal-photo-input" type="file" accept="image/*" class="hidden" @change="handleNewPhotoSelect" />
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
           </div>
           <p class="modal-photo-hint">Click to upload photo</p>
         </div>
         <div class="modal-fields">
           <div class="field-group">
+<<<<<<< HEAD
             <label class="field-label">Full Name <span class="required">*</span></label>
             <input
               v-model="newForm.name"
@@ -352,6 +550,18 @@
               placeholder="e.g. Readers Services Librarian"
               class="modal-input"
             />
+=======
+            <label class="field-label">First Name <span class="required">*</span></label>
+            <input v-model="newForm.first_name" placeholder="e.g. JUAN" class="modal-input" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Last Name <span class="required">*</span></label>
+            <input v-model="newForm.last_name" placeholder="e.g. DELA CRUZ" class="modal-input" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Professional Titles <span class="field-optional">(optional)</span></label>
+            <input v-model="newForm.professional_titles" placeholder="e.g. RL, LPT" class="modal-input" />
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
           </div>
           <div class="field-group">
             <label class="field-label"
@@ -404,7 +614,7 @@
         <div class="px-6 py-5">
           <p class="delete-confirm-text">
             Are you sure you want to remove
-            <strong>{{ deleteTarget?.name }}</strong>
+            <strong>{{ fullName(deleteTarget) }}</strong>
             from the personnel list? This cannot be undone.
           </p>
         </div>
@@ -462,6 +672,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+<<<<<<< HEAD
 
 // ─── Static local images ──────────────────────────────────────────────────────
 import cora from '@/assets/images/personnelpage/cora.png'
@@ -609,11 +820,56 @@ const newForm = ref({
   role: 'staff' as 'head' | 'staff',
   previewUrl: '',
   file: null as File | null,
+=======
+import { supabase } from '@/lib/supabase'
+import { personnelService } from '@/services/personnelService'
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface PersonnelRow {
+  id:                  string
+  first_name:          string | null
+  last_name:           string | null
+  professional_titles: string | null
+  position:            string | null
+  role:                string | null
+  image_url:           string | null
+  is_active:           boolean | null
+  created_at:          string | null
+  updated_at:          string | null
+}
+
+// ─── Default avatar ───────────────────────────────────────────────────────────
+const defaultAvatar =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzBkMmIwZiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMzgiIHI9IjE4IiBmaWxsPSIjNjZiYjZhIi8+PHBhdGggZD0iTTEwIDkwIGMwLTIyIDEzLTM1IDQwLTM1czQwIDEzIDQwIDM1IiBmaWxsPSIjNjZiYjZhIi8+PC9zdmc+'
+
+// ─── State ────────────────────────────────────────────────────────────────────
+const staff         = ref<PersonnelRow[]>([])
+const loading       = ref(true)
+const isAdmin       = ref(false)
+const saving        = ref(false)
+const editingId     = ref<string | null>(null)
+const showAddModal  = ref(false)
+const deleteTarget  = ref<PersonnelRow | null>(null)
+const modalError    = ref('')
+const showScrollTop = ref(false)
+
+const editForm = ref({
+  first_name: '', last_name: '', professional_titles: '', position: '', role: 'staff',
 })
+
+const newForm = ref({
+  first_name: '', last_name: '', professional_titles: '',
+  position: '', role: 'staff',
+  previewUrl: '', file: null as File | null,
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
+})
+
 const toast = ref({ show: false, message: '', type: 'success' as 'success' | 'error' })
 let toastTimer: ReturnType<typeof setTimeout> | null = null
-let unsubscribeFirestore: (() => void) | null = null
+let realtimeChannel: ReturnType<typeof supabase.channel> | null = null
+let observer: IntersectionObserver | null = null
 
+<<<<<<< HEAD
 const featuredStaff = computed<MergedStaff | undefined>(() =>
   staff.value.find((s) => s.role === 'head'),
 )
@@ -648,36 +904,84 @@ function mergeWithFirestore(docs: { id: string; data: any }[]) {
     }
   }
   staff.value = merged
+=======
+// ─── Helper: full display name ────────────────────────────────────────────────
+function fullName(person: PersonnelRow | null): string {
+  if (!person) return ''
+  const last   = person.last_name?.trim().toUpperCase()  ?? ''
+  const first  = person.first_name?.trim().toUpperCase() ?? ''
+  const titles = person.professional_titles?.trim()      ?? ''
+  const name   = [last, first].filter(Boolean).join(', ')
+  return titles ? `${name}, ${titles}` : name
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 
-function subscribeToStaff() {
-  const q = query(collection(db, 'personnel'), orderBy('order'))
-  unsubscribeFirestore = onSnapshot(q, (snap) => {
-    mergeWithFirestore(snap.docs.map((d) => ({ id: d.id, data: d.data() })))
-  })
-}
+// ─── Computed ─────────────────────────────────────────────────────────────────
+const featuredStaff = computed<PersonnelRow | undefined>(() =>
+  staff.value.find((s) => s.role?.toLowerCase() === 'head' && s.is_active !== false)
+)
+const otherStaff = computed<PersonnelRow[]>(() =>
+  staff.value.filter((s) => s.role?.toLowerCase() !== 'head' && s.is_active !== false)
+)
 
-function checkAuth() {
-  if (window.location.pathname.includes('/admin')) {
-    isAdmin.value = true
+// ─── Fetch ────────────────────────────────────────────────────────────────────
+async function fetchPersonnel() {
+  loading.value = true
+  try {
+    const data  = await personnelService.getAll()
+    staff.value = (data ?? []) as PersonnelRow[]
+  } catch (err: any) {
+    console.error('Failed to fetch personnel:', err.message)
+  } finally {
+    loading.value = false
+    setTimeout(initObserver, 100)
   }
-  onAuthStateChanged(auth, (user) => {
-    isAdmin.value = !!user || window.location.pathname.includes('/admin')
+}
+
+// ─── Real-time ────────────────────────────────────────────────────────────────
+function subscribeToStaff() {
+  realtimeChannel = supabase
+    .channel('personnel-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'personnel' }, () => {
+      fetchPersonnel()
+    })
+    .subscribe()
+}
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+function checkAuth() {
+  if (window.location.pathname.includes('/admin')) isAdmin.value = true
+  supabase.auth.onAuthStateChange((_event: string, session: { user: unknown } | null) => {
+    isAdmin.value = !!session?.user || window.location.pathname.includes('/admin')
   })
 }
 
+<<<<<<< HEAD
 function startEdit(person: MergedStaff) {
   editingId.value = person.localId
   editForm.value = { name: person.name, subtitle: person.subtitle, position: person.position ?? '' }
 }
 function cancelEdit() {
   editingId.value = null
+=======
+// ─── Edit ─────────────────────────────────────────────────────────────────────
+function startEdit(person: PersonnelRow) {
+  editingId.value = person.id
+  editForm.value  = {
+    first_name:          person.first_name          ?? '',
+    last_name:           person.last_name           ?? '',
+    professional_titles: person.professional_titles ?? '',
+    position:            person.position            ?? '',
+    role:                person.role                ?? 'staff',
+  }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 
-async function saveEdit(person: MergedStaff) {
-  if (!editForm.value.name.trim() || !editForm.value.subtitle.trim()) return
+async function saveEdit(person: PersonnelRow) {
+  if (!editForm.value.first_name.trim() || !editForm.value.last_name.trim()) return
   saving.value = true
   try {
+<<<<<<< HEAD
     const payload = {
       name: editForm.value.name.trim().toUpperCase(),
       subtitle: editForm.value.subtitle.trim(),
@@ -690,23 +994,36 @@ async function saveEdit(person: MergedStaff) {
     } else {
       await addDoc(collection(db, 'personnel'), { ...payload, imageUrl: '', storagePath: '' })
     }
+=======
+    await personnelService.update(person.id, {
+      first_name:          editForm.value.first_name.trim().toUpperCase(),
+      last_name:           editForm.value.last_name.trim().toUpperCase(),
+      professional_titles: editForm.value.professional_titles.trim(),
+      position:            editForm.value.position.trim(),
+      role:                editForm.value.role,
+      updated_at:          new Date().toISOString(),
+    })
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
     editingId.value = null
     showToast('Changes saved.')
-  } catch {
+  } catch (err: any) {
     showToast('Failed to save changes.', 'error')
+    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
+// ─── Add ──────────────────────────────────────────────────────────────────────
 async function addStaff() {
   modalError.value = ''
-  if (!newForm.value.name.trim() || !newForm.value.subtitle.trim()) {
-    modalError.value = 'Name and Title are required.'
+  if (!newForm.value.first_name.trim() || !newForm.value.last_name.trim()) {
+    modalError.value = 'First name and last name are required.'
     return
   }
   saving.value = true
   try {
+<<<<<<< HEAD
     let imageUrl = '',
       storagePath = ''
     if (newForm.value.file) {
@@ -728,56 +1045,83 @@ async function addStaff() {
       order: 1000 + newEntryCount,
       imageUrl,
       storagePath,
+=======
+    let imageUrl = ''
+    if (newForm.value.file) {
+      const res = await uploadPhoto(newForm.value.file, `personnel/${Date.now()}_${newForm.value.file.name}`)
+      imageUrl  = res.url
+    }
+    await personnelService.create({
+      first_name:          newForm.value.first_name.trim().toUpperCase(),
+      last_name:           newForm.value.last_name.trim().toUpperCase(),
+      professional_titles: newForm.value.professional_titles.trim(),
+      position:            newForm.value.position.trim(),
+      role:                newForm.value.role,
+      image_url:           imageUrl || null,
+      is_active:           true,
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
     })
     closeAddModal()
     showToast('Staff member added.')
-  } catch {
+  } catch (err: any) {
     modalError.value = 'Failed to add staff. Please try again.'
+    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
+<<<<<<< HEAD
 function confirmDelete(person: MergedStaff) {
   deleteTarget.value = person
 }
+=======
+// ─── Delete ───────────────────────────────────────────────────────────────────
+function confirmDelete(person: PersonnelRow) { deleteTarget.value = person }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 
 async function deleteStaff() {
   if (!deleteTarget.value) return
-  if (!deleteTarget.value.firestoreId) {
-    showToast('Cannot delete original staff members.', 'error')
-    deleteTarget.value = null
-    return
-  }
   saving.value = true
   try {
-    if (deleteTarget.value.storagePath) {
-      await deleteObject(storageRef(storage, deleteTarget.value.storagePath)).catch(() => {})
+    // Remove photo from storage if exists
+    if (deleteTarget.value.image_url) {
+      const path = deleteTarget.value.image_url.split('/personnel-photos/')[1]
+      if (path) await supabase.storage.from('personnel-photos').remove([path]).catch(() => {})
     }
-    await deleteDoc(doc(db, 'personnel', deleteTarget.value.firestoreId))
+    await personnelService.delete(deleteTarget.value.id)
     deleteTarget.value = null
     showToast('Staff member removed.')
-  } catch {
+  } catch (err: any) {
     showToast('Failed to delete.', 'error')
+    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
-async function uploadPhoto(file: File, path: string) {
-  const ref = storageRef(storage, path)
-  await uploadBytes(ref, file)
-  return { url: await getDownloadURL(ref), path }
+// ─── Photo upload ─────────────────────────────────────────────────────────────
+async function uploadPhoto(file: File, path: string): Promise<{ url: string; path: string }> {
+  const { error } = await supabase.storage.from('personnel-photos').upload(path, file, { upsert: true })
+  if (error) throw error
+  const { data } = supabase.storage.from('personnel-photos').getPublicUrl(path)
+  return { url: data.publicUrl, path }
 }
 
+<<<<<<< HEAD
 async function handlePhotoUpload(event: Event, person: MergedStaff) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
+=======
+async function handlePhotoUpload(event: Event, person: PersonnelRow) {
+  const file = (event.target as HTMLInputElement).files?.[0]
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
   if (!file) return
   saving.value = true
   try {
     const path = `personnel/${Date.now()}_${file.name}`
     const { url } = await uploadPhoto(file, path)
+<<<<<<< HEAD
     if (person.storagePath) {
       await deleteObject(storageRef(storage, person.storagePath)).catch(() => {})
     }
@@ -793,10 +1137,18 @@ async function handlePhotoUpload(event: Event, person: MergedStaff) {
         order: person.order,
         ...payload,
       })
+=======
+    // Delete old photo if exists
+    if (person.image_url) {
+      const oldPath = person.image_url.split('/personnel-photos/')[1]
+      if (oldPath) await supabase.storage.from('personnel-photos').remove([oldPath]).catch(() => {})
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
     }
+    await personnelService.update(person.id, { image_url: url, updated_at: new Date().toISOString() })
     showToast('Photo updated.')
-  } catch {
+  } catch (err: any) {
     showToast('Failed to upload photo.', 'error')
+    console.error(err)
   } finally {
     saving.value = false
     ;(event.target as HTMLInputElement).value = ''
@@ -810,7 +1162,9 @@ function handleNewPhotoSelect(event: Event) {
   newForm.value.previewUrl = URL.createObjectURL(file)
 }
 
+// ─── Modal helpers ────────────────────────────────────────────────────────────
 function openAddModal() {
+<<<<<<< HEAD
   newForm.value = {
     name: '',
     subtitle: '',
@@ -819,6 +1173,9 @@ function openAddModal() {
     previewUrl: '',
     file: null,
   }
+=======
+  newForm.value    = { first_name: '', last_name: '', professional_titles: '', position: '', role: 'staff', previewUrl: '', file: null }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
   modalError.value = ''
   showAddModal.value = true
 }
@@ -827,6 +1184,7 @@ function closeAddModal() {
   if (newForm.value.previewUrl) URL.revokeObjectURL(newForm.value.previewUrl)
 }
 
+// ─── Toast ────────────────────────────────────────────────────────────────────
 function showToast(message: string, type: 'success' | 'error' = 'success') {
   if (toastTimer) clearTimeout(toastTimer)
   toast.value = { show: true, message, type }
@@ -835,15 +1193,21 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
   }, 3200)
 }
 
+<<<<<<< HEAD
 function handleScroll() {
   showScrollTop.value = window.scrollY > 300
 }
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
+=======
+// ─── Scroll / Observer ───────────────────────────────────────────────────────
+function handleScroll() { showScrollTop.value = window.scrollY > 300 }
+function scrollToTop()  { window.scrollTo({ top: 0, behavior: 'smooth' }) }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 
-let observer: IntersectionObserver | null = null
 function initObserver() {
+  observer?.disconnect()
   observer = new IntersectionObserver(
     (entries) =>
       entries.forEach((e) => {
@@ -854,14 +1218,16 @@ function initObserver() {
   document.querySelectorAll('.sr-item, .sr-card').forEach((el) => observer!.observe(el))
 }
 
-onMounted(() => {
+// ─── Lifecycle ────────────────────────────────────────────────────────────────
+onMounted(async () => {
+  await fetchPersonnel()
   subscribeToStaff()
   checkAuth()
   window.addEventListener('scroll', handleScroll)
   setTimeout(initObserver, 100)
 })
 onUnmounted(() => {
-  unsubscribeFirestore?.()
+  if (realtimeChannel) supabase.removeChannel(realtimeChannel)
   observer?.disconnect()
   window.removeEventListener('scroll', handleScroll)
   if (toastTimer) clearTimeout(toastTimer)
@@ -870,6 +1236,7 @@ onUnmounted(() => {
 
 <style scoped>
 .page-header {
+<<<<<<< HEAD
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -902,8 +1269,20 @@ onUnmounted(() => {
   width: 12px;
   height: 12px;
   opacity: 0.4;
+=======
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 36px 40px 28px; border-bottom: 1px solid rgba(13,43,15,0.08); background: #f5f3ef;
+}
+.header-left  { display: flex; flex-direction: column; gap: 6px; }
+.header-right { display: flex; align-items: center; gap: 12px; padding-top: 8px; }
+.header-breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(13,43,15,0.4);
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 .header-title {
+<<<<<<< HEAD
   font-family: 'Poppins', sans-serif;
   font-size: 2.5rem;
   font-weight: 900;
@@ -931,6 +1310,29 @@ onUnmounted(() => {
   padding: 6px 14px;
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(249, 168, 37, 0.4);
+=======
+  font-family: 'Poppins', sans-serif; font-size: 2.5rem; font-weight: 900;
+  color: #0d2b0f; line-height: 1.1; letter-spacing: -0.01em;
+}
+.header-sub { font-size: 0.82rem; color: rgba(13,43,15,0.5); font-weight: 400; margin-top: 2px; }
+.admin-hero-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.58rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #0d2b0f; background: #f9a825; padding: 6px 14px; border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(249,168,37,0.4);
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
+}
+
+/* Loading */
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-ring {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid rgba(13,43,15,0.12); border-top-color: #0d2b0f;
+  animation: spin 0.7s linear infinite;
+}
+.loading-text {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(13,43,15,0.45);
 }
 
 .label-line {
@@ -951,6 +1353,7 @@ onUnmounted(() => {
   animation: fadeUp 0.7s ease both;
 }
 .featured-card {
+<<<<<<< HEAD
   position: relative;
   display: flex;
   flex-direction: row;
@@ -965,6 +1368,12 @@ onUnmounted(() => {
   transition:
     border-color 0.3s ease,
     box-shadow 0.3s ease;
+=======
+  position: relative; display: flex; flex-direction: row; align-items: center;
+  gap: 48px; background: #ffffff; border: 1px solid rgba(13,43,15,0.08);
+  border-radius: 4px; padding: 48px 52px; box-shadow: 0 4px 40px rgba(13,43,15,0.07);
+  overflow: hidden; transition: border-color 0.3s ease, box-shadow 0.3s ease;
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 .admin-card {
   border-color: rgba(249, 168, 37, 0.25);
@@ -981,12 +1390,16 @@ onUnmounted(() => {
   background: linear-gradient(to bottom, #f9a825, #1b5e20);
 }
 .featured-photo-wrap {
+<<<<<<< HEAD
   position: relative;
   flex-shrink: 0;
   width: 160px;
   height: 160px;
   border-radius: 50%;
   overflow: visible;
+=======
+  position: relative; flex-shrink: 0; width: 160px; height: 160px; border-radius: 50%; overflow: visible;
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 .featured-photo {
   position: absolute;
@@ -1054,6 +1467,7 @@ onUnmounted(() => {
   gap: 24px;
 }
 .staff-card {
+<<<<<<< HEAD
   position: relative;
   display: flex;
   flex-direction: row;
@@ -1076,6 +1490,17 @@ onUnmounted(() => {
   box-shadow: 0 8px 32px rgba(13, 43, 15, 0.12);
   transform: translateY(-3px);
   border-color: rgba(249, 168, 37, 0.35);
+=======
+  position: relative; display: flex; flex-direction: row; align-items: flex-start;
+  gap: 24px; background: #ffffff; border: 1px solid rgba(13,43,15,0.07);
+  border-radius: 4px; padding: 24px 28px; box-shadow: 0 2px 16px rgba(13,43,15,0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  overflow: visible; margin-top: 8px; border-bottom: 2px solid transparent;
+}
+.staff-card:hover {
+  box-shadow: 0 8px 32px rgba(13,43,15,0.12); transform: translateY(-3px);
+  border-color: rgba(249,168,37,0.35); border-bottom-color: #f9a825;
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 .staff-photo-wrap {
   position: relative;
@@ -1174,6 +1599,7 @@ onUnmounted(() => {
 }
 
 .btn-add {
+<<<<<<< HEAD
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1197,6 +1623,14 @@ onUnmounted(() => {
   transform: translateY(-1px);
 }
 
+=======
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+  color: #fff; background: #0d2b0f; padding: 7px 14px; border-radius: 3px;
+  border: none; cursor: pointer; white-space: nowrap; transition: background 0.2s, transform 0.15s;
+}
+.btn-add:hover { background: #1b5e20; transform: translateY(-1px); }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 .btn-edit-inline {
   display: inline-flex;
   align-items: center;
@@ -1219,12 +1653,17 @@ onUnmounted(() => {
   color: #fff;
   border-color: #0d2b0f;
 }
+<<<<<<< HEAD
 
 .card-actions {
   display: flex;
   gap: 6px;
   margin-top: 6px;
 }
+=======
+.btn-edit-inline:hover { background: #0d2b0f; color: #fff; border-color: #0d2b0f; }
+.card-actions { display: flex; gap: 6px; margin-top: 6px; }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 .btn-icon {
   display: inline-flex;
   align-items: center;
@@ -1288,6 +1727,7 @@ onUnmounted(() => {
   display: flex;
   gap: 8px;
 }
+<<<<<<< HEAD
 
 .btn-save {
   display: inline-flex;
@@ -1317,6 +1757,22 @@ onUnmounted(() => {
   font-size: 0.6rem;
 }
 
+=======
+.edit-input:focus { border-color: #1b5e20; background: #fff; }
+.edit-input-lg { font-size: 0.9rem; font-weight: 600; }
+.edit-input-sm { font-size: 0.75rem; padding: 5px 8px; }
+.edit-actions  { display: flex; gap: 8px; }
+
+.btn-save {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
+  color: #fff; background: #0d2b0f; border: none; padding: 6px 14px;
+  border-radius: 3px; cursor: pointer; transition: background 0.2s;
+}
+.btn-save:hover:not(:disabled) { background: #1b5e20; }
+.btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-save-sm { padding: 4px 10px; font-size: 0.6rem; }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 .btn-cancel {
   display: inline-flex;
   align-items: center;
@@ -1340,6 +1796,7 @@ onUnmounted(() => {
   padding: 4px 10px;
   font-size: 0.6rem;
 }
+<<<<<<< HEAD
 
 .btn-delete {
   display: inline-flex;
@@ -1363,6 +1820,15 @@ onUnmounted(() => {
 .btn-delete:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+=======
+.btn-cancel:hover { border-color: rgba(13,43,15,0.4); color: #0d2b0f; }
+.btn-cancel-sm { padding: 4px 10px; font-size: 0.6rem; }
+.btn-delete {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
+  color: #fff; background: #b71c1c; border: none; padding: 8px 16px;
+  border-radius: 3px; cursor: pointer; transition: background 0.2s;
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 
 .modal-backdrop {
@@ -1463,6 +1929,7 @@ onUnmounted(() => {
   text-transform: uppercase;
   font-weight: 600;
 }
+<<<<<<< HEAD
 .modal-fields {
   display: flex;
   flex-direction: column;
@@ -1490,6 +1957,16 @@ onUnmounted(() => {
   text-transform: none;
   letter-spacing: 0;
 }
+=======
+.modal-fields { display: flex; flex-direction: column; gap: 14px; padding: 16px 24px; }
+.field-group  { display: flex; flex-direction: column; gap: 5px; }
+.field-label  {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(13,43,15,0.55);
+}
+.required       { color: #b71c1c; }
+.field-optional { color: rgba(13,43,15,0.35); font-weight: 500; text-transform: none; letter-spacing: 0; }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 .modal-input {
   font-size: 0.83rem;
   color: #0d2b0f;
@@ -1504,6 +1981,7 @@ onUnmounted(() => {
   font-family: 'Poppins', sans-serif;
   width: 100%;
 }
+<<<<<<< HEAD
 .modal-input:focus {
   border-color: #1b5e20;
   background: #fff;
@@ -1529,9 +2007,17 @@ onUnmounted(() => {
 }
 .delete-confirm-text strong {
   color: #0d2b0f;
+=======
+.modal-input:focus { border-color: #1b5e20; background: #fff; }
+.modal-error  { font-size: 0.72rem; color: #b71c1c; font-weight: 600; padding: 0 24px 4px; }
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px;
+  border-top: 1px solid rgba(13,43,15,0.08); background: rgba(247,245,240,0.6);
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 
 .toast {
+<<<<<<< HEAD
   position: fixed;
   bottom: 28px;
   left: 50%;
@@ -1557,6 +2043,15 @@ onUnmounted(() => {
   color: #fff;
 }
 
+=======
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 200; display: flex; align-items: center; gap: 8px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
+  padding: 10px 20px; border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); white-space: nowrap;
+}
+.toast-success { background: #0d2b0f; color: #fff; }
+.toast-error   { background: #b71c1c; color: #fff; }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 .loader-sm {
   display: inline-block;
   width: 12px;
@@ -1575,6 +2070,7 @@ onUnmounted(() => {
     opacity 0.6s ease,
     transform 0.6s ease;
 }
+<<<<<<< HEAD
 .sr-item.in-view,
 .sr-card.in-view {
   opacity: 1;
@@ -1660,5 +2156,27 @@ onUnmounted(() => {
   .staff-grid {
     grid-template-columns: 1fr;
   }
+=======
+.sr-item.in-view, .sr-card.in-view { opacity: 1; transform: translateY(0); }
+
+.fade-enter-active,  .fade-leave-active  { transition: opacity 0.3s ease; }
+.fade-enter-from,    .fade-leave-to      { opacity: 0; }
+.modal-enter-active, .modal-leave-active { transition: opacity 0.25s ease; }
+.modal-enter-active .modal-box, .modal-leave-active .modal-box {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.modal-enter-from, .modal-leave-to { opacity: 0; }
+.modal-enter-from .modal-box, .modal-leave-to .modal-box { transform: scale(0.96) translateY(8px); opacity: 0; }
+.toast-enter-active, .toast-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.toast-enter-from,   .toast-leave-to     { opacity: 0; transform: translateX(-50%) translateY(10px); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 768px) {
+  .featured-card  { flex-direction: column; text-align: center; padding: 36px 28px; gap: 28px; }
+  .featured-info  { align-items: center; }
+  .featured-badge { align-self: center; }
+  .staff-grid     { grid-template-columns: 1fr; }
+>>>>>>> ff427e644e27e00b048de251ce74b62c51bb49dd
 }
 </style>

@@ -37,6 +37,7 @@ import ServicesOverview from '@/views/Admin/ServicesManagement/ServicesOverview.
 import RoomReservation from '@/views/Admin/ServicesManagement/RoomReservation.vue'
 import ManageRecords from '@/views/Admin/ServicesManagement/ManageRecords.vue'
 import ManageGallery from '@/views/Admin/ServicesManagement/ManageGallery.vue'
+import ManageCurriculum from '@/views/Admin/ServicesManagement/ManageCurriculum.vue'
 import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
 import WebsiteImages from '@/views/Admin/WebsiteManagement/WebsiteImages.vue'
 import Developers from '@/views/Developers.vue'
@@ -83,6 +84,7 @@ const router = createRouter({
     { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation },
     { path: '/admin/services/records', name: 'services-records', component: ManageRecords },
     { path: '/admin/services/gallery', name: 'services-gallery', component: ManageGallery },
+    { path: '/admin/services/curriculum', name: 'services-curriculum', component: ManageCurriculum },
     { path: '/admin/website', name: 'website', component: WebsiteOverview },
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages },
 
