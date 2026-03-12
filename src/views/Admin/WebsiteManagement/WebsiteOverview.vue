@@ -8,7 +8,7 @@
   </div>
 
   <!-- MAIN CONTENT -->
-  <div class="flex-1 py-10 px-6 md:px-16" style="font-family:'Poppins',sans-serif">
+  <div class="flex-1 py-10 px-6 md:pl-8 md:pr-16" style="font-family:'Poppins',sans-serif">
 
     <!-- HEADER -->
     <header class="mb-10 flex items-center gap-4">
