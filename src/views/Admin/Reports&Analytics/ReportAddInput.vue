@@ -1,545 +1,463 @@
 <template>
-
-<div class="layout">
+<div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
 
   <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
 
-  <div class="page-content">
+  <main class="report-root flex-1 overflow-y-auto">
 
-  <div class="report-root">
+    <!-- HEADER -->
+    <header class="report-header intro-header">
 
-  <!-- HEADER -->
-  <header class="report-header">
-    <div class="header-left">
+      <div>
+        <div class="header-breadcrumb">
+          <span>Admin</span>
+          <span>•</span>
+          <span>Analytics</span>
+        </div>
 
-      <div class="header-breadcrumb">
-        <span>Admin</span>
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M9 5l7 7-7 7"/>
-        </svg>
-        <span>Reports & Analytics</span>
+        <h1 class="header-title intro-title">
+          Library <span style="color:#f9a825">Collection Analytics</span>
+        </h1>
+
+        <p class="header-sub">
+          Import accession files and visualize CSU Library collection trends,
+          acquisitions, de-accessions, and subject distributions.
+        </p>
       </div>
 
-      <h1 class="header-title">Create Analytics Report</h1>
-      <p class="header-sub">
-        Upload a dataset and configure how the analytics should be generated
-      </p>
-
-    </div>
-  </header>
-
-
-  <!-- STEPPER -->
-  <div class="stepper-wrap">
-
-    <div
-      v-for="(step,i) in steps"
-      :key="i"
-      class="stepper-item"
-      :class="{ active: activeStep === i }"
-      @click="activeStep = i"
-    >
-
-      <div class="stepper-circle">
-        {{ i + 1 }}
+      <div class="header-right">
+        <div class="date-badge">
+          <CalendarDays/>
+          March 2026
+        </div>
       </div>
 
-      <div class="stepper-label">
-        <span class="step-title">{{ step.title }}</span>
-        <span class="step-sub">{{ step.sub }}</span>
+    </header>
+
+
+    <!-- IMPORT PANEL -->
+    <section class="panel">
+
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">Import Accession File</h2>
+          <p class="panel-sub">
+            Upload XLSX / XLS / CSV file to generate analytics
+          </p>
+        </div>
       </div>
 
       <div
-        v-if="i < steps.length-1"
-        class="stepper-line"
-      ></div>
-
-    </div>
-
-  </div>
-
-
-  <!-- STEP PANEL -->
-  <div class="rank-panel">
-
-    <!-- STEP 1 -->
-    <div v-if="activeStep === 0">
-
-      <div class="panel-head">
-        <div class="panel-icon">📂</div>
-
-        <div>
-          <h2 class="panel-title">Upload Dataset</h2>
-          <p class="panel-sub">
-            Import a CSV or Excel file containing the data for this report
-          </p>
-        </div>
-      </div>
-
-      <div class="upload-area">
-
-        <label class="upload-box">
-
-          <input
-            type="file"
-            @change="handleFileUpload"
-            hidden
-          />
-
-          <div class="upload-content">
-            <div class="upload-icon">⬆</div>
-            <p class="upload-title">Upload CSV / Excel</p>
-            <p class="upload-desc">Drag file or click to browse</p>
-          </div>
-
-        </label>
-
+        class="drop-zone"
+        @click="triggerFileInput"
+        @dragover.prevent="isDragging=true"
+        @dragleave.prevent="isDragging=false"
+        @drop.prevent="isDragging=false"
+      >
         <input
-          v-model="reportName"
-          class="field-input"
-          placeholder="Report name"
+          ref="fileInput"
+          type="file"
+          class="hidden"
+          accept=".xlsx,.xls,.csv"
+          @change="onFileChange"
         />
 
+        <p v-if="!fileName">
+          Click to upload or drag accession spreadsheet
+        </p>
+
+        <p v-if="fileName">
+          Selected file: <strong>{{ fileName }}</strong>
+        </p>
+
       </div>
 
-    </div>
+    </section>
 
 
+    <!-- KPI CARDS -->
+    <section class="kpi-strip">
 
-    <!-- STEP 2 -->
-    <div v-if="activeStep === 1">
+      <div
+        v-for="(stat,i) in kpiStats"
+        :key="stat.label"
+        class="kpi-card"
+        :style="`animation-delay:${i*0.05}s`"
+      >
 
-      <div class="panel-head">
-        <div class="panel-icon">📊</div>
+        <div class="kpi-icon" :style="{background:'#1b5e2015'}">
+          <component :is="stat.icon"/>
+        </div>
 
         <div>
-          <h2 class="panel-title">Columns Configuration</h2>
-          <p class="panel-sub">
-            Select which dataset columns will be used for grouping and sorting
-          </p>
-        </div>
-      </div>
-
-
-      <div class="fields-grid">
-
-        <div class="field-group">
-          <label>Group By</label>
-          <select v-model="groupBy">
-            <option disabled value="">Select column</option>
-            <option v-for="c in columns" :key="c">{{ c }}</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label>Unique By</label>
-          <select v-model="uniqueBy">
-            <option disabled value="">Select column</option>
-            <option v-for="c in columns" :key="c">{{ c }}</option>
-          </select>
-        </div>
-
-        <div class="field-group">
-          <label>Sort By</label>
-          <select v-model="sortBy">
-            <option disabled value="">Select column</option>
-            <option v-for="c in columns" :key="c">{{ c }}</option>
-          </select>
+          <span class="kpi-label">{{ stat.label }}</span>
+          <span class="kpi-value">{{ stat.value }}</span>
         </div>
 
       </div>
 
-    </div>
+    </section>
 
 
+    <!-- MAIN GRID -->
+    <div class="main-grid">
 
-    <!-- STEP 3 -->
-    <div v-if="activeStep === 2">
+      <!-- LEFT COLUMN -->
+      <div>
 
-      <div class="panel-head">
-        <div class="panel-icon">⚙</div>
+        <!-- ACQUISITIONS -->
+        <section class="panel">
 
-        <div>
-          <h2 class="panel-title">Filters & Ranking</h2>
-          <p class="panel-sub">
-            Define ranking logic and result limits
-          </p>
-        </div>
-      </div>
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Acquisitions Timeline</h2>
+              <p class="panel-sub">Monthly newly acquired books</p>
+            </div>
 
+            <select v-model="selectedYear">
+              <option
+                v-for="y in availableYears"
+                :key="y"
+                :value="y"
+              >
+                {{ y }}
+              </option>
+            </select>
+          </div>
 
-      <div class="fields-grid">
+          <div class="bar-chart">
 
-        <div class="field-group">
-          <label>Top N Results</label>
-          <input
-            type="number"
-            v-model="limit"
-          />
-        </div>
+            <div class="bars-wrap">
 
+              <div
+                v-for="bar in chartBars"
+                :key="bar.label"
+                class="bar-col"
+              >
 
-        <div class="field-group">
-          <label>Sort Direction</label>
+                <div
+                  class="bar"
+                  :class="{ 'bar--highlight': bar.highlight }"
+                  :style="{ height: bar.h + 'px' }"
+                ></div>
 
-          <div class="toggle-group">
+                <span class="bar-label">
+                  {{ bar.label }}
+                </span>
 
-            <button
-              :class="{active:sortDirection==='desc'}"
-              @click="sortDirection='desc'"
-            >
-              Descending
-            </button>
+              </div>
 
-            <button
-              :class="{active:sortDirection==='asc'}"
-              @click="sortDirection='asc'"
-            >
-              Ascending
-            </button>
+            </div>
 
           </div>
 
-        </div>
+        </section>
+
+
+        <!-- SUBJECT DISTRIBUTION -->
+        <section class="panel">
+
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Subject Distribution</h2>
+              <p class="panel-sub">
+                Top categories by book count
+              </p>
+            </div>
+          </div>
+
+          <table class="report-table">
+
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th class="text-right">Books</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr
+                v-for="(s,i) in subjects"
+                :key="s.name"
+                class="table-row-animate"
+                :style="`animation-delay:${i*0.05}s`"
+              >
+
+                <td class="name-cell">
+                  {{ s.name }}
+                </td>
+
+                <td class="text-right">
+                  {{ s.count }}
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </section>
+
+
+        <!-- NEWLY ACQUIRED -->
+        <section class="panel">
+
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Newly Acquired Books</h2>
+              <p class="panel-sub">
+                Latest additions to the collection
+              </p>
+            </div>
+          </div>
+
+          <table class="report-table">
+
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Subject</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr
+                v-for="(book,i) in newlyAcquired"
+                :key="i"
+                class="table-row-animate"
+                :style="`animation-delay:${i*0.05}s`"
+              >
+
+                <td class="name-cell">{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.subject }}</td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </section>
+
+      </div>
+
+
+      <!-- RIGHT COLUMN -->
+      <div>
+
+        <!-- PUBLICATION YEARS -->
+        <section class="panel">
+
+          <div class="panel-head panel-head--center">
+
+            <h2 class="panel-title">
+              Publication Year Distribution
+            </h2>
+
+            <p class="panel-sub">
+              Books grouped by decade
+            </p>
+
+          </div>
+
+          <table class="report-table">
+
+            <tbody>
+
+              <tr
+                v-for="br in pubBrackets"
+                :key="br.label"
+              >
+
+                <td>{{ br.label }}</td>
+
+                <td class="text-right">
+                  {{ br.count }}
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </section>
+
+
+        <!-- LANGUAGE SPLIT -->
+        <section class="panel">
+
+          <div class="panel-head panel-head--center">
+
+            <h2 class="panel-title">
+              Language Distribution
+            </h2>
+
+            <p class="panel-sub">
+              Books by language
+            </p>
+
+          </div>
+
+          <div class="donut-area">
+
+            <svg
+              viewBox="0 0 120 120"
+              class="donut-svg"
+            >
+              <circle
+                cx="60"
+                cy="60"
+                r="50"
+                fill="none"
+                stroke="#e5e7eb"
+                stroke-width="16"
+              />
+            </svg>
+
+            <div class="donut-legend">
+
+              <div
+                v-for="lang in languages"
+                :key="lang.name"
+                class="legend-row"
+              >
+
+                <div
+                  class="legend-dot"
+                  :style="{background:lang.color}"
+                ></div>
+
+                <span class="legend-label">
+                  {{ lang.name }}
+                </span>
+
+                <span class="legend-pct">
+                  {{ lang.pct }}%
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
 
       </div>
 
     </div>
 
+  </main>
 
-
-    <!-- STEP 4 -->
-    <div v-if="activeStep === 3">
-
-      <div class="panel-head">
-        <div class="panel-icon">📈</div>
-
-        <div>
-          <h2 class="panel-title">Create Report</h2>
-          <p class="panel-sub">
-            Review your configuration and generate the analytics report
-          </p>
-        </div>
-      </div>
-
-
-      <button
-        class="export-btn"
-        @click="createReport"
-      >
-        Generate Report
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-</div>
 </div>
 </template>
 
-
 <script setup lang="ts">
+
 import { ref } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 
-const activeTab = ref('DASHBOARD')
+import {
+CalendarDays,
+Library,
+BookPlus,
+BookX,
+PieChart
+} from 'lucide-vue-next'
 
-const handleTabChange = (name: string) => {
-  activeTab.value = name
+const activeTab = ref('ANALYTICS')
+
+const handleTabChange = (name:string)=>{
+  activeTab.value=name
 }
 
-const activeStep = ref(0)
+/* FILE IMPORT */
 
-const steps = [
-  { title: "Upload", sub: "Import dataset" },
-  { title: "Columns", sub: "Select fields" },
-  { title: "Logic", sub: "Grouping & filters" },
-  { title: "Create", sub: "Generate report" }
+const fileInput = ref<HTMLInputElement|null>(null)
+const isDragging = ref(false)
+const fileName = ref('')
+
+function triggerFileInput(){
+  fileInput.value?.click()
+}
+
+function onFileChange(e:Event){
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if(file) fileName.value=file.name
+}
+
+/* KPI DATA */
+
+const kpiStats = [
+{ label:'Total Books', value:'1,248', icon:Library },
+{ label:'Newly Acquired', value:'34', icon:BookPlus },
+{ label:'De-Accessioned', value:'12', icon:BookX },
+{ label:'Subjects', value:'18', icon:PieChart }
 ]
 
-const reportName = ref("")
-const groupBy = ref("")
-const uniqueBy = ref("")
-const sortBy = ref("")
-const limit = ref(10)
-const sortDirection = ref("desc")
+const selectedYear = ref(2026)
 
-const columns = ref([
-  "student_name",
-  "college",
-  "year",
-  "borrowed_books"
-])
+const availableYears=[2026,2025,2024,2023]
 
-function handleFileUpload(e:any){
-  console.log(e.target.files[0])
-}
+/* BAR CHART */
 
-function createReport(){
-  console.log("Creating report")
-}
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const RAW=[18,22,34,0,0,0,0,0,0,0,0,0]
+
+const chartBars = MONTHS.map((label,i)=>{
+  const val = RAW[i] ?? 0
+
+  return {
+    label,
+    h: val * 4,
+    highlight: i === 2
+  }
+})
+
+/* SUBJECTS */
+
+const subjects=[
+{ name:'Computer Science',count:312 },
+{ name:'Engineering',count:248 },
+{ name:'Natural Sciences',count:199 },
+{ name:'Social Sciences',count:175 },
+{ name:'Literature',count:150 },
+]
+
+/* BOOKS */
+
+const newlyAcquired=[
+{ title:'Artificial Intelligence: A Modern Approach',author:'Russell',subject:'Computer Science'},
+{ title:'Design Patterns',author:'Gamma',subject:'Engineering'},
+{ title:'Organic Chemistry',author:'McMurry',subject:'Science'},
+]
+
+/* PUBLICATION */
+
+const pubBrackets=[
+{label:'Pre-1970',count:48},
+{label:'1970-1989',count:112},
+{label:'1990-1999',count:198},
+{label:'2000-2009',count:337},
+{label:'2010-2019',count:424},
+]
+
+/* LANGUAGES */
+
+const languages=[
+{name:'English',pct:72,color:'#1b5e20'},
+{name:'Filipino',pct:15,color:'#66bb6a'},
+{name:'Spanish',pct:8,color:'#a5d6a7'},
+{name:'Others',pct:5,color:'#f9a825'}
+]
+
 </script>
 
-
-<style scoped>
-
-/* NEW LAYOUT */
-
-.layout{
-  display:flex;
-  min-height:100vh;
-}
-
-.page-content{
-  flex:1;
-  overflow:auto;
-}
-
-
-/* EXISTING PAGE DESIGN */
-
-.report-root{
-  padding:40px;
-  background:#f5f7fb;
-  min-height:100vh;
-  font-family:Inter, sans-serif;
-}
-
-
-/* HEADER */
-
-.report-header{
-  margin-bottom:40px;
-}
-
-.header-breadcrumb{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:14px;
-  color:#6b7280;
-}
-
-.header-breadcrumb svg{
-  width:14px;
-  stroke:#9ca3af;
-  stroke-width:2;
-}
-
-.header-title{
-  font-size:32px;
-  font-weight:700;
-  margin-top:10px;
-}
-
-.header-sub{
-  margin-top:6px;
-  color:#6b7280;
-}
-
-
-/* STEPPER */
-
-.stepper-wrap{
-  display:flex;
-  align-items:center;
-  margin-bottom:30px;
-}
-
-.stepper-item{
-  display:flex;
-  align-items:center;
-  cursor:pointer;
-}
-
-.stepper-circle{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:#e5e7eb;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:600;
-}
-
-.stepper-item.active .stepper-circle{
-  background:#2563eb;
-  color:white;
-}
-
-.stepper-label{
-  margin-left:10px;
-}
-
-.step-title{
-  display:block;
-  font-weight:600;
-}
-
-.step-sub{
-  font-size:12px;
-  color:#6b7280;
-}
-
-.stepper-line{
-  width:60px;
-  height:2px;
-  background:#e5e7eb;
-  margin:0 16px;
-}
-
-
-/* PANEL */
-
-.rank-panel{
-  background:white;
-  border-radius:14px;
-  padding:30px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-
-
-/* PANEL HEADER */
-
-.panel-head{
-  display:flex;
-  gap:16px;
-  margin-bottom:25px;
-}
-
-.panel-icon{
-  width:50px;
-  height:50px;
-  border-radius:10px;
-  background:#eef2ff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-}
-
-.panel-title{
-  font-size:22px;
-  font-weight:600;
-}
-
-.panel-sub{
-  font-size:14px;
-  color:#6b7280;
-}
-
-
-/* UPLOAD */
-
-.upload-area{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-}
-
-.upload-box{
-  border:2px dashed #d1d5db;
-  border-radius:12px;
-  padding:40px;
-  text-align:center;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.upload-box:hover{
-  border-color:#2563eb;
-  background:#f8fbff;
-}
-
-.upload-icon{
-  font-size:32px;
-  margin-bottom:10px;
-}
-
-.upload-title{
-  font-weight:600;
-}
-
-.upload-desc{
-  font-size:13px;
-  color:#6b7280;
-}
-
-
-/* INPUTS */
-
-.fields-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
-}
-
-.field-group{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-.field-group label{
-  font-size:13px;
-  font-weight:600;
-}
-
-.field-group select,
-.field-group input{
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-  font-size:14px;
-}
-
-.field-input{
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #d1d5db;
-}
-
-
-/* TOGGLE */
-
-.toggle-group{
-  display:flex;
-  gap:10px;
-}
-
-.toggle-group button{
-  padding:8px 14px;
-  border-radius:6px;
-  border:1px solid #d1d5db;
-  background:white;
-  cursor:pointer;
-}
-
-.toggle-group button.active{
-  background:#2563eb;
-  color:white;
-  border:none;
-}
-
-
-/* BUTTON */
-
-.export-btn{
-  margin-top:20px;
-  padding:14px 24px;
-  background:#2563eb;
-  color:white;
-  border:none;
-  border-radius:8px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.export-btn:hover{
-  background:#1e40af;
-}
-
-</style>
+<style src="@/assets/styles/report-analytics.css"></style>
