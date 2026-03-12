@@ -82,8 +82,9 @@
 
             <!-- Inline edit fields -->
             <div v-if="editingId === featuredStaff!.localId" class="edit-fields">
-              <input v-model="editForm.name" placeholder="Full Name" class="edit-input edit-input-lg" />
-              <input v-model="editForm.subtitle" placeholder="Title / Designation" class="edit-input" />
+              <input v-model="editForm.firstName" placeholder="First Name" class="edit-input edit-input-lg" />
+              <input v-model="editForm.lastName" placeholder="Last Name" class="edit-input edit-input-lg" />
+              <input v-model="editForm.professionalTitles" placeholder="Professional Titles (e.g. RL, LPT)" class="edit-input" />
               <input v-model="editForm.position" placeholder="Position (optional)" class="edit-input" />
               <div class="edit-actions">
                 <button @click="saveEdit(featuredStaff!)" class="btn-save" :disabled="saving">
@@ -170,8 +171,9 @@
           <div class="staff-info">
             <!-- Inline edit -->
             <template v-if="editingId === person.localId">
-              <input v-model="editForm.name" placeholder="Full Name" class="edit-input edit-input-sm" />
-              <input v-model="editForm.subtitle" placeholder="Title / Designation" class="edit-input edit-input-sm" />
+              <input v-model="editForm.firstName" placeholder="First Name" class="edit-input edit-input-sm" />
+              <input v-model="editForm.lastName" placeholder="Last Name" class="edit-input edit-input-sm" />
+              <input v-model="editForm.professionalTitles" placeholder="Professional Titles (e.g. RL)" class="edit-input edit-input-sm" />
               <input v-model="editForm.position" placeholder="Position (optional)" class="edit-input edit-input-sm" />
               <div class="edit-actions mt-1">
                 <button @click="saveEdit(person)" class="btn-save btn-save-sm" :disabled="saving">
@@ -265,12 +267,16 @@
         </div>
         <div class="modal-fields">
           <div class="field-group">
-            <label class="field-label">Full Name <span class="required">*</span></label>
-            <input v-model="newForm.name" placeholder="e.g. JUAN DELA CRUZ, RL" class="modal-input" />
+            <label class="field-label">First Name <span class="required">*</span></label>
+            <input v-model="newForm.firstName" placeholder="e.g. JUAN" class="modal-input" />
           </div>
           <div class="field-group">
-            <label class="field-label">Title / Designation <span class="required">*</span></label>
-            <input v-model="newForm.subtitle" placeholder="e.g. Readers Services Librarian" class="modal-input" />
+            <label class="field-label">Last Name <span class="required">*</span></label>
+            <input v-model="newForm.lastName" placeholder="e.g. DELA CRUZ" class="modal-input" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Professional Titles <span class="field-optional">(optional)</span></label>
+            <input v-model="newForm.professionalTitles" placeholder="e.g. RL, LPT" class="modal-input" />
           </div>
           <div class="field-group">
             <label class="field-label">Position <span class="field-optional">(optional)</span></label>
@@ -357,59 +363,123 @@ import sabrena  from '@/assets/images/personnelpage/sabrena.png'
 import jasmin   from '@/assets/images/personnelpage/jasmin.png'
 import lagaras  from '@/assets/images/personnelpage/lagaras.png'
 
-// ─── Firebase ─────────────────────────────────────────────────────────────────
-import { db, storage, auth } from '@/firebase'
-import {
-  collection, onSnapshot, addDoc, updateDoc,
-  deleteDoc, doc, orderBy, query,
-} from 'firebase/firestore'
-import {
-  ref as storageRef, uploadBytes,
-  getDownloadURL, deleteObject,
-} from 'firebase/storage'
-import { onAuthStateChanged } from 'firebase/auth'
+// ─── Supabase ─────────────────────────────────────────────────────────────────
+import { supabase } from '@/lib/supabase'
+import { personnelService } from '@/services/personnelService'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-interface MergedStaff {
-  localId:      string
-  firestoreId?: string
-  storagePath?: string
-  name:         string
-  subtitle:     string
-  position?:    string
-  image:        string
-  imageUrl?:    string
-  role:         'head' | 'staff'
-  order:        number
+// Matches actual Supabase table columns
+interface PersonnelRow {
+  id:                  string
+  first_name:          string | null
+  last_name:           string | null
+  professional_titles: string | null
+  position:            string | null
+  role:                string | null
+  image_url:           string | null
+  is_active:           boolean | null
+  created_at:          string | null
+  created_by:          string | null
+  updated_at:          string | null
 }
 
-// ─── Static seed ─────────────────────────────────────────────────────────────
-const STATIC_STAFF: Omit<MergedStaff, 'firestoreId' | 'storagePath' | 'imageUrl'>[] = [
-  { localId: 'local-1',  name: 'MARIA CORAZON L. TERCERA, RL', subtitle: 'University Librarian',
-    position: 'Head, Library Services', image: cora,     role: 'head',  order: 0 },
-  { localId: 'local-2',  name: 'MERCY G. REYES, RL',           subtitle: 'Technical Librarian I',
-    image: mercy,    role: 'staff', order: 0 },
-  { localId: 'local-3',  name: 'ANN MARIE MONTE DE RAMOS, RL', subtitle: 'Readers Services Librarian',
-    image: marie,    role: 'staff', order: 1 },
-  { localId: 'local-4',  name: 'JEHOVENN T. BERONGOY',         subtitle: 'Audio-Visual Technician',
-    image: berongoy, role: 'staff', order: 2 },
-  { localId: 'local-5',  name: 'JORGE V. BAUTISTA',            subtitle: 'Public Assistance & Complaints Desk Officer',
-    image: jorge,    role: 'staff', order: 3 },
-  { localId: 'local-6',  name: 'JOHN WARREN S. BATONDO, LPT',  subtitle: 'Administrative Aide VI Clerk III',
-    image: warren,   role: 'staff', order: 4 },
-  { localId: 'local-7',  name: 'MALYN C. TRAYA',               subtitle: 'Technical Service Staff',
-    image: malyn,    role: 'staff', order: 5 },
-  { localId: 'local-8',  name: 'SABRENA MAE ELLEVERA',         subtitle: 'Periodical Service Staff',
-    image: sabrena,  role: 'staff', order: 6 },
-  { localId: 'local-9',  name: 'JASMIN D. PADILLA',            subtitle: 'Library Learning Spaces Staff',
-    image: jasmin,   role: 'staff', order: 7 },
-  { localId: 'local-10', name: 'JHOGIE A. LAGARAS',            subtitle: 'Circulation Services Staff',
-    image: lagaras,  role: 'staff', order: 8 },
+// Internal display model used by the UI
+interface MergedStaff {
+  localId:     string
+  supabaseId?: string
+  // Derived display fields
+  name:        string   // first_name + last_name + professional_titles
+  subtitle:    string   // professional_titles / designation shown under name
+  position?:   string   // position column
+  image:       string   // static fallback image
+  imageUrl?:   string   // image_url from Supabase
+  role:        'head' | 'staff'
+  order:       number   // display order (static only; Supabase orders by created_at)
+  isActive:    boolean
+  // Raw fields for edit form
+  firstName:   string
+  lastName:    string
+  professionalTitles: string
+}
+
+// ─── Helper: build display name from parts ────────────────────────────────────
+function buildName(row: PersonnelRow): string {
+  const parts = [
+    row.last_name?.trim().toUpperCase(),
+    row.first_name?.trim().toUpperCase(),
+  ].filter(Boolean).join(', ')
+  const titles = row.professional_titles?.trim() ?? ''
+  return titles ? `${parts}, ${titles}` : parts
+}
+
+// ─── Static seed (fallback when no Supabase record exists yet) ────────────────
+const STATIC_STAFF: Omit<MergedStaff, 'supabaseId' | 'imageUrl'>[] = [
+  {
+    localId: 'local-1', order: 0, role: 'head', isActive: true,
+    name: 'MARIA CORAZON L. TERCERA, RL',
+    firstName: 'MARIA CORAZON', lastName: 'TERCERA', professionalTitles: 'RL',
+    subtitle: 'University Librarian', position: 'Head, Library Services', image: cora,
+  },
+  {
+    localId: 'local-2', order: 0, role: 'staff', isActive: true,
+    name: 'MERCY G. REYES, RL',
+    firstName: 'MERCY', lastName: 'REYES', professionalTitles: 'RL',
+    subtitle: 'Technical Librarian I', image: mercy,
+  },
+  {
+    localId: 'local-3', order: 1, role: 'staff', isActive: true,
+    name: 'ANN MARIE MONTE DE RAMOS, RL',
+    firstName: 'ANN MARIE MONTE DE', lastName: 'RAMOS', professionalTitles: 'RL',
+    subtitle: 'Readers Services Librarian', image: marie,
+  },
+  {
+    localId: 'local-4', order: 2, role: 'staff', isActive: true,
+    name: 'JEHOVENN T. BERONGOY',
+    firstName: 'JEHOVENN', lastName: 'BERONGOY', professionalTitles: '',
+    subtitle: 'Audio-Visual Technician', image: berongoy,
+  },
+  {
+    localId: 'local-5', order: 3, role: 'staff', isActive: true,
+    name: 'JORGE V. BAUTISTA',
+    firstName: 'JORGE', lastName: 'BAUTISTA', professionalTitles: '',
+    subtitle: 'Public Assistance & Complaints Desk Officer', image: jorge,
+  },
+  {
+    localId: 'local-6', order: 4, role: 'staff', isActive: true,
+    name: 'JOHN WARREN S. BATONDO, LPT',
+    firstName: 'JOHN WARREN', lastName: 'BATONDO', professionalTitles: 'LPT',
+    subtitle: 'Administrative Aide VI Clerk III', image: warren,
+  },
+  {
+    localId: 'local-7', order: 5, role: 'staff', isActive: true,
+    name: 'MALYN C. TRAYA',
+    firstName: 'MALYN', lastName: 'TRAYA', professionalTitles: '',
+    subtitle: 'Technical Service Staff', image: malyn,
+  },
+  {
+    localId: 'local-8', order: 6, role: 'staff', isActive: true,
+    name: 'SABRENA MAE ELLEVERA',
+    firstName: 'SABRENA MAE', lastName: 'ELLEVERA', professionalTitles: '',
+    subtitle: 'Periodical Service Staff', image: sabrena,
+  },
+  {
+    localId: 'local-9', order: 7, role: 'staff', isActive: true,
+    name: 'JASMIN D. PADILLA',
+    firstName: 'JASMIN', lastName: 'PADILLA', professionalTitles: '',
+    subtitle: 'Library Learning Spaces Staff', image: jasmin,
+  },
+  {
+    localId: 'local-10', order: 8, role: 'staff', isActive: true,
+    name: 'JHOGIE A. LAGARAS',
+    firstName: 'JHOGIE', lastName: 'LAGARAS', professionalTitles: '',
+    subtitle: 'Circulation Services Staff', image: lagaras,
+  },
 ]
 
 const defaultAvatar =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzBkMmIwZiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMzgiIHI9IjE4IiBmaWxsPSIjNjZiYjZhIi8+PHBhdGggZD0iTTEwIDkwIGMwLTIyIDEzLTM1IDQwLTM1czQwIDEzIDQwIDM1IiBmaWxsPSIjNjZiYjZhIi8+PC9zdmc+'
 
+// ─── Reactive state ───────────────────────────────────────────────────────────
 const staff         = ref<MergedStaff[]>([...STATIC_STAFF] as MergedStaff[])
 const isAdmin       = ref(false)
 const saving        = ref(false)
@@ -419,159 +489,228 @@ const deleteTarget  = ref<MergedStaff | null>(null)
 const modalError    = ref('')
 const showScrollTop = ref(false)
 
-const editForm = ref({ name: '', subtitle: '', position: '' })
-const newForm  = ref({
-  name: '', subtitle: '', position: '',
-  role: 'staff' as 'head' | 'staff',
+// Edit form — uses split name fields matching the DB schema
+const editForm = ref({
+  firstName: '', lastName: '', professionalTitles: '',
+  position: '', role: 'staff' as 'head' | 'staff',
+})
+
+// Add form
+const newForm = ref({
+  firstName: '', lastName: '', professionalTitles: '',
+  position: '', role: 'staff' as 'head' | 'staff',
   previewUrl: '', file: null as File | null,
 })
+
 const toast = ref({ show: false, message: '', type: 'success' as 'success' | 'error' })
 let toastTimer: ReturnType<typeof setTimeout> | null = null
-let unsubscribeFirestore: (() => void) | null = null
+let realtimeChannel: ReturnType<typeof supabase.channel> | null = null
 
+// ─── Computed ────────────────────────────────────────────────────────────────
 const featuredStaff = computed<MergedStaff | undefined>(() =>
-  staff.value.find((s) => s.role === 'head'),
+  staff.value.find((s) => s.role === 'head' && s.isActive),
 )
 const otherStaff = computed<MergedStaff[]>(() =>
-  staff.value.filter((s) => s.role === 'staff').sort((a, b) => a.order - b.order),
+  staff.value
+    .filter((s) => s.role === 'staff' && s.isActive)
+    .sort((a, b) => a.order - b.order),
 )
 
-function mergeWithFirestore(docs: { id: string; data: any }[]) {
-  const merged: MergedStaff[] = STATIC_STAFF.map((s) => ({ ...s } as MergedStaff))
-  for (const d of docs) {
-    const match = merged.find((m) => m.role === d.data.role && m.order === d.data.order)
-    if (match) {
-      match.firestoreId = d.id
-      match.name        = d.data.name        ?? match.name
-      match.subtitle    = d.data.subtitle    ?? match.subtitle
-      match.position    = d.data.position    ?? match.position
-      match.imageUrl    = d.data.imageUrl    || undefined
-      match.storagePath = d.data.storagePath || undefined
-    } else {
-      merged.push({
-        localId:     d.id,
-        firestoreId: d.id,
-        name:        d.data.name     ?? '',
-        subtitle:    d.data.subtitle ?? '',
-        position:    d.data.position ?? '',
-        image:       defaultAvatar,
-        imageUrl:    d.data.imageUrl    || undefined,
-        storagePath: d.data.storagePath || undefined,
-        role:        d.data.role  ?? 'staff',
-        order:       d.data.order ?? 999,
-      })
+// ─── Map a Supabase PersonnelRow to MergedStaff ───────────────────────────────
+function rowToMergedStaff(row: PersonnelRow, staticEntry?: typeof STATIC_STAFF[0]): MergedStaff {
+  const displayName = buildName(row)
+  // role: treat 'head' or 'University Librarian' as head, everything else as staff
+  const resolvedRole: 'head' | 'staff' =
+    row.role?.toLowerCase() === 'head' ? 'head' : 'staff'
+
+  return {
+    localId:            row.id,
+    supabaseId:         row.id,
+    firstName:          row.first_name          ?? '',
+    lastName:           row.last_name           ?? '',
+    professionalTitles: row.professional_titles ?? '',
+    name:               displayName,
+    subtitle:           row.professional_titles ?? staticEntry?.subtitle ?? '',
+    position:           row.position            ?? staticEntry?.position ?? '',
+    image:              staticEntry?.image       ?? defaultAvatar,
+    imageUrl:           row.image_url           ?? undefined,
+    role:               resolvedRole,
+    order:              staticEntry?.order       ?? 999,
+    isActive:           row.is_active            ?? true,
+  }
+}
+
+// ─── Merge Supabase rows with static seed ─────────────────────────────────────
+// Priority: Supabase data always wins. Static seed only used as image/order fallback.
+function mergeWithSupabase(rows: PersonnelRow[]) {
+  if (rows.length === 0) {
+    // No DB data yet — show static seed
+    staff.value = STATIC_STAFF.map((s) => ({ ...s } as MergedStaff))
+    return
+  }
+
+  const merged: MergedStaff[] = []
+  const usedStaticIds = new Set<string>()
+
+  for (const row of rows) {
+    // Try to find a static entry to use as image/order fallback
+    // Match by last_name (most reliable single field)
+    const staticMatch = STATIC_STAFF.find(
+      (s) => s.lastName.toUpperCase() === (row.last_name?.toUpperCase() ?? '')
+    )
+    if (staticMatch) usedStaticIds.add(staticMatch.localId)
+    merged.push(rowToMergedStaff(row, staticMatch))
+  }
+
+  // Add static-only entries (not yet in Supabase) as display fallback
+  for (const s of STATIC_STAFF) {
+    if (!usedStaticIds.has(s.localId)) {
+      merged.push({ ...s } as MergedStaff)
     }
   }
+
   staff.value = merged
 }
 
-function subscribeToStaff() {
-  const q = query(collection(db, 'personnel'), orderBy('order'))
-  unsubscribeFirestore = onSnapshot(q, (snap) => {
-    mergeWithFirestore(snap.docs.map((d) => ({ id: d.id, data: d.data() })))
-  })
-}
-
-function checkAuth() {
-  if (window.location.pathname.includes('/admin')) {
-    isAdmin.value = true
+// ─── Fetch ────────────────────────────────────────────────────────────────────
+async function fetchPersonnel() {
+  try {
+    const data = await personnelService.getAll()
+    mergeWithSupabase((data ?? []) as PersonnelRow[])
+  } catch (err: any) {
+    console.error('Failed to fetch personnel:', err.message)
   }
-  onAuthStateChanged(auth, (user) => {
-    isAdmin.value = !!user || window.location.pathname.includes('/admin')
+}
+
+// ─── Real-time subscription ───────────────────────────────────────────────────
+function subscribeToStaff() {
+  realtimeChannel = supabase
+    .channel('personnel-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'personnel' }, () => {
+      fetchPersonnel()
+    })
+    .subscribe()
+}
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+function checkAuth() {
+  if (window.location.pathname.includes('/admin')) isAdmin.value = true
+  supabase.auth.onAuthStateChange((_event: string, session: { user: unknown } | null) => {
+    isAdmin.value = !!session?.user || window.location.pathname.includes('/admin')
   })
 }
 
+// ─── Edit ─────────────────────────────────────────────────────────────────────
 function startEdit(person: MergedStaff) {
   editingId.value = person.localId
-  editForm.value  = { name: person.name, subtitle: person.subtitle, position: person.position ?? '' }
+  editForm.value  = {
+    firstName:          person.firstName,
+    lastName:           person.lastName,
+    professionalTitles: person.professionalTitles,
+    position:           person.position ?? '',
+    role:               person.role,
+  }
 }
 function cancelEdit() { editingId.value = null }
 
 async function saveEdit(person: MergedStaff) {
-  if (!editForm.value.name.trim() || !editForm.value.subtitle.trim()) return
+  if (!editForm.value.firstName.trim() || !editForm.value.lastName.trim()) return
   saving.value = true
   try {
     const payload = {
-      name:     editForm.value.name.trim().toUpperCase(),
-      subtitle: editForm.value.subtitle.trim(),
-      position: editForm.value.position.trim(),
-      role:     person.role,
-      order:    person.order,
+      first_name:          editForm.value.firstName.trim().toUpperCase(),
+      last_name:           editForm.value.lastName.trim().toUpperCase(),
+      professional_titles: editForm.value.professionalTitles.trim(),
+      position:            editForm.value.position.trim(),
+      role:                editForm.value.role,
+      updated_at:          new Date().toISOString(),
     }
-    if (person.firestoreId) {
-      await updateDoc(doc(db, 'personnel', person.firestoreId), payload)
+    if (person.supabaseId) {
+      await personnelService.update(person.supabaseId, payload)
     } else {
-      await addDoc(collection(db, 'personnel'), { ...payload, imageUrl: '', storagePath: '' })
+      await personnelService.create({ ...payload, image_url: null, is_active: true })
     }
     editingId.value = null
     showToast('Changes saved.')
-  } catch {
+  } catch (err: any) {
     showToast('Failed to save changes.', 'error')
+    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
+// ─── Add ──────────────────────────────────────────────────────────────────────
 async function addStaff() {
   modalError.value = ''
-  if (!newForm.value.name.trim() || !newForm.value.subtitle.trim()) {
-    modalError.value = 'Name and Title are required.'
+  if (!newForm.value.firstName.trim() || !newForm.value.lastName.trim()) {
+    modalError.value = 'First name and last name are required.'
     return
   }
   saving.value = true
   try {
-    let imageUrl = '', storagePath = ''
+    let imageUrl = ''
     if (newForm.value.file) {
       const res = await uploadPhoto(newForm.value.file, `personnel/${Date.now()}_${newForm.value.file.name}`)
       imageUrl = res.url
-      storagePath = res.path
     }
-    const newEntryCount = staff.value.filter((s) => s.role === newForm.value.role && s.order >= 1000).length
-    await addDoc(collection(db, 'personnel'), {
-      name:     newForm.value.name.trim().toUpperCase(),
-      subtitle: newForm.value.subtitle.trim(),
-      position: newForm.value.position.trim(),
-      role:     newForm.value.role,
-      order:    1000 + newEntryCount,
-      imageUrl, storagePath,
+    await personnelService.create({
+      first_name:          newForm.value.firstName.trim().toUpperCase(),
+      last_name:           newForm.value.lastName.trim().toUpperCase(),
+      professional_titles: newForm.value.professionalTitles.trim(),
+      position:            newForm.value.position.trim(),
+      role:                newForm.value.role,
+      image_url:           imageUrl || null,
+      is_active:           true,
     })
     closeAddModal()
     showToast('Staff member added.')
-  } catch {
+  } catch (err: any) {
     modalError.value = 'Failed to add staff. Please try again.'
+    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
+// ─── Delete ───────────────────────────────────────────────────────────────────
 function confirmDelete(person: MergedStaff) { deleteTarget.value = person }
 
 async function deleteStaff() {
   if (!deleteTarget.value) return
-  if (!deleteTarget.value.firestoreId) {
+  if (!deleteTarget.value.supabaseId) {
     showToast('Cannot delete original staff members.', 'error')
     deleteTarget.value = null
     return
   }
   saving.value = true
   try {
-    if (deleteTarget.value.storagePath) {
-      await deleteObject(storageRef(storage, deleteTarget.value.storagePath)).catch(() => {})
+    if (deleteTarget.value.imageUrl) {
+      // Extract storage path from the URL if needed
+      await supabase.storage
+        .from('personnel-photos')
+        .remove([deleteTarget.value.imageUrl])
+        .catch(() => {})
     }
-    await deleteDoc(doc(db, 'personnel', deleteTarget.value.firestoreId))
+    await personnelService.delete(deleteTarget.value.supabaseId)
     deleteTarget.value = null
     showToast('Staff member removed.')
-  } catch {
+  } catch (err: any) {
     showToast('Failed to delete.', 'error')
+    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
-async function uploadPhoto(file: File, path: string) {
-  const ref = storageRef(storage, path)
-  await uploadBytes(ref, file)
-  return { url: await getDownloadURL(ref), path }
+// ─── Photo upload ─────────────────────────────────────────────────────────────
+async function uploadPhoto(file: File, path: string): Promise<{ url: string; path: string }> {
+  const { error: uploadError } = await supabase.storage
+    .from('personnel-photos')
+    .upload(path, file, { upsert: true })
+  if (uploadError) throw uploadError
+  const { data } = supabase.storage.from('personnel-photos').getPublicUrl(path)
+  return { url: data.publicUrl, path }
 }
 
 async function handlePhotoUpload(event: Event, person: MergedStaff) {
@@ -582,21 +721,24 @@ async function handlePhotoUpload(event: Event, person: MergedStaff) {
   try {
     const path    = `personnel/${Date.now()}_${file.name}`
     const { url } = await uploadPhoto(file, path)
-    if (person.storagePath) {
-      await deleteObject(storageRef(storage, person.storagePath)).catch(() => {})
-    }
-    const payload = { imageUrl: url, storagePath: path }
-    if (person.firestoreId) {
-      await updateDoc(doc(db, 'personnel', person.firestoreId), payload)
+    const payload = { image_url: url, updated_at: new Date().toISOString() }
+    if (person.supabaseId) {
+      await personnelService.update(person.supabaseId, payload)
     } else {
-      await addDoc(collection(db, 'personnel'), {
-        name: person.name, subtitle: person.subtitle, position: person.position ?? '',
-        role: person.role, order: person.order, ...payload,
+      await personnelService.create({
+        first_name:          person.firstName,
+        last_name:           person.lastName,
+        professional_titles: person.professionalTitles,
+        position:            person.position ?? '',
+        role:                person.role,
+        image_url:           url,
+        is_active:           true,
       })
     }
     showToast('Photo updated.')
-  } catch {
+  } catch (err: any) {
     showToast('Failed to upload photo.', 'error')
+    console.error(err)
   } finally {
     saving.value = false
     ;(event.target as HTMLInputElement).value = ''
@@ -610,8 +752,9 @@ function handleNewPhotoSelect(event: Event) {
   newForm.value.previewUrl = URL.createObjectURL(file)
 }
 
+// ─── Modal helpers ────────────────────────────────────────────────────────────
 function openAddModal() {
-  newForm.value    = { name: '', subtitle: '', position: '', role: 'staff', previewUrl: '', file: null }
+  newForm.value    = { firstName: '', lastName: '', professionalTitles: '', position: '', role: 'staff', previewUrl: '', file: null }
   modalError.value = ''
   showAddModal.value = true
 }
@@ -620,12 +763,14 @@ function closeAddModal() {
   if (newForm.value.previewUrl) URL.revokeObjectURL(newForm.value.previewUrl)
 }
 
+// ─── Toast ────────────────────────────────────────────────────────────────────
 function showToast(message: string, type: 'success' | 'error' = 'success') {
   if (toastTimer) clearTimeout(toastTimer)
   toast.value = { show: true, message, type }
   toastTimer  = setTimeout(() => { toast.value.show = false }, 3200)
 }
 
+// ─── Scroll / IntersectionObserver ───────────────────────────────────────────
 function handleScroll() { showScrollTop.value = window.scrollY > 300 }
 function scrollToTop()  { window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
@@ -640,14 +785,17 @@ function initObserver() {
   document.querySelectorAll('.sr-item, .sr-card').forEach((el) => observer!.observe(el))
 }
 
-onMounted(() => {
+// ─── Lifecycle ────────────────────────────────────────────────────────────────
+onMounted(async () => {
+  await fetchPersonnel()
   subscribeToStaff()
   checkAuth()
   window.addEventListener('scroll', handleScroll)
   setTimeout(initObserver, 100)
 })
+
 onUnmounted(() => {
-  unsubscribeFirestore?.()
+  if (realtimeChannel) supabase.removeChannel(realtimeChannel)
   observer?.disconnect()
   window.removeEventListener('scroll', handleScroll)
   if (toastTimer) clearTimeout(toastTimer)
