@@ -2,23 +2,27 @@
   <div class="page-layout">
     <Sidebar :activeTab="'REPORTS'" />
     <div class="rp-root">
-      <!-- ░░ NOISE GRAIN OVERLAY ░░ -->
       <div class="grain" aria-hidden="true"></div>
 
-      <!-- ░░ FLOATING SHAPES ░░ -->
+      <!-- FLOATING SHAPES -->
       <div class="shape shape-a" aria-hidden="true"></div>
       <div class="shape shape-b" aria-hidden="true"></div>
 
-      <!-- ══════════════════════════════════════════
-         HEADER
-    ══════════════════════════════════════════ -->
+      <!-- HEADER -->
       <header class="rp-header">
         <div class="rp-header__left">
-          <nav class="crumb">
-            <span>Admin</span>
-            <span class="crumb-sep">›</span>
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/analytics')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
             <span>Reports &amp; Analytics</span>
-          </nav>
+          </div>
+
           <div class="rp-title-wrap">
             <h1 class="rp-title">
               <span class="rp-title--dark">Report</span> <span class="rp-title--gold">Display</span>
@@ -81,9 +85,7 @@
         </div>
       </header>
 
-      <!-- ══════════════════════════════════════════
-         TAB BAR
-    ══════════════════════════════════════════ -->
+      <!-- TAB BAR -->
       <div class="tab-bar">
         <button
           v-for="(tab, i) in tabs"
@@ -102,9 +104,7 @@
         </button>
       </div>
 
-      <!-- ══════════════════════════════════════════
-         CONTENT PANEL
-    ══════════════════════════════════════════ -->
+      <!-- CONTENT PANEL -->
       <div class="panel" :key="activeTab">
         <!-- panel kicker -->
         <template v-if="activeTabData">
@@ -189,9 +189,7 @@
       </div>
       <!-- /panel -->
 
-      <!-- ══════════════════════════════════════════
-         EDIT MODAL
-    ══════════════════════════════════════════ -->
+      <!-- EDIT MODAL -->
       <teleport to="body">
         <transition name="modal-fade">
           <div v-if="editModalOpen" class="modal-backdrop" @click.self="closeEditModal">
