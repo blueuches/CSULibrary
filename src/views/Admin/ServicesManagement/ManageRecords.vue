@@ -23,8 +23,7 @@
             <p class="page-subtitle">Update links, descriptions, and visibility for each digital record card shown on the Records page.</p>
           </div>
           <div class="header-actions">
-            <button @click="openAddModal"
-              class="add-card-btn">
+            <button @click="openAddModal" class="add-card-btn">
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
               </svg>
@@ -48,8 +47,27 @@
       <!-- ═══ CONTENT ════════════════════════════════════════════════════════ -->
       <div class="page-content">
 
+        <!-- Loading State -->
+        <div v-if="loading" class="text-center py-24">
+          <div class="inline-flex p-5 rounded bg-[#0d2b0f]/06 mb-4 animate-pulse">
+            <LayoutGrid class="w-8 h-8 text-[#0d2b0f]/30" />
+          </div>
+          <p class="text-[14px] text-[#bbb] font-light">Loading records...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="loadError" class="text-center py-24">
+          <div class="inline-flex p-5 rounded bg-red-50 mb-4">
+            <XCircle class="w-8 h-8 text-red-300" />
+          </div>
+          <p class="text-[14px] text-red-400 font-light mb-3">{{ loadError }}</p>
+          <button @click="loadRecords" class="btn-save text-[11px]">
+            <RefreshCw class="w-3.5 h-3.5" /> Retry
+          </button>
+        </div>
+
         <!-- Records Cards -->
-        <div class="grid grid-cols-1 gap-5">
+        <div v-else class="grid grid-cols-1 gap-5">
           <transition-group name="card-list">
             <div v-for="(record, index) in records" :key="record.id"
               class="manage-card bg-white border border-[#0d2b0f]/8 shadow-sm overflow-hidden"
@@ -59,7 +77,7 @@
               <div class="flex items-center justify-between px-6 py-4 border-b border-[#0d2b0f]/06 bg-[#f7f5f0]">
                 <div class="flex items-center gap-3">
                   <div class="p-2 rounded bg-[#0d2b0f]/8 border border-[#0d2b0f]/10">
-                    <component :is="record.icon" class="w-4 h-4 text-[#0d2b0f]" />
+                    <component :is="resolveIcon(record.iconKey)" class="w-4 h-4 text-[#0d2b0f]" />
                   </div>
                   <div>
                     <h3 class="text-[12px] font-extrabold tracking-widest uppercase text-[#0d2b0f]">{{ record.title }}</h3>
@@ -85,8 +103,10 @@
                     {{ record.editing ? 'Editing...' : 'Edit' }}
                   </button>
                   <button @click="confirmDelete(record)"
-                    class="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold tracking-wide transition-all duration-200 border rounded bg-white text-[#c62828] border-[#ffcdd2] hover:bg-[#ffebee] hover:border-[#ef9a9a]">
-                    <Trash2 class="w-3.5 h-3.5" />Delete
+                    :disabled="record.deleting"
+                    class="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold tracking-wide transition-all duration-200 border rounded bg-white text-[#c62828] border-[#ffcdd2] hover:bg-[#ffebee] hover:border-[#ef9a9a] disabled:opacity-50">
+                    <Loader2 v-if="record.deleting" class="w-3.5 h-3.5 animate-spin" />
+                    <Trash2 v-else class="w-3.5 h-3.5" />Delete
                   </button>
                 </div>
               </div>
@@ -95,13 +115,13 @@
               <div v-if="!record.editing" class="px-6 py-5 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <p class="field-label">Button Label</p>
-                  <p class="text-[13px] text-[#333] font-medium">{{ record.btnLabel }}</p>
+                  <p class="text-[13px] text-[#333] font-medium">{{ record.button_label }}</p>
                 </div>
                 <div class="md:col-span-2">
                   <p class="field-label">{{ record.linkType === 'route' ? 'Router Route Name' : 'Link / URL' }}</p>
                   <p class="text-[13px] text-[#333] font-medium break-all">
-                    <span v-if="record.linkType === 'route'" class="text-[#0d2b0f]">→ route: {{ record.link }}</span>
-                    <a v-else :href="record.link" target="_blank" class="text-[#1b5e20] underline underline-offset-2 hover:text-[#2e7d32]">{{ record.link || '(no link set)' }}</a>
+                    <span v-if="record.linkType === 'route'" class="text-[#0d2b0f]">→ route: {{ record.url }}</span>
+                    <a v-else :href="record.url ?? '#'" target="_blank" class="text-[#1b5e20] underline underline-offset-2 hover:text-[#2e7d32]">{{ record.url || '(no link set)' }}</a>
                   </p>
                 </div>
                 <div class="md:col-span-3">
@@ -118,7 +138,7 @@
                 </div>
                 <div>
                   <label class="field-label mb-1.5 block">Button Label</label>
-                  <input v-model="record.draft.btnLabel" type="text" class="field" placeholder="e.g. Download CD-ROM" />
+                  <input v-model="record.draft.button_label" type="text" class="field" placeholder="e.g. Download CD-ROM" />
                 </div>
 
                 <!-- Icon Picker -->
@@ -165,7 +185,7 @@
                 </div>
                 <div>
                   <label class="field-label mb-1.5 block">{{ record.draft.linkType === 'route' ? 'Route Name' : 'URL / Google Drive Link' }}</label>
-                  <input v-model="record.draft.link" type="text" class="field"
+                  <input v-model="record.draft.url" type="text" class="field"
                     :placeholder="record.draft.linkType === 'route' ? 'e.g. eresources' : 'https://drive.google.com/...'" />
                 </div>
                 <div class="md:col-span-2">
@@ -174,21 +194,23 @@
                 </div>
                 <div class="md:col-span-2 flex items-center justify-end gap-3 pt-1">
                   <button @click="cancelEdit(record)" class="btn-cancel">Cancel</button>
-                  <button @click="saveRecord(record)" class="btn-save">
-                    <Save class="w-3.5 h-3.5" />Save Changes
+                  <button @click="saveRecord(record)" :disabled="record.saving" class="btn-save">
+                    <Loader2 v-if="record.saving" class="w-3.5 h-3.5 animate-spin" />
+                    <Save v-else class="w-3.5 h-3.5" />
+                    {{ record.saving ? 'Saving...' : 'Save Changes' }}
                   </button>
                 </div>
               </div>
             </div>
           </transition-group>
-        </div>
 
-        <!-- Empty State -->
-        <div v-if="records.length === 0" class="text-center py-24">
-          <div class="inline-flex p-5 rounded bg-[#0d2b0f]/06 mb-4">
-            <LayoutGrid class="w-8 h-8 text-[#0d2b0f]/30" />
+          <!-- Empty State -->
+          <div v-if="records.length === 0 && !loading" class="text-center py-24">
+            <div class="inline-flex p-5 rounded bg-[#0d2b0f]/06 mb-4">
+              <LayoutGrid class="w-8 h-8 text-[#0d2b0f]/30" />
+            </div>
+            <p class="text-[14px] text-[#bbb] font-light">No record cards yet. Add one above!</p>
           </div>
-          <p class="text-[14px] text-[#bbb] font-light">No record cards yet. Add one above!</p>
         </div>
       </div>
     </main>
@@ -224,7 +246,7 @@
           </div>
           <div>
             <label class="field-label mb-1.5 block">Button Label <span class="text-red-400">*</span></label>
-            <input v-model="addModal.form.btnLabel" type="text" class="field" placeholder="e.g. Go to Portal" />
+            <input v-model="addModal.form.button_label" type="text" class="field" placeholder="e.g. Go to Portal" />
           </div>
 
           <div class="sm:col-span-2">
@@ -270,7 +292,7 @@
           </div>
           <div>
             <label class="field-label mb-1.5 block">{{ addModal.form.linkType === 'route' ? 'Route Name' : 'URL / Google Drive Link' }}</label>
-            <input v-model="addModal.form.link" type="text" class="field"
+            <input v-model="addModal.form.url" type="text" class="field"
               :placeholder="addModal.form.linkType === 'route' ? 'e.g. eresources' : 'https://drive.google.com/...'" />
           </div>
           <div class="sm:col-span-2">
@@ -282,8 +304,10 @@
 
         <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#0d2b0f]/08 bg-white">
           <button @click="closeAddModal" class="btn-cancel">Cancel</button>
-          <button @click="addRecord" class="btn-save">
-            <Plus class="w-3.5 h-3.5" />Add Card
+          <button @click="addRecord" :disabled="addModal.saving" class="btn-save">
+            <Loader2 v-if="addModal.saving" class="w-3.5 h-3.5 animate-spin" />
+            <Plus v-else class="w-3.5 h-3.5" />
+            {{ addModal.saving ? 'Adding...' : 'Add Card' }}
           </button>
         </div>
       </div>
@@ -391,8 +415,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL as string,
+  import.meta.env.VITE_SUPABASE_ANON_KEY as string,
+)
+
+// ─── Supabase helpers (inlined) ───────────────────────────────────────────────
+interface PublicRecordRow {
+  id: string
+  title: string | null
+  button_label: string | null
+  description: string | null
+  url: string | null
+  is_visible: boolean
+  created_at: string | null
+}
+
+async function apiFetchRecords(): Promise<PublicRecordRow[]> {
+  const { data, error } = await supabase
+    .from('public_records')
+    .select('*')
+    .order('created_at', { ascending: true })
+  if (error) throw new Error(error.message)
+  return (data ?? []) as PublicRecordRow[]
+}
+
+async function apiCreateRecord(payload: {
+  title: string; button_label: string; description: string; url: string
+}): Promise<PublicRecordRow> {
+  const { data, error } = await supabase
+    .from('public_records')
+    .insert([payload])
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
+  return data as PublicRecordRow
+}
+
+async function apiUpdateRecord(id: string, payload: {
+  title: string; button_label: string; description: string; url: string
+}): Promise<PublicRecordRow> {
+  const { data, error } = await supabase
+    .from('public_records')
+    .update(payload)
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw new Error(error.message)
+  return data as PublicRecordRow
+}
+
+async function apiDeleteRecord(id: string): Promise<void> {
+  const { error } = await supabase.from('public_records').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+}
 import {
   Upload, Disc3, BookOpen, Database, FileText, Globe, Link, Star,
   Archive, Award, Bell, BarChart2, BookMarked, BookCopy,
@@ -408,20 +488,36 @@ import {
   Ticket, ToggleLeft, Wrench, TrendingUp, Tv, User, Users, Video,
   Wifi, Zap, BookOpenCheck, FlaskConical, Microscope, Atom, Dna,
   Pencil, Eye, EyeOff, CheckCircle, XCircle, Trash2, Plus, X,
-  LayoutGrid, Check,
+  LayoutGrid, Check, Loader2,
 } from 'lucide-vue-next'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface IconOption { key: string; label: string; component: unknown; category: string }
+
 interface DraftForm {
-  title?: string; description?: string; btnLabel?: string
-  link?: string; linkType?: 'url' | 'route'; iconKey: string
+  title: string
+  description: string
+  button_label: string
+  url: string
+  linkType: 'url' | 'route'
+  iconKey: string
 }
+
 interface RecordItem {
-  id: string; title: string; description: string; btnLabel: string
-  link: string; linkType: 'url' | 'route'; iconKey: string; icon: unknown
-  visible: boolean; editing: boolean
-  draft: { title: string; description: string; btnLabel: string; link: string; linkType: 'url' | 'route'; iconKey: string }
+  id: string
+  title: string | null
+  description: string | null
+  button_label: string | null
+  url: string | null
+  created_at: string | null
+  // UI-only
+  iconKey: string
+  linkType: 'url' | 'route'
+  visible: boolean
+  editing: boolean
+  saving: boolean
+  deleting: boolean
+  draft: DraftForm
 }
 
 // ─── Icons Registry ───────────────────────────────────────────────────────────
@@ -525,7 +621,7 @@ const ALL_ICONS: IconOption[] = [
 ]
 
 const quickIcons = ALL_ICONS.filter(o =>
-  ['Upload','Disc3','BookOpen','Database','FileText','Globe','Link','Star'].includes(o.key)
+  ['Upload', 'Disc3', 'BookOpen', 'Database', 'FileText', 'Globe', 'Link', 'Star'].includes(o.key)
 )
 
 const iconCategories = [
@@ -547,61 +643,176 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
   setTimeout(() => (toast.show = false), 3000)
 }
 
-// ─── Records ──────────────────────────────────────────────────────────────────
-const records = ref<RecordItem[]>([
-  { id: 'data-upload', title: 'Data Upload', description: 'Access institutional records, research documents, and archived files shared by the library — organized for easy retrieval.', btnLabel: 'Go to Data Upload', link: 'https://drive.google.com/drive/folders/10VykxJ5P2C_OwVsF0Ym_ef4TUuFdq9I6', linkType: 'url', iconKey: 'Upload', icon: Upload, visible: true, editing: false, draft: { title: '', description: '', btnLabel: '', link: '', linkType: 'url', iconKey: 'Upload' } },
-  { id: 'cdrom', title: 'CD-ROM', description: 'Download digitized CD-ROM contents — archived theses, references, and multimedia resources from physical formats, now online.', btnLabel: 'Download CD-ROM', link: '', linkType: 'url', iconKey: 'Disc3', icon: Disc3, visible: true, editing: false, draft: { title: '', description: '', btnLabel: '', link: '', linkType: 'url', iconKey: 'Disc3' } },
-  { id: 'ebooks', title: 'E-books GDrive', description: 'Explore our collection of digital textbooks, references, and academic materials via Google Drive — available anytime, anywhere.', btnLabel: 'Go to E-books', link: 'https://drive.google.com/drive/folders/1-2P2uJiziZHND_8gH5-d20uDmAiPs5gt', linkType: 'url', iconKey: 'BookOpen', icon: BookOpen, visible: true, editing: false, draft: { title: '', description: '', btnLabel: '', link: '', linkType: 'url', iconKey: 'BookOpen' } },
-  { id: 'eresources', title: 'E-Resources', description: 'Access subscribed databases, journals, and research portals provided by the library to support learning, teaching, and inquiry.', btnLabel: 'Go to E-Resources', link: 'eresources', linkType: 'route', iconKey: 'Database', icon: Database, visible: true, editing: false, draft: { title: '', description: '', btnLabel: '', link: '', linkType: 'route', iconKey: 'Database' } },
-])
+// ─── Records State ────────────────────────────────────────────────────────────
+const records = ref<RecordItem[]>([])
+const loading = ref(false)
+const loadError = ref<string | null>(null)
 
+function makeDraft(r: RecordItem): DraftForm {
+  return {
+    title: r.title ?? '',
+    description: r.description ?? '',
+    button_label: r.button_label ?? '',
+    url: r.url ?? '',
+    linkType: r.linkType,
+    iconKey: r.iconKey,
+  }
+}
+
+async function loadRecords() {
+  loading.value = true
+  loadError.value = null
+  try {
+    const rows = await apiFetchRecords()
+    records.value = rows.map((row: PublicRecordRow) => ({
+      ...row,
+      iconKey: 'Database',
+      linkType: 'url' as const,
+      visible: row.is_visible,
+      editing: false,
+      saving: false,
+      deleting: false,
+      draft: {
+        title: row.title ?? '',
+        description: row.description ?? '',
+        button_label: row.button_label ?? '',
+        url: row.url ?? '',
+        linkType: 'url' as const,
+        iconKey: 'Database',
+      },
+    }))
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Failed to load records.'
+    loadError.value = msg
+    showToast(msg, 'error')
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => loadRecords())
+
+// ─── Edit ─────────────────────────────────────────────────────────────────────
 function toggleEdit(record: RecordItem) {
   if (record.editing) { cancelEdit(record); return }
-  record.draft = { title: record.title, description: record.description, btnLabel: record.btnLabel, link: record.link, linkType: record.linkType, iconKey: record.iconKey }
+  record.draft = makeDraft(record)
   record.editing = true
 }
 function cancelEdit(record: RecordItem) { record.editing = false }
-function saveRecord(record: RecordItem) {
+
+async function saveRecord(record: RecordItem) {
   if (!record.draft.title.trim()) { showToast('Title cannot be empty.', 'error'); return }
-  if (!record.draft.btnLabel.trim()) { showToast('Button label cannot be empty.', 'error'); return }
-  Object.assign(record, { title: record.draft.title, description: record.draft.description, btnLabel: record.draft.btnLabel, link: record.draft.link, linkType: record.draft.linkType, iconKey: record.draft.iconKey, icon: resolveIcon(record.draft.iconKey), editing: false })
-  showToast(`"${record.title}" updated successfully!`)
-}
-function toggleVisibility(record: RecordItem) {
-  record.visible = !record.visible
-  showToast(`"${record.title}" is now ${record.visible ? 'visible' : 'hidden'} on the Records page.`)
+  if (!record.draft.button_label.trim()) { showToast('Button label cannot be empty.', 'error'); return }
+
+  record.saving = true
+  try {
+    const updated = await apiUpdateRecord(record.id, {
+      title: record.draft.title.trim(),
+      button_label: record.draft.button_label.trim(),
+      description: record.draft.description.trim(),
+      url: record.draft.url.trim(),
+    })
+    // Merge updated fields back, preserve UI-only state
+    record.title = updated.title
+    record.button_label = updated.button_label
+    record.description = updated.description
+    record.url = updated.url
+    record.iconKey = record.draft.iconKey
+    record.linkType = record.draft.linkType
+    record.editing = false
+    showToast(`"${record.title}" updated successfully!`)
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Update failed.'
+    showToast(msg, 'error')
+  } finally {
+    record.saving = false
+  }
 }
 
+// ─── Visibility ───────────────────────────────────────────────────────────────
+async function toggleVisibility(record: RecordItem) {
+  const newVal = !record.visible
+  try {
+    const { error } = await supabase
+      .from('public_records')
+      .update({ is_visible: newVal })
+      .eq('id', record.id)
+    if (error) throw new Error(error.message)
+    record.visible = newVal
+    showToast(`"${record.title}" is now ${newVal ? 'visible' : 'hidden'} on the Records page.`)
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Failed to update visibility.'
+    showToast(msg, 'error')
+  }
+}
+
+// ─── Delete ───────────────────────────────────────────────────────────────────
 const deleteTarget = ref<RecordItem | null>(null)
 function confirmDelete(record: RecordItem) { deleteTarget.value = record }
-function deleteRecord() {
+
+async function deleteRecord() {
   if (!deleteTarget.value) return
-  const name = deleteTarget.value.title
-  records.value = records.value.filter(r => r.id !== deleteTarget.value!.id)
+  const target = deleteTarget.value
+  const name = target.title ?? 'Record'
   deleteTarget.value = null
-  showToast(`"${name}" has been deleted.`)
+  target.deleting = true
+  try {
+    await apiDeleteRecord(target.id)
+    records.value = records.value.filter(r => r.id !== target.id)
+    showToast(`"${name}" has been deleted.`)
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Delete failed.'
+    showToast(msg, 'error')
+    target.deleting = false
+  }
 }
 
-const emptyForm = (): DraftForm => ({ title: '', description: '', btnLabel: '', link: '', linkType: 'url', iconKey: 'Database' })
-const addModal = reactive({ open: false, form: emptyForm() })
+// ─── Add Modal ────────────────────────────────────────────────────────────────
+const emptyForm = (): DraftForm => ({
+  title: '', description: '', button_label: '', url: '', linkType: 'url', iconKey: 'Database',
+})
+const addModal = reactive({ open: false, saving: false, form: emptyForm() })
+
 function openAddModal() { addModal.form = emptyForm(); addModal.open = true }
 function closeAddModal() { addModal.open = false }
-function addRecord() {
-  if (!addModal.form.title?.trim()) { showToast('Title cannot be empty.', 'error'); return }
-  if (!addModal.form.btnLabel?.trim()) { showToast('Button label cannot be empty.', 'error'); return }
-  const newRecord: RecordItem = {
-    id: `record-${Date.now()}`, title: addModal.form.title!.trim(), description: addModal.form.description?.trim() ?? '',
-    btnLabel: addModal.form.btnLabel!.trim(), link: addModal.form.link?.trim() ?? '',
-    linkType: addModal.form.linkType!, iconKey: addModal.form.iconKey, icon: resolveIcon(addModal.form.iconKey),
-    visible: true, editing: false, draft: { title: '', description: '', btnLabel: '', link: '', linkType: 'url', iconKey: 'Database' },
+
+async function addRecord() {
+  if (!addModal.form.title.trim()) { showToast('Title cannot be empty.', 'error'); return }
+  if (!addModal.form.button_label.trim()) { showToast('Button label cannot be empty.', 'error'); return }
+
+  addModal.saving = true
+  try {
+    const created = await apiCreateRecord({
+      title: addModal.form.title.trim(),
+      button_label: addModal.form.button_label.trim(),
+      description: addModal.form.description.trim(),
+      url: addModal.form.url.trim(),
+    })
+    const newRecord: RecordItem = {
+      ...created,
+      iconKey: addModal.form.iconKey,
+      linkType: addModal.form.linkType,
+      visible: true,
+      editing: false,
+      saving: false,
+      deleting: false,
+      draft: emptyForm(),
+    }
+    records.value.push(newRecord)
+    closeAddModal()
+    showToast(`"${newRecord.title}" card added successfully!`)
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Failed to add record.'
+    showToast(msg, 'error')
+  } finally {
+    addModal.saving = false
   }
-  records.value.push(newRecord)
-  closeAddModal()
-  showToast(`"${newRecord.title}" card added successfully!`)
 }
 
+// ─── Icon Browser ─────────────────────────────────────────────────────────────
 let iconBrowserTarget: DraftForm | null = null
 const iconBrowser = reactive({ open: false, search: '', category: 'all', selected: '' })
+
 const filteredBrowseIcons = computed(() => {
   const q = iconBrowser.search.toLowerCase().trim()
   return ALL_ICONS.filter(o => {
@@ -610,7 +821,14 @@ const filteredBrowseIcons = computed(() => {
     return catMatch && searchMatch
   })
 })
-function openIconBrowser(target: DraftForm) { iconBrowserTarget = target; iconBrowser.search = ''; iconBrowser.category = 'all'; iconBrowser.selected = target.iconKey; iconBrowser.open = true }
+
+function openIconBrowser(target: DraftForm) {
+  iconBrowserTarget = target
+  iconBrowser.search = ''
+  iconBrowser.category = 'all'
+  iconBrowser.selected = target.iconKey
+  iconBrowser.open = true
+}
 function closeIconBrowser() { iconBrowser.open = false; iconBrowserTarget = null }
 function selectIconFromBrowser(key: string) { iconBrowser.selected = key }
 function confirmIconSelection() {
@@ -632,196 +850,113 @@ function confirmIconSelection() {
   background: #ffffff;
   flex-shrink: 0;
 }
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
-}
+.breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
 .breadcrumb-back {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.4);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.15s;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(13, 43, 15, 0.4);
+  background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s;
 }
 .breadcrumb-back:hover { color: rgba(13, 43, 15, 0.7); }
 .breadcrumb-chevron { width: 12px; height: 12px; color: rgba(13, 43, 15, 0.3); }
 .breadcrumb-current {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.4);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(13, 43, 15, 0.4);
 }
 .header-title-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
 }
 .page-title {
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  font-weight: 900;
-  color: #0d2b0f;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
+  font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900;
+  color: #0d2b0f; line-height: 1.1; letter-spacing: -0.01em;
 }
 .title-accent { color: #f9a825; }
 .title-underline {
-  width: 200px;
-  height: 4px;
+  width: 200px; height: 4px;
   background: linear-gradient(to right, #1b5e20, #f9a825);
-  border-radius: 2px;
-  margin: 4px 0 10px;
+  border-radius: 2px; margin: 4px 0 10px;
 }
 .page-subtitle {
-  font-size: 0.82rem;
-  color: rgba(13, 43, 15, 0.5);
-  font-weight: 400;
-  margin-top: 4px;
-  max-width: 520px;
+  font-size: 0.82rem; color: rgba(13, 43, 15, 0.5);
+  font-weight: 400; margin-top: 4px; max-width: 520px;
 }
 .header-actions { display: flex; align-items: center; padding-bottom: 4px; }
 
 /* ── Buttons ── */
 .add-card-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #fff;
-  background: #0d2b0f;
-  padding: 8px 18px;
-  border-radius: 3px;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  position: relative;
-  overflow: hidden;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #fff; background: #0d2b0f;
+  padding: 8px 18px; border-radius: 3px; border: none; cursor: pointer;
+  white-space: nowrap; position: relative; overflow: hidden;
   transition: background 0.2s, transform 0.15s;
 }
 .add-card-btn:hover { background: #1b5e20; transform: translateY(-1px); }
 .add-card-btn::after {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
-  transform: translateX(-100%);
-  transition: transform 0.4s ease;
+  transform: translateX(-100%); transition: transform 0.4s ease;
 }
 .add-card-btn:hover::after { transform: translateX(100%); }
 
 .btn-save {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #fff;
-  background: #0d2b0f;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 3px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: background 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #fff; background: #0d2b0f;
+  border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer;
+  position: relative; overflow: hidden; transition: background 0.2s;
 }
 .btn-save:hover:not(:disabled) { background: #1b5e20; }
 .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-save::after {
-  content: '';
-  position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
-  transform: translateX(-100%);
-  transition: transform 0.4s ease;
+  transform: translateX(-100%); transition: transform 0.4s ease;
 }
 .btn-save:hover::after { transform: translateX(100%); }
 
 .btn-cancel {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.55);
-  background: transparent;
-  border: 1px solid rgba(13, 43, 15, 0.18);
-  padding: 8px 16px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.2s;
+  display: inline-flex; align-items: center;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; color: rgba(13, 43, 15, 0.55);
+  background: transparent; border: 1px solid rgba(13, 43, 15, 0.18);
+  padding: 8px 16px; border-radius: 3px; cursor: pointer; transition: all 0.2s;
 }
 .btn-cancel:hover { border-color: rgba(13, 43, 15, 0.4); color: #0d2b0f; }
 
 .btn-delete {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #fff;
-  background: #b71c1c;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 3px;
-  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.18em;
+  text-transform: uppercase; color: #fff; background: #b71c1c;
+  border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer;
   transition: background 0.2s;
 }
 .btn-delete:hover { background: #c62828; }
 
 /* ── Field label ── */
 .field-label {
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  font-size: 0.6rem; font-weight: 800;
+  letter-spacing: 0.22em; text-transform: uppercase;
   color: rgba(13, 43, 15, 0.5);
 }
 
 /* ── Form field ── */
 .field {
-  width: 100%;
-  padding: 9px 12px;
-  border-radius: 3px;
-  border: 1px solid rgba(13, 43, 15, 0.18);
-  background: #ffffff;
-  font-size: 13px;
-  color: #333;
-  font-family: 'Poppins', sans-serif;
-  transition: all 0.2s;
+  width: 100%; padding: 9px 12px; border-radius: 3px;
+  border: 1px solid rgba(13, 43, 15, 0.18); background: #ffffff;
+  font-size: 13px; color: #333; font-family: 'Poppins', sans-serif; transition: all 0.2s;
 }
 .field:focus {
-  outline: none;
-  border-color: rgba(13, 43, 15, 0.4);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(13, 43, 15, 0.07);
+  outline: none; border-color: rgba(13, 43, 15, 0.4);
+  background: #fff; box-shadow: 0 0 0 3px rgba(13, 43, 15, 0.07);
 }
 
 /* ── Content area ── */
-.page-content {
-  padding: 36px 40px 80px;
-  max-width: 1100px;
-}
+.page-content { padding: 36px 40px 80px; max-width: 1100px; }
 
 /* ── Cards ── */
 .manage-card {
-  border-radius: 4px;
-  opacity: 0;
+  border-radius: 4px; opacity: 0;
   animation: fadeUp 0.45s ease forwards;
 }
 @keyframes fadeUp {
@@ -832,36 +967,20 @@ function confirmIconSelection() {
 /* ── Modal ── */
 .modal-box { border-radius: 4px; }
 .modal-header {
-  display: flex;
-  align-items: center;
+  display: flex; align-items: center;
   padding: 18px 20px 18px 24px;
   border-bottom: 1px solid rgba(13, 43, 15, 0.08);
-  position: relative;
-  gap: 12px;
+  position: relative; gap: 12px;
 }
 .modal-header-accent {
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 4px;
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
   background: linear-gradient(to bottom, #f9a825, #1b5e20);
 }
-.modal-header-accent-danger {
-  background: linear-gradient(to bottom, #c62828, #b71c1c);
-}
-.modal-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #0d2b0f;
-  letter-spacing: 0.04em;
-}
+.modal-header-accent-danger { background: linear-gradient(to bottom, #c62828, #b71c1c); }
+.modal-title { font-size: 0.95rem; font-weight: 700; color: #0d2b0f; letter-spacing: 0.04em; }
 .modal-close {
-  color: rgba(13, 43, 15, 0.4);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 3px;
-  transition: color 0.2s, background 0.2s;
+  color: rgba(13, 43, 15, 0.4); background: none; border: none;
+  cursor: pointer; padding: 4px; border-radius: 3px; transition: color 0.2s, background 0.2s;
 }
 .modal-close:hover { color: #0d2b0f; background: rgba(13, 43, 15, 0.07); }
 
@@ -874,9 +993,7 @@ function confirmIconSelection() {
 .modal-enter-active { transition: opacity 0.25s ease; }
 .modal-leave-active { transition: opacity 0.2s ease; }
 .modal-enter-from, .modal-leave-to { opacity: 0; }
-.modal-box {
-  animation: modalPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
+.modal-box { animation: modalPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
 @keyframes modalPop {
   from { transform: scale(0.95) translateY(8px); opacity: 0; }
   to   { transform: scale(1) translateY(0); opacity: 1; }
