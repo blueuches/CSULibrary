@@ -1,6 +1,23 @@
 import { supabase } from "@/lib/supabase"
 
 /**
+ * EVENT TYPE
+ */
+export interface EventData {
+  type?: string
+  title?: string
+  description?: string
+  year?: number
+  start_date?: string
+  end_date?: string
+  location?: string
+  is_active?: boolean
+  created_by?: string
+  images?: string | null
+}
+
+
+/**
  * Get all events
  */
 export const getEvents = async () => {
@@ -52,16 +69,7 @@ export const getEventById = async (eventId: string) => {
 /**
  * Create event
  */
-export const createEvent = async (eventData: {
-  type?: string
-  title?: string
-  description?: string
-  year?: number
-  start_date?: string
-  end_date?: string
-  location?: string
-  created_by?: string
-}) => {
+export const createEvent = async (eventData: EventData) => {
   const { data, error } = await supabase
     .from("events")
     .insert([eventData])
@@ -80,7 +88,7 @@ export const createEvent = async (eventData: {
 /**
  * Update event
  */
-export const updateEvent = async (eventId: string, updates: any) => {
+export const updateEvent = async (eventId: string, updates: Partial<EventData>) => {
   const { data, error } = await supabase
     .from("events")
     .update(updates)
