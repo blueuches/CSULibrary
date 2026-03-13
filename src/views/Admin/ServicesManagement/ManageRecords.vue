@@ -846,7 +846,7 @@ function confirmIconSelection() {
 /* ── Page Header ── */
 .page-header {
   padding: 32px 40px 28px;
-  border-bottom: 1px solid rgba(13, 43, 15, 0.08);
+  border-bottom: 1px solid rgba(10, 65, 14, 0.08);
   background: #ffffff;
   flex-shrink: 0;
 }
@@ -856,7 +856,7 @@ function confirmIconSelection() {
   text-transform: uppercase; color: rgba(13, 43, 15, 0.4);
   background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s;
 }
-.breadcrumb-back:hover { color: rgba(13, 43, 15, 0.7); }
+.breadcrumb-back:hover { color: rgba(13, 43, 15, 0.9); }
 .breadcrumb-chevron { width: 12px; height: 12px; color: rgba(13, 43, 15, 0.3); }
 .breadcrumb-current {
   font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
