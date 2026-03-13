@@ -1191,7 +1191,7 @@ function setCover(i: number) {
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.02em;
-  color: var(--ink);
+  color: #0d2b0f;
   margin: 0 0 8px;
   display: inline-block;
 }
