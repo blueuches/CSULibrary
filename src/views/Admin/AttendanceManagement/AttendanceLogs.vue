@@ -1,266 +1,517 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref, computed, onMounted, watch } from "vue"
+import Sidebar from "@/components/Sidebar.vue"
+import { getAttendanceLogs } from "@/services/attendanceService"
 
-type AttendanceStatus = 'Checked Out' | '---'
+type Student = {
+  id_number?: string
+  first_name?: string
+  last_name?: string
+  program?: string
+  college?: string
+  year_level?: string | number
+}
 
 type AttendanceLog = {
   id: string
-  name: string
-  department: string
-  date: string
-  timeIn: string
-  timeOut: string
-  status: AttendanceStatus
-  remarks: string
+  student_id: string
+  time_in: string | null
+  time_out: string | null
+  attendance_type: string | null
+  event_id: string | null
+  duration_minutes: number | null
+  students?: Student | Student[] | null
 }
 
-const logs = ref<AttendanceLog[]>([
-  { id: '221-1000', name: 'Dyanna Joy Castro', department: 'BSIT', date: '2024-08-23', timeIn: '08:07', timeOut: '17:12', status: 'Checked Out', remarks: 'WFH' },
-  { id: '221-0900', name: 'Reonest Arjayle Espina', department: 'BSIT', date: '2024-08-19', timeIn: '08:32', timeOut: '17:05', status: 'Checked Out', remarks: 'Traffic' },
-  { id: '221-0800', name: 'Christine Mae Lagura', department: 'BSIT', date: '2024-09-04', timeIn: '08:03', timeOut: '17:21', status: 'Checked Out', remarks: '' },
-  { id: '221-0700', name: 'Peral Janette Cacayan', department: 'BSIT', date: '2024-09-11', timeIn: '08:10', timeOut: '', status: '---', remarks: 'No time out recorded' },
-  { id: '221-0600', name: 'Ramon Lim', department: 'BSCS', date: '2025-08-20', timeIn: '08:15', timeOut: '16:58', status: 'Checked Out', remarks: '' },
-  { id: '221-0500', name: 'Juan Luna', department: 'BSCS', date: '2025-01-13', timeIn: '08:20', timeOut: '10:30', status: 'Checked Out', remarks: 'Vacation leave' },
-  { id: '221-0400', name: 'Kenji San', department: 'BSCS', date: '2023-12-06', timeIn: '08:30', timeOut: '17:11', status: 'Checked Out', remarks: '' },
-  { id: '221-0300', name: 'Lia Smith', department: 'BSCS', date: '2023-08-29', timeIn: '08:40', timeOut: '17:02', status: 'Checked Out', remarks: '' },
-  { id: '221-0200', name: 'Noel Brown', department: 'BSIT', date: '2023-10-14', timeIn: '08:45', timeOut: '17:00', status: 'Checked Out', remarks: '' },
-  { id: '221-0100', name: 'Paula Tan', department: 'BSIT', date: '2023-08-01', timeIn: '08:50', timeOut: '', status: '---', remarks: 'Missing time out' },
+const logs = ref<AttendanceLog[]>([])
+const loading = ref(false)
+const errorMessage = ref("")
 
-  // duplicates for sample
-  { id: '221-1000', name: 'Dyanna Joy Castro', department: 'BSIT', date: '2024-08-23', timeIn: '08:07', timeOut: '17:12', status: 'Checked Out', remarks: 'WFH' },
-  { id: '221-0900', name: 'Reonest Arjayle Espina', department: 'BSIT', date: '2024-08-19', timeIn: '08:32', timeOut: '17:05', status: 'Checked Out', remarks: 'Traffic' },
-  { id: '221-0800', name: 'Christine Mae Lagura', department: 'BSIT', date: '2024-09-04', timeIn: '08:03', timeOut: '17:21', status: 'Checked Out', remarks: '' },
-  { id: '221-0700', name: 'Peral Janette Cacayan', department: 'BSIT', date: '2024-09-11', timeIn: '08:10', timeOut: '', status: '---', remarks: 'No time out recorded' },
-  { id: '221-0600', name: 'Ramon Lim', department: 'BSCS', date: '2025-08-20', timeIn: '08:15', timeOut: '16:58', status: 'Checked Out', remarks: '' },
-  { id: '221-0500', name: 'Juan Luna', department: 'BSCS', date: '2025-01-13', timeIn: '08:20', timeOut: '10:30', status: 'Checked Out', remarks: 'Vacation leave' },
-  { id: '221-0400', name: 'Kenji San', department: 'BSCS', date: '2023-12-06', timeIn: '08:30', timeOut: '17:11', status: 'Checked Out', remarks: '' },
-  { id: '221-0300', name: 'Lia Smith', department: 'BSCS', date: '2023-08-29', timeIn: '08:40', timeOut: '17:02', status: 'Checked Out', remarks: '' },
-  { id: '221-0200', name: 'Noel Brown', department: 'BSIT', date: '2023-10-14', timeIn: '08:45', timeOut: '17:00', status: 'Checked Out', remarks: '' },
-  { id: '221-0100', name: 'Paula Tan', department: 'BSIT', date: '2023-08-01', timeIn: '08:50', timeOut: '', status: '---', remarks: 'Missing time out' },
-])
+const search = ref("")
+const selectedProgram = ref("")
+const selectedCollege = ref("")
+const selectedYearLevel = ref("")
+const selectedAttendanceType = ref("")
+const selectedStatus = ref("")
+const selectedDate = ref("")
 
-function deriveStatus(timeOut: string): AttendanceStatus {
-  return timeOut && timeOut.trim() ? 'Checked Out' : '---'
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const fetchAttendanceLogs = async () => {
+  loading.value = true
+  errorMessage.value = ""
+
+  try {
+    const data = await getAttendanceLogs()
+    logs.value = data || []
+  } catch (error: any) {
+    console.error("Failed to fetch attendance logs:", error)
+    errorMessage.value = error?.message || "Failed to load attendance logs."
+  } finally {
+    loading.value = false
+  }
 }
 
-function surnameOf(fullName: string): string {
-  const cleaned = (fullName ?? '').trim()
-  if (!cleaned) return ''
-  const parts = cleaned.split(/\s+/)
-  return parts[parts.length - 1] ?? ''
-}
-
-const rows = computed(() =>
-  logs.value.map((r, idx) => ({
-    ...r,
-    status: deriveStatus(r.timeOut),
-    _rowKey: `${idx}-${r.id}-${r.date}-${r.timeIn}-${r.timeOut}`,
-  })),
-)
-
-const surnameLetter = ref<string>('')
-const alphabetOptions = computed(() => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''))
-
-const searchTerm = ref<string>('')
-
-const surnameFiltered = computed(() => {
-  const letter = surnameLetter.value.trim().toUpperCase()
-  if (!letter) return rows.value
-  return rows.value.filter((r) => surnameOf(r.name).toUpperCase().startsWith(letter))
+onMounted(() => {
+  fetchAttendanceLogs()
 })
 
-const filteredRows = computed(() => {
-  const q = searchTerm.value.trim().toLowerCase()
-  if (!q) return surnameFiltered.value
-  return surnameFiltered.value.filter((r) => {
-    return r.id.toLowerCase().includes(q) || r.name.toLowerCase().includes(q)
+const normalizeStudent = (student: Student | Student[] | null | undefined): Student => {
+  if (Array.isArray(student)) {
+    return student[0] || {}
+  }
+  return student || {}
+}
+
+const formatDateTime = (value: string | null) => {
+  if (!value) return "--"
+
+  return new Date(value).toLocaleString("en-PH", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+}
+
+const getStatus = (log: AttendanceLog) => {
+  return log.time_out ? "Checked Out" : "Checked In"
+}
+
+const uniquePrograms = computed(() => {
+  const values = logs.value
+    .map((log) => normalizeStudent(log.students).program)
+    .filter(Boolean) as string[]
+
+  return [...new Set(values)].sort((a, b) => a.localeCompare(b))
+})
+
+const uniqueColleges = computed(() => {
+  const values = logs.value
+    .map((log) => normalizeStudent(log.students).college)
+    .filter(Boolean) as string[]
+
+  return [...new Set(values)].sort((a, b) => a.localeCompare(b))
+})
+
+const uniqueYearLevels = computed(() => {
+  const values = logs.value
+    .map((log) => normalizeStudent(log.students).year_level)
+    .filter((v) => v !== null && v !== undefined && v !== "") as (string | number)[]
+
+  return [...new Set(values.map(String))].sort((a, b) => Number(a) - Number(b))
+})
+
+const uniqueAttendanceTypes = computed(() => {
+  const values = logs.value
+    .map((log) => log.attendance_type)
+    .filter(Boolean) as string[]
+
+  return [...new Set(values)].sort((a, b) => a.localeCompare(b))
+})
+
+const filteredLogs = computed(() => {
+  return logs.value.filter((log) => {
+    const student = normalizeStudent(log.students)
+
+    const fullName =
+      `${student.first_name || ""} ${student.last_name || ""}`.trim().toLowerCase()
+
+    const idNumber = String(student.id_number || "").toLowerCase()
+    const program = String(student.program || "")
+    const college = String(student.college || "")
+    const yearLevel = String(student.year_level || "")
+    const attendanceType = String(log.attendance_type || "")
+    const status = getStatus(log)
+    const searchValue = search.value.trim().toLowerCase()
+
+    const logDate = log.time_in
+      ? new Date(log.time_in).toISOString().slice(0, 10)
+      : ""
+
+    const matchesSearch =
+      !searchValue ||
+      fullName.includes(searchValue) ||
+      idNumber.includes(searchValue)
+
+    const matchesProgram =
+      !selectedProgram.value || program === selectedProgram.value
+
+    const matchesCollege =
+      !selectedCollege.value || college === selectedCollege.value
+
+    const matchesYearLevel =
+      !selectedYearLevel.value || yearLevel === selectedYearLevel.value
+
+    const matchesAttendanceType =
+      !selectedAttendanceType.value || attendanceType === selectedAttendanceType.value
+
+    const matchesStatus =
+      !selectedStatus.value || status === selectedStatus.value
+
+    const matchesDate =
+      !selectedDate.value || logDate === selectedDate.value
+
+    return (
+      matchesSearch &&
+      matchesProgram &&
+      matchesCollege &&
+      matchesYearLevel &&
+      matchesAttendanceType &&
+      matchesStatus &&
+      matchesDate
+    )
   })
 })
 
-const emptyMessage = computed(() => {
-  const hasLetter = !!surnameLetter.value
-  const hasSearch = !!searchTerm.value.trim()
-
-  if (!hasLetter && !hasSearch) return 'No attendance logs found.'
-  if (hasLetter && !hasSearch) return `No results for surnames starting with “${surnameLetter.value.toUpperCase()}”.`
-  if (!hasLetter && hasSearch) return `No results found for “${searchTerm.value.trim()}”.`
-  return `No results match the current filters.`
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil(filteredLogs.value.length / itemsPerPage))
 })
 
-const page = ref(1)
-const pageSize = ref(10)
-
-watch([surnameLetter, searchTerm], () => {
-  page.value = 1
+const paginatedLogs = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredLogs.value.slice(start, end)
 })
 
-const total = computed(() => filteredRows.value.length)
-const totalPages = computed(() => Math.max(1, Math.ceil(total.value / pageSize.value)))
-
-watch(totalPages, () => {
-  if (page.value > totalPages.value) page.value = totalPages.value
-})
-
-const paged = computed(() => {
-  const start = (page.value - 1) * pageSize.value
-  return filteredRows.value.slice(start, start + pageSize.value)
-})
-
-const showingText = computed(() => {
-  if (total.value === 0) return 'Showing 0 of 0'
-  const start = (page.value - 1) * pageSize.value + 1
-  const end = Math.min(page.value * pageSize.value, total.value)
-  return `Showing ${start}–${end} of ${total.value}`
-})
-
-function prevPage() {
-  page.value = Math.max(1, page.value - 1)
-}
-function nextPage() {
-  page.value = Math.min(totalPages.value, page.value + 1)
+const goToNextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
 }
 
-function exportCSV() {
-  const exportRows = filteredRows.value
-  const header = ['ID', 'Name', 'Department', 'Date', 'Time In', 'Time Out', 'Status', 'Remarks']
-  const csv = [
-    header.join(','),
-    ...exportRows.map((r) =>
-      [
-        csvSafe(r.id),
-        csvSafe(r.name),
-        csvSafe(r.department),
-        r.date,
-        r.timeIn,
-        r.timeOut || '',
-        r.status,
-        csvSafe(r.remarks),
-      ].join(','),
-    ),
-  ].join('\n')
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
 
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+watch(
+  [
+    search,
+    selectedProgram,
+    selectedCollege,
+    selectedYearLevel,
+    selectedAttendanceType,
+    selectedStatus,
+    selectedDate,
+  ],
+  () => {
+    currentPage.value = 1
+  }
+)
+
+watch(filteredLogs, () => {
+  if (currentPage.value > totalPages.value) {
+    currentPage.value = totalPages.value
+  }
+})
+
+const clearFilters = () => {
+  search.value = ""
+  selectedProgram.value = ""
+  selectedCollege.value = ""
+  selectedYearLevel.value = ""
+  selectedAttendanceType.value = ""
+  selectedStatus.value = ""
+  selectedDate.value = ""
+  currentPage.value = 1
+}
+
+const exportToCSV = () => {
+  const headers = [
+    "ID Number",
+    "Student Name",
+    "Program",
+    "College",
+    "Year Level",
+    "Attendance Type",
+    "Time In",
+    "Time Out",
+    "Duration (mins)",
+  ]
+
+  const rows = filteredLogs.value.map((log) => {
+    const student = normalizeStudent(log.students)
+
+    return [
+      student.id_number || "",
+      `${student.first_name || ""} ${student.last_name || ""}`.trim(),
+      student.program || "",
+      student.college || "",
+      student.year_level || "",
+      log.attendance_type || "",
+      log.time_in ? formatDateTime(log.time_in) : "",
+      log.time_out ? formatDateTime(log.time_out) : "",
+      log.duration_minutes ?? "",
+    ]
+  })
+
+  const csvContent = [headers, ...rows]
+    .map((row) =>
+      row
+        .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+        .join(",")
+    )
+    .join("\n")
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
   const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `attendance_logs_${new Date().toISOString().slice(0, 10)}.csv`
-  a.click()
+
+  const link = document.createElement("a")
+  link.href = url
+  link.setAttribute("download", `attendance-logs-${new Date().toISOString().slice(0, 10)}.csv`)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
   URL.revokeObjectURL(url)
-}
-
-function csvSafe(v: string) {
-  const s = (v ?? '').replace(/"/g, '""')
-  return `"${s}"`
-}
-
-function statusPillClass(s: AttendanceStatus) {
-  if (s === 'Checked Out') return 'pill pill-info'
-  return 'pill pill-danger'
 }
 </script>
 
 <template>
-  <div class="page">
-    <div class="wrap">
-      <div class="card">
-        <!-- Header -->
-        <div class="head">
-          <div class="headLeft">
-            <div class="filtersRow">
-              <div class="filterGroup">
-                <select v-model="surnameLetter" class="select">
-                  <option value="">All</option>
-                  <option v-for="ch in alphabetOptions" :key="ch" :value="ch">
-                    {{ ch }}
+  <div class="layoutShell">
+  <div class="sidebarWrap">
+    <Sidebar />
+  </div>
+
+  <main class="mainArea">
+      <div class="page">
+        <div class="wrap">
+          <div class="card">
+            <div class="headBlock">
+              <div class="header-breadcrumb !mb-2">
+                <span
+                  class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+                  @click="$router.push('/admin/attendance')"
+                >
+                  BACK
+                </span>
+
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+
+                <span>Attendance</span>
+              </div>
+
+              <div class="titleHero">
+                <h1 class="heroTitle">
+                  <span class="heroTitlePrimary">Attendance</span>
+                  <span class="heroTitleAccent">Logs</span>
+                </h1>
+
+                <div class="heroUnderline"></div>
+              </div>
+            </div>
+
+            <div class="toolbar">
+              <div class="toolbarLeft">
+                <div class="stackCol">
+                  <select v-model="selectedProgram" class="control selectControl">
+                    <option value="">All Programs</option>
+                    <option
+                      v-for="program in uniquePrograms"
+                      :key="program"
+                      :value="program"
+                    >
+                      {{ program }}
+                    </option>
+                  </select>
+
+                  <input
+                    v-model="selectedDate"
+                    type="date"
+                    class="control inputControl dateControl"
+                  />
+                </div>
+
+                <div class="stackCol">
+                  <select v-model="selectedCollege" class="control selectControl">
+                    <option value="">All Colleges</option>
+                    <option
+                      v-for="college in uniqueColleges"
+                      :key="college"
+                      :value="college"
+                    >
+                      {{ college }}
+                    </option>
+                  </select>
+
+                  <button @click="clearFilters" class="control actionBtn clearButton">
+                    Reset
+                  </button>
+                </div>
+
+                <select v-model="selectedYearLevel" class="control selectControl narrow">
+                  <option value="">All Year</option>
+                  <option
+                    v-for="year in uniqueYearLevels"
+                    :key="year"
+                    :value="year"
+                  >
+                    {{ year }}
+                  </option>
+                </select>
+
+                <select
+                  v-model="selectedAttendanceType"
+                  class="control selectControl medium"
+                >
+                  <option value="">All Types</option>
+                  <option
+                    v-for="type in uniqueAttendanceTypes"
+                    :key="type"
+                    :value="type"
+                  >
+                    {{ type }}
                   </option>
                 </select>
               </div>
 
-              <!-- Search bar -->
-              <div class="searchGroup">
-                <span class="filterLabel">Search</span>
-                <input
-                  v-model="searchTerm"
-                  class="searchInput"
-                  type="text"
-                  placeholder="Search ID or Name..."
-                  autocomplete="off"
-                />
-                <button v-if="searchTerm" class="clearBtn" type="button" @click="searchTerm = ''" title="Clear search">
-                  ✕
-                </button>
+              <div class="toolbarRight">
+  <button @click="exportToCSV" class="exportBtn">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M12 3v12" />
+    <path d="M7 10l5 5 5-5" />
+    <path d="M5 21h14" />
+  </svg>
+  <span>Export CSV</span>
+</button>
+
+  <input
+    v-model="search"
+    type="text"
+    placeholder="Search ID number or student name..."
+    class="control searchControl"
+  />
+</div>
+            </div>
+
+
+            <div v-if="errorMessage" class="errorBox">
+              {{ errorMessage }}
+            </div>
+
+            <div class="tableShell">
+              <div class="tableScroll">
+                <table class="tbl">
+                  <thead>
+                    <tr>
+                      <th>ID Number</th>
+                      <th>Student Name</th>
+                      <th>Program</th>
+                      <th>College</th>
+                      <th>Year Level</th>
+                      <th>Attendance Type</th>
+                      <th>Time In</th>
+                      <th>Time Out</th>
+                      <th>Duration</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr v-if="loading">
+                      <td colspan="9" class="empty">
+                        Loading attendance logs...
+                      </td>
+                    </tr>
+
+                    <tr v-else-if="filteredLogs.length === 0">
+                      <td colspan="9" class="empty">
+                        No attendance records found.
+                        <div class="emptyHint">
+                          Try changing your search or filter selection.
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr
+                      v-for="log in paginatedLogs"
+                      :key="log.id"
+                    >
+                      <td data-label="ID Number" class="strong">
+                        {{ normalizeStudent(log.students).id_number || "--" }}
+                      </td>
+                      <td data-label="Student Name" class="strong">
+                        {{
+                          `${normalizeStudent(log.students).first_name || ""} ${normalizeStudent(log.students).last_name || ""}`.trim() || "--"
+                        }}
+                      </td>
+                      <td data-label="Program">
+                        {{ normalizeStudent(log.students).program || "--" }}
+                      </td>
+                      <td data-label="College">
+                        {{ normalizeStudent(log.students).college || "--" }}
+                      </td>
+                      <td data-label="Year Level">
+                        {{ normalizeStudent(log.students).year_level || "--" }}
+                      </td>
+                      <td data-label="Attendance Type">
+                        {{ log.attendance_type || "--" }}
+                      </td>
+                      <td data-label="Time In">
+                        {{ formatDateTime(log.time_in) }}
+                      </td>
+                      <td data-label="Time Out">
+                        {{ formatDateTime(log.time_out) }}
+                      </td>
+                      <td data-label="Duration" class="muted">
+                        {{ log.duration_minutes ? `${log.duration_minutes} mins` : "--" }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
+
+              <div class="foot">
+  <div class="footText">
+    Tip: Use the filters and search to narrow down records faster.
+  </div>
+
+  <div class="pager" v-if="filteredLogs.length > itemsPerPage">
+
+    <button
+      v-if="currentPage < totalPages"
+      class="pagerBtn"
+      @click="goToNextPage"
+    >
+      Next
+    </button>
+  </div>
+</div>
             </div>
-          </div>
 
-          <!-- Export -->
-          <button class="btn btn-green" @click="exportCSV">
-            <svg class="ico" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 3v12m0 0l4-4m-4 4l-4-4"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            </svg>
-            Export CSV
-          </button>
-        </div>
+            <div class="summaryBar">
+  <span class="summaryText">
+    Showing
+    <span class="summaryStrong">
+      {{ filteredLogs.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }}
+    </span>
+    -
+    <span class="summaryStrong">
+      {{ Math.min(currentPage * itemsPerPage, filteredLogs.length) }}
+    </span>
+    of <span class="summaryStrong">{{ filteredLogs.length }}</span> records
+  </span>
+</div>
 
-        <!-- Table -->
-        <div class="tableShell">
-          <div class="tableScroll">
-            <table class="tbl">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Program</th>
-                  <th>Date</th>
-                  <th>Time In</th>
-                  <th>Time Out</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr v-for="row in paged" :key="row._rowKey">
-                  <td class="muted" data-label="ID">{{ row.id }}</td>
-                  <td class="strong" data-label="Name">{{ row.name }}</td>
-                  <td class="muted" data-label="Program">{{ row.department }}</td>
-                  <td class="muted" data-label="Date">{{ row.date }}</td>
-                  <td class="muted" data-label="Time In">{{ row.timeIn }}</td>
-                  <td class="muted" data-label="Time Out">{{ row.timeOut || '---' }}</td>
-                  <td data-label="Status">
-                    <span :class="statusPillClass(row.status)">{{ row.status }}</span>
-                  </td>
-                </tr>
-
-                <tr v-if="paged.length === 0">
-                  <td class="empty" colspan="7">
-                    {{ emptyMessage }}
-                    <div class="emptyHint">Try selecting a different letter, clear filters, or adjust your search.</div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Footer -->
-          <div class="foot">
-            <div class="footText">{{ showingText }}</div>
-
-            <div class="pager">
-              <button class="btn btn-ghost" @click="prevPage" :disabled="page === 1">Prev</button>
-              <button class="btn btn-ghost" @click="nextPage" :disabled="page === totalPages">Next</button>
-            </div>
           </div>
         </div>
-        <!-- /Table -->
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -279,10 +530,10 @@ function statusPillClass(s: AttendanceStatus) {
   --danger: #d32f2f;
   --info: #0288d1;
 
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   box-sizing: border-box;
-  padding: clamp(10px, 2vw, 28px);
+  padding: clamp(10px, 2vw, 8px);
   background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
 }
 
@@ -293,11 +544,10 @@ function statusPillClass(s: AttendanceStatus) {
 }
 
 .card {
-  height: 100%;
+  min-height: calc(100vh - 40px);
   width: 100%;
   display: flex;
   flex-direction: column;
-
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 22px;
@@ -305,126 +555,249 @@ function statusPillClass(s: AttendanceStatus) {
   overflow: hidden;
 }
 
-.head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 18px clamp(14px, 2vw, 24px);
+.headBlock {
+  padding: 20px clamp(14px, 2vw, 24px) 16px;
   border-bottom: 1px solid var(--border);
   background: linear-gradient(180deg, #ffffff 0%, var(--bg-strip) 100%);
 }
 
-.filtersRow {
+.crumbs {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(13, 43, 15, 0.42);
+  margin-bottom: 16px;
+}
+
+.crumbs span {
+  margin: 0 10px;
+  color: rgba(13, 43, 15, 0.28);
+}
+
+.titleHero {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.heroTitle {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: 10px;
+  line-height: 0.95;
+  font-size: clamp(3rem, 3vw, 1.7rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.heroTitlePrimary {
+  color: #003b0f;
+}
+
+.heroTitleAccent {
+  color: #efb72d;
+}
+
+.heroUnderline {
+  margin-top: 14px;
+  width: 150px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #214b1f 0%, #c49317 100%);
+}
+
+.titleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: clamp(22px, 2.3vw, 32px);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: rgba(13, 43, 15, 0.94);
+}
+
+.pageSub {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(13, 43, 15, 0.58);
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px clamp(14px, 2vw, 24px) 10px;
   flex-wrap: wrap;
 }
 
-.filterGroup,
-.searchGroup {
+.toolbarLeft {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbarRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 10px;
-  padding: 8px 10px;
-  border-radius: 14px;
+  margin-left: auto;
+  width: 340px;
+  max-width: 100%;
+}
+
+.exportBtn {
+  width: 170px;
+  height: 48px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 18px;
+  background: #0a3a10;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 160ms ease;
+  box-shadow: 0 8px 18px rgba(10, 58, 16, 0.18);
+}
+
+.exportBtn:hover {
+  background: #0d4715;
+  transform: translateY(-1px);
+}
+
+.exportBtn:active {
+  transform: translateY(0);
+}
+
+.exportBtn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, #165b1b 0%, #1d6a22 100%);
+}
+
+.stackCol {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.control {
+  height: 52px;
+  border-radius: 18px;
   border: 1px solid var(--border);
   background: #ffffff;
-}
-
-.filterLabel {
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.6);
-  white-space: nowrap;
-}
-
-.select {
-  border: 0;
-  outline: none;
-  background: transparent;
-  font-weight: 900;
   color: rgba(13, 43, 15, 0.85);
-  cursor: pointer;
-  padding: 2px 6px;
-  min-width: 88px;
+  box-shadow: 0 8px 18px rgba(13, 43, 15, 0.04);
+  box-sizing: border-box;
 }
 
-.searchInput {
-  border: 0;
-  outline: none;
-  background: transparent;
+.selectControl,
+.inputControl,
+.searchControl,
+.actionBtn {
+  font-size: 15px;
   font-weight: 800;
-  color: rgba(13, 43, 15, 0.85);
-  padding: 2px 6px;
-  width: min(260px, 55vw);
 }
 
-.searchInput::placeholder {
+.searchControl {
+  width: 100%;
+  min-width: 0;
+  padding: 0 16px;
+  outline: none;
+}
+
+.selectControl.narrow {
+  min-width: 138px;
+}
+
+.selectControl.medium {
+  min-width: 158px;
+}
+
+.inputControl {
+  min-width: 176px;
+  padding: 0 16px;
+  outline: none;
+}
+
+.dateControl {
+  appearance: auto;
+}
+
+.searchControl {
+  width: min(390px, 100%);
+  min-width: 280px;
+  padding: 0 16px;
+  outline: none;
+}
+
+.searchControl::placeholder,
+.inputControl::placeholder {
   color: rgba(13, 43, 15, 0.35);
   font-weight: 800;
 }
 
-.clearBtn {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  font-weight: 900;
-  color: rgba(13, 43, 15, 0.55);
-  padding: 4px 6px;
-  border-radius: 10px;
-  transition: 160ms ease;
-}
-
-.clearBtn:hover {
-  background: var(--bg-strip);
-  color: rgba(13, 43, 15, 0.85);
-}
-
-.btn {
+.actionBtn {
+  min-width: 176px;
+  padding: 0 18px;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  font-weight: 800;
-  font-size: 13px;
+  justify-content: center;
   cursor: pointer;
   transition: 160ms ease;
-  user-select: none;
-  white-space: nowrap;
 }
 
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.clearButton {
+  background: linear-gradient(180deg, #f9fbf8 0%, var(--bg-strip) 100%);
+  color: rgba(13, 43, 15, 0.8);
 }
 
-.btn-green {
-  background: var(--primary);
-  color: #ffffff;
-  border-color: rgba(13, 43, 15, 0.16);
+.clearButton:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #e8ddcb 100%);
 }
 
-.btn-green:hover {
-  background: var(--primary-2);
+.summaryBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 2px clamp(14px, 2vw, 24px) 10px;
 }
 
-.btn-ghost {
-  background: #ffffff;
-  color: rgba(13, 43, 15, 0.75);
-}
-.btn-ghost:hover {
-  background: var(--bg-strip);
+.summaryText {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(13, 43, 15, 0.58);
 }
 
-.ico {
-  width: 16px;
-  height: 16px;
+.summaryStrong {
+  font-weight: 900;
+  color: rgba(13, 43, 15, 0.92);
+}
+
+.errorBox {
+  margin: 0 clamp(14px, 2vw, 24px) 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(211, 47, 47, 0.16);
+  background: rgba(211, 47, 47, 0.08);
+  padding: 12px 14px;
+  color: #b71c1c;
+  font-weight: 800;
 }
 
 .tableShell {
@@ -432,7 +805,7 @@ function statusPillClass(s: AttendanceStatus) {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: clamp(10px, 1.6vw, 14px);
+  padding: clamp(10px, 1.6vw, 10px);
 }
 
 .tableScroll {
@@ -441,12 +814,10 @@ function statusPillClass(s: AttendanceStatus) {
   overflow: auto;
   border-radius: 18px;
   border: 1px solid var(--border);
-
   background:
     radial-gradient(900px circle at 18% 18%, rgba(34, 197, 94, 0.14), transparent 60%),
     radial-gradient(700px circle at 85% 35%, rgba(16, 185, 129, 0.10), transparent 62%),
     linear-gradient(180deg, #f4fbf6 0%, #eef8f1 55%, #ffffff 100%);
-
   scrollbar-width: none;
 }
 
@@ -496,6 +867,7 @@ function statusPillClass(s: AttendanceStatus) {
 .muted {
   color: rgba(13, 43, 15, 0.65);
 }
+
 .strong {
   font-weight: 900;
   color: rgba(13, 43, 15, 0.92);
@@ -511,11 +883,13 @@ function statusPillClass(s: AttendanceStatus) {
   font-weight: 900;
   letter-spacing: 0.02em;
 }
+
 .pill-info {
   background: rgba(2, 136, 209, 0.1);
   border-color: rgba(2, 136, 209, 0.22);
   color: #026caa;
 }
+
 .pill-danger {
   background: rgba(211, 47, 47, 0.1);
   border-color: rgba(211, 47, 47, 0.22);
@@ -543,44 +917,53 @@ function statusPillClass(s: AttendanceStatus) {
   gap: 12px;
   padding: 12px 6px 2px;
 }
+
 .footText {
   font-size: 12px;
   color: rgba(13, 43, 15, 0.55);
   padding-left: 6px;
 }
-.pager {
-  display: flex;
-  gap: 8px;
-}
 
-@media (max-width: 520px) {
-  .head {
-    flex-direction: column;
+@media (max-width: 1100px) {
+  .toolbar {
     align-items: stretch;
   }
-  .btn {
+
+  .toolbarRight {
     width: 100%;
-    justify-content: center;
+    margin-left: 0;
+    justify-content: stretch;
   }
-  .filtersRow {
+
+  .searchControl {
     width: 100%;
-  }
-  .filterGroup,
-  .searchGroup {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .searchInput {
-    width: 100%;
-    text-align: right;
-  }
-  .select {
-    width: 100%;
-    text-align: right;
+    min-width: 0;
   }
 }
 
 @media (max-width: 640px) {
+  .toolbarLeft {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .stackCol {
+    width: 100%;
+  }
+
+  .selectControl,
+  .inputControl,
+  .actionBtn,
+  .searchControl {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .summaryBar {
+    justify-content: flex-start;
+  }
+
   .tbl thead {
     display: none;
   }
@@ -616,5 +999,29 @@ function statusPillClass(s: AttendanceStatus) {
     font-size: 10px;
     line-height: 1.2;
   }
+}
+
+.layoutShell {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
+}
+
+.sidebarWrap {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+  z-index: 30;
+}
+
+.mainArea {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 </style>
