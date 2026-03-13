@@ -276,7 +276,7 @@
             <button
               type="submit"
               class="flex-1 px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 btn-submit"
-              style="background-color: #2d7231"
+              style="background-color: #0d2b0f"
             >
               {{ isEditing ? 'Update News' : 'Publish News' }}
             </button>
@@ -364,7 +364,7 @@ textarea::placeholder {
 }
 
 .btn-submit:hover {
-  background-color: #faa627 !important;
+  background-color: #1b5e20 !important;
 }
 
 .attachment-zone:hover {
