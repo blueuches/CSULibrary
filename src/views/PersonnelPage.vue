@@ -50,8 +50,7 @@
             <div class="featured-info">
               <span class="featured-badge">Head of Library Services</span>
               <h2 class="featured-name">{{ fullName(featuredStaff) }}</h2>
-              <p class="featured-subtitle">{{ featuredStaff.professional_titles }}</p>
-              <div class="featured-divider"></div>
+<div class="featured-divider"></div>
               <p v-if="featuredStaff.position" class="featured-position">
                 {{ featuredStaff.position }}
               </p>
@@ -85,12 +84,11 @@
                 class="staff-photo"
               />
             </div>
-            <div class="staff-info">
-              <h3 class="staff-name">{{ fullName(person) }}</h3>
-              <div class="staff-rule"></div>
-              <p class="staff-subtitle">{{ person.professional_titles }}</p>
-              <p v-if="person.position" class="staff-position">{{ person.position }}</p>
-            </div>
+           <div class="staff-info">
+  <h3 class="staff-name">{{ fullName(person) }}</h3>
+  <div class="staff-rule"></div>
+  <p v-if="person.position" class="staff-position">{{ person.position }}</p>
+</div>
           </div>
         </div>
 

@@ -96,7 +96,7 @@
 
               <!-- Info -->
               <div class="featured-info">
-                <span class="featured-badge">Head of Library Services</span>
+                <span class="featured-badge">University Librarian</span>
 
                 <!-- Edit form -->
                 <div v-if="editingId === featuredStaff.id" class="edit-fields">
@@ -132,8 +132,7 @@
                 <!-- Display -->
                 <template v-else>
                   <h2 class="featured-name">{{ fullName(featuredStaff) }}</h2>
-                  <p class="featured-subtitle">{{ featuredStaff.professional_titles }}</p>
-                  <div class="featured-divider"></div>
+<div class="featured-divider"></div>
                   <p v-if="featuredStaff.position" class="featured-position">
                     {{ featuredStaff.position }}
                   </p>
@@ -260,11 +259,10 @@
                 </template>
 
                 <!-- Display -->
-                <template v-else>
-                  <h3 class="staff-name">{{ fullName(person) }}</h3>
-                  <div class="staff-rule"></div>
-                  <p class="staff-subtitle">{{ person.professional_titles }}</p>
-                  <p v-if="person.position" class="staff-position">{{ person.position }}</p>
+<template v-else>
+  <h3 class="staff-name">{{ fullName(person) }}</h3>
+  <div class="staff-rule"></div>
+  <p v-if="person.position" class="staff-position">{{ person.position }}</p>
                   <div v-if="isAdmin" class="card-actions">
                     <button @click="startEdit(person)" class="btn-icon">
                       <svg
@@ -1021,11 +1019,6 @@ onUnmounted(() => {
   color: #0d2b0f;
   line-height: 1.2;
   letter-spacing: 0.03em;
-}
-.featured-subtitle {
-  font-size: 0.85rem;
-  color: #1b5e20;
-  font-style: italic;
 }
 .featured-divider {
   width: 48px;

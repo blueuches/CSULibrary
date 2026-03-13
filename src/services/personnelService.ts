@@ -5,14 +5,14 @@ const TABLE = 'personnel'
 export const personnelService = {
 
   async getAll() {
-    const { data, error } = await supabase
-      .from(TABLE)
-      .select('*')
-      .order('created_at', { ascending: false })
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('*')
+    .order('created_at', { ascending: true })  // ← i-change sa true
 
-    if (error) throw error
-    return data
-  },
+  if (error) throw error
+  return data
+},
 
   async getById(id: string) {
     const { data, error } = await supabase
