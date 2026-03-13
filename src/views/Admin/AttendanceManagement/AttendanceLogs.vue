@@ -43,14 +43,19 @@ const fetchAttendanceLogs = async () => {
   errorMessage.value = ""
 
   try {
-    const data = await getAttendanceLogs()
-    logs.value = data || []
-  } catch (error: any) {
-    console.error("Failed to fetch attendance logs:", error)
-    errorMessage.value = error?.message || "Failed to load attendance logs."
-  } finally {
-    loading.value = false
+  const data = await getAttendanceLogs()
+  logs.value = data || []
+} catch (error: unknown) {
+  console.error("Failed to fetch attendance logs:", error)
+
+  if (error instanceof Error) {
+    errorMessage.value = error.message
+  } else {
+    errorMessage.value = "Failed to load attendance logs."
   }
+} finally {
+  loading.value = false
+}
 }
 
 onMounted(() => {
@@ -179,12 +184,6 @@ const paginatedLogs = computed(() => {
 const goToNextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++
-  }
-}
-
-const goToPreviousPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
   }
 }
 
