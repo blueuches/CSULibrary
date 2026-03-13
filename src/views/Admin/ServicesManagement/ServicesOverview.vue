@@ -344,25 +344,6 @@ const router = useRouter()
   color: #6b7280;
   margin-top: 20px;
 }
-.header-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  color: #94a3b8;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.header-breadcrumb svg {
-  width: 12px;
-  height: 12px;
-  color: #cbd5e1;
-}
-.header-breadcrumb span:last-child {
-  color: #0d2b0f;
-}
 
 /* ══ BENTO GRID ══ */
 .nav-bento-grid {
