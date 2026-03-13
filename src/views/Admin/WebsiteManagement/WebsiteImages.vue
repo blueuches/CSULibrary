@@ -769,11 +769,17 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
     <div class="wm-page">
       <div class="wm-wrap">
         <div class="wm-hero">
-          <button class="wm-back-btn" @click="goBack">
-            <span>Back</span>
-            <span class="wm-back-sep">&gt;</span>
-            <span>Admin</span>
-          </button>
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/website')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>WEBSITE MANAGEMENT</span>
+          </div>
 
           <div class="wm-hero-main">
             <div class="wm-hero-copy">

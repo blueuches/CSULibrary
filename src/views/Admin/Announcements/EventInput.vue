@@ -4,18 +4,12 @@
 
     <main
       class="flex-1 overflow-y-auto p-6 md:p-10 bg-gray-50"
-      style="font-family:'Poppins',sans-serif; color: #1a1a1a;"
+      style="font-family: 'Poppins', sans-serif; color: #1a1a1a"
     >
       <!-- HEADER -->
       <div class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         
         <div class="flex items-center gap-6">
-          <button @click="goBack" class="p-4 bg-white hover:bg-gray-100 rounded-2xl border border-gray-300 shadow-sm transition-all group">
-            <svg class="w-6 h-6 text-gray-700 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
           <div class="header-left">
             <div class="header-breadcrumb">
               <span>Admin</span>
@@ -60,7 +54,9 @@
               <div class="space-y-6">
 
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Headline
                   </label>
 
@@ -73,7 +69,9 @@
                 </div>
 
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Details
                   </label>
 
@@ -132,7 +130,7 @@
               <button
                 type="submit"
                 class="flex-[2] py-4 rounded-2xl font-bold text-white shadow-lg hover:brightness-110 active:scale-95 transition-all"
-                style="background: linear-gradient(to right, #F28500, #FDBE33)"
+                style="background: linear-gradient(to right, #f28500, #fdbe33)"
               >
                 Publish Announcement
               </button>
@@ -218,7 +216,7 @@ const formData = ref({
   title: "",
   description: "",
   attachment: null as File | null,
-  datePublished: today
+  datePublished: today,
 })
 
 const handleFileUpload = (event: Event) => {

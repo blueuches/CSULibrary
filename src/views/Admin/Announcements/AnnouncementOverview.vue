@@ -15,7 +15,9 @@
               <span>Announcement Management</span>
             </div>
           </div>
-          <h1 class="header-title intro-title">Library <span class="text-yellow-500">Announcements</span></h1>
+          <h1 class="header-title intro-title">
+            Library <span class="text-yellow-500">Announcements</span>
+          </h1>
           <p class="header-sub">Manage and review all general updates and event posts.</p>
         </div>
 
@@ -24,7 +26,8 @@
           <div class="flex flex-col items-end gap-3">
             <div class="relative dropdown-wrapper" ref="dropdownRef">
               <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
-                <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New Announcement
+                <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New
+                Announcement
               </button>
               <transition name="dropdown">
                 <div v-if="dropdownOpen" class="dropdown-menu">
@@ -218,8 +221,8 @@ onBeforeUnmount(() => {
 <style scoped>
 .action-btn {
   border-radius: 0.75rem;
-  border: 1px solid #1b5e20;
-  background: #1b5e20;
+  border: 1px solid #0d2b0f;
+  background: #0d2b0f;
   color: #ffffff;
   font-size: 0.8rem;
   font-weight: 700;

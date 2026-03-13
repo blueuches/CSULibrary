@@ -1,89 +1,138 @@
 <template>
   <div class="page-layout">
     <Sidebar :activeTab="'SERVICES'" />
-    <div class="portal-root">
+
+    <main class="portal-root">
       <div class="glow-spot-left"></div>
       <div class="glow-spot-right"></div>
 
       <div class="dashboard-wrapper">
         <header class="dashboard-header">
           <div class="branding-group">
-            <div class="path-navigation">
-              <span class="root-path">ADMIN</span>
-              <svg
-                class="path-chevron"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-              >
-                <path d="M9 18l6-6-6-6" />
+            <div class="header-breadcrumb !mb-2">
+              <span>Admin</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
               </svg>
-              <span class="active-path">SERVICES</span>
+              <span>SERVICES</span>
             </div>
 
             <h1 class="portal-main-title">
               <span class="word-forest word-underlined">Library</span>
               <span class="word-mustard"> Services</span>
             </h1>
+
             <p class="portal-subtitle">
               Comprehensive overview of institutional engagement and borrowing patterns
             </p>
           </div>
-
-          <div class="header-actions-hub">
-            <div class="system-pills">
-              <div class="status-pill">
-                <span class="online-indicator"></span>
-                LIVE_DATA
-              </div>
-              <div class="date-pill">Wednesday, March 11, 2026</div>
-            </div>
-            <button class="nav-btn-primary" @click="navigateTo('settings')">
-              <span>DASHBOARD SETTINGS</span>
-              <div class="icon-wrap">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                >
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-              </div>
-            </button>
-          </div>
         </header>
 
         <section class="nav-bento-grid">
-          <div class="bento-card card-dark card-big">
-            <div class="card-content">
-              <div class="top-meta">
-                <span class="serial-no">01 // NAV</span>
-                <div class="micro-chart">
-                  <div class="m-bar" style="height: 40%"></div>
-                  <div class="m-bar" style="height: 80%"></div>
-                  <div class="m-bar highlight" style="height: 60%"></div>
+          <!-- ── HERO: Room Reservation ── -->
+          <div class="bento-card card-hero">
+            <div class="hero-noise"></div>
+            <div class="hero-glow"></div>
+            <div class="hero-inner">
+              <div class="hero-top">
+                <span class="hero-tag">
+                  <span class="hero-tag-dot"></span>
+                  FACILITY MANAGEMENT
+                </span>
+                <div class="hero-bars">
+                  <div class="hbar" style="height: 35%"></div>
+                  <div class="hbar" style="height: 60%"></div>
+                  <div class="hbar" style="height: 45%"></div>
+                  <div class="hbar accent" style="height: 85%"></div>
+                  <div class="hbar" style="height: 55%"></div>
                 </div>
               </div>
 
-              <h2 class="card-h-title">Room<br /><span class="text-mustard">Reservation</span></h2>
-              <p class="card-p-text">
-                Direct access to campus facility bookings and approval queues.
-              </p>
+              <div class="hero-body">
+                <h2 class="hero-title">Room<br /><em>Reservation</em></h2>
+                <p class="hero-desc">
+                  Control campus facility availability, approve pending requests, and manage
+                  hardware allocation.
+                </p>
+              </div>
 
-              <button class="bento-btn-white" @click="navigateTo('reservations')">
+              <div class="hero-stats-row">
+                <div class="hstat">
+                  <span class="hstat-n">24</span>
+                  <span class="hstat-l">Rooms</span>
+                </div>
+                <div class="hstat-divider"></div>
+                <div class="hstat">
+                  <span class="hstat-n">8</span>
+                  <span class="hstat-l">Pending</span>
+                </div>
+                <div class="hstat-divider"></div>
+                <div class="hstat">
+                  <span class="hstat-n">3</span>
+                  <span class="hstat-l">Today</span>
+                </div>
+              </div>
+
+              <button class="hero-cta" @click="router.push('/admin/services/reservations')">
                 <span>MANAGE ROOMS</span>
+                <div class="hero-cta-icon">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <path d="M5 12h14m-7-7 7 7-7 7" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- ── RECORDS ── -->
+          <div class="bento-card card-records">
+            <div class="rec-inner">
+              <div class="rec-head">
+                <div class="rec-icon-wrap">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l5 5v11a2 2 0 0 1-2 2z"
+                    />
+                  </svg>
+                </div>
+                <span class="rec-eyebrow">RECORDS</span>
+              </div>
+
+              <div class="rec-number">12,840</div>
+              <div class="rec-meta">
+                <span class="rec-up">↑ 2.4%</span>
+                <span class="rec-since">vs last month</span>
+              </div>
+
+              <div class="rec-track">
+                <div class="rec-fill forest" style="width: 70%"></div>
+                <div class="rec-fill mustard" style="width: 20%"></div>
+                <div class="rec-fill faint" style="width: 10%"></div>
+              </div>
+
+              <button class="rec-cta" @click="router.push('/admin/services/records')">
+                VIEW ALL
                 <svg
-                  class="arrow-svg"
-                  width="20"
-                  height="20"
+                  width="13"
+                  height="13"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  stroke-width="3"
+                  stroke-width="2.5"
                 >
                   <path d="M5 12h14m-7-7 7 7-7 7" />
                 </svg>
@@ -91,133 +140,88 @@
             </div>
           </div>
 
-          <div class="bento-card card-white card-wide">
-            <div class="metric-flex-box">
-              <div class="metric-info">
-                <span class="m-label">ACTIVE BORROWERS</span>
-                <div class="m-value">12,840 <span class="m-trend">↑ 2.4%</span></div>
+          <!-- ── GALLERY ── -->
+          <div class="bento-card card-gal">
+            <div class="gal-mosaic">
+              <div class="gal-tile t1"></div>
+              <div class="gal-tile t2"></div>
+              <div class="gal-tile t3"></div>
+              <div class="gal-tile t4"></div>
+            </div>
+            <div class="gal-body">
+              <div class="gal-row">
+                <div class="gal-icon-wrap">🖼</div>
+                <div>
+                  <h3 class="gal-title">Gallery Assets</h3>
+                  <p class="gal-sub">2.4k Digital Media</p>
+                </div>
               </div>
-              <button class="fab-nav-btn" @click="navigateTo('borrowers')" title="View All Members">
+              <button class="gal-cta" @click="router.push('/admin/services/gallery')">
+                MANAGE GALLERY
                 <svg
-                  width="24"
-                  height="24"
+                  width="13"
+                  height="13"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2.5"
                 >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="bento-card card-mustard">
-            <div class="sq-nav-content">
-              <div class="nav-icon-box">🗓</div>
-              <h3 class="nav-title">Schedules</h3>
-              <p class="nav-subtitle">12 Upcoming</p>
-              <button class="corner-btn" @click="navigateTo('calendar')">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                >
-                  <path d="M7 17L17 7M17 7H7M17 7V17" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="bento-card card-white">
-            <div class="sq-nav-content">
-              <div class="nav-icon-box-forest">🖼</div>
-              <h3 class="nav-title">Gallery</h3>
-              <p class="nav-subtitle">2.4k Assets</p>
-              <button class="corner-btn-forest" @click="navigateTo('media')">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3"
-                >
-                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                  <path d="M5 12h14m-7-7 7 7-7 7" />
                 </svg>
               </button>
             </div>
           </div>
         </section>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
 
-const navigateTo = (page) => {
-  console.log(`Routing to: ${page}`)
-  // Your router link logic here
-}
+const router = useRouter()
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;900&display=swap');
 
+/* --- PAGE STRUCTURE --- */
 .page-layout {
   display: flex;
   height: 100vh;
   overflow: hidden;
+  background-color: #f9fbfb;
 }
-
 .portal-root {
   width: 100%;
   min-height: 100vh;
-  background-color: #f9fbfb;
-  font-family: 'Poppins', sans-serif;
-  color: #0d2b0f;
-  display: flex;
-  justify-content: center;
   position: relative;
-  overflow-x: hidden;
   overflow-y: auto;
+  font-family: 'Poppins', sans-serif;
 }
-
 .dashboard-wrapper {
   width: 100%;
   max-width: 1400px;
-  padding: 4rem 3rem;
+  padding: 2rem 2rem 4rem;
   z-index: 10;
+  position: relative;
 }
 
-/* --- HEADER ENHANCEMENTS --- */
+/* --- HEADER --- */
 .dashboard-header {
-  display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
 }
-
 .path-navigation {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   margin-bottom: 1.2rem;
 }
-.root-path {
-  font-size: 11px;
-  font-weight: 800;
-  color: #94a3b8;
-  letter-spacing: 0.15em;
-}
+
 .path-chevron {
   width: 12px;
   height: 12px;
@@ -230,13 +234,11 @@ const navigateTo = (page) => {
 }
 
 .portal-main-title {
-  font-family: 'Poppins', sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.02em;
-  color: var(--ink);
-  margin: 0 0 8px;
+  margin: 0;
   display: inline-block;
 }
 .word-forest {
@@ -264,11 +266,9 @@ const navigateTo = (page) => {
   font-weight: 400;
   color: #6b7280;
   margin-top: 20px;
-  margin-bottom: 0;
-  font-family: 'Poppins', sans-serif;
 }
 
-/* Header Buttons */
+/* Header Actions */
 .header-actions-hub {
   display: flex;
   flex-direction: column;
@@ -279,14 +279,17 @@ const navigateTo = (page) => {
   display: flex;
   gap: 12px;
 }
-.status-pill {
+.status-pill,
+.date-pill {
   background: white;
-  padding: 6px 14px;
+  padding: 4px 14px;
   border-radius: 20px;
   font-size: 10px;
   font-weight: 800;
-  color: #16a34a;
   border: 1px solid #f1f5f9;
+}
+.status-pill {
+  color: #16a34a;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -298,16 +301,6 @@ const navigateTo = (page) => {
   border-radius: 50%;
   box-shadow: 0 0 10px #16a34a;
 }
-.date-pill {
-  background: white;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 10px;
-  font-weight: 700;
-  color: #64748b;
-  border: 1px solid #f1f5f9;
-}
-
 .nav-btn-primary {
   background: #0d2b0f;
   color: white;
@@ -321,12 +314,7 @@ const navigateTo = (page) => {
   align-items: center;
   gap: 15px;
   cursor: pointer;
-  transition: 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.nav-btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 24px rgba(13, 43, 15, 0.2);
-  background: #154218;
+  transition: 0.3s;
 }
 .icon-wrap {
   width: 42px;
@@ -338,196 +326,421 @@ const navigateTo = (page) => {
   justify-content: center;
 }
 
-/* --- GRID & NAVIGATION BUTTONS --- */
+/* ══ REDESIGNED BENTO GRID ══ */
 .nav-bento-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 240px;
-  gap: 30px;
+  grid-template-columns: 1.7fr 1fr 1fr;
+  grid-auto-rows: 480px;
+  gap: 20px;
 }
 
-.bento-card {
-  border-radius: 40px;
+/* ── HERO CARD ── */
+.card-hero {
+  background: linear-gradient(150deg, #0a2010 0%, #122b14 50%, #0d2b0f 100%);
+  border-radius: 32px;
   position: relative;
-  transition: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   overflow: hidden;
+  box-shadow: 0 16px 48px rgba(13, 43, 15, 0.28);
+  transition:
+    transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.45s;
 }
-.bento-card:hover {
-  transform: translateY(-8px);
+.card-hero:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 60px rgba(13, 43, 15, 0.35);
 }
-
-.card-dark {
-  background: #0d2b0f;
-  color: white;
-  padding: 45px;
+.hero-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-size: 150px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.hero-glow {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(230, 168, 0, 0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 38px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
-.card-white {
-  background: white;
-  border: 1.5px solid #edf2f5;
-  padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
-}
-.card-mustard {
-  background: #facc15;
-  padding: 40px;
-}
-
-.card-big {
-  grid-column: span 2;
-  grid-row: span 2;
-}
-.card-wide {
-  grid-column: span 2;
-}
-
-/* CARD 1 BUTTON: The Massive Action */
-.bento-btn-white {
-  margin-top: auto;
-  background: white;
-  color: #0d2b0f;
-  border: none;
-  height: 70px;
-  padding: 0 30px;
-  border-radius: 22px;
-  font-weight: 900;
-  font-size: 15px;
+.hero-top {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  transition: 0.3s;
+  justify-content: space-between;
+  margin-bottom: 28px;
 }
-.bento-btn-white:hover {
-  background: #facc15;
-  transform: scale(1.02);
+.hero-tag {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.35);
 }
-.arrow-svg {
-  transition: 0.3s;
+.hero-tag-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4caf50;
+  box-shadow: 0 0 8px #4caf50;
+  animation: pulse-dot 2s ease-in-out infinite;
 }
-.bento-btn-white:hover .arrow-svg {
-  transform: translateX(5px);
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+.hero-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 32px;
+}
+.hbar {
+  width: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+}
+.hbar.accent {
+  background: #e6a800;
 }
 
-/* CARD 2 BUTTON: The FAB Icon */
-.metric-flex-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
+.hero-body {
+  flex: 1;
 }
-.m-value {
-  font-size: 2.8rem;
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.2rem;
   font-weight: 900;
   line-height: 1;
-}
-.m-label {
-  font-size: 11px;
-  font-weight: 800;
-  color: #94a3b8;
-}
-.fab-nav-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 24px;
-  background: #f0fdf4;
-  color: #0d2b0f;
-  border: none;
-  cursor: pointer;
-  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.fab-nav-btn:hover {
-  background: #0d2b0f;
   color: white;
-  transform: rotate(-10deg) scale(1.1);
+  margin: 0 0 14px;
+  letter-spacing: -0.02em;
+}
+.hero-title em {
+  font-style: italic;
+  color: #facc15;
+}
+.hero-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.75;
+  max-width: 300px;
 }
 
-/* CARD 3 & 4 BUTTONS: The Corner Links */
-.sq-nav-content {
+.hero-stats-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 16px 24px;
+  margin-bottom: 18px;
+}
+.hstat {
+  flex: 1;
   text-align: center;
 }
-.nav-icon-box {
-  width: 60px;
-  height: 60px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  margin-bottom: 15px;
+.hstat-n {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+  letter-spacing: -0.03em;
 }
-.nav-icon-box-forest {
-  width: 60px;
-  height: 60px;
-  background: #0d2b0f;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  margin-bottom: 15px;
+.hstat-l {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 3px;
 }
-.nav-title {
-  font-size: 20px;
-  font-weight: 800;
+.hstat-divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.corner-btn,
-.corner-btn-forest {
-  position: absolute;
-  top: 25px;
-  right: 25px;
-  width: 44px;
-  height: 44px;
+.hero-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 58px;
+  padding: 0 8px 0 24px;
+  background: #facc15;
+  color: #0d2b0f;
   border: none;
-  border-radius: 14px;
+  border-radius: 18px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.25s;
+  box-shadow: 0 8px 24px rgba(250, 204, 21, 0.3);
+}
+.hero-cta:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(250, 204, 21, 0.2);
+}
+.hero-cta-icon {
+  width: 42px;
+  height: 42px;
+  background: rgba(13, 43, 15, 0.12);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: 0.3s;
+  flex-shrink: 0;
 }
-.corner-btn {
-  background: #0d2b0f;
-  color: white;
+
+/* ── RECORDS CARD ── */
+.card-records {
+  background: white;
+  border-radius: 32px;
+  border: 1px solid rgba(13, 43, 15, 0.07);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition:
+    transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.45s;
 }
-.corner-btn-forest {
-  background: #f8fafb;
+.card-records:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(13, 43, 15, 0.1);
+}
+.rec-inner {
+  padding: 36px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.rec-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.rec-icon-wrap {
+  width: 38px;
+  height: 38px;
+  background: rgba(13, 43, 15, 0.06);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #0d2b0f;
 }
-.corner-btn:hover,
-.corner-btn-forest:hover {
-  transform: scale(1.1);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+.rec-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #e6a800;
+  background: rgba(230, 168, 0, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.rec-number {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.4rem;
+  font-weight: 900;
+  color: #0d2b0f;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.rec-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.rec-up {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.rec-since {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+.rec-track {
+  display: flex;
+  height: 6px;
+  border-radius: 10px;
+  overflow: hidden;
+  gap: 2px;
+  margin-bottom: auto;
+}
+.rec-fill {
+  border-radius: 10px;
+  height: 100%;
+}
+.rec-fill.forest {
+  background: #0d2b0f;
+}
+.rec-fill.mustard {
+  background: #e6a800;
+}
+.rec-fill.faint {
+  background: #e2e8f0;
+}
+.rec-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  width: 100%;
+  height: 50px;
+  padding: 0 18px;
+  background: #0d2b0f;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.25s;
+}
+.rec-cta:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(13, 43, 15, 0.25);
 }
 
-/* ORBS */
-.glow-spot-left {
-  position: absolute;
-  top: -100px;
-  left: -100px;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(13, 43, 15, 0.03), transparent);
-  z-index: 1;
+/* ── GALLERY CARD ── */
+.card-gal {
+  background: white;
+  border-radius: 32px;
+  border: 1px solid rgba(13, 43, 15, 0.07);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.45s;
 }
-.glow-spot-right {
-  position: absolute;
-  bottom: -100px;
-  right: -100px;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(250, 204, 21, 0.05), transparent);
-  z-index: 1;
+.card-gal:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(13, 43, 15, 0.1);
+}
+.gal-mosaic {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 200px;
+  gap: 3px;
+}
+.gal-tile {
+  transition: filter 0.3s;
+}
+.card-gal:hover .gal-tile {
+  filter: brightness(1.06);
+}
+.t1 {
+  background: linear-gradient(135deg, #0d2b0f 0%, #1e4d22 100%);
+}
+.t2 {
+  background: linear-gradient(135deg, #e6a800 0%, #facc15 100%);
+}
+.t3 {
+  background: linear-gradient(135deg, #c8dac8 0%, #a8c4a8 100%);
+}
+.t4 {
+  background: linear-gradient(135deg, #163318 0%, #0d2b0f 100%);
+}
+
+.gal-body {
+  padding: 24px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 16px;
+}
+.gal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.gal-icon-wrap {
+  width: 44px;
+  height: 44px;
+  background: rgba(13, 43, 15, 0.06);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.gal-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0d2b0f;
+  margin: 0 0 2px;
+}
+.gal-sub {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin: 0;
+}
+.gal-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 48px;
+  padding: 0 18px;
+  background: #0d2b0f;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.25s;
+  margin-top: auto;
+}
+.gal-cta:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(13, 43, 15, 0.25);
 }
 </style>

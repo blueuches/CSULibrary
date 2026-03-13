@@ -1,18 +1,21 @@
 <template>
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
-    <Sidebar 
-    />
+    <Sidebar />
 
     <main class="reservation-root flex-1 overflow-y-auto">
       <!-- HEADER -->
       <header class="reservation-header intro-header">
         <div class="header-left">
-          <div class="header-breadcrumb">
-            <span>Library Services</span>
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/services')"
+              >BACK</span
+            >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>AVR Management</span>
+            <span>RESERVATION MANAGEMENT</span>
           </div>
 
           <h1 class="header-title intro-title">
@@ -27,24 +30,36 @@
         <div class="header-right">
           <div class="date-badge">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0
               002-2V7a2 2 0 00-2-2H5a2 2 0
-              00-2 2v12a2 2 0 002 2z" />
+              00-2 2v12a2 2 0 002 2z"
+              />
             </svg>
             {{ currentDate }}
           </div>
 
-          <button class="export-btn" @click="openBookingModal">
-            + New Booking
-          </button>
+          <button class="export-btn" @click="openBookingModal">+ New Booking</button>
         </div>
       </header>
 
       <!-- KPI -->
       <div class="reservation-kpi-strip">
         <div v-for="(stat, i) in roomStats" :key="i" class="reservation-kpi-card">
-          <div class="reservation-kpi-icon" :style="{ background: stat.color + '18', color: stat.color }">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" v-html="stat.icon"></svg>
+          <div
+            class="reservation-kpi-icon"
+            :style="{ background: stat.color + '18', color: stat.color }"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              v-html="stat.icon"
+            ></svg>
           </div>
 
           <div class="reservation-kpi-body">
@@ -55,10 +70,8 @@
       </div>
 
       <div class="main-grid">
-
         <!-- LEFT -->
         <div class="col-left">
-
           <!-- ROOMS -->
           <div class="panel">
             <div class="panel-head">
@@ -69,34 +82,35 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-              <div v-for="room in avrRooms" :key="room.id" class="rounded-xl p-4 border transition-all" :style="room.status === 'Occupied'
-                ? 'border-color:#ffcdd2;background:#fff8f8'
-                : 'border-color:#c8e6c9;background:#f9fdf9'">
-
+              <div
+                v-for="room in avrRooms"
+                :key="room.id"
+                class="rounded-xl p-4 border transition-all"
+                :style="
+                  room.status === 'Occupied'
+                    ? 'border-color:#ffcdd2;background:#fff8f8'
+                    : 'border-color:#c8e6c9;background:#f9fdf9'
+                "
+              >
                 <div class="flex justify-between items-start mb-4">
-
                   <div>
                     <h3 class="font-black text-[#0d2b0f]">
                       {{ room.name }}
                     </h3>
 
-                    <p class="text-xs text-gray-500">
-                      Capacity: {{ room.capacity }} pax
-                    </p>
+                    <p class="text-xs text-gray-500">Capacity: {{ room.capacity }} pax</p>
                   </div>
 
-                  <span class="badge" :class="room.status === 'Occupied' ? 'badge-red' : 'badge-green'">
+                  <span
+                    class="badge"
+                    :class="room.status === 'Occupied' ? 'badge-red' : 'badge-green'"
+                  >
                     {{ room.status }}
                   </span>
-
                 </div>
 
                 <div v-if="room.status === 'Occupied'" class="mb-4">
-
-                  <p class="text-[10px] uppercase font-bold text-gray-400">
-                    Current Session
-                  </p>
+                  <p class="text-[10px] uppercase font-bold text-gray-400">Current Session</p>
 
                   <p class="text-xs font-bold text-[#1b5e20]">
                     {{ room.currentSession?.title }}
@@ -105,29 +119,25 @@
                   <p class="text-[10px] text-gray-500">
                     {{ room.currentSession?.time }}
                   </p>
-
                 </div>
 
-                <div v-else class="empty-state">
-                  No Active Session
-                </div>
+                <div v-else class="empty-state">No Active Session</div>
 
                 <div class="flex gap-2 pt-3 border-t border-black/5">
+                  <button class="btn-outline" @click="openScheduleModal(room)">View Sched</button>
 
-                  <button class="btn-outline" @click="openScheduleModal(room)">
-                    View Sched
-                  </button>
-
-                  <button v-if="room.status === 'Occupied'" class="btn-dark" @click="openEndSessionModal(room)">
+                  <button
+                    v-if="room.status === 'Occupied'"
+                    class="btn-dark"
+                    @click="openEndSessionModal(room)"
+                  >
                     End Session
                   </button>
 
                   <button v-else class="btn-yellow" @click="openQuickBookModal(room)">
                     Quick Book
                   </button>
-
                 </div>
-
               </div>
             </div>
           </div>
@@ -139,7 +149,6 @@
             </div>
 
             <table class="report-table">
-
               <thead>
                 <tr>
                   <th>Date</th>
@@ -157,68 +166,49 @@
                   <td>{{ res.status }}</td>
                 </tr>
               </tbody>
-
             </table>
           </div>
-
         </div>
 
         <!-- RIGHT -->
         <div class="col-right">
-
           <!-- STAFF CHECKLIST -->
           <div class="panel staff-panel">
-
-            <h2 class="right-title font-bold mb-3 text-yellow-500" style="font-size: 1.1rem;">
+            <h2 class="right-title font-bold mb-3 text-yellow-500" style="font-size: 1.1rem">
               Staff Checklist
             </h2>
 
             <ul class="staff-list">
-
               <li v-for="(step, i) in steps" :key="i">
                 <span class="step-number">{{ i + 1 }}</span>
                 {{ step }}
               </li>
-
             </ul>
-
           </div>
-
 
           <!-- AMENITIES / EQUIPMENT -->
           <div class="panel">
-
-            <h2 class="panel-title text-sm">
-              Equipment Check
-            </h2>
+            <h2 class="panel-title text-sm">Equipment Check</h2>
 
             <div v-for="(item, i) in amenities" :key="i" class="equipment-row">
-
               <span class="equipment-name">
                 {{ item.name }}
               </span>
 
-              <span class="equipment-dot" :class="item.working ? 'dot-green' : 'dot-red'">
-              </span>
-
+              <span class="equipment-dot" :class="item.working ? 'dot-green' : 'dot-red'"> </span>
             </div>
 
             <button class="btn-outline mt-3 w-full" @click="openEquipmentModal">
               Update Inventory
             </button>
-
           </div>
-
         </div>
-
       </div>
     </main>
 
     <!-- NEW BOOKING MODAL -->
     <div v-if="showBookingModal" class="modal">
-
       <div class="modal-box">
-
         <h2 class="modal-title">New Reservation</h2>
 
         <input v-model="bookingForm.activity" placeholder="Activity" class="input" />
@@ -230,18 +220,13 @@
           <button class="btn-cancel" @click="closeModal">Cancel</button>
           <button class="btn-confirm" @click="createBooking">Create</button>
         </div>
-
       </div>
     </div>
 
     <!-- QUICK BOOK MODAL -->
     <div v-if="showQuickBookModal" class="modal">
-
       <div class="modal-box">
-
-        <h2 class="modal-title">
-          Quick Book {{ selectedRoom?.name }}
-        </h2>
+        <h2 class="modal-title">Quick Book {{ selectedRoom?.name }}</h2>
 
         <input v-model="bookingForm.activity" placeholder="Session Title" class="input" />
         <input v-model="bookingForm.time" placeholder="Time" class="input" />
@@ -250,175 +235,161 @@
           <button class="btn-cancel" @click="closeModal">Cancel</button>
           <button class="btn-confirm" @click="confirmQuickBook">Start Session</button>
         </div>
-
       </div>
     </div>
 
     <!-- END SESSION -->
     <div v-if="showEndSessionModal" class="modal">
-
       <div class="modal-box text-center">
-
         <h2 class="modal-title">End Session?</h2>
 
-        <p class="text-sm mb-4 p-5">
-          This will free {{ selectedRoom?.name }}
-        </p>
+        <p class="text-sm mb-4 p-5">This will free {{ selectedRoom?.name }}</p>
 
         <div class="modal-actions justify-center">
           <button class="btn-cancel" @click="closeModal">Cancel</button>
-          <button class="btn-confirm-session bg-red-700 text-white font-semibold"
-            style="padding: 10px; border-radius: 5px; font-size: 14px;" @click="confirmEndSession">End Session</button>
+          <button
+            class="btn-confirm-session bg-red-700 text-white font-semibold"
+            style="padding: 10px; border-radius: 5px; font-size: 14px"
+            @click="confirmEndSession"
+          >
+            End Session
+          </button>
         </div>
-
       </div>
     </div>
 
     <!-- SCHEDULE -->
     <div v-if="showScheduleModal" class="modal">
-
       <div class="modal-box">
+        <h2 class="modal-title">{{ selectedRoom?.name }} Schedule</h2>
 
-        <h2 class="modal-title">
-          {{ selectedRoom?.name }} Schedule
-        </h2>
-
-        <p class="text-sm text-gray-500">
-          Schedule preview will appear here.
-        </p>
+        <p class="text-sm text-gray-500">Schedule preview will appear here.</p>
 
         <div class="modal-actions">
           <button class="btn-confirm" @click="closeModal">Close</button>
         </div>
-
       </div>
     </div>
 
     <!-- EQUIPMENT MODAL -->
     <div v-if="showEquipmentModal" class="modal">
-
       <div class="modal-box">
-
-        <h2 class="modal-title">
-          Update Equipment Inventory
-        </h2>
+        <h2 class="modal-title">Update Equipment Inventory</h2>
 
         <!-- ADD EQUIPMENT -->
-        <div class="flex gap-2 mb-4 items-center"> <input v-model="newEquipment" placeholder="New equipment"
-            class="input" style="height: 2.5rem; width: 80%; margin-bottom: 0;" /> <button class="btn-confirm-add"
-            @click="addEquipment">
-            Add
-          </button>
-
+        <div class="flex gap-2 mb-4 items-center">
+          <input
+            v-model="newEquipment"
+            placeholder="New equipment"
+            class="input"
+            style="height: 2.5rem; width: 80%; margin-bottom: 0"
+          />
+          <button class="btn-confirm-add" @click="addEquipment">Add</button>
         </div>
-
 
         <!-- EQUIPMENT LIST -->
         <div class="space-y-2 max-h-[200px] overflow-y-auto">
-
           <div v-for="(item, i) in amenities" :key="i" class="equipment-edit">
-
             <span>{{ item.name }}</span>
 
             <div class="flex gap-2">
-
-              <button class="btn-outline-inventory" @click="toggleEquipment(i)">
-                {{ item.working ? 'Working' : 'Broken' }}
-              </button>
-
-              <button class="btn-cancel-inventory" @click="removeEquipment(i)">
-                Delete
-              </button>
-
+              <button class="btn-cancel-inventory" @click="removeEquipment(i)">Delete</button>
             </div>
-
           </div>
-
         </div>
 
         <div class="btn-actions-inventory">
-          <button class="btn-confirm" @click="showEquipmentModal = false">
-            Done
-          </button>
+          <button class="btn-confirm" @click="showEquipmentModal = false">Done</button>
         </div>
-
       </div>
-
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue"
+import { ref, computed } from 'vue'
 import '@/assets/styles/avr-reservation.css'
-import Sidebar from "@/components/Sidebar.vue"
-
+import Sidebar from '@/components/Sidebar.vue'
 
 const showEquipmentModal = ref(false)
-const newEquipment = ref("")
+const newEquipment = ref('')
 
 const currentDate = computed(() =>
-  new Date().toLocaleDateString("en-PH", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  })
+  new Date().toLocaleDateString('en-PH', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }),
 )
 
 const avrRooms = ref([
   {
     id: 1,
-    name: "AVR Room 1",
-    status: "Occupied",
+    name: 'AVR Room 1',
+    status: 'Occupied',
     capacity: 50,
     currentSession: {
-      title: "CSU Faculty Seminar",
-      time: "8:00 AM - 12:00 PM"
-    }
+      title: 'CSU Faculty Seminar',
+      time: '8:00 AM - 12:00 PM',
+    },
   },
   {
     id: 2,
-    name: "AVR Room 2",
-    status: "Available",
+    name: 'AVR Room 2',
+    status: 'Available',
     capacity: 30,
-    currentSession: null
-  }
+    currentSession: null,
+  },
 ])
 
 const steps = [
-  "Verify faculty/student ID",
-  "Check approved reservation form",
-  "Inspect projector and audio system",
-  "Log start time in the system",
-  "Check room condition after use"
+  'Verify faculty/student ID',
+  'Check approved reservation form',
+  'Inspect projector and audio system',
+  'Log start time in the system',
+  'Check room condition after use',
 ]
 
 const amenities = ref([
-  { name: "Projector", working: true },
-  { name: "Sound System", working: true },
-  { name: "Air Conditioning", working: true },
-  { name: "Wi-Fi Router", working: true },
-  { name: "50 Chairs", working: true }
+  { name: 'Projector', working: true },
+  { name: 'Sound System', working: true },
+  { name: 'Air Conditioning', working: true },
+  { name: 'Wi-Fi Router', working: true },
+  { name: '50 Chairs', working: true },
 ])
 
 const roomStats = computed(() => {
-
-  const available = avrRooms.value.filter(r => r.status === "Available").length
-  const occupied = avrRooms.value.filter(r => r.status === "Occupied").length
+  const available = avrRooms.value.filter((r) => r.status === 'Available').length
+  const occupied = avrRooms.value.filter((r) => r.status === 'Occupied').length
 
   return [
-    { label: "Available Now", value: `${available} Rooms`, color: "#1b5e20", icon: '<path d="M5 13l4 4L19 7"/>' },
-    { label: "Occupied", value: `${occupied}`, color: "#c62828", icon: '<path d="M12 8v4l3 3"/>' },
-    { label: "Today's Total", value: "8 Sessions", color: "#0277bd", icon: '<path d="M8 7V3m8 4V3"/>' },
-    { label: "Total Room", value: "2 Rooms", color: "#0277bd", icon: '<path d="M8 7V3m8 4V3"/>' }
+    {
+      label: 'Available Now',
+      value: `${available} Rooms`,
+      color: '#1b5e20',
+      icon: '<path d="M5 13l4 4L19 7"/>',
+    },
+    { label: 'Occupied', value: `${occupied}`, color: '#c62828', icon: '<path d="M12 8v4l3 3"/>' },
+    {
+      label: "Today's Total",
+      value: '8 Sessions',
+      color: '#0277bd',
+      icon: '<path d="M8 7V3m8 4V3"/>',
+    },
+    { label: 'Total Room', value: '2 Rooms', color: '#0277bd', icon: '<path d="M8 7V3m8 4V3"/>' },
   ]
 })
 
 const upcomingReservations = ref([
-  { id: 101, date: "March 24", activity: "Thesis Defense", requester: "BSIT-4", status: "Confirmed" },
-  { id: 102, date: "March 25", activity: "Seminar", requester: "Faculty", status: "Pending" }
+  {
+    id: 101,
+    date: 'March 24',
+    activity: 'Thesis Defense',
+    requester: 'BSIT-4',
+    status: 'Confirmed',
+  },
+  { id: 102, date: 'March 25', activity: 'Seminar', requester: 'Faculty', status: 'Pending' },
 ])
 
 const showBookingModal = ref(false)
@@ -429,10 +400,10 @@ const showScheduleModal = ref(false)
 const selectedRoom = ref<any>(null)
 
 const bookingForm = ref({
-  activity: "",
-  requester: "",
-  date: "",
-  time: ""
+  activity: '',
+  requester: '',
+  date: '',
+  time: '',
 })
 
 function openEquipmentModal() {
@@ -440,20 +411,14 @@ function openEquipmentModal() {
 }
 
 function addEquipment() {
-
   if (!newEquipment.value.trim()) return
 
   amenities.value.push({
     name: newEquipment.value,
-    working: true
+    working: true,
   })
 
-  newEquipment.value = ""
-}
-
-function toggleEquipment(index: number) {
-  amenities.value[index].working =
-    !amenities.value[index].working
+  newEquipment.value = ''
 }
 
 function removeEquipment(index: number) {
@@ -487,33 +452,30 @@ function closeModal() {
 }
 
 function createBooking() {
-
   upcomingReservations.value.push({
     id: Date.now(),
     date: bookingForm.value.date,
     activity: bookingForm.value.activity,
     requester: bookingForm.value.requester,
-    status: "Pending"
+    status: 'Pending',
   })
 
   closeModal()
 }
 
 function confirmQuickBook() {
-
-  selectedRoom.value.status = "Occupied"
+  selectedRoom.value.status = 'Occupied'
 
   selectedRoom.value.currentSession = {
-    title: bookingForm.value.activity || "Walk-in Session",
-    time: bookingForm.value.time || "Now"
+    title: bookingForm.value.activity || 'Walk-in Session',
+    time: bookingForm.value.time || 'Now',
   }
 
   closeModal()
 }
 
 function confirmEndSession() {
-
-  selectedRoom.value.status = "Available"
+  selectedRoom.value.status = 'Available'
   selectedRoom.value.currentSession = null
 
   closeModal()
@@ -524,7 +486,7 @@ function confirmEndSession() {
 .col-left {
   display: flex;
   flex-direction: column;
-  gap: 20px
+  gap: 20px;
 }
 
 .modal {
@@ -608,12 +570,12 @@ function confirmEndSession() {
 .btn-confirm-add {
   background: #0d2b0f;
   color: white;
-  height: 2.5rem;      
-  padding: 0 25px;    
+  height: 2.5rem;
+  padding: 0 25px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: bold;
-  display: flex;      
+  display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.2s;
@@ -622,7 +584,6 @@ function confirmEndSession() {
 .btn-confirm-add:hover {
   background: #1b5e20;
 }
-
 
 .btn-outline-inventory {
   margin-top: 0;
@@ -633,7 +594,6 @@ function confirmEndSession() {
   background: white;
   cursor: pointer;
 }
-
 
 .btn-dark {
   flex: 1;
