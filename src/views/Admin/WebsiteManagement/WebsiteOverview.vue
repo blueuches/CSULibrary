@@ -1,252 +1,175 @@
 <template>
-  <div class="w-full min-h-screen py-8 px-4 md:px-12 bg-white text-gray-800" style="font-family: 'Poppins', sans-serif;">
-    <header class="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
-      <div class="space-y-1">
-        <h2 class="text-4xl font-black text-[#0B2010] tracking-tight flex items-center gap-3">
-          <div class="p-2 bg-orange-400 rounded-2xl shadow-lg">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+  <div class="flex min-h-screen bg-gray-50">
+    <!-- SIDEBAR -->
+    <div class="sticky top-0 h-screen">
+      <Sidebar />
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex-1 py-10 px-6 md:pl-8 md:pr-16" style="font-family: 'Poppins', sans-serif">
+      <!-- HEADER -->
+      <header class="mb-10 flex items-center gap-4">
+        <div class="header-left">
+          <div class="header-breadcrumb">
+            <span>Admin</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
             </svg>
+            <span>Web Overview</span>
           </div>
-          Web Overview
-        </h2>
+          <h1 class="header-title">Web <span class="text-yellow-500">Overview</span></h1>
+          <p class="header-sub">Manage website visuals and assets</p>
+        </div>
+      </header>
+
+      <!-- TOP NAVIGATION -->
+      <div class="flex gap-4 mb-10 flex-wrap">
+        <button
+          @click="activeSection = 'carousel'"
+          :class="
+            activeSection === 'carousel'
+              ? 'bg-[#0B2010] text-white'
+              : 'bg-white text-gray-600 hover:bg-gray-100'
+          "
+          class="px-6 py-3 rounded-xl font-bold shadow-sm transition"
+        >
+          Hero Carousel
+        </button>
+
+        <button
+          @click="activeSection = 'cards'"
+          :class="
+            activeSection === 'cards'
+              ? 'bg-[#0B2010] text-white'
+              : 'bg-white text-gray-600 hover:bg-gray-100'
+          "
+          class="px-6 py-3 rounded-xl font-bold shadow-sm transition"
+        >
+          Feature Cards
+        </button>
+
+        <button
+          @click="activeSection = 'about'"
+          :class="
+            activeSection === 'about'
+              ? 'bg-[#0B2010] text-white'
+              : 'bg-white text-gray-600 hover:bg-gray-100'
+          "
+          class="px-6 py-3 rounded-xl font-bold shadow-sm transition"
+        >
+          About Banner
+        </button>
       </div>
-    </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <!-- HERO CAROUSEL -->
+      <section v-if="activeSection === 'carousel'" class="animate-fade-in">
+        <div class="bg-white rounded-3xl shadow-lg p-10">
+          <div class="flex justify-between items-center mb-8">
+            <h4 class="font-black text-xl">Hero Carousel Slides</h4>
 
-      <!-- SIDEBAR -->
-      <aside class="lg:col-span-3 space-y-6">
-        
-        <div class="bg-gradient-to-br from-[#1a3d21] via-[#0B2010] to-[#051108] border border-green-900 rounded-[2.5rem] p-6 shadow-sm text-white">
+            <button
+              @click="goToEditor('New Slide', 'new.jpg')"
+              class="px-6 py-3 bg-[#0d2b0f] text-white rounded-xl font-bold hover:bg-[#1b5e20] transition"
+            >
+              Add Slide
+            </button>
+          </div>
 
-          <p class="text-[10px] font-black text-white/60 uppercase tracking-[0.2em] mb-6 px-4">
-            Navigation Map
-          </p>
-          
-          <nav class="space-y-2">
-
-            <!-- HOME -->
-            <div class="rounded-[2rem] overflow-hidden transition-all"
-              :class="activePage === 'home' ? 'bg-white/10 p-2' : ''">
-
-              <button 
-                @click="activePage = 'home'; activeSubSection = 'carousel'"
-                :class="activePage === 'home' ? 'text-white' : 'text-white/70 hover:text-white'"
-                class="w-full flex items-center justify-between px-5 py-4 rounded-2xl font-bold transition-all"
+          <div class="grid md:grid-cols-2 gap-6">
+            <div
+              v-for="n in 5"
+              :key="n"
+              class="flex items-center gap-6 bg-gray-50 p-6 rounded-2xl border hover:shadow-md transition"
+            >
+              <div
+                class="w-40 h-24 bg-gray-200 rounded-xl flex items-center justify-center text-xs text-gray-500"
               >
-                <div class="flex items-center gap-3">
-                  <div
-                    :class="activePage === 'home' ? 'bg-orange-400' : 'bg-white/30'"
-                    class="w-1.5 h-6 rounded-full transition-all">
-                  </div>
+                Slide {{ n }} Preview
+              </div>
 
-                  Home Page
-                  
-                </div>
+              <div class="flex-1">
+                <h5 class="font-bold text-gray-800">Hero Slide {{ n }}</h5>
+                <p class="text-xs text-gray-400">Main_Hero_Asset_{{ n }}.webp</p>
+              </div>
 
-                <svg
-                  :class="activePage === 'home' ? 'rotate-180 text-orange-400' : 'text-white/40'"
-                  class="w-4 h-4 transition-transform duration-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+              <button
+                @click="goToEditor(`Hero Slide ${n}`, `hero_${n}.jpg`)"
+                class="px-5 py-2 bg-[#0d2b0f] text-white rounded-lg text-sm hover:bg-[#1b5e20] transition"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURE CARDS -->
+      <section v-if="activeSection === 'cards'" class="animate-fade-in">
+        <div class="bg-white rounded-3xl shadow-lg p-10">
+          <h4 class="font-black text-xl mb-8">Feature Cards</h4>
+
+          <div class="grid md:grid-cols-3 gap-8">
+            <div
+              v-for="tag in ['Read', 'Learn', 'Discover']"
+              :key="tag"
+              @click="goToEditor(`${tag} Card`, `lib-${tag.toLowerCase()}.jpg`)"
+              class="aspect-[4/5] bg-gray-50 border-2 border-dashed rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-[#0B2010] hover:bg-green-50 transition"
+            >
+              <div
+                class="w-20 h-20 bg-white shadow rounded-2xl mb-6 flex items-center justify-center text-green-700"
+              >
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    stroke-width="3"
-                    d="M19 9l-7 7-7-7"
+                    stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"
                   />
                 </svg>
-              </button>
-
-              <!-- HOME SUBMENU -->
-              <div v-if="activePage === 'home'" class="mt-2 space-y-1">
-
-                <button
-                  v-for="sub in homeSubSections"
-                  :key="sub.id"
-                  @click="activeSubSection = sub.id"
-                  :class="activeSubSection === sub.id
-                  ? 'bg-white/10 text-orange-400 shadow'
-                  : 'text-white/70 hover:bg-white/5'"
-
-                  class="w-full text-left py-3 px-10 text-xs font-bold rounded-xl transition-all flex items-center gap-3"
-                >
-                  <div class="w-1 h-1 rounded-full bg-current"></div>
-                  {{ sub.name }}
-                </button>
               </div>
+
+              <h5 class="font-black text-[#0B2010] tracking-widest uppercase">
+                {{ tag }}
+              </h5>
+
+              <p class="text-xs text-gray-400 mt-2">Change Image</p>
             </div>
-
-            <!-- ABOUT -->
-            <button
-              @click="activePage = 'about'; activeSubSection = 'banner'"
-              :class="activePage === 'about'
-              ? 'bg-white/10 text-white shadow'
-              : 'text-white/70 hover:bg-white/5'"
-
-              class="w-full flex items-center justify-between px-5 py-4 rounded-2xl font-bold transition-all">
-              <div class="flex items-center gap-3">
-                <div
-                  :class="activePage === 'about' ? 'bg-orange-400' : 'bg-white/30'"
-                  class="w-1.5 h-6 rounded-full">
-                </div>
-
-                About Us
-
-              </div>
-            </button>
-          </nav>
+          </div>
         </div>
-      </aside>
+      </section>
 
+      <!-- ABOUT BANNER -->
+      <section v-if="activeSection === 'about'" class="animate-fade-in">
+        <div class="bg-white rounded-3xl shadow-lg p-10">
+          <h4 class="font-black text-xl mb-8">About Page Banner</h4>
 
-      <!-- MAIN -->
-      <main class="lg:col-span-9 space-y-8 pb-24">
+          <div
+            class="aspect-[21/9] bg-gray-200 rounded-3xl flex items-center justify-center relative group overflow-hidden"
+          >
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
+              <svg class="w-24 h-24 mb-4" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+              10-4.48 10-10S17.52 2 12 2z"
+                />
+              </svg>
 
-        <!-- HERO CAROUSEL -->
-        <section v-if="activePage === 'home' && activeSubSection === 'carousel'" class="animate-fade-in">
+              <p class="font-bold text-lg">Banner Preview</p>
+            </div>
 
-          <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-white/10">
-            <div class="p-10 bg-gradient-to-br from-[#1a3d21] via-[#0B2010] to-[#051108] flex items-center justify-between text-white border-b border-white/5">
-              <div>
-                <h4 class="font-black text-2xl tracking-tighter">Hero Carousel</h4>
-                <p class="text-green-400/60 text-[10px] font-bold uppercase tracking-widest mt-1">Management for landing page slides</p>
-              </div>
-              <button @click="goToEditor('New Slide', 'new.jpg')" class="px-6 py-3 bg-orange-400 hover:bg-orange-500 rounded-2xl text-xs font-black transition-all shadow-xl shadow-orange-900/40 transform active:scale-95 uppercase tracking-widest">
-                Add Slide
+            <div
+              class="absolute inset-0 bg-white/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition"
+            >
+              <button
+                @click="goToEditor('About Banner', 'about-bg.jpg')"
+                class="px-8 py-4 bg-[#0d2b0f] text-white font-bold rounded-xl hover:bg-[#1b5e20] transition"
+              >
+                Replace Banner
               </button>
             </div>
-
-            <div class="p-8 grid grid-cols-1 gap-4">
-
-              <div v-for="n in 5" :key="n"
-                class="flex flex-col md:flex-row md:items-center gap-8 p-6 rounded-[2rem] bg-gray-50 border border-gray-200 hover:shadow-lg transition-all">
-
-                <div class="w-full md:w-44 h-28 bg-gray-200 rounded-[1.5rem] flex items-center justify-center text-gray-500 text-xs font-bold">
-                  Slide {{n}} Preview
-                </div>
-
-                <div class="flex-1 space-y-1 text-center md:text-left">
-                  <span class="px-3 py-1 bg-orange-100 text-orange-500 rounded-full text-xs font-bold">
-                    Carousel Slot {{n}}
-                  </span>
-                  <h5 class="text-gray-900 font-black text-lg">
-                    Main_Hero_Asset_{{n}}.webp
-                  </h5>
-                </div>
-
-                <div class="flex gap-3 justify-center">
-
-                  <button
-                    @click="goToEditor(`Hero Slide #${n}`, `hero_${n}.jpg`)"
-                    class="px-6 py-3 bg-[#0B2010] hover:bg-orange-500 text-white rounded-xl text-xs font-bold"
-                  >
-                    Edit Picture
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
-        </section>
-
-         <section v-if="activePage === 'home' && activeSubSection === 'cards'" class="animate-fade-in">
-            <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-400">
-              <!-- HEADER -->
-              <div class="p-10 bg-gradient-to-br from-[#1a3d21] via-[#0B2010] to-[#051108] flex items-center justify-between text-white border-b border-white/10">
-                <div>
-                  <h4 class="font-black text-2xl tracking-tighter">
-                    Feature Cards
-                  </h4>
-                  <p class="text-green-400/70 text-[10px] font-bold uppercase tracking-widest mt-1">
-                    Configure icons and representative images for the main services
-                  </p>
-                </div>
-              </div>
-
-              <!-- CONTENT -->
-              <div class="p-10">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-                  <div v-for="tag in ['Read', 'Learn', 'Discover']" :key="tag" 
-                    @click="goToEditor(`${tag} Card`, `lib-${tag.toLowerCase()}.jpg`)"
-                    class="group relative">
-
-                    <div class="aspect-[4/5] bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-300 group-hover:border-[#0B2010] group-hover:bg-green-50/30 transition-all duration-500 cursor-pointer flex flex-col items-center justify-center p-8 overflow-hidden">
-
-                      <div class="absolute top-6 right-6 w-10 h-10 bg-white rounded-2xl shadow-lg flex items-center justify-center text-slate-300 group-hover:text-green-700 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                      </div>
-
-                      <div class="w-20 h-20 bg-white shadow-xl rounded-[1.5rem] mb-6 flex items-center justify-center text-green-700 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-
-                      <h5 class="font-black text-[#0B2010] tracking-widest text-lg uppercase">{{ tag }}</h5>
-
-                      <p class="text-[9px] font-black text-[#0B2010] mt-2 uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity">
-                        Change Picture
-                      </p>
-
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
-          </section>
-
-        <!-- ABOUT BANNER -->
-        <section v-if="activePage === 'about'" class="animate-fade-in">
-
-          <div class="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-gray-400">
-
-            <div class="p-10 border-b border-gray-300 bg-gradient-to-br from-[#1a3d21] via-[#0B2010] to-[#051108]">
-              <h4 class="text-white font-black text-2xl">About Us Banner</h4>
-              <p class="text-green-700 text-xs font-bold">
-                Wide aspect ratio image for the page header.
-              </p>
-            </div>
-
-            <div class="p-10">
-
-              <div class="relative group rounded-[3rem] overflow-hidden bg-gray-200 aspect-[21/9] shadow-xl">
-
-                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-
-                  <svg class="w-24 h-24 mb-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
-                     10-4.48 10-10S17.52 2 12 2z"/>
-                  </svg>
-
-                  <p class="font-black italic text-xl uppercase">
-                    High Definition Asset
-                  </p>
-
-                </div>
-
-                <div class="absolute inset-0 bg-white/80 opacity-0 group-hover:opacity-100 flex items-center justify-center">
-
-                  <button
-                    @click="goToEditor('About Us Banner', 'about-bg.jpg')"
-                    class="px-10 py-5 bg-orange-400 text-white font-black rounded-2xl shadow-xl hover:bg-orange-500 transition-all"
-                  >
-                    Replace Banner
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      </main>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -258,33 +181,34 @@ import Sidebar from '@/components/Sidebar.vue'
 
 const router = useRouter()
 
-const activePage = ref('home')
-const activeSubSection = ref('carousel')
-
-const homeSubSections = [
-  { id: 'carousel', name: 'Hero Carousel' },
-  { id: 'cards', name: 'Read, Learn, Discover Cards' }
-]
+const activeSection = ref('carousel')
 
 const goToEditor = (target: string, currentFile: string) => {
   router.push({
     name: 'website-images',
-    query: { target, file: currentFile }
+    query: {
+      target,
+      file: currentFile,
+    },
   })
 }
 </script>
 
 <style scoped>
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
-.animate-fade-in{
-  animation: fadeIn 0.6s ease forwards;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
 }
 
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(30px)}
-  to{opacity:1;transform:translateY(0)}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 </style>

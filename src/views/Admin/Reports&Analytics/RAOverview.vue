@@ -1,218 +1,281 @@
 <template>
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
-    
-    <Sidebar 
-      :activeTab="activeTab" 
-      @updateActiveTab="handleTabChange"
-    />
+    <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
 
     <!-- Header and sub-head -->
-  <transition name="page-intro">
-    <main class="report-root flex-1 overflow-y-auto">
-      <header class="report-header intro-header">
-        <div class="header-left ">
-          <div class="header-breadcrumb">
-            <span>Admin</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7" /></svg>
-            <span>User Analytics</span>
-          </div>
-          <h1 class="header-title intro-title">Library <span class="text-yellow-500">Analytics</span></h1>
-          <p class="header-sub">Comprehensive overview of institutional engagement and borrowing patterns</p>
-        </div>
-        <div class="header-right">
-          <div class="date-badge">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            {{ currentDate }}
-          </div>
-          <button class="export-btn" @click="exportData">
-            Export CSV
-          </button>
-        </div>
-      </header>
-
-
-      <!-- Card -->
-      <div class="kpi-strip">
-        <div
-          v-for="(kpi, i) in kpis"
-          :key="kpi.label"
-          class="kpi-card"
-          :style="{ animationDelay: `${i * 0.08}s` }"
-        >
-          <div class="kpi-icon" :style="{ background: `${kpi.color}18`, color: kpi.color }">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" v-html="kpi.icon"></svg>
-          </div>
-          <div class="kpi-body">
-            <span class="kpi-label">{{ kpi.label }}</span>
-            <div class="kpi-value-row">
-              <span class="kpi-value">{{ kpi.value }}</span>
+    <transition name="page-intro">
+      <main class="report-root flex-1 overflow-y-auto">
+        <header class="report-header intro-header">
+          <div class="header-left">
+            <div class="header-breadcrumb">
+              <span>Admin</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+              <span>User Analytics</span>
             </div>
+            <h1 class="header-title intro-title">
+              Library <span class="text-yellow-500">Analytics</span>
+            </h1>
+            <p class="header-sub">
+              Comprehensive overview of institutional engagement and borrowing patterns
+            </p>
           </div>
-          <div class="kpi-sparkline">
-            <svg viewBox="0 0 80 32" preserveAspectRatio="none">
-              <polyline :points="kpi.spark" fill="none" :stroke="kpi.color" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7" />
-            </svg>
+          <div class="header-right">
+            <div class="date-badge">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+              {{ currentDate }}
+            </div>
+            <button class="export-btn" @click="exportData">Export CSV</button>
           </div>
-        </div>
-      </div>
+        </header>
 
-      <!-- Borrowing Trend card -->
-      <div class="main-grid">
-        <div class="col-left">
-          
-          <div class="panel panel--chart">
-            <div class="panel-head">
-              <div>
-                <h2 class="panel-title">Borrowing Trend</h2>
-                <p class="panel-sub">Engagement metrics — {{ activeChartTab.toLowerCase() }} view</p>
-              </div>
-              <div class="chart-tabs">
-                <button
-                  v-for="tab in chartTabs"
-                  :key="tab"
-                  @click="activeChartTab = tab"
-                  :class="['chart-tab', activeChartTab === tab ? 'chart-tab--active' : '']"
-                >
-                  {{ tab }}
-                </button>
+        <!-- Card -->
+        <div class="kpi-strip">
+          <div
+            v-for="(kpi, i) in kpis"
+            :key="kpi.label"
+            class="kpi-card"
+            :style="{ animationDelay: `${i * 0.08}s` }"
+          >
+            <div class="kpi-icon" :style="{ background: `${kpi.color}18`, color: kpi.color }">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                v-html="kpi.icon"
+              ></svg>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">{{ kpi.label }}</span>
+              <div class="kpi-value-row">
+                <span class="kpi-value">{{ kpi.value }}</span>
               </div>
             </div>
+            <div class="kpi-sparkline">
+              <svg viewBox="0 0 80 32" preserveAspectRatio="none">
+                <polyline
+                  :points="kpi.spark"
+                  fill="none"
+                  :stroke="kpi.color"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  opacity="0.7"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
 
-            <div class="bar-chart">
-              <div class="bar-grid">
-                <span v-for="g in chartYAxis" :key="g" class="bar-grid-label">{{ g }}</span>
+        <!-- Borrowing Trend card -->
+        <div class="main-grid">
+          <div class="col-left">
+            <div class="panel panel--chart">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">Borrowing Trend</h2>
+                  <p class="panel-sub">
+                    Engagement metrics — {{ activeChartTab.toLowerCase() }} view
+                  </p>
+                </div>
+                <div class="chart-tabs">
+                  <button
+                    v-for="tab in chartTabs"
+                    :key="tab"
+                    @click="activeChartTab = tab"
+                    :class="['chart-tab', activeChartTab === tab ? 'chart-tab--active' : '']"
+                  >
+                    {{ tab }}
+                  </button>
+                </div>
               </div>
-              <div class="bars-wrap">
-                <div
-                  v-for="(bar, i) in barData"
-                  :key="bar.label + activeChartTab"
-                  class="bar-col"
-                  :style="{ animationDelay: `${i * 0.06}s` }"
-                >
-                  <div class="bar-tooltip" style="font-size: 0.9rem; font-weight: bold; display: none;">{{ bar.value }}</div>
+
+              <div class="bar-chart">
+                <div class="bar-grid">
+                  <span v-for="g in chartYAxis" :key="g" class="bar-grid-label">{{ g }}</span>
+                </div>
+                <div class="bars-wrap">
                   <div
-                    class="bar"
-                    :class="bar.highlight ? 'bar--highlight' : ''"
-                    :style="{ height: `${(bar.value / maxChartValue) * 100}%` }"
-                  ></div>
-                  <span class="bar-label">{{ bar.label }}</span>
+                    v-for="(bar, i) in barData"
+                    :key="bar.label + activeChartTab"
+                    class="bar-col"
+                    :style="{ animationDelay: `${i * 0.06}s` }"
+                  >
+                    <div
+                      class="bar-tooltip"
+                      style="font-size: 0.9rem; font-weight: bold; display: none"
+                    >
+                      {{ bar.value }}
+                    </div>
+                    <div
+                      class="bar"
+                      :class="bar.highlight ? 'bar--highlight' : ''"
+                      :style="{ height: `${(bar.value / maxChartValue) * 100}%` }"
+                    ></div>
+                    <span class="bar-label">{{ bar.label }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
+            <!-- Library Analytics -->
+            <div class="panel panel--table">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">Library Analytics</h2>
+                  <p class="panel-sub">
+                    Rankings based on {{ activeRankingTab.toLowerCase() }} activity
+                  </p>
+                </div>
+                <div class="chart-tabs">
+                  <button
+                    v-for="tab in rankingTabs"
+                    :key="tab.id"
+                    @click="activeRankingTab = tab.id"
+                    :class="['chart-tab', activeRankingTab === tab.id ? 'chart-tab--active' : '']"
+                  >
+                    {{ tab.label }}
+                  </button>
+                </div>
+              </div>
 
-          <!-- Library Analytics -->
-          <div class="panel panel--table">
-            <div class="panel-head">
-              <div>
-                <h2 class="panel-title">Library Analytics</h2>
-                <p class="panel-sub">Rankings based on {{ activeRankingTab.toLowerCase() }} activity</p>
+              <div class="table-wrap">
+                <table class="report-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>{{ currentRankingData.headerName }}</th>
+                      <th>{{ currentRankingData.headerMeta }}</th>
+                      <th>Total Loans</th>
+                    </tr>
+                  </thead>
+                  <tbody :key="activeRankingTab" class="fade-in-group">
+                    <tr
+                      v-for="(row, i) in currentRankingData.data"
+                      :key="row.name"
+                      class="table-row-animate"
+                    >
+                      <td class="rank-cell">
+                        <span class="rank" :class="i < 3 ? `rank--${i + 1}` : ''">{{ i + 1 }}</span>
+                      </td>
+                      <td class="name-cell">{{ row.name }}</td>
+                      <td class="floor-cell">
+                        <span class="floor-tag">{{ row.meta }}</span>
+                      </td>
+                      <td class="visitors-cell">{{ row.value.toLocaleString() }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div class="chart-tabs">
-                <button
-                  v-for="tab in rankingTabs"
-                  :key="tab.id"
-                  @click="activeRankingTab = tab.id"
-                  :class="['chart-tab', activeRankingTab === tab.id ? 'chart-tab--active' : '']"
-                >
-                  {{ tab.label }}
-                </button>
-              </div>
-            </div>
-            
-            <div class="table-wrap">
-              <table class="report-table">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>{{ currentRankingData.headerName }}</th>
-                    <th>{{ currentRankingData.headerMeta }}</th>
-                    <th>Total Loans</th>
-                  </tr>
-                </thead>
-                <tbody :key="activeRankingTab" class="fade-in-group">
-                  <tr v-for="(row, i) in currentRankingData.data" :key="row.name" class="table-row-animate">
-                    <td class="rank-cell">
-                      <span class="rank" :class="i < 3 ? `rank--${i + 1}` : ''">{{ i + 1 }}</span>
-                    </td>
-                    <td class="name-cell">{{ row.name }}</td>
-                    <td class="floor-cell"><span class="floor-tag">{{ row.meta }}</span></td>
-                    <td class="visitors-cell">{{ row.value.toLocaleString() }}</td>
-                    
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="panel-footer" style="display: flex;">
-              <button class="add-section-btn">
-                <RouterLink to="/admin/analytics/display" class="w-full h-full block text-inherit no-underline">
-                  View Detailed {{ activeRankingTab }} Analytics
-                </RouterLink>
-              </button>
+              <div class="panel-footer" style="display: flex">
                 <button class="add-section-btn">
-                  <RouterLink to="/admin/analytics/books" class="w-full h-full block text-inherit no-underline">
+                  <RouterLink
+                    to="/admin/analytics/display"
+                    class="w-full h-full block text-inherit no-underline"
+                  >
+                    View Detailed {{ activeRankingTab }} Analytics
+                  </RouterLink>
+                </button>
+                <button class="add-section-btn">
+                  <RouterLink
+                    to="/admin/analytics/add"
+                    class="w-full h-full block text-inherit no-underline"
+                  >
                     Add/Edit Ranking Categories
                   </RouterLink>
                 </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- CIcrle Chart -->
-        <div class="col-right">
-          <div class="panel panel--donut">
-            <div class="panel-head panel-head--center">
-              <div class="text-center">
-                <h2 class="panel-title">Engagement Spread</h2>
-                <p class="panel-sub">Top {{ activeDonutFilter.toLowerCase() }} ratio</p>
-              </div>
-              <div class="chart-tabs">
-                <button
-                  v-for="f in donutFilters"
-                  :key="f"
-                  @click="activeDonutFilter = f"
-                  :class="['chart-tab', activeDonutFilter === f ? 'chart-tab--active' : '']"
-                >
-                  {{ f }}
+                <button class="add-section-btn">
+                  <RouterLink
+                    to="/admin/analytics/books"
+                    class="w-full h-full block text-inherit no-underline"
+                  >
+                    View Book Analytics
+                  </RouterLink>
                 </button>
               </div>
             </div>
-            <div class="donut-area">
-              <svg class="donut-svg" viewBox="0 0 160 160">
-                <circle cx="80" cy="80" r="60" fill="none" stroke="#f0ede7" stroke-width="22" />
-                <circle
-                  v-for="(seg, i) in filteredDonutSegments"
-                  :key="i"
-                  cx="80" cy="80" r="60"
-                  fill="none"
-                  :stroke="seg.color"
-                  stroke-width="22"
-                  :stroke-dasharray="`${seg.dash} ${377 - seg.dash}`"
-                  :stroke-dashoffset="seg.offset"
-                  stroke-linecap="round"
-                  class="donut-segment"
-                />
-                <text x="80" y="76" text-anchor="middle" font-size="20" font-weight="900" fill="#0d2b0f">
-                  {{ currentDonutData.totalLabel }}
-                </text>
-                <text x="80" y="94" text-anchor="middle" font-size="8" font-weight="700" fill="rgba(13,43,15,0.45)" letter-spacing="1">
-                  TOTAL LOANS
-                </text>
-              </svg>
-              <div class="donut-legend">
-                <div v-for="seg in filteredDonutSegments" :key="seg.label" class="legend-row">
-                  <span class="legend-dot" :style="{ background: seg.color }"></span>
-                  <span class="legend-label">{{ seg.label }}</span>
-                  <span class="legend-pct">{{ seg.pct }}%</span>
+          </div>
+
+          <!-- CIcrle Chart -->
+          <div class="col-right">
+            <div class="panel panel--donut">
+              <div class="panel-head panel-head--center">
+                <div class="text-center">
+                  <h2 class="panel-title">Engagement Spread</h2>
+                  <p class="panel-sub">Top {{ activeDonutFilter.toLowerCase() }} ratio</p>
+                </div>
+                <div class="chart-tabs">
+                  <button
+                    v-for="f in donutFilters"
+                    :key="f"
+                    @click="activeDonutFilter = f"
+                    :class="['chart-tab', activeDonutFilter === f ? 'chart-tab--active' : '']"
+                  >
+                    {{ f }}
+                  </button>
+                </div>
+              </div>
+              <div class="donut-area">
+                <svg class="donut-svg" viewBox="0 0 160 160">
+                  <circle cx="80" cy="80" r="60" fill="none" stroke="#f0ede7" stroke-width="22" />
+                  <circle
+                    v-for="(seg, i) in filteredDonutSegments"
+                    :key="i"
+                    cx="80"
+                    cy="80"
+                    r="60"
+                    fill="none"
+                    :stroke="seg.color"
+                    stroke-width="22"
+                    :stroke-dasharray="`${seg.dash} ${377 - seg.dash}`"
+                    :stroke-dashoffset="seg.offset"
+                    stroke-linecap="round"
+                    class="donut-segment"
+                  />
+                  <text
+                    x="80"
+                    y="76"
+                    text-anchor="middle"
+                    font-size="20"
+                    font-weight="900"
+                    fill="#0d2b0f"
+                  >
+                    {{ currentDonutData.totalLabel }}
+                  </text>
+                  <text
+                    x="80"
+                    y="94"
+                    text-anchor="middle"
+                    font-size="8"
+                    font-weight="700"
+                    fill="rgba(13,43,15,0.45)"
+                    letter-spacing="1"
+                  >
+                    TOTAL LOANS
+                  </text>
+                </svg>
+                <div class="donut-legend">
+                  <div v-for="seg in filteredDonutSegments" :key="seg.label" class="legend-row">
+                    <span class="legend-dot" :style="{ background: seg.color }"></span>
+                    <span class="legend-label">{{ seg.label }}</span>
+                    <span class="legend-pct">{{ seg.pct }}%</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
-  </transition>
+      </main>
+    </transition>
   </div>
 </template>
 
@@ -230,14 +293,17 @@ const activeTab = ref('REPORTS')
 const activeChartTab = ref<ChartTab>('Monthly')
 const chartTabs: ChartTab[] = ['Weekly', 'Monthly', 'Yearly']
 
-
-
-const handleTabChange = (tab: string) => { activeTab.value = tab }
+const handleTabChange = (tab: string) => {
+  activeTab.value = tab
+}
 
 const currentDate = computed(() =>
   new Date().toLocaleDateString('en-PH', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  })
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }),
 )
 
 // --- KPI Data ---
@@ -291,7 +357,7 @@ const trendData: Record<ChartTab, TrendEntry[]> = {
     { label: 'Thu', value: 65, highlight: true },
     { label: 'Fri', value: 48 },
     { label: 'Sat', value: 20 },
-    { label: 'Sun', value: 15 }
+    { label: 'Sun', value: 15 },
   ],
   Monthly: [
     { label: 'Aug', value: 280 },
@@ -307,20 +373,20 @@ const trendData: Record<ChartTab, TrendEntry[]> = {
     { label: '2022', value: 2400 },
     { label: '2023', value: 3100 },
     { label: '2024', value: 4200, highlight: true },
-    { label: '2025', value: 3800 }
-  ]
+    { label: '2025', value: 3800 },
+  ],
 }
 
 const barData = computed(() => trendData[activeChartTab.value])
 
 const maxChartValue = computed(() => {
-  const values = barData.value.map(d => d.value)
+  const values = barData.value.map((d) => d.value)
   return Math.max(...values) * 1.2
 })
 
 const chartYAxis = computed(() => {
   const max = Math.ceil(maxChartValue.value / 100) * 100
-  return [max, max * 0.75, max * 0.5, max * 0.25, 0].map(v => Math.floor(v))
+  return [max, max * 0.75, max * 0.5, max * 0.25, 0].map((v) => Math.floor(v))
 })
 
 // --- Consolidated Ranking Logic ---
@@ -329,14 +395,17 @@ const activeRankingTab = ref<RankingTab>('Borrowers')
 const rankingTabs: { id: RankingTab; label: string }[] = [
   { id: 'Borrowers', label: 'Students' },
   { id: 'Colleges', label: 'Colleges' },
-  { id: 'Departments', label: 'Programs' }
+  { id: 'Departments', label: 'Programs' },
 ]
 
-const rankingsData: Record<RankingTab, {
-  headerName: string
-  headerMeta: string
-  data: { name: string; meta: string; value: number }[]
-}> = {
+const rankingsData: Record<
+  RankingTab,
+  {
+    headerName: string
+    headerMeta: string
+    data: { name: string; meta: string; value: number }[]
+  }
+> = {
   Borrowers: {
     headerName: 'Student Name',
     headerMeta: 'ID Number',
@@ -345,7 +414,7 @@ const rankingsData: Record<RankingTab, {
       { name: 'Maria Santos', meta: '21-0854', value: 38 },
       { name: 'Petrus Fontanilla', meta: '19-1231', value: 31 },
       { name: 'Ana Reyes', meta: '22-0045', value: 29 },
-    ]
+    ],
   },
   Colleges: {
     headerName: 'College',
@@ -355,7 +424,7 @@ const rankingsData: Record<RankingTab, {
       { name: 'College of Computing', meta: 'CCIS', value: 980 },
       { name: 'College of Education', meta: 'CED', value: 850 },
       { name: 'College of Agriculture', meta: 'CAA', value: 640 },
-    ]
+    ],
   },
   Departments: {
     headerName: 'Program',
@@ -365,8 +434,8 @@ const rankingsData: Record<RankingTab, {
       { name: 'BS Civil Engineering', meta: 'BSCE', value: 520 },
       { name: 'BS Psychology', meta: 'BS PSYCH', value: 410 },
       { name: 'BS Computer Science', meta: 'BSCS', value: 390 },
-    ]
-  }
+    ],
+  },
 }
 
 const currentRankingData = computed(() => rankingsData[activeRankingTab.value])
@@ -393,9 +462,7 @@ interface DonutData {
 const donutDataMap: Record<DonutFilter, DonutData> = {
   Students: {
     totalLabel: '392',
-    segments: [
-      { label: 'Total Borrowers', pct: 100, color: '#1b5e20' }
-    ]
+    segments: [{ label: 'Total Borrowers', pct: 100, color: '#1b5e20' }],
   },
   Colleges: {
     totalLabel: '392',
@@ -403,17 +470,17 @@ const donutDataMap: Record<DonutFilter, DonutData> = {
       { label: 'CEIT', pct: 40, color: '#1b5e20' },
       { label: 'CAS', pct: 30, color: '#0277bd' },
       { label: 'CED', pct: 20, color: '#f9a825' },
-      { label: 'COA', pct: 10, color: '#6a1b9a' }
-    ]
+      { label: 'COA', pct: 10, color: '#6a1b9a' },
+    ],
   },
   Programs: {
     totalLabel: '392',
     segments: [
       { label: 'BSIT', pct: 50, color: '#1b5e20' },
       { label: 'BSCE', pct: 25, color: '#0277bd' },
-      { label: 'BSED', pct: 25, color: '#f9a825' }
-    ]
-  }
+      { label: 'BSED', pct: 25, color: '#f9a825' },
+    ],
+  },
 }
 
 const currentDonutData = computed(() => donutDataMap[activeDonutFilter.value])
@@ -430,4 +497,3 @@ const filteredDonutSegments = computed(() => {
   })
 })
 </script>
-

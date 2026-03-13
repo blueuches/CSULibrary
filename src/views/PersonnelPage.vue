@@ -3,7 +3,6 @@
     <!-- ===== HERO ===== -->
     <div class="personnel-hero">
       <div class="absolute inset-0 hero-overlay"></div>
-
       <div class="relative z-10 flex flex-col items-center gap-3">
         <p class="hero-eyebrow anim-eyebrow">Caraga State University</p>
         <h1 class="hero-title anim-title">Library Personnel</h1>
@@ -19,65 +18,91 @@
 
     <!-- ===== MAIN CONTENT ===== -->
     <div class="px-6 sm:px-10 lg:px-16 py-20 max-w-6xl mx-auto">
-      <!-- ===== FEATURED (HEAD) ===== -->
-      <div v-if="featuredStaff" class="featured-wrapper mb-24">
-        <div class="sr-item flex items-center gap-3 mb-10 justify-center">
+
+      <!-- ===== LOADING ===== -->
+      <div v-if="loading" class="flex flex-col items-center justify-center py-32 gap-4">
+        <div class="loader-ring"></div>
+        <p class="loading-text">Loading personnel...</p>
+      </div>
+
+      <template v-else>
+        <!-- ===== FEATURED (HEAD) ===== -->
+        <div v-if="featuredStaff" class="featured-wrapper mb-24">
+          <div class="sr-item flex items-center gap-3 mb-10 justify-center">
+            <div class="label-line"></div>
+            <span class="label-text">University Librarian</span>
+            <div class="label-line"></div>
+          </div>
+
+          <div class="sr-item featured-card">
+            <div class="featured-accent-bar"></div>
+            <div class="featured-photo-wrap">
+              <div
+                class="absolute inset-0 rounded-full border-4 shadow-md"
+                style="background-color: #0d2b0f; border-color: #66bb6a"
+              ></div>
+              <img
+                :src="featuredStaff.image_url || defaultAvatar"
+                :alt="fullName(featuredStaff)"
+                class="featured-photo"
+              />
+            </div>
+            <div class="featured-info">
+              <span class="featured-badge">Head of Library Services</span>
+              <h2 class="featured-name">{{ fullName(featuredStaff) }}</h2>
+              <p class="featured-subtitle">{{ featuredStaff.professional_titles }}</p>
+              <div class="featured-divider"></div>
+              <p v-if="featuredStaff.position" class="featured-position">
+                {{ featuredStaff.position }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== STAFF SECTION LABEL ===== -->
+        <div class="sr-item flex items-center gap-3 mb-12">
           <div class="label-line"></div>
-          <span class="label-text">University Librarian</span>
-          <div class="label-line"></div>
+          <span class="label-text">Library Staff</span>
+          <div class="label-line flex-1"></div>
         </div>
 
-        <div class="sr-item featured-card">
-          <div class="featured-accent-bar"></div>
-          <div class="featured-photo-wrap">
-            <div
-              class="absolute inset-0 rounded-full border-4 shadow-md"
-              style="background-color: #0d2b0f; border-color: #66bb6a"
-            ></div>
-            <img :src="featuredStaff.image" :alt="featuredStaff.name" class="featured-photo" />
-          </div>
-          <div class="featured-info">
-            <span class="featured-badge">Head of Library Services</span>
-            <h2 class="featured-name">{{ featuredStaff.name }}</h2>
-            <p class="featured-subtitle">{{ featuredStaff.subtitle }}</p>
-            <div class="featured-divider"></div>
-            <p v-if="featuredStaff.position" class="featured-position">
-              {{ featuredStaff.position }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ===== STAFF SECTION LABEL ===== -->
-      <div class="sr-item flex items-center gap-3 mb-12">
-        <div class="label-line"></div>
-        <span class="label-text">Library Staff</span>
-        <div class="label-line flex-1"></div>
-      </div>
-
-      <!-- ===== STAFF GRID ===== -->
-      <div class="staff-grid">
-        <div
-          v-for="(person, index) in otherStaff"
-          :key="person.id"
-          class="sr-card staff-card"
-          :style="{ transitionDelay: (index % 2) * 0.12 + 's' }"
-        >
-          <div class="staff-photo-wrap">
-            <div
-              class="absolute inset-0 rounded-full border-4 shadow-md"
-              style="background-color: #0d2b0f; border-color: #66bb6a"
-            ></div>
-            <img :src="person.image" :alt="person.name" class="staff-photo" />
-          </div>
-          <div class="staff-info">
-            <h3 class="staff-name">{{ person.name }}</h3>
-            <div class="staff-rule"></div>
-            <p class="staff-subtitle">{{ person.subtitle }}</p>
-            <p v-if="person.position" class="staff-position">{{ person.position }}</p>
+        <!-- ===== STAFF GRID ===== -->
+        <div v-if="otherStaff.length > 0" class="staff-grid">
+          <div
+            v-for="(person, index) in otherStaff"
+            :key="person.id"
+            class="sr-card staff-card"
+            :style="{ transitionDelay: (index % 2) * 0.12 + 's' }"
+          >
+            <div class="staff-photo-wrap">
+              <div
+                class="absolute inset-0 rounded-full border-4 shadow-md"
+                style="background-color: #0d2b0f; border-color: #66bb6a"
+              ></div>
+              <img
+                :src="person.image_url || defaultAvatar"
+                :alt="fullName(person)"
+                class="staff-photo"
+              />
+            </div>
+            <div class="staff-info">
+              <h3 class="staff-name">{{ fullName(person) }}</h3>
+              <div class="staff-rule"></div>
+              <p class="staff-subtitle">{{ person.professional_titles }}</p>
+              <p v-if="person.position" class="staff-position">{{ person.position }}</p>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- ===== EMPTY STATE ===== -->
+        <div v-else class="flex flex-col items-center py-20 gap-3 opacity-50">
+          <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="#0d2b0f">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+          </svg>
+          <p class="text-sm font-semibold tracking-widest uppercase text-[#0d2b0f]">No staff found</p>
+        </div>
+      </template>
     </div>
   </div>
 
@@ -100,98 +125,94 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { personnelService } from '@/services/personnelService'
 
-import cora from '@/assets/images/personnelpage/cora.png'
-import mercy from '@/assets/images/personnelpage/mercy.png'
-import marie from '@/assets/images/personnelpage/marie.png'
-import berongoy from '@/assets/images/personnelpage/berongoy.png'
-import jorge from '@/assets/images/personnelpage/jorge.png'
-import warren from '@/assets/images/personnelpage/warren.png'
-import malyn from '@/assets/images/personnelpage/malyn.png'
-import sabrena from '@/assets/images/personnelpage/sabrena.png'
-import jasmin from '@/assets/images/personnelpage/jasmin.png'
-import lagaras from '@/assets/images/personnelpage/lagaras.png'
-
-interface StaffMember {
-  id: number
-  name: string
-  subtitle: string
-  position?: string
-  image: string
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface PersonnelRow {
+  id:                  string
+  first_name:          string | null
+  last_name:           string | null
+  professional_titles: string | null
+  position:            string | null
+  role:                string | null
+  image_url:           string | null
+  is_active:           boolean | null
+  created_at:          string | null
 }
 
-const staff = ref<StaffMember[]>([
-  {
-    id: 1,
-    name: 'MARIA CORAZON L. TERCERA, RL',
-    subtitle: 'University Librarian',
-    position: 'Head, Library Services',
-    image: cora,
-  },
-  { id: 2, name: 'MERCY G. REYES, RL', subtitle: 'Technical Librarian I', image: mercy },
-  {
-    id: 3,
-    name: 'ANN MARIE MONTE DE RAMOS, RL',
-    subtitle: 'Readers Services Librarian',
-    image: marie,
-  },
-  { id: 4, name: 'JEHOVENN T. BERONGOY', subtitle: 'Audio-Visual Technician', image: berongoy },
-  {
-    id: 5,
-    name: 'JORGE V. BAUTISTA',
-    subtitle: 'Public Assistance & Complaints Desk Officer',
-    image: jorge,
-  },
-  {
-    id: 6,
-    name: 'JOHN WARREN S. BATONDO, LPT',
-    subtitle: 'Administrative Aide VI Clerk III',
-    image: warren,
-  },
-  { id: 7, name: 'MALYN C. TRAYA', subtitle: 'Technical Service Staff', image: malyn },
-  { id: 8, name: 'SABRENA MAE ELLEVERA', subtitle: 'Periodical Service Staff', image: sabrena },
-  { id: 9, name: 'JASMIN D. PADILLA', subtitle: 'Library Learning Spaces Staff', image: jasmin },
-  { id: 10, name: 'JHOGIE A. LAGARAS', subtitle: 'Circulation Services Staff', image: lagaras },
-])
+// ─── Default avatar SVG (shown when image_url is empty) ───────────────────────
+const defaultAvatar =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzBkMmIwZiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMzgiIHI9IjE4IiBmaWxsPSIjNjZiYjZhIi8+PHBhdGggZD0iTTEwIDkwIGMwLTIyIDEzLTM1IDQwLTM1czQwIDEzIDQwIDM1IiBmaWxsPSIjNjZiYjZhIi8+PC9zdmc+'
 
-const featuredStaff = computed(() => staff.value[0])
-const otherStaff = computed(() => staff.value.slice(1))
-
+// ─── State ────────────────────────────────────────────────────────────────────
+const staff         = ref<PersonnelRow[]>([])
+const loading       = ref(true)
 const showScrollTop = ref(false)
 let observer: IntersectionObserver | null = null
 
-function handleScroll() {
-  showScrollTop.value = window.scrollY > 300
-}
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+// ─── Helper: build full display name from split columns ───────────────────────
+function fullName(person: PersonnelRow): string {
+  const last   = person.last_name?.trim().toUpperCase()  ?? ''
+  const first  = person.first_name?.trim().toUpperCase() ?? ''
+  const titles = person.professional_titles?.trim()      ?? ''
+  const name   = [last, first].filter(Boolean).join(', ')
+  return titles ? `${name}, ${titles}` : name
 }
 
+// ─── Computed ─────────────────────────────────────────────────────────────────
+const featuredStaff = computed<PersonnelRow | undefined>(() =>
+  staff.value.find(
+    (s) => s.role?.toLowerCase() === 'head' && s.is_active !== false
+  )
+)
+
+const otherStaff = computed<PersonnelRow[]>(() =>
+  staff.value.filter(
+    (s) => s.role?.toLowerCase() !== 'head' && s.is_active !== false
+  )
+)
+
+// ─── Fetch from Supabase via personnelService ─────────────────────────────────
+async function fetchPersonnel() {
+  loading.value = true
+  try {
+    const data  = await personnelService.getAll()
+    staff.value = (data ?? []) as PersonnelRow[]
+  } catch (err) {
+    console.error('Failed to fetch personnel:', err)
+  } finally {
+    loading.value = false
+    setTimeout(initObserver, 100)
+  }
+}
+
+// ─── Scroll ───────────────────────────────────────────────────────────────────
+function handleScroll() { showScrollTop.value = window.scrollY > 300 }
+function scrollToTop()  { window.scrollTo({ top: 0, behavior: 'smooth' }) }
+
+// ─── Intersection Observer (scroll reveal) ────────────────────────────────────
 function initObserver() {
+  observer?.disconnect()
   observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view')
-        } else {
-          entry.target.classList.remove('in-view')
-        }
-      })
-    },
+    (entries) => entries.forEach((e) => {
+      e.isIntersecting
+        ? e.target.classList.add('in-view')
+        : e.target.classList.remove('in-view')
+    }),
     { threshold: 0.1 },
   )
-  document.querySelectorAll('.sr-item, .sr-card').forEach((el) => {
-    observer!.observe(el)
-  })
+  document.querySelectorAll('.sr-item, .sr-card').forEach((el) => observer!.observe(el))
 }
 
+// ─── Lifecycle ────────────────────────────────────────────────────────────────
 onMounted(() => {
+  fetchPersonnel()
   window.addEventListener('scroll', handleScroll)
   setTimeout(initObserver, 100)
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  if (observer) observer.disconnect()
+  observer?.disconnect()
 })
 </script>
 
@@ -200,461 +221,216 @@ onUnmounted(() => {
    HERO ENTRY ANIMATIONS
 ================================ */
 @keyframes heroFadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes heroFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes heroScaleIn {
-  from {
-    opacity: 0;
-    transform: scaleX(0.4);
-  }
-  to {
-    opacity: 1;
-    transform: scaleX(1);
-  }
+  from { opacity: 0; transform: scaleX(0.4); }
+  to   { opacity: 1; transform: scaleX(1); }
 }
-
 @keyframes heroDotPop {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-  70% {
-    transform: scale(1.35);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0%   { opacity: 0; transform: scale(0); }
+  70%  { transform: scale(1.35); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-/* eyebrow — slides down from above */
-.anim-eyebrow {
-  opacity: 0;
-  animation: heroFadeDown 0.6s ease 0.1s forwards;
-}
-
-/* title — slides up from below, slightly delayed */
-.anim-title {
-  opacity: 0;
-  animation: heroFadeUp 0.7s ease 0.35s forwards;
-}
-
-/* divider container — scales in from center */
-.anim-divider {
-  opacity: 0;
-  animation: heroScaleIn 0.55s cubic-bezier(0.23, 1, 0.32, 1) 0.75s forwards;
-}
-
-/* individual dots pop in sequence */
-.anim-divider .hero-dot:nth-child(1) {
-  opacity: 0;
-  animation: heroDotPop 0.4s ease 0.9s forwards;
-}
-.anim-divider .hero-dot:nth-child(3) {
-  opacity: 0;
-  animation: heroDotPop 0.4s ease 1.05s forwards;
-}
-.anim-divider .hero-dot:nth-child(5) {
-  opacity: 0;
-  animation: heroDotPop 0.4s ease 1.2s forwards;
-}
+.anim-eyebrow { opacity: 0; animation: heroFadeDown 0.6s ease 0.1s  forwards; }
+.anim-title   { opacity: 0; animation: heroFadeUp  0.7s ease 0.35s forwards; }
+.anim-divider { opacity: 0; animation: heroScaleIn 0.55s cubic-bezier(0.23,1,0.32,1) 0.75s forwards; }
+.anim-divider .hero-dot:nth-child(1) { opacity: 0; animation: heroDotPop 0.4s ease 0.9s  forwards; }
+.anim-divider .hero-dot:nth-child(3) { opacity: 0; animation: heroDotPop 0.4s ease 1.05s forwards; }
+.anim-divider .hero-dot:nth-child(5) { opacity: 0; animation: heroDotPop 0.4s ease 1.2s  forwards; }
 
 /* ================================
    HERO
 ================================ */
 .personnel-hero {
-  width: 100%;
-  height: 380px;
+  width: 100%; height: 380px;
   background-image: url('@/assets/images/personnelpage/csu-background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
 }
-
 .hero-overlay {
   background: linear-gradient(
     to bottom,
-    rgba(4, 16, 5, 0.72) 0%,
-    rgba(13, 43, 15, 0.8) 60%,
-    rgba(4, 16, 5, 0.9) 100%
+    rgba(4,16,5,0.72) 0%,
+    rgba(13,43,15,0.8) 60%,
+    rgba(4,16,5,0.9) 100%
   );
 }
-
 .hero-eyebrow {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.35em;
-  color: #f9a825;
-  text-transform: uppercase;
-  opacity: 0.85;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.35em;
+  color: #f9a825; text-transform: uppercase; opacity: 0.85;
 }
-
 .hero-title {
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(1rem, 4vw, 2rem);
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  line-height: 1;
+  font-size: clamp(1rem, 4vw, 2rem); font-weight: 700;
+  color: #ffffff; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1;
 }
+.hero-divider { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.hero-dot  { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
+.hero-dot.gold  { background: #f9a825; }
+.hero-dot.green { background: #66bb6a; }
+.hero-line { width: 40px; height: 1px; background: rgba(255,255,255,0.3); display: inline-block; }
 
-.hero-divider {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 4px 0;
+/* ================================
+   LOADING
+================================ */
+@keyframes spin { to { transform: rotate(360deg); } }
+.loader-ring {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid rgba(13,43,15,0.12);
+  border-top-color: #0d2b0f;
+  animation: spin 0.7s linear infinite;
 }
-.hero-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  display: inline-block;
-}
-.hero-dot.gold {
-  background: #f9a825;
-}
-.hero-dot.green {
-  background: #66bb6a;
-}
-.hero-line {
-  width: 40px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.3);
-  display: inline-block;
+.loading-text {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(13,43,15,0.45);
 }
 
 /* ================================
    LABELS
 ================================ */
 .label-line {
-  height: 1px;
-  width: 40px;
-  background: linear-gradient(to right, #0d2b0f, rgba(13, 43, 15, 0.15));
+  height: 1px; width: 40px;
+  background: linear-gradient(to right, #0d2b0f, rgba(13,43,15,0.15));
 }
 .label-text {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.28em;
-  color: #0d2b0f;
-  text-transform: uppercase;
-  white-space: nowrap;
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.28em;
+  color: #0d2b0f; text-transform: uppercase; white-space: nowrap;
 }
 
 /* ================================
    FEATURED CARD
 ================================ */
-.featured-wrapper {
-  animation: fadeUp 0.7s ease both;
-}
-
+.featured-wrapper { animation: fadeUp 0.7s ease both; }
 .featured-card {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 48px;
-  background: #ffffff;
-  border: 1px solid rgba(13, 43, 15, 0.08);
-  border-radius: 4px;
-  padding: 48px 52px;
-  box-shadow: 0 4px 40px rgba(13, 43, 15, 0.07);
+  position: relative; display: flex; flex-direction: row; align-items: center;
+  gap: 48px; background: #ffffff; border: 1px solid rgba(13,43,15,0.08);
+  border-radius: 4px; padding: 48px 52px; box-shadow: 0 4px 40px rgba(13,43,15,0.07);
   overflow: hidden;
 }
-
 .featured-accent-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
   background: linear-gradient(to bottom, #f9a825, #1b5e20);
 }
-
 .featured-photo-wrap {
-  position: relative;
-  flex-shrink: 0;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  overflow: visible;
+  position: relative; flex-shrink: 0;
+  width: 160px; height: 160px; border-radius: 50%; overflow: visible;
 }
-
 .featured-photo {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 192px;
-  height: 224px;
-  object-fit: cover;
-  border-radius: 50%;
-  z-index: 1;
-  transition: transform 0.3s ease;
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 192px; height: 224px; object-fit: cover; border-radius: 50%;
+  z-index: 1; transition: transform 0.3s ease;
 }
-.featured-photo:hover {
-  transform: translateX(-50%) scale(1.05);
-}
-
-.featured-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
+.featured-photo:hover { transform: translateX(-50%) scale(1.05); }
+.featured-info { flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .featured-badge {
-  display: inline-block;
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #0d2b0f;
-  background: #f9a825;
-  padding: 3px 10px;
-  border-radius: 2px;
-  width: fit-content;
+  display: inline-block; font-size: 0.6rem; font-weight: 800;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #0d2b0f; background: #f9a825;
+  padding: 3px 10px; border-radius: 2px; width: fit-content;
 }
-
 .featured-name {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0d2b0f;
-  line-height: 1.2;
-  letter-spacing: 0.03em;
+  font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 700;
+  color: #0d2b0f; line-height: 1.2; letter-spacing: 0.03em;
 }
-
-.featured-subtitle {
-  font-size: 0.85rem;
-  color: #1b5e20;
-  font-style: italic;
-}
-
+.featured-subtitle { font-size: 0.85rem; color: #1b5e20; font-style: italic; }
 .featured-divider {
-  width: 48px;
-  height: 2px;
-  background: linear-gradient(to right, #f9a825, rgba(249, 168, 37, 0.2));
-  border-radius: 2px;
+  width: 48px; height: 2px;
+  background: linear-gradient(to right, #f9a825, rgba(249,168,37,0.2)); border-radius: 2px;
 }
-
 .featured-position {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.5);
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(13,43,15,0.5);
 }
 
 /* ================================
    STAFF GRID
 ================================ */
-.staff-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-}
-
+.staff-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
 .staff-card {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 24px;
-  background: #ffffff;
-  border: 1px solid rgba(13, 43, 15, 0.07);
-  border-radius: 4px;
-  padding: 24px 28px;
-  box-shadow: 0 2px 16px rgba(13, 43, 15, 0.05);
-  transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease,
-    border-color 0.3s ease;
-  overflow: hidden;
-  margin-top: 8px;
+  position: relative; display: flex; flex-direction: row; align-items: center;
+  gap: 24px; background: #ffffff; border: 1px solid rgba(13,43,15,0.07);
+  border-radius: 4px; padding: 24px 28px; box-shadow: 0 2px 16px rgba(13,43,15,0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  overflow: hidden; margin-top: 8px;
 }
-
 .staff-card:hover {
-  box-shadow: 0 8px 32px rgba(13, 43, 15, 0.12);
+  box-shadow: 0 8px 32px rgba(13,43,15,0.12);
   transform: translateY(-3px);
-  border-color: rgba(249, 168, 37, 0.35);
+  border-color: rgba(249,168,37,0.35);
 }
-
 .staff-photo-wrap {
-  position: relative;
-  flex-shrink: 0;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: visible;
+  position: relative; flex-shrink: 0;
+  width: 80px; height: 80px; border-radius: 50%; overflow: visible;
 }
-
 .staff-photo {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 96px;
-  height: 106px;
-  object-fit: cover;
-  border-radius: 50%;
-  z-index: 1;
-  transition: transform 0.3s ease;
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 96px; height: 106px; object-fit: cover; border-radius: 50%;
+  z-index: 1; transition: transform 0.3s ease;
 }
-.staff-card:hover .staff-photo {
-  transform: translateX(-50%) scale(1.05);
-}
-
-.staff-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-
+.staff-card:hover .staff-photo { transform: translateX(-50%) scale(1.05); }
+.staff-info { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .staff-name {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #0d2b0f;
-  line-height: 1.3;
-  letter-spacing: 0.01em;
+  font-family: 'Poppins', sans-serif; font-size: 0.88rem; font-weight: 700;
+  color: #0d2b0f; line-height: 1.3; letter-spacing: 0.01em;
 }
-
 .staff-rule {
-  width: 28px;
-  height: 1.5px;
-  background: linear-gradient(to right, #f9a825, rgba(249, 168, 37, 0.2));
-  border-radius: 2px;
-  transition: width 0.3s ease;
+  width: 28px; height: 1.5px;
+  background: linear-gradient(to right, #f9a825, rgba(249,168,37,0.2));
+  border-radius: 2px; transition: width 0.3s ease;
 }
-.staff-card:hover .staff-rule {
-  width: 48px;
-}
-
-.staff-subtitle {
-  font-size: 0.75rem;
-  color: #1b5e20;
-  font-style: italic;
-  line-height: 1.5;
-}
-
+.staff-card:hover .staff-rule { width: 48px; }
+.staff-subtitle { font-size: 0.75rem; color: #1b5e20; font-style: italic; line-height: 1.5; }
 .staff-position {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.45);
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(13,43,15,0.45);
 }
-
 .staff-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(to right, #f9a825, #1b5e20);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
+  transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
 }
-.staff-card:hover::after {
-  transform: scaleX(1);
-}
+.staff-card:hover::after { transform: scaleX(1); }
 
 /* ================================
    SCROLL REVEAL
 ================================ */
-.sr-item,
-.sr-card {
-  opacity: 0;
-  transform: translateY(32px);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+.sr-item, .sr-card {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.sr-item.in-view,
-.sr-card.in-view {
-  opacity: 1;
-  transform: translateY(0);
-}
+.sr-item.in-view, .sr-card.in-view { opacity: 1; transform: translateY(0); }
 
 /* ================================
    FADE TRANSITION
 ================================ */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from,   .fade-leave-to     { opacity: 0; }
 
 /* ================================
    ANIMATIONS
 ================================ */
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ================================
    RESPONSIVE
 ================================ */
 @media (max-width: 768px) {
-  .personnel-hero {
-    height: 280px;
-  }
-  .hero-title {
-    font-size: 1.8rem;
-  }
-  .featured-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 36px 28px;
-    gap: 28px;
-  }
-  .featured-info {
-    align-items: center;
-  }
-  .featured-badge {
-    align-self: center;
-  }
-  .staff-grid {
-    grid-template-columns: 1fr;
-  }
+  .personnel-hero { height: 280px; }
+  .hero-title     { font-size: 1.8rem; }
+  .featured-card  { flex-direction: column; text-align: center; padding: 36px 28px; gap: 28px; }
+  .featured-info  { align-items: center; }
+  .featured-badge { align-self: center; }
+  .staff-grid     { grid-template-columns: 1fr; }
 }
 </style>
