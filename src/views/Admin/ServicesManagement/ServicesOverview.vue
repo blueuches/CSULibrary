@@ -78,9 +78,8 @@
                 <div class="hero-cta-icon">
                   <svg
                     width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
+                    height="10"
+                    viewBox="0 0 10 24"
                     stroke="currentColor"
                     stroke-width="2.5"
                   >
@@ -140,22 +139,102 @@
             </div>
           </div>
 
+          <!-- ── CURRICULUM ── -->
+          <div class="bento-card card-curriculum">
+            <div class="cur-inner">
+              <div class="cur-head">
+                <div class="cur-icon-wrap">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path
+                      d="M12 14l6.16-3.422A12.083 12.083 0 0 1 18.818 17.5L12 20.055l-6.818-2.555A12.083 12.083 0 0 1 5.84 10.578L12 14z"
+                    />
+                    <path d="M12 14v7" />
+                  </svg>
+                </div>
+                <span class="cur-eyebrow">CURRICULUM</span>
+              </div>
+
+              <div class="cur-number">348</div>
+              <div class="cur-label">Active Subjects</div>
+              <div class="cur-meta">
+                <span class="cur-up">↑ 1.8%</span>
+                <span class="cur-since">vs last semester</span>
+              </div>
+
+              <div class="cur-track">
+                <div class="cur-fill forest" style="width: 60%"></div>
+                <div class="cur-fill mustard" style="width: 28%"></div>
+                <div class="cur-fill faint" style="width: 12%"></div>
+              </div>
+
+              <div class="cur-tags">
+                <span class="cur-tag">Undergraduate</span>
+                <span class="cur-tag cur-tag--gold">Graduate</span>
+              </div>
+
+              <button class="cur-cta" @click="router.push('/admin/services/curriculum')">
+                MANAGE CURRICULUM
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path d="M5 12h14m-7-7 7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
           <!-- ── GALLERY ── -->
           <div class="bento-card card-gal">
-            <div class="gal-mosaic">
-              <div class="gal-tile t1"></div>
-              <div class="gal-tile t2"></div>
-              <div class="gal-tile t3"></div>
-              <div class="gal-tile t4"></div>
-            </div>
-            <div class="gal-body">
-              <div class="gal-row">
-                <div class="gal-icon-wrap">🖼</div>
-                <div>
-                  <h3 class="gal-title">Gallery Assets</h3>
-                  <p class="gal-sub">2.4k Digital Media</p>
+            <div class="gal-inner">
+              <div class="gal-head">
+                <div class="gal-icon-wrap">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path d="M21 15l-5-5L5 21" />
+                  </svg>
                 </div>
+                <span class="gal-eyebrow">GALLERY</span>
               </div>
+
+              <div class="gal-number">2,400</div>
+              <div class="gal-label">Digital Media Files</div>
+              <div class="gal-meta">
+                <span class="gal-up">↑ 3.1%</span>
+                <span class="gal-since">vs last month</span>
+              </div>
+
+              <div class="gal-track">
+                <div class="gal-fill forest" style="width: 55%"></div>
+                <div class="gal-fill mustard" style="width: 30%"></div>
+                <div class="gal-fill faint" style="width: 15%"></div>
+              </div>
+
+              <div class="gal-tags">
+                <span class="gal-tag">Images</span>
+                <span class="gal-tag gal-tag--gold">Videos</span>
+              </div>
+
               <button class="gal-cta" @click="router.push('/admin/services/gallery')">
                 MANAGE GALLERY
                 <svg
@@ -221,7 +300,6 @@ const router = useRouter()
   gap: 5px;
   margin-bottom: 1.2rem;
 }
-
 .path-chevron {
   width: 12px;
   height: 12px;
@@ -232,7 +310,6 @@ const router = useRouter()
   font-weight: 800;
   color: #0d2b0f;
 }
-
 .portal-main-title {
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 900;
@@ -267,71 +344,37 @@ const router = useRouter()
   color: #6b7280;
   margin-top: 20px;
 }
-
-/* Header Actions */
-.header-actions-hub {
+.header-breadcrumb {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 20px;
-}
-.system-pills {
-  display: flex;
-  gap: 12px;
-}
-.status-pill,
-.date-pill {
-  background: white;
-  padding: 4px 14px;
-  border-radius: 20px;
+  align-items: center;
+  gap: 6px;
   font-size: 10px;
   font-weight: 800;
-  border: 1px solid #f1f5f9;
+  letter-spacing: 0.2em;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 12px;
 }
-.status-pill {
-  color: #16a34a;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.header-breadcrumb svg {
+  width: 12px;
+  height: 12px;
+  color: #cbd5e1;
 }
-.online-indicator {
-  width: 6px;
-  height: 6px;
-  background: #16a34a;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #16a34a;
-}
-.nav-btn-primary {
-  background: #0d2b0f;
-  color: white;
-  border: none;
-  padding: 0 6px 0 24px;
-  height: 54px;
-  border-radius: 18px;
-  font-weight: 800;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.icon-wrap {
-  width: 42px;
-  height: 42px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.header-breadcrumb span:last-child {
+  color: #0d2b0f;
 }
 
-/* ══ REDESIGNED BENTO GRID ══ */
+/* ══ BENTO GRID ══ */
 .nav-bento-grid {
   display: grid;
-  grid-template-columns: 1.7fr 1fr 1fr;
-  grid-auto-rows: 480px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 340px 280px;
   gap: 20px;
+}
+
+.card-hero {
+  grid-column: 1 / 4;
+  grid-row: 1;
 }
 
 /* ── HERO CARD ── */
@@ -370,16 +413,19 @@ const router = useRouter()
   position: relative;
   z-index: 2;
   height: 100%;
-  padding: 38px;
-  display: flex;
-  flex-direction: column;
+  padding: 32px 44px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 280px;
+  grid-template-rows: auto 1fr auto;
+  column-gap: 40px;
   box-sizing: border-box;
 }
 .hero-top {
+  grid-column: 1 / 4;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
 }
 .hero-tag {
   display: flex;
@@ -421,9 +467,12 @@ const router = useRouter()
 .hbar.accent {
   background: #e6a800;
 }
-
 .hero-body {
-  flex: 1;
+  grid-column: 1 / 3;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 .hero-title {
   font-family: 'Poppins', sans-serif;
@@ -444,20 +493,25 @@ const router = useRouter()
   line-height: 1.75;
   max-width: 300px;
 }
-
 .hero-stats-row {
+  grid-column: 3;
+  grid-row: 2 / 4;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
-  padding: 16px 24px;
-  margin-bottom: 18px;
+  padding: 20px;
+  gap: 14px;
+  margin-bottom: 0;
+  align-self: stretch;
 }
 .hstat {
-  flex: 1;
+  flex: unset;
   text-align: center;
+  width: 100%;
 }
 .hstat-n {
   display: block;
@@ -478,22 +532,24 @@ const router = useRouter()
   margin-top: 3px;
 }
 .hstat-divider {
-  width: 1px;
-  height: 36px;
+  width: 80%;
+  height: 1px;
   background: rgba(255, 255, 255, 0.1);
 }
-
 .hero-cta {
+  grid-column: 1 / 3;
+  grid-row: 3;
+  align-self: end;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  height: 58px;
+  width: 40%;
+  height: 50px;
   padding: 0 8px 0 24px;
   background: #facc15;
   color: #0d2b0f;
-  border: none;
-  border-radius: 18px;
+  border-radius: 16px;
+  margin-top: 1.5%;
   font-family: 'Poppins', sans-serif;
   font-size: 11px;
   font-weight: 800;
@@ -535,17 +591,18 @@ const router = useRouter()
   box-shadow: 0 20px 40px rgba(13, 43, 15, 0.1);
 }
 .rec-inner {
-  padding: 36px;
+  padding: 28px 32px;
   height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 .rec-head {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 .rec-icon-wrap {
   width: 38px;
@@ -568,18 +625,18 @@ const router = useRouter()
 }
 .rec-number {
   font-family: 'Poppins', sans-serif;
-  font-size: 3.4rem;
+  font-size: 2.4rem;
   font-weight: 900;
   color: #0d2b0f;
   letter-spacing: -0.04em;
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .rec-meta {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 .rec-up {
   font-size: 0.7rem;
@@ -595,11 +652,11 @@ const router = useRouter()
 }
 .rec-track {
   display: flex;
-  height: 6px;
+  height: 5px;
   border-radius: 10px;
   overflow: hidden;
   gap: 2px;
-  margin-bottom: auto;
+  margin-bottom: 0;
 }
 .rec-fill {
   border-radius: 10px;
@@ -618,14 +675,14 @@ const router = useRouter()
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 24px;
+  margin-top: 0;
   width: 100%;
-  height: 50px;
+  height: 44px;
   padding: 0 18px;
   background: #0d2b0f;
   color: white;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   font-family: 'Poppins', sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -640,6 +697,154 @@ const router = useRouter()
   box-shadow: 0 10px 28px rgba(13, 43, 15, 0.25);
 }
 
+/* ── CURRICULUM CARD ── */
+.card-curriculum {
+  background: white;
+  border-radius: 32px;
+  border: 1px solid rgba(13, 43, 15, 0.07);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition:
+    transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.45s;
+}
+.card-curriculum:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(13, 43, 15, 0.1);
+}
+.cur-inner {
+  padding: 28px 32px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.cur-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.cur-icon-wrap {
+  width: 38px;
+  height: 38px;
+  background: rgba(13, 43, 15, 0.06);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d2b0f;
+}
+.cur-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #e6a800;
+  background: rgba(230, 168, 0, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.cur-number {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #0d2b0f;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.cur-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(13, 43, 15, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 4px;
+}
+.cur-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.cur-up {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.cur-since {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+.cur-track {
+  display: flex;
+  height: 5px;
+  border-radius: 10px;
+  overflow: hidden;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+.cur-fill {
+  border-radius: 10px;
+  height: 100%;
+}
+.cur-fill.forest {
+  background: #0d2b0f;
+}
+.cur-fill.mustard {
+  background: #e6a800;
+}
+.cur-fill.faint {
+  background: #e2e8f0;
+}
+.cur-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+.cur-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(13, 43, 15, 0.06);
+  color: #0d2b0f;
+}
+.cur-tag--gold {
+  background: rgba(230, 168, 0, 0.1);
+  color: #c8930a;
+}
+.cur-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0;
+  width: 100%;
+  height: 44px;
+  padding: 0 18px;
+  background: #0d2b0f;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.25s;
+}
+.cur-cta:hover {
+  background: #1b5e20;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(13, 43, 15, 0.25);
+}
+
 /* ── GALLERY CARD ── */
 .card-gal {
   background: white;
@@ -647,8 +852,6 @@ const router = useRouter()
   border: 1px solid rgba(13, 43, 15, 0.07);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   transition:
     transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
     box-shadow 0.45s;
@@ -657,86 +860,132 @@ const router = useRouter()
   transform: translateY(-6px);
   box-shadow: 0 20px 40px rgba(13, 43, 15, 0.1);
 }
-.gal-mosaic {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  height: 200px;
-  gap: 3px;
-}
-.gal-tile {
-  transition: filter 0.3s;
-}
-.card-gal:hover .gal-tile {
-  filter: brightness(1.06);
-}
-.t1 {
-  background: linear-gradient(135deg, #0d2b0f 0%, #1e4d22 100%);
-}
-.t2 {
-  background: linear-gradient(135deg, #e6a800 0%, #facc15 100%);
-}
-.t3 {
-  background: linear-gradient(135deg, #c8dac8 0%, #a8c4a8 100%);
-}
-.t4 {
-  background: linear-gradient(135deg, #163318 0%, #0d2b0f 100%);
-}
-
-.gal-body {
-  padding: 24px 28px 28px;
+.gal-inner {
+  padding: 28px 32px;
+  height: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  gap: 16px;
+  justify-content: space-between;
 }
-.gal-row {
+.gal-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 .gal-icon-wrap {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   background: rgba(13, 43, 15, 0.06);
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.gal-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  font-weight: 800;
   color: #0d2b0f;
-  margin: 0 0 2px;
 }
-.gal-sub {
-  font-size: 0.72rem;
+.gal-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #e6a800;
+  background: rgba(230, 168, 0, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.gal-number {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #0d2b0f;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.gal-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(13, 43, 15, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 4px;
+}
+.gal-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.gal-up {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+.gal-since {
+  font-size: 0.68rem;
   color: #94a3b8;
-  margin: 0;
+}
+.gal-track {
+  display: flex;
+  height: 5px;
+  border-radius: 10px;
+  overflow: hidden;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+.gal-fill {
+  border-radius: 10px;
+  height: 100%;
+}
+.gal-fill.forest {
+  background: #0d2b0f;
+}
+.gal-fill.mustard {
+  background: #e6a800;
+}
+.gal-fill.faint {
+  background: #e2e8f0;
+}
+.gal-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+.gal-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(13, 43, 15, 0.06);
+  color: #0d2b0f;
+}
+.gal-tag--gold {
+  background: rgba(230, 168, 0, 0.1);
+  color: #c8930a;
 }
 .gal-cta {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: 0;
   width: 100%;
-  height: 48px;
+  height: 44px;
   padding: 0 18px;
   background: #0d2b0f;
   color: white;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   font-family: 'Poppins', sans-serif;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   cursor: pointer;
   box-sizing: border-box;
   transition: all 0.25s;
-  margin-top: auto;
 }
 .gal-cta:hover {
   background: #1b5e20;

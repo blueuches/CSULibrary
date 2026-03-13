@@ -20,7 +20,7 @@
             :class="[
               'pill-entrance whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-all duration-300',
               selectedEventMonth === month
-                ? 'bg-green-900 text-white shadow-lg scale-105'
+                ? 'bg-[#0d2b0f] text-white shadow-lg scale-105'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
             ]"
             :style="{ '--p-i': index }"
@@ -39,7 +39,7 @@
             <div
               v-for="event in pinnedEvents"
               :key="'pinned-' + event.id"
-              class="min-w-full group relative bg-green-900 flex flex-col md:flex-row h-auto md:h-[350px]"
+              class="min-w-full group relative bg-[#0d2b0f] flex flex-col md:flex-row h-auto md:h-[350px]"
             >
               <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
                 <img
@@ -51,7 +51,7 @@
                 <span
                   class="bg-yellow-400 text-green-900 self-start px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse"
                 >
-                  📌 Pinned Highlight
+                  Pinned Highlight
                 </span>
                 <h3
                   class="text-3xl font-bold text-white leading-tight group-hover:text-yellow-400 transition-colors"
@@ -137,7 +137,7 @@
                 v-if="event.pinned"
                 class="absolute top-4 left-4 z-10 bg-yellow-400 text-green-900 px-3 py-1 rounded-full text-[9px] font-black tracking-tighter shadow-lg"
               >
-                📌 Pinned
+                Pinned
               </div>
 
               <img
@@ -190,7 +190,7 @@
       <div class="flex justify-center mt-20">
         <router-link
           to="/top-borrowers"
-          class="inline-block bg-green-900 text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-green-700 hover:scale-105 transition transform duration-300 animate-pop-in cta-btn"
+          class="inline-block bg-[#0d2b0f] text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-[#1b5e20] hover:scale-105 transition transform duration-300 animate-pop-in cta-btn"
         >
           View Top Borrowers
         </router-link>

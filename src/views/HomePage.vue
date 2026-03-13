@@ -6,11 +6,7 @@
         class="flex transition-transform duration-700 ease-in-out"
         :style="{ transform: `translateX(-${currentIndex * slideWidth}%)` }"
       >
-        <div
-          v-for="(media, index) in carouselItems"
-          :key="media.id || index"
-          class="min-w-[100%]"
-        >
+        <div v-for="(media, index) in carouselItems" :key="media.id || index" class="min-w-[100%]">
           <img
             v-if="media.type === 'image'"
             :src="media.src"
@@ -30,7 +26,6 @@
           ></video>
         </div>
       </div>
-
       <button
         @click="prev"
         class="absolute left-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
@@ -44,7 +39,6 @@
           />
         </svg>
       </button>
-
       <button
         @click="next"
         class="absolute right-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
@@ -53,7 +47,6 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
       </button>
-
       <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         <button
           v-for="(_, i) in carouselItems"
@@ -78,9 +71,8 @@
           color: #f9a825;
           text-transform: uppercase;
         "
+        >CSU Library System</span
       >
-        CSU Library System
-      </span>
       <div style="width: 40px; height: 1px; background: #1b5e20; opacity: 0.4"></div>
     </div>
     <h2
@@ -90,21 +82,18 @@
       <span
         class="animate-fade-in inline-block"
         style="animation-delay: 0s; animation-fill-mode: both; color: #0d2b0f"
+        >HERO</span
       >
-        HERO
-      </span>
       <span
         class="animate-fade-in inline-block mx-2"
         style="animation-delay: 0.4s; animation-fill-mode: both; color: #1b5e20"
+        >LEARNING</span
       >
-        LEARNING
-      </span>
       <span
         class="animate-fade-in inline-block"
         style="animation-delay: 0.8s; animation-fill-mode: both; color: #fbc02d"
+        >COMMONS</span
       >
-        COMMONS
-      </span>
     </h2>
     <p
       class="animate-fade-in text-center"
@@ -144,13 +133,8 @@
     <div class="absolute inset-0" style="background: rgba(13, 43, 15, 0.88)"></div>
     <div class="w-[100%] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
       <div class="sr-left w-full h-full flex justify-center">
-        <img
-          :src="libraryMainImage"
-          alt="Students"
-          class="w-full h-full object-cover rounded-sm"
-        />
+        <img :src="libraryMainImage" alt="Students" class="w-full h-full object-cover rounded-sm" />
       </div>
-
       <div class="sr-right flex flex-col text-white px-4 relative">
         <div style="width: 60px; height: 4px; background: #f9a825; margin-bottom: 16px"></div>
         <div class="mb-4">
@@ -164,9 +148,8 @@
               padding: 4px 12px;
               border-radius: 4px;
             "
+            >CSU LIBRARY</span
           >
-            CSU LIBRARY
-          </span>
         </div>
         <h2
           class="mb-4"
@@ -257,48 +240,35 @@
     </div>
   </div>
 
-  <!-- READ LEARN DISCOVER SECTION -->
+  <!-- READ LEARN DISCOVER -->
   <div class="w-full overflow-hidden" style="background: #ffffff; position: relative">
     <div class="w-[100%] mx-auto px-6 py-20 relative z-10">
-      <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-        <div>
-          <p
-            style="
-              font-size: 0.68rem;
-              font-weight: 800;
-              letter-spacing: 0.3em;
-              color: #f9a825;
-              text-transform: uppercase;
-            "
-            class="mb-3"
-          >
-            ✦ &nbsp;CSU Library Experience
-          </p>
-          <h2
-            style="
-              font-size: clamp(2.5rem, 5vw, 4rem);
-              font-weight: 900;
-              color: #0d2b0f;
-              line-height: 1;
-              letter-spacing: -0.03em;
-            "
-          >
-            Read.<br /><span style="color: #1b5e20">Learn.</span><br /><span style="color: #f9a825"
-              >Discover.</span
-            >
-          </h2>
-        </div>
+      <!-- CENTERED HEADING -->
+      <div class="sr-item flex flex-col items-center mb-16 gap-3 text-center">
         <p
           style="
-            font-size: 0.9rem;
-            color: rgba(13, 43, 15, 0.5);
-            max-width: 280px;
-            line-height: 1.7;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.3em;
+            color: #f9a825;
+            text-transform: uppercase;
           "
         >
-          Three pillars of the Caraga State University Library experience — built for students,
-          researchers, and curious minds.
+          &nbsp;CSU Library Experience
         </p>
+        <h2
+          style="
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            color: #0d2b0f;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            text-align: center;
+          "
+        >
+          Read.<span style="color: #1b5e20">Learn.</span
+          ><span style="color: #f9a825">Discover.</span>
+        </h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -354,9 +324,8 @@
                 padding: 4px 10px;
                 border-radius: 20px;
               "
+              >Collection</span
             >
-              Collection
-            </span>
           </div>
           <div class="absolute inset-0 flex flex-col justify-end p-7">
             <span
@@ -371,9 +340,8 @@
                 display: block;
                 margin-bottom: -8px;
               "
+              >01</span
             >
-              01
-            </span>
             <h3
               style="
                 font-size: 2.4rem;
@@ -482,9 +450,8 @@
                 padding: 4px 10px;
                 border-radius: 20px;
               "
+              >Featured</span
             >
-              Featured
-            </span>
           </div>
           <div class="absolute inset-0 flex flex-col justify-end p-7">
             <span
@@ -499,9 +466,8 @@
                 display: block;
                 margin-bottom: -8px;
               "
+              >02</span
             >
-              02
-            </span>
             <h3
               style="
                 font-size: 2.4rem;
@@ -603,9 +569,8 @@
                 padding: 4px 10px;
                 border-radius: 20px;
               "
+              >Resources</span
             >
-              Resources
-            </span>
           </div>
           <div class="absolute inset-0 flex flex-col justify-end p-7">
             <span
@@ -620,9 +585,8 @@
                 display: block;
                 margin-bottom: -8px;
               "
+              >03</span
             >
-              03
-            </span>
             <h3
               style="
                 font-size: 2.4rem;
@@ -681,9 +645,8 @@
               color: #0d2b0f;
               text-transform: uppercase;
             "
+            >CSU Library</span
           >
-            CSU Library
-          </span>
           <div style="width: 1px; height: 12px; background: #0d2b0f; opacity: 0.3"></div>
           <span
             style="
@@ -693,9 +656,8 @@
               color: #0d2b0f;
               text-transform: uppercase;
             "
+            >Butuan City</span
           >
-            Butuan City
-          </span>
         </div>
         <div class="flex gap-2">
           <div
@@ -712,40 +674,36 @@
     </div>
   </div>
 
-  <!-- CAMPUS UPDATES SECTION -->
+  <!-- LIBRARY UPDATES -->
   <div class="w-full px-6 py-16" style="background: #f4f6f4">
     <div class="w-[100%] mx-auto">
-      <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-        <div>
-          <div class="flex items-center gap-3 mb-3">
-            <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
-            <span
-              style="
-                font-size: 0.68rem;
-                font-weight: 800;
-                letter-spacing: 0.25em;
-                color: #1b5e20;
-                text-transform: uppercase;
-              "
-            >
-              Latest from the Library
-            </span>
-          </div>
-          <h2
+      <!-- CENTERED HEADING -->
+      <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
+        <div class="flex items-center gap-3">
+          <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+          <span
             style="
-              font-size: clamp(2rem, 4vw, 3rem);
-              font-weight: 900;
+              font-size: 0.68rem;
+              font-weight: 800;
+              letter-spacing: 0.25em;
               color: #0d2b0f;
-              line-height: 1;
-              letter-spacing: -0.02em;
+              text-transform: uppercase;
             "
+            >Latest from the Library</span
           >
-            Library Updates
-          </h2>
         </div>
-        <p style="font-size: 0.88rem; color: #888; max-width: 260px; line-height: 1.6">
-          Stay informed with the latest news, services, and programs from CSU Library.
-        </p>
+        <h2
+          style="
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: #0d2b0f;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            text-align: center;
+          "
+        >
+          Library Updates
+        </h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -776,9 +734,8 @@
                   padding: 3px 10px;
                   border-radius: 20px;
                 "
+                >News</span
               >
-                News
-              </span>
             </div>
           </div>
           <div class="p-5">
@@ -789,14 +746,12 @@
               BSP Knowledge Resource Network
             </h3>
             <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600">
-                February 19, 2026
-              </span>
-              <span
+              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
+                >February 19, 2026</span
+              ><span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
                 style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-              >
-                Read more
+                >Read more
                 <svg
                   style="width: 12px; height: 12px"
                   fill="none"
@@ -808,9 +763,8 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </span>
+                  /></svg
+              ></span>
             </div>
           </div>
           <div
@@ -850,9 +804,8 @@
                   padding: 3px 10px;
                   border-radius: 20px;
                 "
+                >Event</span
               >
-                Event
-              </span>
             </div>
           </div>
           <div class="p-5">
@@ -863,14 +816,12 @@
               National Book Week Celebration
             </h3>
             <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600">
-                February 19, 2026
-              </span>
-              <span
+              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
+                >February 19, 2026</span
+              ><span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
                 style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-              >
-                Read more
+                >Read more
                 <svg
                   style="width: 12px; height: 12px"
                   fill="none"
@@ -882,9 +833,8 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </span>
+                  /></svg
+              ></span>
             </div>
           </div>
           <div
@@ -924,9 +874,8 @@
                   padding: 3px 10px;
                   border-radius: 20px;
                 "
+                >Service</span
               >
-                Service
-              </span>
             </div>
           </div>
           <div class="p-5">
@@ -937,14 +886,12 @@
               STARBOOKS - DOST-STII
             </h3>
             <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600">
-                February 19, 2026
-              </span>
-              <span
+              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
+                >February 19, 2026</span
+              ><span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
                 style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-              >
-                Read more
+                >Read more
                 <svg
                   style="width: 12px; height: 12px"
                   fill="none"
@@ -956,9 +903,8 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </span>
+                  /></svg
+              ></span>
             </div>
           </div>
           <div
@@ -994,9 +940,8 @@
                   padding: 3px 10px;
                   border-radius: 20px;
                 "
+                >Service</span
               >
-                Service
-              </span>
             </div>
           </div>
           <div class="p-5">
@@ -1007,14 +952,12 @@
               AVR Reservation
             </h3>
             <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600">
-                February 19, 2026
-              </span>
-              <span
+              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
+                >February 19, 2026</span
+              ><span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
                 style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-              >
-                Read more
+                >Read more
                 <svg
                   style="width: 12px; height: 12px"
                   fill="none"
@@ -1026,9 +969,8 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </span>
+                  /></svg
+              ></span>
             </div>
           </div>
           <div
@@ -1068,9 +1010,8 @@
                   padding: 3px 10px;
                   border-radius: 20px;
                 "
+                >Recognition</span
               >
-                Recognition
-              </span>
             </div>
           </div>
           <div class="p-5">
@@ -1081,14 +1022,12 @@
               Top Library Borrowers and Visitors
             </h3>
             <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600">
-                February 19, 2026
-              </span>
-              <span
+              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
+                >February 19, 2026</span
+              ><span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
                 style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-              >
-                Read more
+                >Read more
                 <svg
                   style="width: 12px; height: 12px"
                   fill="none"
@@ -1100,9 +1039,8 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </span>
+                  /></svg
+              ></span>
             </div>
           </div>
           <div
@@ -1142,9 +1080,8 @@
                   padding: 3px 10px;
                   border-radius: 20px;
                 "
+                >Service</span
               >
-                Service
-              </span>
             </div>
           </div>
           <div class="p-5">
@@ -1155,14 +1092,12 @@
               Newly Acquired Books
             </h3>
             <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600">
-                February 19, 2026
-              </span>
-              <span
+              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
+                >February 19, 2026</span
+              ><span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
                 style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-              >
-                Read more
+                >Read more
                 <svg
                   style="width: 12px; height: 12px"
                   fill="none"
@@ -1174,9 +1109,8 @@
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </span>
+                  /></svg
+              ></span>
             </div>
           </div>
           <div
@@ -1188,7 +1122,7 @@
     </div>
   </div>
 
-  <!-- USEFUL LINKS SECTION -->
+  <!-- USEFUL LINKS -->
   <div
     class="w-[100%] px-6 py-16"
     style="background: #0d2b0f; position: relative; overflow: hidden"
@@ -1216,44 +1150,33 @@
       "
     ></div>
     <div class="w-[100%] mx-auto relative z-10">
-      <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-        <div>
-          <div class="flex items-center gap-3 mb-3">
-            <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
-            <span
-              style="
-                font-size: 0.68rem;
-                font-weight: 800;
-                letter-spacing: 0.25em;
-                color: #f9a825;
-                text-transform: uppercase;
-              "
-            >
-              External Resources
-            </span>
-          </div>
-          <h2
+      <!-- CENTERED HEADING -->
+      <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
+        <div class="flex items-center gap-3">
+          <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+          <span
             style="
-              font-size: clamp(2rem, 4vw, 3rem);
-              font-weight: 900;
-              color: white;
-              line-height: 1;
-              letter-spacing: -0.02em;
+              font-size: 0.68rem;
+              font-weight: 800;
+              letter-spacing: 0.25em;
+              color: #f9a825;
+              text-transform: uppercase;
             "
+            >External Resources</span
           >
-            Useful Links
-          </h2>
         </div>
-        <p
+        <h2
           style="
-            font-size: 0.88rem;
-            color: rgba(255, 255, 255, 0.4);
-            max-width: 260px;
-            line-height: 1.6;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: white;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            text-align: center;
           "
         >
-          Quick access to trusted academic databases, catalogs, and university resources.
-        </p>
+          Useful Links
+        </h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1319,7 +1242,6 @@
             </svg>
           </div>
         </a>
-
         <a
           href="https://www.carsu.edu.ph/"
           target="_blank"
@@ -1386,7 +1308,6 @@
             </svg>
           </div>
         </a>
-
         <a
           href="http://mylibrary.carsu.edu.ph/"
           target="_blank"
@@ -1449,7 +1370,6 @@
             </svg>
           </div>
         </a>
-
         <a
           href="https://www.journals.uchicago.edu/action/showPublications"
           target="_blank"
@@ -1516,7 +1436,6 @@
             </svg>
           </div>
         </a>
-
         <a
           href="https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU"
           target="_blank"
@@ -1579,7 +1498,6 @@
             </svg>
           </div>
         </a>
-
         <a
           href="https://login.ebsco.com"
           target="_blank"
@@ -1650,52 +1568,36 @@
     </div>
   </div>
 
-  <!-- FEATURES SECTION -->
+  <!-- WATCH & EXPLORE -->
   <div class="w-full py-16 px-6" style="background: #f4f6f4">
     <div class="w-[100%] mx-auto">
-      <div class="sr-item flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-        <div>
-          <div class="flex items-center gap-3 mb-3">
-            <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
-            <span
-              style="
-                font-size: 0.68rem;
-                font-weight: 800;
-                letter-spacing: 0.25em;
-                color: #1b5e20;
-                text-transform: uppercase;
-              "
-            >
-              Featured Media
-            </span>
-          </div>
-
-          <h2
+      <!-- CENTERED HEADING -->
+      <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
+        <div class="flex items-center gap-3">
+          <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+          <span
             style="
-              font-size: clamp(2rem, 4vw, 3rem);
-              font-weight: 900;
+              font-size: 0.68rem;
+              font-weight: 800;
+              letter-spacing: 0.25em;
               color: #0d2b0f;
-              line-height: 1;
-              letter-spacing: -0.02em;
+              text-transform: uppercase;
             "
+            >Featured Media</span
           >
-            Watch & Explore
-          </h2>
         </div>
-
-        <div>
-          <p
-            style="
-              font-size: 0.9rem;
-              color: rgba(13, 43, 15, 0.5);
-              max-width: 300px;
-              line-height: 1.7;
-            "
-          >
-            Watch our comprehensive video guides to explore our facilities and learn how to use our
-            resources.
-          </p>
-        </div>
+        <h2
+          style="
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: #0d2b0f;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            text-align: center;
+          "
+        >
+          Watch &amp; Explore
+        </h2>
       </div>
 
       <div
@@ -1740,7 +1642,6 @@
                   </svg>
                 </div>
               </div>
-
               <div
                 class="absolute bottom-4 left-4 flex items-center gap-1.5"
                 style="
@@ -1755,12 +1656,11 @@
                     d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
                   />
                 </svg>
-                <span style="font-size: 0.7rem; color: white; font-weight: 600">
-                  Watch on YouTube
-                </span>
+                <span style="font-size: 0.7rem; color: white; font-weight: 600"
+                  >Watch on YouTube</span
+                >
               </div>
             </template>
-
             <template v-else>
               <div
                 class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
@@ -1772,7 +1672,6 @@
               ></div>
             </template>
           </div>
-
           <div class="p-6" style="background: #0d2b0f">
             <h3
               style="font-size: 1.25rem; font-weight: 900; color: white; line-height: 1.2"
@@ -1796,9 +1695,8 @@
                   letter-spacing: 0.1em;
                   text-transform: uppercase;
                 "
+                >Caraga State University Library</span
               >
-                Caraga State University Library
-              </span>
             </div>
           </div>
         </div>
@@ -1829,7 +1727,6 @@
       >
         ✕
       </button>
-
       <iframe
         v-if="activeFeatureModal.type === 'video' && activeFeatureModal.embedUrl"
         class="w-full h-full"
@@ -1838,7 +1735,6 @@
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
       ></iframe>
-
       <video
         v-else-if="activeFeatureModal.type === 'video'"
         class="w-full h-full"
@@ -1846,7 +1742,6 @@
         controls
         autoplay
       ></video>
-
       <img
         v-else
         class="w-full h-full object-contain bg-black"
@@ -1856,7 +1751,7 @@
     </div>
   </div>
 
-  <!-- SCROLL TO TOP --->
+  <!-- SCROLL TO TOP -->
   <Transition name="fade">
     <button
       v-if="showScrollTop"
@@ -1874,24 +1769,20 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-
 import photo1 from '@/assets/images/img.jpg'
 import photo2 from '@/assets/images/lib.jpg'
 import photo3 from '@/assets/images/img1.jpg'
 import photo4 from '@/assets/images/img2.jpg'
 import photo5 from '@/assets/images/img3.jpg'
 import designBg from '@/assets/images/design.png'
-
 import tinay from '@/assets/images/tinay.jpg'
 import eden from '@/assets/images/eden.jpg'
-
 import card1 from '@/assets/images/card1.jpg'
 import card2 from '@/assets/images/card2.jpg'
 import card3 from '@/assets/images/card3.png'
 import reservation from '@/assets/images/reservation.jpg'
 import topImg from '@/assets/images/top.jpg'
 import newlyAcquiredBooks from '@/assets/images/newly_acc_books.png'
-
 import eLib from '@/assets/images/e-lib.jpg'
 import opac from '@/assets/images/opac.png'
 import freeJournals from '@/assets/images/free.jpg'
@@ -1900,7 +1791,6 @@ import ebsco from '@/assets/images/EBSCO.jpg'
 
 type MediaType = 'image' | 'video'
 type PageType = 'homepage' | 'aboutpage'
-
 type MediaItem = {
   id: string
   title: string
@@ -1914,16 +1804,9 @@ type MediaItem = {
   embedUrl?: string
   thumbnail?: string
 }
-
-type CarouselDisplayItem = {
-  id: string
-  type: MediaType
-  src: string
-  alt: string
-}
+type CarouselDisplayItem = { id: string; type: MediaType; src: string; alt: string }
 
 const STORAGE_KEY = 'website-media-v11'
-
 const defaultImages: CarouselDisplayItem[] = [
   { id: 'default-1', type: 'image', src: photo1, alt: 'Photo 1' },
   { id: 'default-2', type: 'image', src: photo2, alt: 'Photo 2' },
@@ -1931,9 +1814,7 @@ const defaultImages: CarouselDisplayItem[] = [
   { id: 'default-4', type: 'image', src: photo4, alt: 'Photo 4' },
   { id: 'default-5', type: 'image', src: photo5, alt: 'Photo 5' },
 ]
-
 const mediaItems = ref<MediaItem[]>([])
-
 function loadMedia() {
   try {
     mediaItems.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
@@ -1941,19 +1822,14 @@ function loadMedia() {
     mediaItems.value = []
   }
 }
-
 function getSectionMedia(section: string) {
   return mediaItems.value
     .filter((item) => item.page === 'homepage' && item.section === section)
     .sort((a, b) => a.order - b.order)
 }
-
-const carouselMedia = computed(() => getSectionMedia('carousel'))
-
 const carouselItems = computed<CarouselDisplayItem[]>(() => {
-  const items = carouselMedia.value
+  const items = getSectionMedia('carousel')
   if (!items.length) return defaultImages
-
   return items.map((item) => ({
     id: item.id,
     type: item.type,
@@ -1961,34 +1837,28 @@ const carouselItems = computed<CarouselDisplayItem[]>(() => {
     alt: item.title || 'Carousel Media',
   }))
 })
-
 const librarySectionItems = computed(() => getSectionMedia('library-section'))
 const rldItems = computed(() => getSectionMedia('read-learn-discover'))
 const updateItems = computed(() => getSectionMedia('library-updates'))
 const usefulItems = computed(() => getSectionMedia('useful-links'))
 const featureItems = computed(() => getSectionMedia('features'))
-
 const libraryBgImage = computed(() => librarySectionItems.value[0]?.src || designBg)
 const libraryMainImage = computed(() => librarySectionItems.value[1]?.src || photo2)
-
 const rldImage1 = computed(() => rldItems.value[0]?.src || tinay)
 const rldImage2 = computed(() => rldItems.value[1]?.src || eden)
 const rldImage3 = computed(() => rldItems.value[2]?.src || tinay)
-
 const updateImage1 = computed(() => updateItems.value[0]?.src || card1)
 const updateImage2 = computed(() => updateItems.value[1]?.src || card2)
 const updateImage3 = computed(() => updateItems.value[2]?.src || card3)
 const updateImage4 = computed(() => updateItems.value[3]?.src || reservation)
 const updateImage5 = computed(() => updateItems.value[4]?.src || topImg)
 const updateImage6 = computed(() => updateItems.value[5]?.src || newlyAcquiredBooks)
-
 const usefulImage1 = computed(() => usefulItems.value[0]?.src || eLib)
 const usefulImage2 = computed(() => usefulItems.value[1]?.src || '/csu-logo.png')
 const usefulImage3 = computed(() => usefulItems.value[2]?.src || opac)
 const usefulImage4 = computed(() => usefulItems.value[3]?.src || freeJournals)
 const usefulImage5 = computed(() => usefulItems.value[4]?.src || gale)
 const usefulImage6 = computed(() => usefulItems.value[5]?.src || ebsco)
-
 const defaultFeatureItems: MediaItem[] = [
   {
     id: 'default-feature-1',
@@ -2017,96 +1887,70 @@ const defaultFeatureItems: MediaItem[] = [
     externalLink: 'https://www.youtube.com/watch?v=HAEPrH2aYpc',
   },
 ]
-
-const displayFeatureItems = computed(() => {
-  return featureItems.value.length ? featureItems.value : defaultFeatureItems
-})
-
+const displayFeatureItems = computed(() =>
+  featureItems.value.length ? featureItems.value : defaultFeatureItems,
+)
 const activeFeatureModal = ref<MediaItem | null>(null)
-
 function getFeatureThumbnail(feature: MediaItem) {
   return feature.thumbnail || feature.src
 }
-
 function getFeatureDescription(feature: MediaItem, index: number) {
   if (feature.type === 'video') {
-    if (index === 0) {
+    if (index === 0)
       return 'Explore our modern facilities and collection areas from the comfort of your device.'
-    }
-    if (index === 1) {
+    if (index === 1)
       return 'First time here? Learn how to navigate our physical and digital resources before your visit.'
-    }
     return 'Watch and explore more featured videos from Caraga State University Library.'
   }
-
-  if (index === 0) {
-    return 'Preview one of the featured visual highlights of Caraga State University Library.'
-  }
-
-  return 'Another featured visual from the library that can be opened in a larger preview.'
+  return index === 0
+    ? 'Preview one of the featured visual highlights of Caraga State University Library.'
+    : 'Another featured visual from the library that can be opened in a larger preview.'
 }
-
 function openFeature(index: number) {
   activeFeatureModal.value = displayFeatureItems.value[index] || null
 }
-
 function closeFeatureModal() {
   activeFeatureModal.value = null
 }
-
 const imageHeight = '600px'
 const currentIndex = ref(0)
 const slideWidth = 100
 const showScrollTop = ref(false)
-
 let autoplayInterval: ReturnType<typeof setInterval> | null = null
 let observer: IntersectionObserver | null = null
-
 function next() {
   if (!carouselItems.value.length) return
   currentIndex.value = (currentIndex.value + 1) % carouselItems.value.length
 }
-
 function prev() {
   if (!carouselItems.value.length) return
-  currentIndex.value = (currentIndex.value - 1 + carouselItems.value.length) % carouselItems.value.length
+  currentIndex.value =
+    (currentIndex.value - 1 + carouselItems.value.length) % carouselItems.value.length
 }
-
 function handleScroll() {
   showScrollTop.value = window.scrollY > 300
 }
-
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
-
 function initObserver() {
   observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('in-view')
-        } else {
-          entry.target.classList.remove('in-view')
-        }
+        if (entry.isIntersecting) entry.target.classList.add('in-view')
+        else entry.target.classList.remove('in-view')
       })
     },
     { threshold: 0.1 },
   )
-
-  document.querySelectorAll('.sr-item, .sr-card, .sr-left, .sr-right').forEach((el) => {
-    observer?.observe(el)
-  })
+  document
+    .querySelectorAll('.sr-item, .sr-card, .sr-left, .sr-right')
+    .forEach((el) => observer?.observe(el))
 }
-
 function handleMediaUpdated() {
   loadMedia()
-
-  if (currentIndex.value >= carouselItems.value.length) {
-    currentIndex.value = 0
-  }
+  if (currentIndex.value >= carouselItems.value.length) currentIndex.value = 0
 }
-
 onMounted(() => {
   loadMedia()
   autoplayInterval = setInterval(next, 3000)
@@ -2114,7 +1958,6 @@ onMounted(() => {
   window.addEventListener('website-media-updated', handleMediaUpdated as EventListener)
   setTimeout(initObserver, 100)
 })
-
 onUnmounted(() => {
   if (autoplayInterval) clearInterval(autoplayInterval)
   if (observer) observer.disconnect()
@@ -2134,12 +1977,10 @@ onUnmounted(() => {
     transform: translateY(0);
   }
 }
-
 .animate-fade-in {
   opacity: 0;
   animation: fadeIn 0.6s ease forwards;
 }
-
 .sr-item,
 .sr-card {
   opacity: 0;
@@ -2148,7 +1989,6 @@ onUnmounted(() => {
     opacity 0.6s ease,
     transform 0.6s ease;
 }
-
 .sr-left {
   opacity: 0;
   transform: translateX(-48px);
@@ -2156,7 +1996,6 @@ onUnmounted(() => {
     opacity 0.7s ease,
     transform 0.7s ease;
 }
-
 .sr-right {
   opacity: 0;
   transform: translateX(48px);
@@ -2164,7 +2003,6 @@ onUnmounted(() => {
     opacity 0.7s ease,
     transform 0.7s ease;
 }
-
 .sr-item.in-view,
 .sr-card.in-view,
 .sr-left.in-view,
@@ -2172,36 +2010,6 @@ onUnmounted(() => {
   opacity: 1;
   transform: translate(0, 0);
 }
-
-.tagline-title {
-  font-weight: 900;
-  font-size: 3rem;
-  color: #0d2b0f;
-  text-align: center;
-  line-height: 2;
-}
-
-.card-heading {
-  font-size: 1rem;
-  font-weight: 900;
-  color: #0d2b0f;
-}
-
-.link-heading {
-  font-size: 1.1rem;
-  font-weight: 900;
-  color: #0d2b0f;
-}
-
-@media (max-width: 1400px) {
-  .tagline-title {
-    font-size: 2.5rem;
-  }
-  .page-heading {
-    font-size: 1.9rem;
-  }
-}
-
 @media (max-width: 768px) {
   .tagline-title {
     margin-top: 22px;
@@ -2209,12 +2017,10 @@ onUnmounted(() => {
     font-size: 1.5rem;
   }
 }
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
-
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
