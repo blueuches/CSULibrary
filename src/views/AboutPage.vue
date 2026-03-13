@@ -45,10 +45,12 @@ const defaultIconMedia = [
 ]
 
 const objectives = [
-  '1. Develop collections of materials that support, enrich and satisfy the curricula and research needs of stakeholders;',
-  '2. Effect a universally-accepted library system of organization and circulation;',
-  '3. Ensure the provision and maintenance of efficient facilities and equipment for quality library services and operations;',
-  '4. Install a computerized system of information access for wider information coverage and facilitated library operations;',
+  '1. Ensure the provision and maintainance of efficient facilities and equipment to support high-quality library services and operations.;',
+  '2. Employ committed and competent library personnel to deliver excellent library services.;',
+  '3. Build a collection that meets the standards of modern libraries-not only within Caraga, but also at the national and international levels.;',
+  '4. Establish linkages with local, national, and international academic and research networks to access updated technological information.;',
+  '5. Provide library personnel with a dynamic program for professional development and continous learning.;',
+  '6. Develop and implement a robust monitoring and evaluation system to assess library performance and identify strategies for improvement.;',
 ]
 
 const rules = [
@@ -217,9 +219,9 @@ onBeforeUnmount(() => {
               <h3 class="green-heading with-accent">Vision</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  The CSU Library envisions to be a leading repository of knowledge in the pursuit
-                  of globally competitive academic aspirations of the University with respect to the
-                  advancement of science and technology for the changing demands of Caraga Region.
+                  The CSU-HERO Learning Commons envisions itself as a prenier repository of knowledge, 
+                  champoining the university's commitment to becoming a socially engaged, digitally innovative, 
+                  and entrepreneurial institution-excelling in science, engineering, and the arts by 2028.
                 </p>
               </div>
             </div>
@@ -232,9 +234,9 @@ onBeforeUnmount(() => {
               <h3 class="green-heading with-accent">Mission</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  It is committed to sustain an excellent bank of information to support the
-                  services of the empowering stakeholders with knowledge and skills relevant to the
-                  broad-based development of the region.
+                  The CSU-HERO Learning Commons provides resources and delivers essentials services that align with the 
+                  University's mission as a transformative institution. It remains committed to the fostering a sustainable
+                  future for the regiion, the nation, and beyond.
                 </p>
               </div>
             </div>
@@ -247,9 +249,9 @@ onBeforeUnmount(() => {
               <h3 class="green-heading with-accent">Goal</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  To ensure a well organized library system with a vast collection of information
-                  and education materials relative to the academic programs of the University and
-                  the societal demand of the region.
+                  To ensure a well-organized library system with a vast collection of information
+                  and education materials that support the academic programs of the University and 
+                  respond to the evolving needs of society within the region.
                 </p>
               </div>
             </div>
@@ -261,7 +263,7 @@ onBeforeUnmount(() => {
         <div class="grid-item" v-reveal>
           <div class="content-box fixed-card">
             <div class="section-block no-top-space">
-              <h3 class="green-heading with-accent">Objectives</h3>
+              <h3 class="green-heading with-accent bottom-box">Objectives</h3>
               <div class="card-body no-scroll">
                 <ol class="custom-list list-tight">
                   <li v-for="(item, i) in objectives" :key="i">{{ item }}</li>
@@ -274,7 +276,7 @@ onBeforeUnmount(() => {
         <div class="grid-item" v-reveal="80">
           <div class="content-box fixed-card">
             <div class="section-block no-top-space">
-              <h3 class="green-heading with-accent">Rules and Regulation</h3>
+              <h3 class="green-heading with-accent bottom-box">Rules and Regulation</h3>
               <div class="card-body no-scroll">
                 <ol class="custom-list list-tight">
                   <li v-for="(item, i) in rules" :key="i">{{ item }}</li>
@@ -486,11 +488,12 @@ onBeforeUnmount(() => {
     0 10px 20px rgba(var(--float-shadow-green), 0.16);
 }
 .fixed-card {
-  height: 350px;
+  height: 380px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
+
 .no-top-space {
   margin-top: 0;
   height: 100%;
