@@ -33,14 +33,15 @@ export type WebsiteImagePayload = {
   thumbnail_url?: string | null
   external_link?: string | null
 }
-export const getImagesByPage = async (page: "homepage") => {
+
+export const getImagesByPage = async (page: 'homepage' | 'aboutpage') => {
   const { data, error } = await supabase
-    .from("website_images")
-    .select("*")
-    .eq("page", page)
-    .eq("is_active", true)
-    .order("section", { ascending: true })
-    .order("display_order", { ascending: true })
+    .from('website_images')
+    .select('*')
+    .eq('page', page)
+    .eq('is_active', true)
+    .order('section', { ascending: true })
+    .order('display_order', { ascending: true })
 
   if (error) throw error
   return data || []
