@@ -1067,6 +1067,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 </template>
 
 <style scoped>
+/* style */
 .page-layout {
   display: flex;
   height: 100vh;
