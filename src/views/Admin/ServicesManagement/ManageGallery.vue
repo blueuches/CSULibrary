@@ -86,7 +86,8 @@
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     transitionDelay: `${(idx % 4) * 0.08}s`,
-                  } : { transitionDelay: `${(idx % 4) * 0.08}s` }" @click="openViewer(section)">
+                  } : { transitionDelay: `${(idx % 4) * 0.08}s` }" @click="openViewer(section)"
+                  @mouseenter="startCarousel(section)" @mouseleave="stopCarousel(section)">
                   <div
                     class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500">
                   </div>
@@ -247,24 +248,6 @@
                 </label>
               </div>
               <p class="photo-hint">First photo = cover. Click ★ to change.</p>
-
-              <!-- LIVE PREVIEW -->
-              <div class="fg-section">Preview · Public Gallery View</div>
-              <div class="live-preview" :style="form.images[0] ? `background-image:url(${form.images[0]})` : ''">
-                <div class="lp-gradient"></div>
-                <div class="absolute top-3 left-3">
-                  <span
-                    class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase bg-[#0d2b0f] text-white">
-                    {{floors.find((f) => f.id === form.floorId)?.name ?? '1st Floor'}}
-                  </span>
-                </div>
-                <div class="lp-body">
-                  <div class="lp-bar"></div>
-                  <p class="lp-title">{{ form.title || 'Section Title' }}</p>
-                  <p v-if="form.note" class="lp-note">{{ form.note }}</p>
-                  <p class="lp-desc">{{ form.description || 'Description will appear here.' }}</p>
-                </div>
-              </div>
             </div>
 
             <!-- FOOTER -->
@@ -331,6 +314,32 @@ import {
 /* =====================================================
   STATE MANAGEMENT
 ===================================================== */
+
+const hoverIndex = ref(null)
+const hoverIntervals = new Map()
+
+const startCarousel = (section) => {
+  if (!section.images || section.images.length < 2) return
+
+  let index = 0
+
+  hoverIntervals.set(
+    section.id,
+    setInterval(() => {
+      index = (index + 1) % section.images.length
+      section.images.unshift(section.images.splice(index, 1)[0])
+    }, 1200)
+  )
+}
+
+const stopCarousel = (section) => {
+  const interval = hoverIntervals.get(section.id)
+  if (interval) {
+    clearInterval(interval)
+    hoverIntervals.delete(section.id)
+  }
+}
+
 const floors = ref([
   { id: 1, name: '1st Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] },
   { id: 2, name: '2nd Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] },
