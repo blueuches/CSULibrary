@@ -35,10 +35,7 @@ import gale from '@/assets/images/gale.jpg'
 import ebsco from '@/assets/images/EBSCO.jpg'
 
 const heroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
-const iconGif1 = new URL('@/assets/icons/idea.gif', import.meta.url).href
-const iconGif2 = new URL('@/assets/icons/opportunities.gif', import.meta.url).href
-const iconGif3 = new URL('@/assets/icons/student.gif', import.meta.url).href
-const iconGif4 = new URL('@/assets/icons/social-life.gif', import.meta.url).href
+
 
 type MediaType = 'image' | 'video'
 type PageType = 'homepage' | 'aboutpage'
