@@ -176,8 +176,8 @@
                   </tbody>
                 </table>
               </div>
-              <div class="panel-footer" style="display: flex">
-                <button class="add-section-btn">
+              <div class="panel-footer" style="display: flex; gap: 10px;">
+                <button class="report-add-section-btn">
                   <RouterLink
                     to="/admin/analytics/display"
                     class="w-full h-full block text-inherit no-underline"
@@ -185,7 +185,7 @@
                     View Detailed {{ activeRankingTab }} Analytics
                   </RouterLink>
                 </button>
-                <button class="add-section-btn">
+                <button class="report-add-section-btn">
                   <RouterLink
                     to="/admin/analytics/add"
                     class="w-full h-full block text-inherit no-underline"
@@ -193,7 +193,7 @@
                     Add/Edit Ranking Categories
                   </RouterLink>
                 </button>
-                <button class="add-section-btn">
+                <button class="report-add-section-btn">
                   <RouterLink
                     to="/admin/analytics/books"
                     class="w-full h-full block text-inherit no-underline"

@@ -2,6 +2,18 @@
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
     <Sidebar />
 
+    <transition name="toast">
+      <div
+        v-if="toast.show"
+        :class="[
+          'fixed left-1/2 top-6 z-[9999] -translate-x-1/2 px-6 py-4 rounded-2xl text-base font-bold text-white shadow-2xl',
+          toast.type === 'success' ? 'bg-[#0d2b0f]' : 'bg-red-600',
+        ]"
+      >
+        {{ toast.message }}
+      </div>
+    </transition>
+
     <main class="report-root flex-1 overflow-y-auto">
       <header class="report-header intro-header">
         <div class="header-left">
@@ -276,7 +288,7 @@
             <button
               type="submit"
               class="flex-1 px-8 py-4 rounded-xl font-bold text-white transition-all duration-300 btn-submit"
-              style="background-color: #2d7231"
+              style="background-color: #0d2b0f"
             >
               {{ isEditing ? 'Update News' : 'Publish News' }}
             </button>
@@ -288,9 +300,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
+import { createAnnouncement } from '@/services/announcementService'
+import { supabase } from '@/lib/supabase'
 import '@/assets/styles/report-analytics.css'
 
 const router = useRouter()
@@ -310,6 +324,25 @@ const formData = ref<{
   datePublished: today,
 })
 
+const toast = reactive({
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error',
+})
+
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+
+const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+  toast.message = message
+  toast.type = type
+  toast.show = true
+
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => {
+    toast.show = false
+  }, 2500)
+}
+
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
@@ -320,17 +353,48 @@ const handleFileUpload = (event: Event) => {
 
 const submitForm = async () => {
   if (!formData.value.title.trim()) {
-    alert('Please enter a title')
+    showToast('Please enter a title', 'error')
     return
   }
   if (!formData.value.description.trim()) {
-    alert('Please enter description')
+    showToast('Please enter description', 'error')
     return
   }
 
-  console.log('Saving news:', formData.value)
-  // TODO: Add Firebase/database logic here
-  router.push('/admin/announcement')
+  try {
+    let imageUrl: string | undefined = undefined
+
+    if (formData.value.attachment) {
+      const file = formData.value.attachment
+      const fileName = `${Date.now()}_${file.name}`
+      const filePath = `announcements/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('events_images')
+        .upload(filePath, file)
+
+      if (uploadError) throw uploadError
+
+      const { data } = supabase.storage.from('events_images').getPublicUrl(filePath)
+      imageUrl = data.publicUrl
+    }
+
+    await createAnnouncement({
+      type: 'news',
+      title: formData.value.title.trim(),
+      content: formData.value.description.trim(),
+      image_url: imageUrl,
+      event_id: null,
+    })
+
+    showToast('News published successfully!')
+    setTimeout(() => {
+      router.push('/admin/announcement')
+    }, 400)
+  } catch (error) {
+    console.error('Error publishing news:', error)
+    showToast('Failed to publish news.', 'error')
+  }
 }
 
 const goBack = () => {
@@ -364,11 +428,22 @@ textarea::placeholder {
 }
 
 .btn-submit:hover {
-  background-color: #faa627 !important;
+  background-color: #1b5e20 !important;
 }
 
 .attachment-zone:hover {
   border-color: #f28500;
   background-color: #fff9e6 !important;
+}
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.2s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
