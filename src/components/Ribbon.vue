@@ -28,7 +28,7 @@
   position: relative;
   width: 100%;
   height: 48px;
-  background: #1b5e20;
+  background: #0d2b0f;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +52,7 @@
   bottom: -10px;
   width: 0;
   height: 0;
-  border-top: 10px solid #1b5e20;
+  border-top: 10px solid #0d2b0f;
   border-right: 12px solid transparent;
 }
 

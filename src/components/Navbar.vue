@@ -1,13 +1,10 @@
 <template>
-  <header class="w-full bg-white border-t-4 border-[#FBC02D] shadow-sm">
+  <header class="fixed top-0 left-0 w-full bg-white border-t-4 border-[#FBC02D] shadow-sm z-50">
     <div class="w-full px-6 lg:px-10">
       <div class="flex justify-between items-center h-20">
         <div class="flex items-center">
-          <img src="/csu-logo.png" alt="University Logo" class="w-[55px] h-auto" />
-          <div class="flex flex-col font-serif leading-tight text-[#0d2b0f]">
-            <span class="text-lg md:text-xl font-bold uppercase tracking-tight text-green-900">Caraga State University</span>
-            <!-- <span class="text-lg md:text-xl font-bold uppercase tracking-tight">University</span> -->
-          </div>
+          <img src="/csu-logo.png" alt="University Logo" class="w-40 h-auto" />
+          <div class="flex flex-col font-serif leading-tight text-[#0d2b0f]"></div>
         </div>
 
         <nav class="hidden xl:flex items-center">
@@ -31,6 +28,9 @@
       </div>
     </div>
   </header>
+
+  <!-- IMPORTANT: add spacer so content won't hide under fixed navbar -->
+  <div class="h-20"></div>
 </template>
 
 <script setup lang="ts">
@@ -38,13 +38,13 @@ import { RouterLink } from 'vue-router'
 
 const navLinks = [
   { name: 'Home', path: '/' },
-  { name: 'About Us', path: '/about' },
   { name: 'announcement', path: '/announcements' },
-  { name: 'features', path: '/features' },
   { name: 'Gallery', path: '/gallery' },
   { name: 'personnel', path: '/personnel' },
   { name: 'Record', path: '/records' },
   { name: 'services', path: '/services' },
+  { name: 'About Us', path: '/about' },
+  { name: 'Admin', path: '/admin/login' },
 ]
 </script>
 
