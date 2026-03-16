@@ -1,7 +1,10 @@
 <template>
   <div class="w-full !m-0 !p-0">
     <!-- CAROUSEL -->
-    <div class="relative w-full overflow-hidden">
+    <div
+      v-if="isMediaLoaded && carouselItems.length"
+      class="relative w-full overflow-hidden"
+    >
       <div
         class="flex transition-transform duration-700 ease-in-out"
         :style="{ transform: `translateX(-${currentIndex * slideWidth}%)` }"
@@ -56,6 +59,14 @@
           :class="currentIndex === i ? 'bg-[#fbc02d] w-2' : 'bg-[#fbc02d]/50'"
         />
       </div>
+    </div>
+
+    <div
+      v-else
+      class="w-full flex items-center justify-center"
+      :style="{ height: imageHeight, background: '#f4f6f4' }"
+    >
+      <span style="color: rgba(13,43,15,0.55); font-weight: 700;">Loading carousel...</span>
     </div>
   </div>
 
@@ -243,7 +254,6 @@
   <!-- READ LEARN DISCOVER -->
   <div class="w-full overflow-hidden" style="background: #ffffff; position: relative">
     <div class="w-[100%] mx-auto px-6 py-20 relative z-10">
-      <!-- CENTERED HEADING -->
       <div class="sr-item flex flex-col items-center mb-16 gap-3 text-center">
         <p
           style="
@@ -677,7 +687,6 @@
   <!-- LIBRARY UPDATES -->
   <div class="w-full px-6 py-16" style="background: #f4f6f4">
     <div class="w-[100%] mx-auto">
-      <!-- CENTERED HEADING -->
       <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
         <div class="flex items-center gap-3">
           <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
@@ -1150,7 +1159,6 @@
       "
     ></div>
     <div class="w-[100%] mx-auto relative z-10">
-      <!-- CENTERED HEADING -->
       <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
         <div class="flex items-center gap-3">
           <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
@@ -1181,7 +1189,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <a
-          href="https://www.elib.gov.ph"
+          :href="usefulLink1"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1243,7 +1251,7 @@
           </div>
         </a>
         <a
-          href="https://www.carsu.edu.ph/"
+          :href="usefulLink2"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1309,7 +1317,7 @@
           </div>
         </a>
         <a
-          href="http://mylibrary.carsu.edu.ph/"
+          :href="usefulLink3"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1371,7 +1379,7 @@
           </div>
         </a>
         <a
-          href="https://www.journals.uchicago.edu/action/showPublications"
+          :href="usefulLink4"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1437,7 +1445,7 @@
           </div>
         </a>
         <a
-          href="https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU"
+          :href="usefulLink5"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1499,7 +1507,7 @@
           </div>
         </a>
         <a
-          href="https://login.ebsco.com"
+          :href="usefulLink6"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1571,7 +1579,6 @@
   <!-- WATCH & EXPLORE -->
   <div class="w-full py-16 px-6" style="background: #f4f6f4">
     <div class="w-[100%] mx-auto">
-      <!-- CENTERED HEADING -->
       <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
         <div class="flex items-center gap-3">
           <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
@@ -1769,6 +1776,8 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { getImagesByPage } from '@/services/websiteImageService'
+
 import photo1 from '@/assets/images/img.jpg'
 import photo2 from '@/assets/images/lib.jpg'
 import photo3 from '@/assets/images/img1.jpg'
@@ -1807,6 +1816,8 @@ type MediaItem = {
 type CarouselDisplayItem = { id: string; type: MediaType; src: string; alt: string }
 
 const STORAGE_KEY = 'website-media-v11'
+const isMediaLoaded = ref(false)
+
 const defaultImages: CarouselDisplayItem[] = [
   { id: 'default-1', type: 'image', src: photo1, alt: 'Photo 1' },
   { id: 'default-2', type: 'image', src: photo2, alt: 'Photo 2' },
@@ -1814,22 +1825,89 @@ const defaultImages: CarouselDisplayItem[] = [
   { id: 'default-4', type: 'image', src: photo4, alt: 'Photo 4' },
   { id: 'default-5', type: 'image', src: photo5, alt: 'Photo 5' },
 ]
+
 const mediaItems = ref<MediaItem[]>([])
-function loadMedia() {
+
+function extractYouTubeId(url: string) {
+  if (!url) return ''
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([^&]+)/,
+    /(?:youtu\.be\/)([^?&/]+)/,
+    /(?:youtube\.com\/embed\/)([^?&/]+)/,
+    /(?:youtube\.com\/shorts\/)([^?&/]+)/,
+  ]
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match?.[1]) return match[1]
+  }
+  return ''
+}
+
+function getYouTubeThumbnail(url: string) {
+  const id = extractYouTubeId(url)
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : ''
+}
+
+function getYouTubeEmbed(url: string) {
+  const id = extractYouTubeId(url)
+  return id ? `https://www.youtube.com/embed/${id}` : ''
+}
+
+function normalizeMediaRow(row: any): MediaItem {
+  const mediaType = (row.media_type || 'image') as MediaType
+  const videoUrl = row.video_url || row.external_link || ''
+  const imageUrl = row.image_url || ''
+  const thumbnailUrl = row.thumbnail_url || imageUrl || getYouTubeThumbnail(videoUrl)
+
+  return {
+    id: row.id,
+    title: row.title || '',
+    type: mediaType,
+    page: row.page || 'homepage',
+    section: row.section || '',
+    order: Number(row.display_order || 1),
+    category: `HomePage ${row.section || ''}`,
+    src: mediaType === 'video' ? videoUrl : imageUrl,
+    externalLink: row.external_link || '',
+    embedUrl: mediaType === 'video' ? getYouTubeEmbed(videoUrl) : '',
+    thumbnail: mediaType === 'video' ? thumbnailUrl : imageUrl,
+  }
+}
+
+function loadMediaFromLocalStorage() {
   try {
-    mediaItems.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    mediaItems.value = Array.isArray(raw) ? raw : []
   } catch {
     mediaItems.value = []
   }
 }
+
+async function loadMediaFromSupabase() {
+  isMediaLoaded.value = false
+  try {
+    const rows = await getImagesByPage('homepage')
+    mediaItems.value = rows.map(normalizeMediaRow)
+  } catch (error) {
+    console.error('Failed to load homepage media from Supabase:', error)
+    loadMediaFromLocalStorage()
+  } finally {
+    isMediaLoaded.value = true
+  }
+}
+
 function getSectionMedia(section: string) {
   return mediaItems.value
     .filter((item) => item.page === 'homepage' && item.section === section)
     .sort((a, b) => a.order - b.order)
 }
+
 const carouselItems = computed<CarouselDisplayItem[]>(() => {
+  if (!isMediaLoaded.value) return []
+
   const items = getSectionMedia('carousel')
   if (!items.length) return defaultImages
+
   return items.map((item) => ({
     id: item.id,
     type: item.type,
@@ -1837,28 +1915,45 @@ const carouselItems = computed<CarouselDisplayItem[]>(() => {
     alt: item.title || 'Carousel Media',
   }))
 })
+
 const librarySectionItems = computed(() => getSectionMedia('library-section'))
 const rldItems = computed(() => getSectionMedia('read-learn-discover'))
 const updateItems = computed(() => getSectionMedia('library-updates'))
 const usefulItems = computed(() => getSectionMedia('useful-links'))
 const featureItems = computed(() => getSectionMedia('features'))
+
 const libraryBgImage = computed(() => librarySectionItems.value[0]?.src || designBg)
 const libraryMainImage = computed(() => librarySectionItems.value[1]?.src || photo2)
+
 const rldImage1 = computed(() => rldItems.value[0]?.src || tinay)
 const rldImage2 = computed(() => rldItems.value[1]?.src || eden)
 const rldImage3 = computed(() => rldItems.value[2]?.src || tinay)
+
 const updateImage1 = computed(() => updateItems.value[0]?.src || card1)
 const updateImage2 = computed(() => updateItems.value[1]?.src || card2)
 const updateImage3 = computed(() => updateItems.value[2]?.src || card3)
 const updateImage4 = computed(() => updateItems.value[3]?.src || reservation)
 const updateImage5 = computed(() => updateItems.value[4]?.src || topImg)
 const updateImage6 = computed(() => updateItems.value[5]?.src || newlyAcquiredBooks)
+
 const usefulImage1 = computed(() => usefulItems.value[0]?.src || eLib)
 const usefulImage2 = computed(() => usefulItems.value[1]?.src || '/csu-logo.png')
 const usefulImage3 = computed(() => usefulItems.value[2]?.src || opac)
 const usefulImage4 = computed(() => usefulItems.value[3]?.src || freeJournals)
 const usefulImage5 = computed(() => usefulItems.value[4]?.src || gale)
 const usefulImage6 = computed(() => usefulItems.value[5]?.src || ebsco)
+
+const usefulLink1 = computed(() => usefulItems.value[0]?.externalLink || 'https://www.elib.gov.ph')
+const usefulLink2 = computed(() => usefulItems.value[1]?.externalLink || 'https://www.carsu.edu.ph/')
+const usefulLink3 = computed(() => usefulItems.value[2]?.externalLink || 'http://mylibrary.carsu.edu.ph/')
+const usefulLink4 = computed(
+  () => usefulItems.value[3]?.externalLink || 'https://www.journals.uchicago.edu/action/showPublications',
+)
+const usefulLink5 = computed(
+  () => usefulItems.value[4]?.externalLink || 'https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU',
+)
+const usefulLink6 = computed(() => usefulItems.value[5]?.externalLink || 'https://login.ebsco.com')
+
 const defaultFeatureItems: MediaItem[] = [
   {
     id: 'default-feature-1',
@@ -1887,13 +1982,17 @@ const defaultFeatureItems: MediaItem[] = [
     externalLink: 'https://www.youtube.com/watch?v=HAEPrH2aYpc',
   },
 ]
+
 const displayFeatureItems = computed(() =>
   featureItems.value.length ? featureItems.value : defaultFeatureItems,
 )
+
 const activeFeatureModal = ref<MediaItem | null>(null)
+
 function getFeatureThumbnail(feature: MediaItem) {
-  return feature.thumbnail || feature.src
+  return feature.thumbnail || getYouTubeThumbnail(feature.src) || feature.src
 }
+
 function getFeatureDescription(feature: MediaItem, index: number) {
   if (feature.type === 'video') {
     if (index === 0)
@@ -1906,33 +2005,42 @@ function getFeatureDescription(feature: MediaItem, index: number) {
     ? 'Preview one of the featured visual highlights of Caraga State University Library.'
     : 'Another featured visual from the library that can be opened in a larger preview.'
 }
+
 function openFeature(index: number) {
   activeFeatureModal.value = displayFeatureItems.value[index] || null
 }
+
 function closeFeatureModal() {
   activeFeatureModal.value = null
 }
+
 const imageHeight = '600px'
 const currentIndex = ref(0)
 const slideWidth = 100
 const showScrollTop = ref(false)
+
 let autoplayInterval: ReturnType<typeof setInterval> | null = null
 let observer: IntersectionObserver | null = null
+
 function next() {
   if (!carouselItems.value.length) return
   currentIndex.value = (currentIndex.value + 1) % carouselItems.value.length
 }
+
 function prev() {
   if (!carouselItems.value.length) return
   currentIndex.value =
     (currentIndex.value - 1 + carouselItems.value.length) % carouselItems.value.length
 }
+
 function handleScroll() {
   showScrollTop.value = window.scrollY > 300
 }
+
 function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
+
 function initObserver() {
   observer = new IntersectionObserver(
     (entries) => {
@@ -1947,17 +2055,20 @@ function initObserver() {
     .querySelectorAll('.sr-item, .sr-card, .sr-left, .sr-right')
     .forEach((el) => observer?.observe(el))
 }
-function handleMediaUpdated() {
-  loadMedia()
+
+async function handleMediaUpdated() {
+  await loadMediaFromSupabase()
   if (currentIndex.value >= carouselItems.value.length) currentIndex.value = 0
 }
-onMounted(() => {
-  loadMedia()
+
+onMounted(async () => {
+  await loadMediaFromSupabase()
   autoplayInterval = setInterval(next, 3000)
   window.addEventListener('scroll', handleScroll)
   window.addEventListener('website-media-updated', handleMediaUpdated as EventListener)
   setTimeout(initObserver, 100)
 })
+
 onUnmounted(() => {
   if (autoplayInterval) clearInterval(autoplayInterval)
   if (observer) observer.disconnect()
