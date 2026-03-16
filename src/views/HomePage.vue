@@ -1,8 +1,7 @@
 <template>
   <div class="w-full !m-0 !p-0">
     <!-- CAROUSEL -->
-    <div class="relative w-full overflow-hidden">
-      <div
+<div v-if="isMediaLoaded && carouselItems.length" class="relative w-full overflow-hidden">      <div
         class="flex transition-transform duration-700 ease-in-out"
         :style="{ transform: `translateX(-${currentIndex * slideWidth}%)` }"
       >
@@ -1258,7 +1257,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <a
-          href="https://www.elib.gov.ph"
+          :href="usefulLink1"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1321,7 +1320,7 @@
         </a>
 
         <a
-          href="https://www.carsu.edu.ph/"
+          :href="usefulLink2"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1388,7 +1387,7 @@
         </a>
 
         <a
-          href="http://mylibrary.carsu.edu.ph/"
+          :href="usefulLink3"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1451,7 +1450,7 @@
         </a>
 
         <a
-          href="https://www.journals.uchicago.edu/action/showPublications"
+          :href="usefulLink4"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1518,7 +1517,7 @@
         </a>
 
         <a
-          href="https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU"
+          :href="usefulLink5"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1581,7 +1580,7 @@
         </a>
 
         <a
-          href="https://login.ebsco.com"
+          :href="usefulLink6"
           target="_blank"
           rel="noopener noreferrer"
           class="sr-card group flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1"
@@ -1856,7 +1855,7 @@
     </div>
   </div>
 
-  <!-- SCROLL TO TOP --->
+  <!-- SCROLL TO TOP -->
   <Transition name="fade">
     <button
       v-if="showScrollTop"
@@ -1874,6 +1873,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { getImagesByPage } from '@/services/websiteImageService'
 
 import photo1 from '@/assets/images/img.jpg'
 import photo2 from '@/assets/images/lib.jpg'
@@ -1932,13 +1932,75 @@ const defaultImages: CarouselDisplayItem[] = [
   { id: 'default-5', type: 'image', src: photo5, alt: 'Photo 5' },
 ]
 
+function extractYouTubeId(url: string) {
+  if (!url) return ''
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=)([^&]+)/,
+    /(?:youtu\.be\/)([^?&/]+)/,
+    /(?:youtube\.com\/embed\/)([^?&/]+)/,
+    /(?:youtube\.com\/shorts\/)([^?&/]+)/,
+  ]
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match?.[1]) return match[1]
+  }
+  return ''
+}
+
+function getYouTubeThumbnail(url: string) {
+  const id = extractYouTubeId(url)
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : ''
+}
+
+function getYouTubeEmbed(url: string) {
+  const id = extractYouTubeId(url)
+  return id ? `https://www.youtube.com/embed/${id}` : ''
+}
+
+function normalizeMediaRow(row: any): MediaItem {
+  const mediaType = (row.media_type || 'image') as MediaType
+  const videoUrl = row.video_url || row.external_link || ''
+  const imageUrl = row.image_url || ''
+  const thumbUrl = row.thumbnail_url || imageUrl || getYouTubeThumbnail(videoUrl)
+
+  return {
+    id: row.id,
+    title: row.title || '',
+    type: mediaType,
+    page: row.page || 'homepage',
+    section: row.section || '',
+    order: Number(row.display_order || 1),
+    category: `HomePage ${row.section || ''}`,
+    src: mediaType === 'video' ? videoUrl : imageUrl,
+    externalLink: row.external_link || '',
+    embedUrl: mediaType === 'video' ? getYouTubeEmbed(videoUrl) : '',
+    thumbnail: mediaType === 'video' ? thumbUrl : imageUrl,
+  }
+}
+
 const mediaItems = ref<MediaItem[]>([])
 
-function loadMedia() {
+function loadMediaFromLocalStorage() {
   try {
-    mediaItems.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    mediaItems.value = Array.isArray(raw) ? raw : []
   } catch {
     mediaItems.value = []
+  }
+}
+
+const isMediaLoaded = ref(false)
+
+async function loadMediaFromSupabase() {
+  isMediaLoaded.value = false
+  try {
+    const rows = await getImagesByPage('homepage')
+    mediaItems.value = rows.map(normalizeMediaRow)
+  } catch (error) {
+    console.error('Failed to load homepage media from Supabase:', error)
+    loadMediaFromLocalStorage()
+  } finally {
+    isMediaLoaded.value = true
   }
 }
 
@@ -1951,6 +2013,8 @@ function getSectionMedia(section: string) {
 const carouselMedia = computed(() => getSectionMedia('carousel'))
 
 const carouselItems = computed<CarouselDisplayItem[]>(() => {
+  if (!isMediaLoaded.value) return []
+
   const items = carouselMedia.value
   if (!items.length) return defaultImages
 
@@ -1989,6 +2053,17 @@ const usefulImage4 = computed(() => usefulItems.value[3]?.src || freeJournals)
 const usefulImage5 = computed(() => usefulItems.value[4]?.src || gale)
 const usefulImage6 = computed(() => usefulItems.value[5]?.src || ebsco)
 
+const usefulLink1 = computed(() => usefulItems.value[0]?.externalLink || 'https://www.elib.gov.ph')
+const usefulLink2 = computed(() => usefulItems.value[1]?.externalLink || 'https://www.carsu.edu.ph/')
+const usefulLink3 = computed(() => usefulItems.value[2]?.externalLink || 'http://mylibrary.carsu.edu.ph/')
+const usefulLink4 = computed(
+  () => usefulItems.value[3]?.externalLink || 'https://www.journals.uchicago.edu/action/showPublications',
+)
+const usefulLink5 = computed(
+  () => usefulItems.value[4]?.externalLink || 'https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU',
+)
+const usefulLink6 = computed(() => usefulItems.value[5]?.externalLink || 'https://login.ebsco.com')
+
 const defaultFeatureItems: MediaItem[] = [
   {
     id: 'default-feature-1',
@@ -2025,7 +2100,7 @@ const displayFeatureItems = computed(() => {
 const activeFeatureModal = ref<MediaItem | null>(null)
 
 function getFeatureThumbnail(feature: MediaItem) {
-  return feature.thumbnail || feature.src
+  return feature.thumbnail || getYouTubeThumbnail(feature.src) || feature.src
 }
 
 function getFeatureDescription(feature: MediaItem, index: number) {
@@ -2069,7 +2144,8 @@ function next() {
 
 function prev() {
   if (!carouselItems.value.length) return
-  currentIndex.value = (currentIndex.value - 1 + carouselItems.value.length) % carouselItems.value.length
+  currentIndex.value =
+    (currentIndex.value - 1 + carouselItems.value.length) % carouselItems.value.length
 }
 
 function handleScroll() {
@@ -2099,16 +2175,16 @@ function initObserver() {
   })
 }
 
-function handleMediaUpdated() {
-  loadMedia()
+async function handleMediaUpdated() {
+  await loadMediaFromSupabase()
 
   if (currentIndex.value >= carouselItems.value.length) {
     currentIndex.value = 0
   }
 }
 
-onMounted(() => {
-  loadMedia()
+onMounted(async () => {
+  await loadMediaFromSupabase()
   autoplayInterval = setInterval(next, 3000)
   window.addEventListener('scroll', handleScroll)
   window.addEventListener('website-media-updated', handleMediaUpdated as EventListener)
