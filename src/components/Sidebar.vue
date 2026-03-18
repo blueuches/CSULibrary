@@ -168,15 +168,6 @@ const menuItems = [
       <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
     </svg>`,
   },
-  {
-    name: 'CURRICULUM',
-    label: 'Curriculum',
-    route: '/admin/services/curriculum',
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-    <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
-  </svg>`,
-  },
 
   {
     name: 'CURRICULUM',
@@ -187,7 +178,7 @@ const menuItems = [
     <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/>
   </svg>`,
   },
-  
+
   {
     name: 'WEBSITE',
     label: 'Website',
