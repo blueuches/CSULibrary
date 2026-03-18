@@ -674,7 +674,11 @@
     </div>
   </div>
 
+<<<<<<< HEAD
   <!-- LIBRARY SERVICES & RECOGNITION -->
+=======
+ <!-- LIBRARY SERVICES & RECOGNITION -->
+>>>>>>> 26f11cfec02d931633c24c39caf71ee06b6fe1b3
   <div
     class="w-full px-6 py-20 relative overflow-hidden"
     style="background: linear-gradient(160deg, #f0f4f0 0%, #e8efe8 50%, #f4f2ed 100%)"
