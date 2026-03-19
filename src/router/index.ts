@@ -89,6 +89,12 @@ const router = createRouter({
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages },
 
   ],
+   scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    return { top: 0, behavior: 'smooth' }
+  },
 })
 
 export default router
