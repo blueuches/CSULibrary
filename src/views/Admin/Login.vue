@@ -1,7 +1,7 @@
 <template>
   <div 
     class="w-full min-h-screen flex items-center justify-center py-6 bg-cover bg-center bg-no-repeat relative font-poppins"
-    style="background-image: url('/Gemini_Generated_Image_sx9k3lsx9k3lsx9k.png');"
+    :style="{ backgroundImage: `url(${libImg})` }"
   >
     <div class="absolute inset-0 bg-black/20"></div>
 
@@ -109,6 +109,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+// Import ang image gikan assets
+import libImg from '@/assets/images/lib.jpg'
 
 const showPassword = ref(false)
 
