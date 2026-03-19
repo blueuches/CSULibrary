@@ -9,7 +9,6 @@
             {{ activeTab }} VIEW
           </span>
         </div>
-
         <div class="flex items-center gap-6">
           <div class="text-right hidden md:block">
             <p class="text-xs font-medium text-[#1b5e20]">{{ currentDate }}</p>
@@ -23,31 +22,31 @@
         <transition name="fade" mode="out-in">
           <div :key="activeTab" class="w-full max-w-6xl py-12">
             <div v-if="activeTab === 'DASHBOARD'" class="space-y-12">
+              <!-- Welcome heading -->
               <div class="space-y-4">
                 <div class="space-y-2">
-                  <p
-                    class="text-[#0d2b0f] uppercase tracking-[0.5em] text-sm font-bold animate-pulse"
+                  <h2
+                    class="text-[#0d2b0f] text-6xl md:text-7xl font-black tracking-tighter anim-slide-up"
                   >
-                    Operational
-                  </p>
-                  <h2 class="text-[#0d2b0f] text-6xl md:text-7xl font-black tracking-tighter">
-                    Welcome, <span class="text-[#f9a825]">Admin</span>.
+                    Welcome, <span class="text-[#f9a825] anim-shimmer">Admin</span>.
                   </h2>
                 </div>
               </div>
 
+              <!-- Stat cards -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
                 <div
-                  v-for="stat in quickStats"
+                  v-for="(stat, i) in quickStats"
                   :key="stat.label"
-                  class="group bg-white border-2 border-[#1b5e20] p-6 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 hover:bg-[#1b5e20] hover:-translate-y-2 shadow-md hover:shadow-xl cursor-pointer"
+                  class="group bg-white border-2 border-[#1b5e20] p-6 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 hover:bg-[#1b5e20] hover:-translate-y-2 shadow-md hover:shadow-xl cursor-pointer anim-card-in"
+                  :style="{ animationDelay: `${i * 0.1}s` }"
                 >
                   <span
-                    class="mb-3 transition-all duration-300 group-hover:scale-110 text-[#f9a825] group-hover:text-white"
+                    class="mb-3 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 text-[#f9a825] group-hover:text-white"
                     v-html="stat.icon"
                   ></span>
                   <h3
-                    class="text-[#1b5e20] text-3xl font-black tracking-tight transition-colors duration-300 group-hover:text-white"
+                    class="text-[#1b5e20] text-3xl font-black tracking-tight transition-colors duration-300 group-hover:text-white anim-count"
                   >
                     {{ stat.value }}
                   </h3>
@@ -56,12 +55,20 @@
                   >
                     {{ stat.label }}
                   </p>
+                  <!-- Card bottom accent -->
+                  <div
+                    class="w-0 group-hover:w-8 h-0.5 bg-[#f9a825] mt-3 transition-all duration-300 rounded-full"
+                  ></div>
                 </div>
               </div>
 
-              <div class="relative py-4 max-w-2xl mx-auto">
+              <!-- Quote -->
+              <div
+                class="relative py-4 max-w-2xl mx-auto anim-fade-in"
+                style="animation-delay: 0.5s"
+              >
                 <p
-                  class="text-[#1b5e20] text-3xl md:text-2xl font-serif italic font-medium leading-tight px-6"
+                  class="text-[#1b5e20] text-3xl md:text-2xl font-serif italic font-medium leading-tight px-6 relative z-10"
                 >
                   "{{ currentQuote.text }}"
                 </p>
@@ -70,12 +77,16 @@
                 >
                   — {{ currentQuote.author }}
                 </p>
+                <!-- Animated underline -->
+                <div
+                  class="mt-4 mx-auto w-16 h-0.5 bg-gradient-to-r from-[#1b5e20] to-[#f9a825] rounded-full anim-expand"
+                ></div>
               </div>
             </div>
 
-            <div v-else class="text-[#1b5e20] space-y-4">
+            <div v-else class="text-[#1b5e20] space-y-4 anim-slide-up">
               <h2 class="text-5xl font-black uppercase tracking-tighter">{{ activeTab }}</h2>
-              <div class="h-1 w-16 bg-[#1b5e20] mx-auto"></div>
+              <div class="h-1 w-16 bg-[#1b5e20] mx-auto anim-expand"></div>
               <p class="text-[#1b5e20] font-light italic text-lg opacity-80">
                 Accessing database records...
               </p>
@@ -164,25 +175,91 @@ const currentDate = computed(() =>
 .font-serif {
   font-family: 'Playfair Display', serif;
 }
-
 h2,
 h3 {
   letter-spacing: -0.02em;
 }
 
-.group:hover h3,
-.group:hover p {
-  text-shadow: none !important;
+/* ── SLIDE UP ── */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.anim-slide-up {
+  animation: slideUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.flex-1::-webkit-scrollbar {
-  width: 5px;
+/* ── FADE IN ── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-.flex-1::-webkit-scrollbar-thumb {
-  background: #1b5e2033;
-  border-radius: 10px;
+.anim-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.7s ease both;
 }
 
+/* ── CARD POP IN ── */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.anim-card-in {
+  opacity: 0;
+  animation: cardIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── EXPAND LINE ── */
+@keyframes expand {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 4rem;
+    opacity: 1;
+  }
+}
+.anim-expand {
+  width: 0;
+  animation: expand 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+
+/* ── GOLD SHIMMER on "Admin" text ── */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+.anim-shimmer {
+  background: linear-gradient(90deg, #f9a825 25%, #fde68a 50%, #f9a825 75%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ── PAGE TRANSITION ── */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
