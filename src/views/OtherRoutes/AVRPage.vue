@@ -417,19 +417,20 @@
             v-for="(post, i) in latestPosts"
             :key="i"
             class="flex gap-3 mb-4 cursor-pointer group"
+            @click="router.push(post.route)"
           >
             <img
               :src="post.image"
               :alt="post.title"
-              class="w-20 h-16 object-cover rounded flex-shrink-0"
+              class="w-20 h-16 object-cover rounded flex-shrink-0 group-hover:brightness-90 transition-all duration-200"
             />
-            <div>
-              <p
-                class="group-hover:text-[#1b5e20] transition-colors duration-200"
+            <div class="flex flex-col justify-center min-w-0">
+              <span
+                class="group-hover:underline"
                 style="font-size: 0.85rem; font-weight: 700; color: #1b5e20; line-height: 1.4"
               >
                 {{ post.title }}
-              </p>
+              </span>
               <p style="font-size: 0.75rem; color: #888" class="mt-1">{{ post.date }}</p>
             </div>
           </div>
@@ -466,6 +467,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 /* ── Scroll to Top ────────────────────────────────────── */
 const showScrollTop = ref(false)
@@ -588,29 +591,35 @@ const steps = [
 
 const latestPosts = [
   {
+    image: new URL('@/assets/images/card1.jpg', import.meta.url).href,
+    title: 'BSP Knowledge Resource Network',
+    date: 'February 19, 2026',
+    route: { name: 'bcppage' },
+  },
+  {
     image: new URL('@/assets/images/card2.jpg', import.meta.url).href,
     title: 'National Book Week Celebration',
     date: 'February 19, 2026',
+    route: { name: 'nbwcpage' },
   },
   {
     image: new URL('@/assets/images/card3.png', import.meta.url).href,
     title: 'STARBOOKS - DOST-STII',
     date: 'February 19, 2026',
+    route: { name: 'starbooks' },
   },
-  {
-    image: new URL('@/assets/images/reservation.jpg', import.meta.url).href,
-    title: 'AVR Reservation',
-    date: 'February 19, 2026',
-  },
+
   {
     image: new URL('@/assets/images/top.jpg', import.meta.url).href,
     title: 'Top Library Borrowers and Visitors',
     date: 'February 19, 2026',
+    route: { name: 'top-borrowers' },
   },
   {
     image: new URL('@/assets/images/newly_acc_books.png', import.meta.url).href,
     title: 'Newly Acquired Books',
     date: 'February 19, 2026',
+    route: { name: 'newlyacquiredbooks' },
   },
 ]
 </script>
