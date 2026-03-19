@@ -214,20 +214,6 @@
               style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
               class="mb-4 flex items-center gap-2"
             >
-              <svg
-                class="w-5 h-5"
-                style="color: #f9a825"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
               How to Download
             </h3>
             <div class="flex flex-col gap-3">
@@ -342,12 +328,14 @@ const searchQuery = ref('')
 /* ── Colleges Data ────────────────────────────────────── */
 const colleges = [
   { name: 'College of Agriculture and Agri-Industries', file: 'CAA.docx', href: '#' },
-  { name: 'College of Arts and Sciences', file: 'CAS.docx', href: '#' },
+  { name: 'College of Humanities and Social Sciences', file: 'CHASS.docx', href: '#' },
   { name: 'College of Computing and Information Sciences', file: 'CCIS.docx', href: '#' },
   { name: 'College of Education', file: 'CED.docx', href: '#' },
+  { name: 'College of Mathematics Natural Sciences', file: 'CMNS.docx', href: '#' },
+
   {
     name: 'College of Engineering and Geo-Sciences',
-    file: 'College of Engineering and Geo-Sciences.docx',
+    file: 'CEGS.docx',
     href: '#',
   },
   { name: 'College of Forestry and Environmental Sciences', file: 'CoFES.docx', href: '#' },

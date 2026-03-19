@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full !m-0 !p-0">
+  <div class="w-full">
     <!-- CAROUSEL -->
     <div v-if="isMediaLoaded && carouselItems.length" class="relative w-full overflow-hidden">
       <div

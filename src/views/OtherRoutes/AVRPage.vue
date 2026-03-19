@@ -333,20 +333,6 @@
             style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
             class="mb-4 flex items-center gap-2"
           >
-            <svg
-              class="w-5 h-5"
-              style="color: #1b5e20"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
-              />
-            </svg>
             Amenities
           </h3>
           <div class="grid grid-cols-2 gap-2">
@@ -374,20 +360,6 @@
             style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
             class="mb-4 flex items-center gap-2"
           >
-            <svg
-              class="w-5 h-5"
-              style="color: #f9a825"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
             How to Reserve
           </h3>
           <div class="flex flex-col gap-3">
