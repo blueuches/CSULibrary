@@ -1,10 +1,7 @@
 <template>
-  <div class="w-full !m-0 !p-0">
+  <div class="w-full">
     <!-- CAROUSEL -->
-    <div
-      v-if="isMediaLoaded && carouselItems.length"
-      class="relative w-full overflow-hidden"
-    >
+    <div v-if="isMediaLoaded && carouselItems.length" class="relative w-full overflow-hidden">
       <div
         class="flex transition-transform duration-700 ease-in-out"
         :style="{ transform: `translateX(-${currentIndex * slideWidth}%)` }"
@@ -66,7 +63,7 @@
       class="w-full flex items-center justify-center"
       :style="{ height: imageHeight, background: '#f4f6f4' }"
     >
-      <span style="color: rgba(13,43,15,0.55); font-weight: 700;">Loading carousel...</span>
+      <span style="color: rgba(13, 43, 15, 0.55); font-weight: 700">Loading carousel...</span>
     </div>
   </div>
 
@@ -684,7 +681,7 @@
     </div>
   </div>
 
- <!-- LIBRARY SERVICES & RECOGNITION -->
+  <!-- LIBRARY SERVICES & RECOGNITION -->
   <div
     class="w-full px-6 py-20 relative overflow-hidden"
     style="background: linear-gradient(160deg, #f0f4f0 0%, #e8efe8 50%, #f4f2ed 100%)"
@@ -2302,13 +2299,21 @@ const usefulImage5 = computed(() => usefulItems.value[4]?.src || gale)
 const usefulImage6 = computed(() => usefulItems.value[5]?.src || ebsco)
 
 const usefulLink1 = computed(() => usefulItems.value[0]?.externalLink || 'https://www.elib.gov.ph')
-const usefulLink2 = computed(() => usefulItems.value[1]?.externalLink || 'https://www.carsu.edu.ph/')
-const usefulLink3 = computed(() => usefulItems.value[2]?.externalLink || 'http://mylibrary.carsu.edu.ph/')
+const usefulLink2 = computed(
+  () => usefulItems.value[1]?.externalLink || 'https://www.carsu.edu.ph/',
+)
+const usefulLink3 = computed(
+  () => usefulItems.value[2]?.externalLink || 'http://mylibrary.carsu.edu.ph/',
+)
 const usefulLink4 = computed(
-  () => usefulItems.value[3]?.externalLink || 'https://www.journals.uchicago.edu/action/showPublications',
+  () =>
+    usefulItems.value[3]?.externalLink ||
+    'https://www.journals.uchicago.edu/action/showPublications',
 )
 const usefulLink5 = computed(
-  () => usefulItems.value[4]?.externalLink || 'https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU',
+  () =>
+    usefulItems.value[4]?.externalLink ||
+    'https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU',
 )
 const usefulLink6 = computed(() => usefulItems.value[5]?.externalLink || 'https://login.ebsco.com')
 
