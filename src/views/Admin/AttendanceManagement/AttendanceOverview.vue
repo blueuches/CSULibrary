@@ -108,7 +108,7 @@
                 stroke="url(#gaugeGrad)"
                 stroke-width="18"
                 stroke-dasharray="691.2"
-                :stroke-dashoffset="691.2 - 691.2 * 0.94"
+               :stroke-dashoffset="691.2 - 691.2 * (occupancyPercent / 100)"
                 stroke-linecap="round"
                 transform="rotate(-90 160 160)"
                 class="gauge-arc"
@@ -123,7 +123,7 @@
 
             <div class="gauge-center">
               <div class="gauge-num">
-                <span class="gauge-pct">94</span>
+               <span class="gauge-pct">{{ occupancyPercent }}</span>
                 <span class="gauge-unit">%</span>
               </div>
               <span class="gauge-sublabel">OCCUPANCY</span>
@@ -138,7 +138,7 @@
               </div>
               <div class="flow-info">
                 <span class="flow-label flow-label--in">Incoming</span>
-                <span class="flow-num flow-num--in">+24</span>
+                <span class="flow-num flow-num--in">{{ visitorsToday - currentlyInside }}</span>
               </div>
             </div>
             <div class="flow-divider"></div>
@@ -148,7 +148,7 @@
               </div>
               <div class="flow-info">
                 <span class="flow-label">Outgoing</span>
-                <span class="flow-num flow-num--out">−12</span>
+              <span class="flow-num flow-num--out">{{ outgoing }}</span>
               </div>
             </div>
           </div>
@@ -287,56 +287,227 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { getAttendanceLogs } from '@/services/attendanceService'
+import { getFirestore, collection, getDocs } from "firebase/firestore"
+
+import { supabase } from '@/lib/supabase'
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    const { data, error } = await supabase
+      .from('attendance_logs')
+      .select('*')
+
+    if (error) {
+      console.error("Supabase error:", error)
+    } else {
+      // Assign Supabase data to logs
+      logs.value = data || []
+      console.log("Attendance Logs:", logs.value)
+    }
+  } catch (err) {
+    console.error("Fetch error:", err)
+  } finally {
+    loading.value = false
+  }
+})
+/* -----------------------------
+STATE
+------------------------------*/
+
+const logs = ref<any[]>([])
+const loading = ref(false)
+
+/* FIXED: typed number to remove TS warning */
+const LIBRARY_CAPACITY: number = 10 
+
+/* -----------------------------
+EXPORT LOGS (for table)
+------------------------------*/
 
 const exportLogs = ref([
-  { date: 'Mar 11, 2026', time: '09:42 AM', type: 'PDF', user: 'Maria Santos', status: 'success' },
+  {
+    date: 'Mar 11, 2026',
+    time: '09:42 AM',
+    type: 'PDF',
+    user: 'Maria Santos',
+    status: 'success'
+  },
   {
     date: 'Mar 10, 2026',
     time: '03:15 PM',
     type: 'CSV',
     user: 'Juan dela Cruz',
-    status: 'success',
+    status: 'success'
   },
-  { date: 'Mar 09, 2026', time: '11:08 AM', type: 'XLSX', user: 'Ana Reyes', status: 'success' },
-  { date: 'Mar 08, 2026', time: '02:30 PM', type: 'PDF', user: 'Jose Bautista', status: 'failed' },
-  { date: 'Mar 07, 2026', time: '08:55 AM', type: 'CSV', user: 'Maria Santos', status: 'success' },
-  { date: 'Mar 06, 2026', time: '04:20 PM', type: 'XLSX', user: 'Liza Garcia', status: 'pending' },
+  {
+    date: 'Mar 09, 2026',
+    time: '11:08 AM',
+    type: 'XLSX',
+    user: 'Ana Reyes',
+    status: 'success'
+  },
+  {
+    date: 'Mar 08, 2026',
+    time: '02:30 PM',
+    type: 'PDF',
+    user: 'Jose Bautista',
+    status: 'failed'
+  },
+  {
+    date: 'Mar 07, 2026',
+    time: '08:55 AM',
+    type: 'CSV',
+    user: 'Maria Santos',
+    status: 'success'
+  },
+  {
+    date: 'Mar 06, 2026',
+    time: '04:20 PM',
+    type: 'XLSX',
+    user: 'Liza Garcia',
+    status: 'pending'
+  }
 ])
 
-const quickStats = [
+/* -----------------------------
+FETCH ATTENDANCE
+------------------------------*/
+const fetchAttendance = async () => {
+  loading.value = true
+
+  try {
+    const db = getFirestore()
+
+    const snapshot = await getDocs(
+      collection(db, "attendance_logs")
+    )
+
+    const records = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+
+    console.log("Firestore Logs:", records)
+
+    logs.value = records
+
+  } catch (err) {
+    console.error("Firestore fetch error:", err)
+  } finally {
+    loading.value = false
+  }
+}
+// const fetchAttendance = async () => {
+//   loading.value = true
+
+//   try {
+//     const data = await getAttendanceLogs({
+//       attendanceType: 'library'
+//     })
+
+//     logs.value = data || []
+//   } catch (err) {
+//     console.error('Attendance fetch error:', err)
+//   } finally {
+//     loading.value = false
+//   }
+// }
+
+// onMounted(fetchAttendance)
+
+/* -----------------------------
+TODAY VISITORS
+------------------------------*/
+
+const visitorsToday = computed(() => {
+  const today = new Date().toISOString().split("T")[0]
+
+  return logs.value.filter((log) => {
+    if (!log.time_in) return false
+
+    const logDate = log.time_in.split("T")[0]
+
+    return logDate === today
+  }).length
+})
+
+/* -----------------------------
+CURRENTLY INSIDE
+------------------------------*/
+const currentlyInside = computed(() => {
+  // Count all today's logs
+  const today = new Date().toISOString().split("T")[0]
+
+  return logs.value.filter((log) => {
+    if (!log.time_in) return false
+    const logDate = log.time_in.split("T")[0]
+    return logDate === today
+  }).length
+})
+
+/* -----------------------------
+OUTGOING
+------------------------------*/
+
+const outgoing = computed(() => {
+  return visitorsToday.value - currentlyInside.value
+})
+
+/* -----------------------------
+OCCUPANCY %
+------------------------------*/
+
+const occupancyPercent = computed(() => {
+  if (LIBRARY_CAPACITY === 0) return 0
+
+  // Use currentlyInside to calculate the percentage
+  const percent = (currentlyInside.value / LIBRARY_CAPACITY) * 100
+  return Math.min(Math.round(percent), 100)
+})
+
+/* -----------------------------
+QUICK STATS
+------------------------------*/
+
+const quickStats = computed(() => [
   {
-    val: '2,112',
+    val: visitorsToday.value,
     label: 'Visitors Today',
-    delta: '+8.4%',
+    delta: 'Live',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>`
   },
   {
-    val: '284',
-    label: 'Active Borrowers',
-    delta: '+3.2%',
+    val: currentlyInside.value,
+    label: 'Inside Library',
+    delta: 'Live',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg>`
   },
   {
-    val: '392',
+    val: '—',
     label: 'Books Loaned',
-    delta: '−1.1%',
-    up: false,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+    delta: 'N/A',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24"></svg>`
   },
   {
-    val: '10 AM',
+    val: '—',
     label: 'Peak Hour',
-    delta: 'Steady',
+    delta: 'N/A',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-  },
-]
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24"></svg>`
+  }
+])
+
+/* -----------------------------
+SIDEBAR TAB HANDLER
+------------------------------*/
 
 const handleTabChange = (name: string) => {
   console.log('tab:', name)
