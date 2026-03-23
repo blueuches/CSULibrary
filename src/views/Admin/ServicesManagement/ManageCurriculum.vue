@@ -20,30 +20,16 @@
             College <span class="text-yellow-500">Curriculum</span>
           </h1>
           <p class="header-sub">
-            Analytics-style interface with college cards, program dropdowns, and curriculum details.
+            Browse colleges, inspect program flow, and review semester subjects in one place.
           </p>
-        </div>
-        <div class="header-right">
-          <div class="date-badge">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            {{ currentDate }}
-          </div>
-          <button class="export-btn" type="button">Manage Curriculum</button>
         </div>
       </header>
 
       <section class="kpi-strip">
         <article class="kpi-card">
           <div class="kpi-body">
-            <span class="kpi-label">Colleges</span>
-            <span class="kpi-value">{{ colleges.length }}</span>
+            <span class="kpi-label">Visible Colleges</span>
+            <span class="kpi-value">{{ filteredColleges.length }}</span>
           </div>
         </article>
         <article class="kpi-card">
@@ -54,8 +40,8 @@
         </article>
         <article class="kpi-card">
           <div class="kpi-body">
-            <span class="kpi-label">Status</span>
-            <span class="kpi-value status-value">Dummy Data</span>
+            <span class="kpi-label">Open College</span>
+            <span class="kpi-value status-value">{{ openCollegeName || 'None' }}</span>
           </div>
         </article>
       </section>
@@ -70,14 +56,47 @@
           </div>
         </div>
 
+        <div class="panel-toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search college, program, or code..."
+            />
+          </div>
+          <div class="toolbar-actions">
+            <span class="toolbar-chip">{{ filteredColleges.length }} matches</span>
+            <button type="button" class="toolbar-btn" @click="closeAllCards">Collapse All</button>
+            <button v-if="searchQuery" type="button" class="toolbar-btn toolbar-btn--ghost" @click="searchQuery = ''">
+              Clear Search
+            </button>
+            <button v-if="activeCollegeId" type="button" class="toolbar-btn toolbar-btn--ghost" @click="closeAllCards" title="Close expanded card">
+              Close Card
+            </button>
+          </div>
+        </div>
+
         <section class="college-grid">
           <div
-            v-for="college in colleges"
+            v-for="college in filteredColleges"
             :key="college.code"
             class="college-card"
-            :class="{ 'college-card--open': openCollegeCode === college.code }"
+            :class="[
+              { 'college-card--open': isCollegeOpen(college.code) },
+              isCollegeOpen(college.code) ? 'border-emerald-500 shadow-xl' : '',
+              isCollegeDisabled(college) ? 'college-card--disabled' : '',
+            ]"
           >
-            <button type="button" class="college-trigger" @click="toggleCollege(college.code)">
+            <button
+              type="button"
+              class="college-trigger"
+              @click="toggleCollege(college)"
+              :aria-expanded="isCollegeOpen(college.code)"
+              :disabled="isCollegeDisabled(college)"
+            >
               <div class="college-trigger-left">
                 <span class="college-code">{{ college.code }}</span>
                 <span class="college-name">{{ college.name }}</span>
@@ -89,18 +108,20 @@
                 <span v-else class="college-count">No programs yet</span>
                 <svg
                   class="chevron"
-                  :class="{ 'chevron--open': openCollegeCode === college.code }"
+                  :class="{ 'chevron--open': isCollegeOpen(college.code) }"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2.5"
+                  aria-hidden="true"
                 >
                   <path d="M6 9l6 6 6-6" />
                 </svg>
               </div>
             </button>
 
-            <div v-if="openCollegeCode === college.code" class="college-body">
+            <Transition name="college-expand">
+              <div v-if="isCollegeOpen(college.code)" class="college-body">
               <p v-if="college.programs.length === 0" class="empty-state-text">
                 Graduate program list is not yet added.
               </p>
@@ -142,8 +163,14 @@
                   </details>
                 </div>
               </details>
-            </div>
+              </div>
+            </Transition>
           </div>
+
+          <article v-if="filteredColleges.length === 0" class="empty-search-card">
+            <h3>No curriculum cards found</h3>
+            <p>Try a different keyword or clear your search filter.</p>
+          </article>
         </section>
       </section>
     </main>
@@ -388,24 +415,71 @@ const editCurriculum = (collegeCode: string, programName: string): void => {
   window.alert(message)
 }
 
-const openCollegeCode = ref<string | null>(null)
+// Track which college card is currently open (by unique college id/code)
+const activeCollegeId = ref<string | null>(null)
+const openCollegeName = ref<string>('None')
 
-const toggleCollege = (code: string): void => {
-  openCollegeCode.value = openCollegeCode.value === code ? null : code
+const isCollegeDisabled = (college: CollegeCurriculum): boolean => {
+  return college.programs.length === 0
 }
 
-const currentDate = computed(() =>
-  new Date().toLocaleDateString('en-PH', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }),
-)
+const closeAllCards = (): void => {
+  activeCollegeId.value = null
+  openCollegeName.value = 'None'
+}
+
+/**
+ * Toggle a specific college card open/closed.
+ * Only one card can be open at a time.
+ * Clicking the same card again closes it.
+ * @param college - Target college card
+ */
+const toggleCollege = (college: CollegeCurriculum): void => {
+  if (isCollegeDisabled(college)) {
+    return
+  }
+
+  if (activeCollegeId.value === college.code) {
+    // Card is already open, so close it
+    activeCollegeId.value = null
+    openCollegeName.value = 'None'
+  } else {
+    // Open this card (automatically closes any previously opened card)
+    activeCollegeId.value = college.code
+    openCollegeName.value = college.code
+  }
+}
+
+/**
+ * Check if a specific college card is currently open.
+ * @param collegeCode - The college code to check
+ * @returns true if this college's card is open
+ */
+const isCollegeOpen = (collegeCode: string): boolean => {
+  return activeCollegeId.value === collegeCode
+}
 
 const totalPrograms = computed(() =>
   colleges.reduce((sum, college) => sum + college.programs.length, 0),
 )
+
+const searchQuery = ref('')
+
+const filteredColleges = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase()
+  if (!query) return colleges
+
+  return colleges.filter((college) => {
+    const collegeMatch =
+      college.code.toLowerCase().includes(query) || college.name.toLowerCase().includes(query)
+
+    const programMatch = college.programs.some((program) =>
+      program.name.toLowerCase().includes(query),
+    )
+
+    return collegeMatch || programMatch
+  })
+})
 </script>
 
 <style scoped>
@@ -422,21 +496,112 @@ const totalPrograms = computed(() =>
 
 .status-value {
   color: #f9a825;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .curriculum-panel {
-  padding-top: 20px;
+  padding-top: 16px;
   min-height: calc(100vh - 205px);
   display: flex;
   flex-direction: column;
+  gap: 14px;
 }
 
 .college-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 14px;
   align-content: start;
+}
+
+.panel-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: -4px;
+}
+
+.search-wrap {
+  flex: 1;
+  min-width: 260px;
+  max-width: 560px;
+  position: relative;
+}
+
+.search-wrap svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  color: rgba(13, 43, 15, 0.38);
+  pointer-events: none;
+}
+
+.search-wrap input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid rgba(13, 43, 15, 0.14);
+  border-radius: 12px;
+  padding: 0 12px 0 38px;
+  background: #fff;
+  color: #0d2b0f;
+  font-size: 0.84rem;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-wrap input:focus {
+  border-color: rgba(13, 43, 15, 0.32);
+  box-shadow: 0 0 0 3px rgba(13, 43, 15, 0.08);
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toolbar-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  border-radius: 999px;
+  padding: 0 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1b5e20;
+  background: #ebf5ec;
+  border: 1px solid #cde2cf;
+}
+
+.toolbar-btn {
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(13, 43, 15, 0.16);
+  background: #fff;
+  color: #0d2b0f;
+  padding: 0 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.toolbar-btn:hover {
+  background: #0d2b0f;
+  border-color: #0d2b0f;
+  color: #fff;
+}
+
+.toolbar-btn--ghost {
+  color: #5a745d;
 }
 
 .program-accordion,
@@ -448,16 +613,22 @@ const totalPrograms = computed(() =>
 
 .college-card {
   border: 1px solid rgba(13, 43, 15, 0.09);
-  border-radius: 14px;
+  border-radius: 16px;
   background: #fff;
   overflow: hidden;
-  box-shadow: 0 2px 20px rgba(13, 43, 15, 0.07);
-  transition: 0.2s;
+  box-shadow: 0 6px 22px rgba(13, 43, 15, 0.07);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 .college-card--open {
-  border-color: rgba(13, 43, 15, 0.22);
-  box-shadow: 0 8px 28px rgba(13, 43, 15, 0.11);
+  border-color: rgba(13, 43, 15, 0.25);
+  box-shadow: 0 12px 30px rgba(13, 43, 15, 0.12);
+  transform: translateY(-1px);
+}
+
+.college-card--disabled {
+  opacity: 0.7;
+  background: #f3f4f6;
 }
 
 .college-trigger {
@@ -466,15 +637,24 @@ const totalPrograms = computed(() =>
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.95rem 1rem;
-  background: transparent;
+  padding: 1rem 1rem;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdfb 100%);
   border: none;
   cursor: pointer;
   text-align: left;
 }
 
 .college-trigger:hover {
-  background: #f8f5ef;
+  background: linear-gradient(180deg, #f9fbf8 0%, #f3f8f3 100%);
+}
+
+.college-trigger:disabled {
+  cursor: not-allowed;
+  background: #f3f4f6;
+}
+
+.college-trigger:disabled:hover {
+  background: #f3f4f6;
 }
 
 .college-trigger-left {
@@ -499,6 +679,26 @@ const totalPrograms = computed(() =>
 
 .chevron--open {
   transform: rotate(180deg);
+}
+
+.college-expand-enter-active,
+.college-expand-leave-active {
+  transition: max-height 0.28s ease, opacity 0.2s ease, transform 0.2s ease;
+  overflow: hidden;
+}
+
+.college-expand-enter-from,
+.college-expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.college-expand-enter-to,
+.college-expand-leave-from {
+  max-height: 1200px;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .program-accordion summary,
@@ -539,7 +739,7 @@ const totalPrograms = computed(() =>
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.75rem 0.85rem;
-  background: #faf8f2;
+  background: #f7faf7;
   border-radius: 12px;
 }
 
@@ -562,7 +762,7 @@ const totalPrograms = computed(() =>
   padding: 0.7rem 0.85rem;
   font-weight: 700;
   color: rgba(13, 43, 15, 0.8);
-  background: #f0ede7;
+  background: #eef4ef;
   border-radius: 12px;
 }
 
@@ -604,20 +804,25 @@ const totalPrograms = computed(() =>
 
 .semester-card {
   background: #fff;
-  border: 1px solid rgba(13, 43, 15, 0.09);
+  border: 1px solid rgba(13, 43, 15, 0.1);
   border-radius: 12px;
-  padding: 0.7rem;
+  padding: 0.75rem;
+  box-shadow: 0 2px 10px rgba(13, 43, 15, 0.05);
 }
 
 .college-code {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.6rem;
+  justify-content: center;
+  padding: 0.3rem 0.85rem;
   border-radius: 999px;
   background: rgba(13, 43, 15, 0.08);
   font-size: 0.75rem;
   font-weight: 700;
   color: #0d2b0f;
+  white-space: nowrap;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .college-count {
@@ -665,6 +870,28 @@ const totalPrograms = computed(() =>
   background: #faf8f2;
 }
 
+.empty-search-card {
+  grid-column: 1 / -1;
+  border: 1px dashed rgba(13, 43, 15, 0.22);
+  border-radius: 14px;
+  background: #f9fbf8;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.empty-search-card h3 {
+  margin: 0;
+  color: #0d2b0f;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.empty-search-card p {
+  margin: 0.4rem 0 0;
+  color: rgba(13, 43, 15, 0.62);
+  font-size: 0.84rem;
+}
+
 @media (max-width: 1100px) {
   .kpi-strip {
     grid-template-columns: repeat(3, 1fr);
@@ -678,6 +905,10 @@ const totalPrograms = computed(() =>
 @media (max-width: 800px) {
   .kpi-strip {
     grid-template-columns: 1fr;
+  }
+
+  .search-wrap {
+    max-width: 100%;
   }
 }
 </style>
