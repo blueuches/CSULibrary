@@ -41,118 +41,114 @@
 
       <!-- ══ MAIN GRID ══ -->
       <div class="main-grid">
-        <!-- ── LEFT: Dial ── -->
-        <div class="dial-card">
-          <div class="dial-card__header">
-            <span class="section-eyebrow">Live Occupancy</span>
-            <span class="live-chip"><span class="live-dot"></span>LIVE</span>
-          </div>
+<!-- ── LEFT: Dial ── -->
+<div class="dial-card enhanced">
+  <div class="dial-card__header">
+    <span class="section-eyebrow">Live Occupancy</span>
+    <span class="live-chip"><span class="live-dot"></span>LIVE</span>
+  </div>
 
-          <div class="gauge-wrap">
-            <svg viewBox="0 0 320 320" class="gauge-svg">
-              <circle
-                cx="160"
-                cy="160"
-                r="148"
-                fill="none"
-                stroke="rgba(13,43,15,0.04)"
-                stroke-width="1"
-              />
-              <g v-for="i in 72" :key="`t${i}`">
-                <line
-                  :x1="160 + 138 * Math.cos(((i * 5 - 90) * Math.PI) / 180)"
-                  :y1="160 + 138 * Math.sin(((i * 5 - 90) * Math.PI) / 180)"
-                  :x2="
-                    160 +
-                    (i % 6 === 0 ? 124 : i % 3 === 0 ? 129 : 133) *
-                      Math.cos(((i * 5 - 90) * Math.PI) / 180)
-                  "
-                  :y2="
-                    160 +
-                    (i % 6 === 0 ? 124 : i % 3 === 0 ? 129 : 133) *
-                      Math.sin(((i * 5 - 90) * Math.PI) / 180)
-                  "
-                  :stroke="
-                    (i * 5) / 360 <= 0.94
-                      ? i % 6 === 0
-                        ? '#0d2b0f'
-                        : 'rgba(249,168,37,0.45)'
-                      : 'rgba(13,43,15,0.1)'
-                  "
-                  :stroke-width="i % 6 === 0 ? 2.5 : 1.5"
-                  stroke-linecap="round"
-                />
-              </g>
-              <circle
-                cx="160"
-                cy="160"
-                r="110"
-                fill="none"
-                stroke="rgba(13,43,15,0.07)"
-                stroke-width="18"
-              />
-              <circle
-                cx="160"
-                cy="160"
-                r="88"
-                fill="none"
-                stroke="rgba(13,43,15,0.04)"
-                stroke-width="1"
-                stroke-dasharray="4 5"
-              />
-              <circle
-                cx="160"
-                cy="160"
-                r="110"
-                fill="none"
-                stroke="url(#gaugeGrad)"
-                stroke-width="18"
-                stroke-dasharray="691.2"
-               :stroke-dashoffset="691.2 - 691.2 * (occupancyPercent / 100)"
-                stroke-linecap="round"
-                transform="rotate(-90 160 160)"
-                class="gauge-arc"
-              />
+  <div class="gauge-wrap">
+    <svg viewBox="0 0 320 320" class="gauge-svg">
 
-              <defs>
-                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="100%" stop-color="#0d2b0f" />
-                </linearGradient>
-              </defs>
-            </svg>
+      <!-- background -->
+      <circle cx="160" cy="160" r="120"
+        fill="none"
+        stroke="rgba(13,43,15,0.05)"
+        stroke-width="20" />
 
-            <div class="gauge-center">
-              <div class="gauge-num">
-               <span class="gauge-pct">{{ occupancyPercent }}</span>
-                <span class="gauge-unit">%</span>
-              </div>
-              <span class="gauge-sublabel">OCCUPANCY</span>
-              <span class="gauge-max">AT CAPACITY</span>
-            </div>
-          </div>
+      <!-- progress -->
+      <circle cx="160" cy="160" r="120"
+        fill="none"
+        stroke="url(#gaugeGrad)"
+        stroke-width="20"
+        stroke-linecap="round"
+        :stroke-dasharray="754"
+        :stroke-dashoffset="754 - (754 * occupancyPercent / 100)"
+        transform="rotate(-90 160 160)"
+        class="gauge-arc"
+      />
 
-          <div class="flow-row">
-            <div class="flow-col">
-              <div class="flow-bar-wrap">
-                <div class="flow-bar flow-bar--in" style="width: 72%"></div>
-              </div>
-              <div class="flow-info">
-                <span class="flow-label flow-label--in">Incoming</span>
-                <span class="flow-num flow-num--in">{{ visitorsToday - currentlyInside }}</span>
-              </div>
-            </div>
-            <div class="flow-divider"></div>
-            <div class="flow-col">
-              <div class="flow-bar-wrap">
-                <div class="flow-bar flow-bar--out" style="width: 38%"></div>
-              </div>
-              <div class="flow-info">
-                <span class="flow-label">Outgoing</span>
-              <span class="flow-num flow-num--out">{{ outgoing }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- glow -->
+      <circle cx="160" cy="160" r="120"
+        fill="none"
+        stroke="url(#gaugeGlow)"
+        stroke-width="28"
+        stroke-linecap="round"
+        :stroke-dasharray="754"
+        :stroke-dashoffset="754 - (754 * occupancyPercent / 100)"
+        transform="rotate(-90 160 160)"
+        class="gauge-glow"
+      />
+
+      <defs>
+        <linearGradient id="gaugeGrad">
+          <stop offset="0%" stop-color="#f9a825"/>
+          <stop offset="100%" stop-color="#0d2b0f"/>
+        </linearGradient>
+
+        <linearGradient id="gaugeGlow">
+          <stop offset="0%" stop-color="#f9a825" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#0d2b0f" stop-opacity="0.4"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <!-- CENTER -->
+    <div class="gauge-center">
+      <div class="gauge-num">
+        <span class="gauge-pct">{{ occupancyPercent }}</span>
+        <span class="gauge-unit">%</span>
+      </div>
+
+      <span class="gauge-sublabel">CURRENT OCCUPANCY</span>
+
+      <span 
+        class="gauge-status"
+        :class="{
+          low: occupancyPercent < 40,
+          mid: occupancyPercent >= 40 && occupancyPercent < 80,
+          high: occupancyPercent >= 80
+        }"
+      >
+        {{
+          occupancyPercent < 40
+            ? 'Low Usage'
+            : occupancyPercent < 80
+            ? 'Moderate'
+            : 'Near Capacity'
+        }}
+      </span>
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow-row">
+    <div class="flow-col">
+      <div class="flow-bar-wrap">
+        <div class="flow-bar flow-bar--in" :style="{ width: occupancyPercent + '%' }"></div>
+      </div>
+      <div class="flow-info">
+        <span class="flow-label">Incoming</span>
+        <span class="flow-num flow-num--in">
+          {{ visitorsToday - currentlyInside }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flow-divider"></div>
+
+    <div class="flow-col">
+      <div class="flow-bar-wrap">
+        <div class="flow-bar flow-bar--out" :style="{ width: (100 - occupancyPercent) + '%' }"></div>
+      </div>
+      <div class="flow-info">
+        <span class="flow-label">Outgoing</span>
+        <span class="flow-num flow-num--out">{{ outgoing }}</span>
+      </div>
+    </div>
+  </div>
+</div>
 
         <!-- ── RIGHT: Controls ── -->
         <div class="controls-col">
@@ -469,7 +465,57 @@ const occupancyPercent = computed(() => {
   const percent = (currentlyInside.value / LIBRARY_CAPACITY) * 100
   return Math.min(Math.round(percent), 100)
 })
+/* -----------------------------
+AVERAGE STAY (OVERALL)
+------------------------------*/
+const avgStay = computed(() => {
+  let total = 0
+  let count = 0
 
+  logs.value.forEach(log => {
+    if (log.time_in && log.time_out) {
+      total += new Date(log.time_out).getTime() - new Date(log.time_in).getTime()
+      count++
+    }
+  })
+
+  if (!count) return '—'
+  return Math.floor(total / count / 60000) + ' mins'
+})
+
+/* -----------------------------
+AVG STAY BY GROUP
+------------------------------*/
+const avgByGroup = (key: string) => {
+  const map: any = {}
+
+  logs.value.forEach(log => {
+    if (!log.time_in || !log.time_out) return
+
+    const group = log[key] || 'Unknown'
+    const duration =
+      new Date(log.time_out).getTime() -
+      new Date(log.time_in).getTime()
+
+    if (!map[group]) map[group] = { total: 0, count: 0 }
+
+    map[group].total += duration
+    map[group].count++
+  })
+
+  return Object.entries(map)
+    .map(([k, v]: any) => ({
+      name: k,
+      avg: Math.floor(v.total / v.count / 60000)
+    }))
+    .sort((a, b) => b.avg - a.avg)
+    .slice(0, 1)[0] // TOP ONLY (clean UI)
+}
+
+/* TOP PER CATEGORY */
+const topCollegeStay = computed(() => avgByGroup('college'))
+const topProgramStay = computed(() => avgByGroup('program'))
+const topYearStay = computed(() => avgByGroup('year_level'))
 /* -----------------------------
 QUICK STATS
 ------------------------------*/
@@ -480,28 +526,42 @@ const quickStats = computed(() => [
     label: 'Visitors Today',
     delta: 'Live',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+  },
+  {
+    val: avgStay.value,
+    label: 'Avg. Duration',
+    delta: 'Session',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+  },
+  {
+    val: topCollegeStay.value ? topCollegeStay.value.name : 'N/A',
+    label: 'Top College',
+    delta: topCollegeStay.value ? `${topCollegeStay.value.avg}m avg` : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`
+  },
+  {
+    val: topProgramStay.value ? topProgramStay.value.name : 'N/A',
+    label: 'Top Program',
+    delta: topProgramStay.value ? `${topProgramStay.value.avg}m avg` : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`
+  },
+   {
+    val: topYearStay.value ? `Year ${topYearStay.value.name}` : 'N/A',
+    label: 'Most Active Year',
+    delta: topYearStay.value ? 'Top Tier' : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
   },
   {
     val: currentlyInside.value,
-    label: 'Inside Library',
-    delta: 'Live',
-    up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg>`
-  },
-  {
-    val: '—',
-    label: 'Books Loaned',
-    delta: 'N/A',
-    up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24"></svg>`
-  },
-  {
-    val: '—',
-    label: 'Peak Hour',
-    delta: 'N/A',
-    up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24"></svg>`
+    label: 'Peak Occupancy',
+    delta: `${occupancyPercent.value}%`,
+    up: occupancyPercent.value > 80,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>`
   }
 ])
 
@@ -667,8 +727,8 @@ const handleTabChange = (name: string) => {
 
 /* ─── DIAL CARD ─── */
 .dial-card {
-  background: white;
-  border: 1px solid rgba(13, 43, 15, 0.07);
+  background: rgb(206, 225, 207);
+  border: 1px solid rgba(177, 207, 43, 0.07);
   border-radius: 28px;
   padding: 28px 24px 24px;
   box-shadow: 0 4px 24px rgba(13, 43, 15, 0.06);
