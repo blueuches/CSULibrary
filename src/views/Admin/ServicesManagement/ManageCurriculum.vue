@@ -80,8 +80,22 @@
         </div>
 
         <section class="college-grid">
+          <div v-if="isLoading" class="empty-search-card">
+            <h3>Loading curriculums...</h3>
+            <p>Fetching data from the database.</p>
+          </div>
+
+          <div v-else-if="errorMessage" class="empty-search-card" style="border-color: #ef4444;">
+            <h3>Error Loading Curriculums</h3>
+            <p>{{ errorMessage }}</p>
+            <button type="button" class="toolbar-btn" @click="loadCurriculums" style="margin-top: 12px;">
+              Retry
+            </button>
+          </div>
+
           <div
             v-for="college in filteredColleges"
+            v-else
             :key="college.code"
             class="college-card"
             :class="[
@@ -136,288 +150,181 @@
                 </summary>
 
                 <div class="program-body">
-                  <details class="curriculum-accordion">
-                    <summary class="curriculum-header">
-                      <span>View Curriculum</span>
-                      <button
-                        type="button"
-                        class="edit-curriculum-btn"
-                        @click.prevent.stop="editCurriculum(college.code, program.name)"
-                      >
-                        Edit
-                      </button>
-                    </summary>
+                  <div class="curriculum-actions">
+                    <button
+                      type="button"
+                      class="view-curriculum-btn"
+                      @click.prevent.stop="openCurriculumModal(college.code, program)"
+                    >
+                      View Curriculum
+                    </button>
+                    <button
+                      type="button"
+                      class="edit-curriculum-btn"
+                      @click.prevent.stop="editCurriculum(college.code, program.name)"
+                    >
+                      Edit
+                    </button>
+                  </div>
 
-                    <div class="semester-grid">
-                      <article
-                        v-for="semester in program.curriculum"
-                        :key="semester.label"
-                        class="semester-card"
-                      >
-                        <h4>{{ semester.label }}</h4>
-                        <ul>
-                          <li v-for="subject in semester.subjects" :key="subject">{{ subject }}</li>
-                        </ul>
-                      </article>
-                    </div>
-                  </details>
+                  <p v-if="program.curriculum.length" class="program-meta-note">
+                    {{ program.curriculum.length }} curriculum revision(s) available for this program.
+                  </p>
+                  <p v-else class="program-meta-note">
+                    No curriculum revision available yet for this program.
+                  </p>
                 </div>
               </details>
               </div>
             </Transition>
           </div>
 
-          <article v-if="filteredColleges.length === 0" class="empty-search-card">
+          <article v-if="!isLoading && !errorMessage && filteredColleges.length === 0" class="empty-search-card">
             <h3>No curriculum cards found</h3>
             <p>Try a different keyword or clear your search filter.</p>
           </article>
         </section>
       </section>
+
+      <Transition name="modal-fade">
+        <div
+          v-if="isCurriculumModalOpen"
+          class="curriculum-modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Curriculum details"
+          @click.self="closeCurriculumModal"
+        >
+          <article class="curriculum-modal">
+            <header class="curriculum-modal-head">
+              <div>
+                <p class="modal-badge">{{ modalCollegeCode }}</p>
+                <h3>{{ modalProgramName }}</h3>
+                <p class="modal-subtitle">Curriculum detail fetched from the database.</p>
+              </div>
+              <button type="button" class="modal-close" @click="closeCurriculumModal">Close</button>
+            </header>
+
+            <div v-if="isCurriculumModalLoading" class="modal-state">Loading curriculum details...</div>
+
+            <div v-else-if="curriculumModalError" class="modal-state modal-state--error">
+              {{ curriculumModalError }}
+            </div>
+
+            <div v-else-if="activeCurriculumDetail" class="curriculum-modal-body">
+              <section class="description-panel">
+                <h4>Description</h4>
+                <p>
+                  {{ activeCurriculumDetail.description || 'No description provided for this curriculum revision.' }}
+                </p>
+              </section>
+
+              <section class="meta-grid">
+                <article class="meta-card">
+                  <span>Revision Year</span>
+                  <strong>{{ activeCurriculumDetail.revision_year ?? 'N/A' }}</strong>
+                </article>
+                <article class="meta-card">
+                  <span>Revision No.</span>
+                  <strong>{{ activeCurriculumDetail.revision_no || 'N/A' }}</strong>
+                </article>
+                <article class="meta-card">
+                  <span>Legal Basis</span>
+                  <strong>{{ activeCurriculumDetail.legal_basis || 'N/A' }}</strong>
+                </article>
+                <article class="meta-card">
+                  <span>Effectivity Term</span>
+                  <strong>{{ activeCurriculumDetail.effectivity_term || 'N/A' }}</strong>
+                </article>
+              </section>
+            </div>
+
+            <div v-else class="modal-state">No curriculum details found for this program.</div>
+          </article>
+        </div>
+      </Transition>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import {
+  getCurriculums,
+  getCurriculumDetailByProgramId,
+  transformCurriculumsToCollege,
+} from '@/services/curriculumService'
+import type { CollegeCurriculum, CurriculumDetail, ProgramCurriculum } from '@/types/Curriculum'
 import '@/assets/styles/report-analytics.css'
 
-type SemesterCurriculum = {
-  label: string
-  subjects: string[]
-}
+// State management
+const colleges = ref<CollegeCurriculum[]>([])
+const isLoading = ref(false)
+const errorMessage = ref<string | null>(null)
 
-type ProgramCurriculum = {
-  name: string
-  curriculum: SemesterCurriculum[]
-}
+// Curriculum detail modal state
+const isCurriculumModalOpen = ref(false)
+const isCurriculumModalLoading = ref(false)
+const curriculumModalError = ref<string | null>(null)
+const modalProgramName = ref('')
+const modalCollegeCode = ref('')
+const activeCurriculumDetail = ref<CurriculumDetail | null>(null)
 
-type CollegeCurriculum = {
-  code: string
-  name: string
-  programs: ProgramCurriculum[]
-  note?: string
-}
+// Track which college card is currently open (by unique college id/code)
+const activeCollegeId = ref<string | null>(null)
+const openCollegeName = ref<string>('None')
 
-type CollegeSeed = {
-  code: string
-  name: string
-  programs: string[]
-  note?: string
-}
+const loadCurriculums = async (): Promise<void> => {
+  isLoading.value = true
+  errorMessage.value = null
 
-const normalizeFocus = (programName: string): string => {
-  const fromParentheses = programName.match(/\(([^)]+)\)/)?.[1]
-
-  if (fromParentheses) {
-    return fromParentheses.replace('Major in ', '').trim()
+  try {
+    const curriculumData = await getCurriculums()
+    colleges.value = transformCurriculumsToCollege(curriculumData)
+    console.log('Loaded curriculums:', colleges.value)
+  } catch (error) {
+    console.error('Failed to load curriculums:', error)
+    errorMessage.value = 'Failed to load curriculums. Please try again.'
+    colleges.value = []
+  } finally {
+    isLoading.value = false
   }
-
-  const stripped = programName
-    .replace('Bachelor of Science in ', '')
-    .replace('Bachelor of Secondary Education ', '')
-    .replace('Bachelor of Elementary Education', 'Elementary Education')
-    .trim()
-  return stripped
 }
 
-const makeSubjectCode = (collegeCode: string, focus: string, level: number): string => {
-  const token =
-    focus
-      .replace(/[^A-Za-z]/g, '')
-      .toUpperCase()
-      .slice(0, 4) || 'CORE'
-  return `${collegeCode}-${token}${level}`
+const closeCurriculumModal = (): void => {
+  isCurriculumModalOpen.value = false
+  isCurriculumModalLoading.value = false
+  curriculumModalError.value = null
+  activeCurriculumDetail.value = null
 }
 
-const buildDummyCurriculum = (collegeCode: string, programName: string): SemesterCurriculum[] => {
-  const focus = normalizeFocus(programName)
+const openCurriculumModal = async (
+  collegeCode: string,
+  program: ProgramCurriculum,
+): Promise<void> => {
+  modalCollegeCode.value = collegeCode
+  modalProgramName.value = program.name
+  isCurriculumModalOpen.value = true
+  isCurriculumModalLoading.value = true
+  curriculumModalError.value = null
+  activeCurriculumDetail.value = null
 
-  return [
-    {
-      label: 'Year 1 - 1st Semester',
-      subjects: [
-        'GE 101 Purposive Communication',
-        'GE 102 Mathematics in the Modern World',
-        `${makeSubjectCode(collegeCode, focus, 101)} Introduction to ${focus}`,
-        `${makeSubjectCode(collegeCode, focus, 102)} Basic Laboratory and Field Skills`,
-        'NSTP 101 Civic Welfare Training Service 1',
-      ],
-    },
-    {
-      label: 'Year 1 - 2nd Semester',
-      subjects: [
-        'GE 103 Understanding the Self',
-        'GE 104 The Contemporary World',
-        `${makeSubjectCode(collegeCode, focus, 103)} Fundamentals of ${focus} Systems`,
-        `${makeSubjectCode(collegeCode, focus, 104)} Data Collection and Technical Writing`,
-        'PATHFIT 102 Exercise-based Fitness Activities',
-      ],
-    },
-    {
-      label: 'Year 2 - 1st Semester',
-      subjects: [
-        'GE 201 Readings in Philippine History',
-        `${makeSubjectCode(collegeCode, focus, 201)} Intermediate ${focus} Concepts`,
-        `${makeSubjectCode(collegeCode, focus, 202)} Quantitative Methods for ${focus}`,
-        `${makeSubjectCode(collegeCode, focus, 203)} Applied Tools and Instrumentation`,
-        'ELEC 201 Professional Elective 1',
-      ],
-    },
-    {
-      label: 'Year 2 - 2nd Semester',
-      subjects: [
-        'GE 202 Ethics',
-        `${makeSubjectCode(collegeCode, focus, 204)} Community and Extension Applications`,
-        `${makeSubjectCode(collegeCode, focus, 205)} Case Studies in ${focus}`,
-        `${makeSubjectCode(collegeCode, focus, 206)} Research Methods and Statistics`,
-        'ELEC 202 Professional Elective 2',
-      ],
-    },
-    {
-      label: 'Year 3 - 1st Semester',
-      subjects: [
-        'GE 301 Science, Technology and Society',
-        `${makeSubjectCode(collegeCode, focus, 301)} Advanced Topics in ${focus}`,
-        `${makeSubjectCode(collegeCode, focus, 302)} Policy, Law and Governance`,
-        `${makeSubjectCode(collegeCode, focus, 303)} Seminar in Current Issues`,
-        'ELEC 301 Professional Elective 3',
-      ],
-    },
-    {
-      label: 'Year 3 - 2nd Semester',
-      subjects: [
-        `${makeSubjectCode(collegeCode, focus, 304)} Project Design and Proposal Writing`,
-        `${makeSubjectCode(collegeCode, focus, 305)} Practicum Preparation`,
-        `${makeSubjectCode(collegeCode, focus, 306)} Innovation and Entrepreneurship`,
-        'GE 302 Rizal: Life and Works',
-        'ELEC 302 Professional Elective 4',
-      ],
-    },
-    {
-      label: 'Year 4 - 1st Semester',
-      subjects: [
-        `${makeSubjectCode(collegeCode, focus, 401)} Internship / On-the-Job Training`,
-        `${makeSubjectCode(collegeCode, focus, 402)} Research 1: Thesis Writing`,
-        `${makeSubjectCode(collegeCode, focus, 403)} Strategic Management in ${focus}`,
-        'ELEC 401 Professional Elective 5',
-      ],
-    },
-    {
-      label: 'Year 4 - 2nd Semester',
-      subjects: [
-        `${makeSubjectCode(collegeCode, focus, 404)} Research 2: Thesis Completion`,
-        `${makeSubjectCode(collegeCode, focus, 405)} Integrative Capstone`,
-        `${makeSubjectCode(collegeCode, focus, 406)} Comprehensive Review`,
-        'COLL 401 Career Development and Employability',
-      ],
-    },
-  ]
+  try {
+    activeCurriculumDetail.value = await getCurriculumDetailByProgramId(program.id)
+  } catch (error) {
+    console.error('Failed to load curriculum detail:', error)
+    curriculumModalError.value = 'Failed to load curriculum details. Please try again.'
+  } finally {
+    isCurriculumModalLoading.value = false
+  }
 }
-
-const collegeSeed: CollegeSeed[] = [
-  {
-    code: 'COFES',
-    name: 'College of Forestry and Environmental Sciences',
-    programs: [
-      'Bachelor of Science in Forestry (General Forestry)',
-      'Bachelor of Science in Environmental Science (BSES)',
-      'Bachelor of Science in Agroforestry (BSAF)',
-    ],
-  },
-  {
-    code: 'CMNS',
-    name: 'College of Mathematics and Natural Sciences',
-    programs: [
-      'Bachelor of Science in Physics',
-      'Bachelor of Science in Mathematics',
-      'Bachelor of Science in Marine Biology',
-      'Bachelor of Science in Chemistry',
-      'Bachelor of Science in Biology (Major in Microbiology)',
-      'Bachelor of Science in Biology (Major in Medical Biology)',
-      'Bachelor of Science in Applied Mathematics',
-      'Bachelor of Science in Biodiversity Conservation',
-    ],
-  },
-  {
-    code: 'CHASS',
-    name: 'College of Humanities and Social Sciences',
-    programs: [
-      'Bachelor of Science in Social Work',
-      'Bachelor of Science in Psychology',
-      'Bachelor of Science in Sociology',
-    ],
-  },
-  {
-    code: 'CEGS',
-    name: 'College of Engineering and Geosciences',
-    programs: [
-      'Bachelor of Science in Mining Engineering',
-      'Bachelor of Science in Geology',
-      'Bachelor of Science in Geodetic Engineering',
-      'Bachelor of Science in Electronics Engineering',
-      'Bachelor of Science in Civil Engineering',
-      'Bachelor of Science in Agricultural and Biosystems Engineering',
-    ],
-  },
-  {
-    code: 'CED',
-    name: 'College of Education',
-    programs: [
-      'Bachelor of Secondary Education (Science)',
-      'Bachelor of Secondary Education (Mathematics)',
-      'Bachelor of Secondary Education (Filipino)',
-      'Bachelor of Secondary Education (English)',
-      'Bachelor of Elementary Education',
-    ],
-  },
-  {
-    code: 'CCIS',
-    name: 'College of Computing and Information Sciences',
-    programs: [
-      'Bachelor of Science in Information Technology',
-      'Bachelor of Science in Information System',
-      'Bachelor of Science in Computer Science',
-    ],
-  },
-  {
-    code: 'CAA',
-    name: 'College of Agriculture and Agri-industries',
-    programs: [
-      'Bachelor of Science in Agriculture (Soil Science)',
-      'Bachelor of Science in Agriculture (Horticulture)',
-      'Bachelor of Science in Agriculture (Crop Protection)',
-      'Bachelor of Science in Agriculture (Animal Science)',
-      'Bachelor of Science in Agriculture (Agronomy)',
-      'Bachelor of Science in Agriculture (Agriculture Economics)',
-    ],
-  },
-  {
-    code: 'GS',
-    name: 'Graduate Studies',
-    programs: [],
-  },
-]
-
-const colleges: CollegeCurriculum[] = collegeSeed.map((college) => ({
-  code: college.code,
-  name: college.name,
-  note: college.note,
-  programs: college.programs.map((programName) => ({
-    name: programName,
-    curriculum: buildDummyCurriculum(college.code, programName),
-  })),
-}))
 
 const editCurriculum = (collegeCode: string, programName: string): void => {
   const message = `Edit requested for ${collegeCode} - ${programName}`
   console.log(message)
   window.alert(message)
 }
-
-// Track which college card is currently open (by unique college id/code)
-const activeCollegeId = ref<string | null>(null)
-const openCollegeName = ref<string>('None')
 
 const isCollegeDisabled = (college: CollegeCurriculum): boolean => {
   return college.programs.length === 0
@@ -432,7 +339,6 @@ const closeAllCards = (): void => {
  * Toggle a specific college card open/closed.
  * Only one card can be open at a time.
  * Clicking the same card again closes it.
- * @param college - Target college card
  */
 const toggleCollege = (college: CollegeCurriculum): void => {
   if (isCollegeDisabled(college)) {
@@ -440,36 +346,44 @@ const toggleCollege = (college: CollegeCurriculum): void => {
   }
 
   if (activeCollegeId.value === college.code) {
-    // Card is already open, so close it
     activeCollegeId.value = null
     openCollegeName.value = 'None'
   } else {
-    // Open this card (automatically closes any previously opened card)
     activeCollegeId.value = college.code
     openCollegeName.value = college.code
   }
 }
 
-/**
- * Check if a specific college card is currently open.
- * @param collegeCode - The college code to check
- * @returns true if this college's card is open
- */
 const isCollegeOpen = (collegeCode: string): boolean => {
   return activeCollegeId.value === collegeCode
 }
 
+const handleEscapeKey = (event: KeyboardEvent): void => {
+  if (event.key === 'Escape' && isCurriculumModalOpen.value) {
+    closeCurriculumModal()
+  }
+}
+
+onMounted(() => {
+  void loadCurriculums()
+  window.addEventListener('keydown', handleEscapeKey)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleEscapeKey)
+})
+
 const totalPrograms = computed(() =>
-  colleges.reduce((sum, college) => sum + college.programs.length, 0),
+  colleges.value.reduce((sum, college) => sum + college.programs.length, 0),
 )
 
 const searchQuery = ref('')
 
 const filteredColleges = computed(() => {
   const query = searchQuery.value.trim().toLowerCase()
-  if (!query) return colleges
+  if (!query) return colleges.value
 
-  return colleges.filter((college) => {
+  return colleges.value.filter((college) => {
     const collegeMatch =
       college.code.toLowerCase().includes(query) || college.name.toLowerCase().includes(query)
 
@@ -773,6 +687,31 @@ const filteredColleges = computed(() => {
   gap: 0.65rem;
 }
 
+.curriculum-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.view-curriculum-btn {
+  border: 1px solid rgba(13, 43, 15, 0.12);
+  border-radius: 8px;
+  background: #0d2b0f;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1;
+  padding: 0.46rem 0.76rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.view-curriculum-btn:hover {
+  background: #173e1a;
+  transform: translateY(-1px);
+}
+
 .edit-curriculum-btn {
   border: 1px solid rgba(13, 43, 15, 0.1);
   border-radius: 8px;
@@ -788,6 +727,12 @@ const filteredColleges = computed(() => {
 .edit-curriculum-btn:hover {
   background: #0d2b0f;
   color: #fff;
+}
+
+.program-meta-note {
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  color: rgba(13, 43, 15, 0.65);
 }
 
 .curriculum-accordion {
@@ -892,6 +837,163 @@ const filteredColleges = computed(() => {
   font-size: 0.84rem;
 }
 
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.curriculum-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 18, 12, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 20px;
+}
+
+.curriculum-modal {
+  width: min(820px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fcf8 100%);
+  border: 1px solid rgba(13, 43, 15, 0.11);
+  box-shadow: 0 24px 60px rgba(13, 43, 15, 0.24);
+  padding: 18px;
+}
+
+.curriculum-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid rgba(13, 43, 15, 0.12);
+  padding-bottom: 12px;
+}
+
+.modal-badge {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #1b5e20;
+  background: #e9f4ea;
+  border: 1px solid #cae0cc;
+}
+
+.curriculum-modal-head h3 {
+  margin: 0.5rem 0 0.3rem;
+  color: #0d2b0f;
+  font-size: 1.1rem;
+}
+
+.modal-subtitle {
+  margin: 0;
+  color: rgba(13, 43, 15, 0.62);
+  font-size: 0.82rem;
+}
+
+.modal-close {
+  border: 1px solid rgba(13, 43, 15, 0.15);
+  border-radius: 10px;
+  background: #fff;
+  color: #0d2b0f;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: #0d2b0f;
+  color: #fff;
+}
+
+.curriculum-modal-body {
+  margin-top: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.description-panel {
+  border: 1px solid rgba(13, 43, 15, 0.12);
+  background: #f4faf4;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.description-panel h4 {
+  margin: 0;
+  color: #0d2b0f;
+  font-size: 0.92rem;
+}
+
+.description-panel p {
+  margin: 0.55rem 0 0;
+  color: #27452c;
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.meta-card {
+  border: 1px solid rgba(13, 43, 15, 0.1);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 14px rgba(13, 43, 15, 0.07);
+  padding: 12px;
+  display: grid;
+  gap: 0.32rem;
+}
+
+.meta-card span {
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(13, 43, 15, 0.56);
+  font-weight: 700;
+}
+
+.meta-card strong {
+  font-size: 0.88rem;
+  color: #163818;
+  line-height: 1.35;
+}
+
+.modal-state {
+  margin-top: 12px;
+  border: 1px dashed rgba(13, 43, 15, 0.24);
+  border-radius: 12px;
+  background: #f8fbf8;
+  padding: 14px;
+  color: rgba(13, 43, 15, 0.7);
+  font-size: 0.86rem;
+}
+
+.modal-state--error {
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #991b1b;
+  background: #fef2f2;
+}
+
 @media (max-width: 1100px) {
   .kpi-strip {
     grid-template-columns: repeat(3, 1fr);
@@ -909,6 +1011,18 @@ const filteredColleges = computed(() => {
 
   .search-wrap {
     max-width: 100%;
+  }
+
+  .curriculum-modal {
+    padding: 14px;
+  }
+
+  .curriculum-modal-head {
+    flex-direction: column;
+  }
+
+  .modal-close {
+    width: 100%;
   }
 }
 </style>
