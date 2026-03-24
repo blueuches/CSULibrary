@@ -9,16 +9,14 @@ import Footer from './components/Footer.vue'
 
 const route = useRoute()
 
-const isAdminRoute = computed(() =>
-  route.path.startsWith('/admin')
-)
+const isAdminRoute = computed(() => route.path.startsWith('/admin'))
 </script>
 
 <!-- max-w-7xl -->
 
 <template>
   <div class="min-h-screen w-full flex flex-col bg-slate-50">
-    <Navbar  v-if="!isAdminRoute" />
+    <Navbar v-if="!isAdminRoute" />
     <main class="flex-grow w-full !p-0 !m-0">
       <RouterView />
     </main>
@@ -30,6 +28,8 @@ const isAdminRoute = computed(() =>
 body {
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 #app {

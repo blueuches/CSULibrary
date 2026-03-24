@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import Sidebar from '@/components/Sidebar.vue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { Files, Image as ImageIcon, Video } from 'lucide-vue-next'
+
+import {
+  getAllWebsiteImages,
+  createWebsiteImage,
+  updateWebsiteImage,
+  deleteWebsiteImage,
+  uploadWebsiteImage,
+} from '@/services/websiteImageService'
 
 import photo1 from '@/assets/images/img.jpg'
 import photo2 from '@/assets/images/lib.jpg'
@@ -27,10 +35,7 @@ import gale from '@/assets/images/gale.jpg'
 import ebsco from '@/assets/images/EBSCO.jpg'
 
 const heroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
-const iconGif1 = new URL('@/assets/icons/idea.gif', import.meta.url).href
-const iconGif2 = new URL('@/assets/icons/opportunities.gif', import.meta.url).href
-const iconGif3 = new URL('@/assets/icons/student.gif', import.meta.url).href
-const iconGif4 = new URL('@/assets/icons/social-life.gif', import.meta.url).href
+
 
 type MediaType = 'image' | 'video'
 type PageType = 'homepage' | 'aboutpage'
@@ -48,12 +53,66 @@ type MediaItem = {
   externalLink?: string
   embedUrl?: string
   thumbnail?: string
+  is_active?: boolean
 }
 
-const STORAGE_KEY = 'website-media-v11'
+const homepageSections = [
+  { value: 'carousel', label: 'Carousel' },
+  { value: 'library-section', label: 'Library Section' },
+  { value: 'read-learn-discover', label: 'Read Learn Discover' },
+  { value: 'library-updates', label: 'Library Updates' },
+  { value: 'useful-links', label: 'Useful Links' },
+  { value: 'features', label: 'Features' },
+]
 
-function makeId() {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+const aboutpageSections = [
+  { value: 'hero', label: 'Hero' },
+  { value: 'icons', label: 'Icons' },
+]
+
+const createAllowedHomepageSections = [
+  { value: 'carousel', label: 'Carousel' },
+  { value: 'features', label: 'Features' },
+]
+
+const createAllowedAboutpageSections = [{ value: 'icons', label: 'Icons' }]
+
+const assetUrlMap: Record<string, string> = {
+  '/src/assets/images/img.jpg': photo1,
+  '/src/assets/images/lib.jpg': photo2,
+  '/src/assets/images/img1.jpg': photo3,
+  '/src/assets/images/img2.jpg': photo4,
+  '/src/assets/images/img3.jpg': photo5,
+  '/src/assets/images/design.png': designBg,
+  '/src/assets/images/tinay.jpg': tinay,
+  '/src/assets/images/tinay.JPG': tinay,
+  '/src/assets/images/eden.jpg': eden,
+  '/src/assets/images/card1.jpg': card1,
+  '/src/assets/images/card2.jpg': card2,
+  '/src/assets/images/card3.png': card3,
+  '/src/assets/images/reservation.jpg': reservation,
+  '/src/assets/images/top.jpg': topImg,
+  '/src/assets/images/newly_acc_books.png': newlyAcquiredBooks,
+  '/src/assets/images/e-lib.jpg': eLib,
+  '/src/assets/images/opac.png': opac,
+  '/src/assets/images/free.jpg': freeJournals,
+  '/src/assets/images/gale.jpg': gale,
+  '/src/assets/images/EBSCO.jpg': ebsco,
+  '/src/assets/csu.jpg': heroSrc,
+  '/csu-logo.png': '/csu-logo.png',
+}
+
+function resolveMediaUrl(url?: string | null) {
+  if (!url) return ''
+  if (assetUrlMap[url]) return assetUrlMap[url]
+  if (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('data:') ||
+    url.startsWith('blob:')
+  ) return url
+  if (url.startsWith('/')) return url
+  return url
 }
 
 function extractYouTubeId(url: string) {
@@ -81,376 +140,83 @@ function getYouTubeEmbed(url: string) {
   return id ? `https://www.youtube.com/embed/${id}` : ''
 }
 
-function mediaKey(item: MediaItem) {
-  return `${item.page}__${item.section}__${item.order}__${item.title}`.toLowerCase()
+function isDirectVideoUrl(url?: string | null) {
+  if (!url) return false
+  return /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url) || url.startsWith('blob:')
 }
 
-const homepageSections = [
-  { value: 'carousel', label: 'Carousel' },
-  { value: 'library-section', label: 'Library Section' },
-  { value: 'read-learn-discover', label: 'Read Learn Discover' },
-  { value: 'library-updates', label: 'Library Updates' },
-  { value: 'useful-links', label: 'Useful Links' },
-  { value: 'features', label: 'Features' },
-]
+function getDefaultCategory(page: PageType, section: string) {
+  const sectionLabel =
+    [...homepageSections, ...aboutpageSections].find((item) => item.value === section)?.label ??
+    section
 
-const aboutpageSections = [
-  { value: 'hero', label: 'Hero' },
-  { value: 'icons', label: 'Icons' },
-]
+  return `${page === 'homepage' ? 'HomePage' : 'AboutPage'} ${sectionLabel}`
+}
 
-const createAllowedHomepageSections = [
-  { value: 'carousel', label: 'Carousel' },
-  { value: 'features', label: 'Features' },
-]
+function getVideoSource(item: Partial<MediaItem>) {
+  return item.externalLink?.trim() || item.src?.trim() || ''
+}
 
-const createAllowedAboutpageSections = [{ value: 'icons', label: 'Icons' }]
+function getVideoThumb(item: Partial<MediaItem>) {
+  const explicitThumb = resolveMediaUrl(item.thumbnail || '')
+  if (explicitThumb) return explicitThumb
 
-const defaultItems: MediaItem[] = [
-  {
-    id: makeId(),
-    title: 'Carousel Photo 1',
-    type: 'image',
-    page: 'homepage',
-    section: 'carousel',
-    order: 1,
-    category: 'HomePage Carousel',
-    src: photo1,
-  },
-  {
-    id: makeId(),
-    title: 'Carousel Photo 2',
-    type: 'image',
-    page: 'homepage',
-    section: 'carousel',
-    order: 2,
-    category: 'HomePage Carousel',
-    src: photo2,
-  },
-  {
-    id: makeId(),
-    title: 'Carousel Photo 3',
-    type: 'image',
-    page: 'homepage',
-    section: 'carousel',
-    order: 3,
-    category: 'HomePage Carousel',
-    src: photo3,
-  },
-  {
-    id: makeId(),
-    title: 'Carousel Photo 4',
-    type: 'image',
-    page: 'homepage',
-    section: 'carousel',
-    order: 4,
-    category: 'HomePage Carousel',
-    src: photo4,
-  },
-  {
-    id: makeId(),
-    title: 'Carousel Photo 5',
-    type: 'image',
-    page: 'homepage',
-    section: 'carousel',
-    order: 5,
-    category: 'HomePage Carousel',
-    src: photo5,
-  },
-  {
-    id: makeId(),
-    title: 'Design Background',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-section',
-    order: 1,
-    category: 'HomePage Library Section',
-    src: designBg,
-  },
-  {
-    id: makeId(),
-    title: 'CSU Library Main Image',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-section',
-    order: 2,
-    category: 'HomePage Library Section',
-    src: photo2,
-  },
-  {
-    id: makeId(),
-    title: 'Read Card Image',
-    type: 'image',
-    page: 'homepage',
-    section: 'read-learn-discover',
-    order: 1,
-    category: 'HomePage Read Learn Discover',
-    src: tinay,
-  },
-  {
-    id: makeId(),
-    title: 'Learn Card Image',
-    type: 'image',
-    page: 'homepage',
-    section: 'read-learn-discover',
-    order: 2,
-    category: 'HomePage Read Learn Discover',
-    src: eden,
-  },
-  {
-    id: makeId(),
-    title: 'Discover Card Image',
-    type: 'image',
-    page: 'homepage',
-    section: 'read-learn-discover',
-    order: 3,
-    category: 'HomePage Read Learn Discover',
-    src: tinay,
-  },
-  {
-    id: makeId(),
-    title: 'BSP Knowledge Resource Network',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-updates',
-    order: 1,
-    category: 'HomePage Library Updates',
-    src: card1,
-  },
-  {
-    id: makeId(),
-    title: 'National Book Week Celebration',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-updates',
-    order: 2,
-    category: 'HomePage Library Updates',
-    src: card2,
-  },
-  {
-    id: makeId(),
-    title: 'STARBOOKS - DOST-STII',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-updates',
-    order: 3,
-    category: 'HomePage Library Updates',
-    src: card3,
-  },
-  {
-    id: makeId(),
-    title: 'AVR Reservation',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-updates',
-    order: 4,
-    category: 'HomePage Library Updates',
-    src: reservation,
-  },
-  {
-    id: makeId(),
-    title: 'Top Library Borrowers and Visitors',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-updates',
-    order: 5,
-    category: 'HomePage Library Updates',
-    src: topImg,
-  },
-  {
-    id: makeId(),
-    title: 'Newly Acquired Books',
-    type: 'image',
-    page: 'homepage',
-    section: 'library-updates',
-    order: 6,
-    category: 'HomePage Library Updates',
-    src: newlyAcquiredBooks,
-  },
-  {
-    id: makeId(),
-    title: 'Philippine E-Lib',
-    type: 'image',
-    page: 'homepage',
-    section: 'useful-links',
-    order: 1,
-    category: 'HomePage Useful Links',
-    src: eLib,
-    externalLink: 'https://www.elib.gov.ph',
-  },
-  {
-    id: makeId(),
-    title: 'CARSU Webpage Logo',
-    type: 'image',
-    page: 'homepage',
-    section: 'useful-links',
-    order: 2,
-    category: 'HomePage Useful Links',
-    src: '/csu-logo.png',
-    externalLink: 'https://www.carsu.edu.ph/',
-  },
-  {
-    id: makeId(),
-    title: 'Web OPAC',
-    type: 'image',
-    page: 'homepage',
-    section: 'useful-links',
-    order: 3,
-    category: 'HomePage Useful Links',
-    src: opac,
-    externalLink: 'http://mylibrary.carsu.edu.ph/',
-  },
-  {
-    id: makeId(),
-    title: 'Free Access Journals',
-    type: 'image',
-    page: 'homepage',
-    section: 'useful-links',
-    order: 4,
-    category: 'HomePage Useful Links',
-    src: freeJournals,
-    externalLink: 'https://www.journals.uchicago.edu/action/showPublications',
-  },
-  {
-    id: makeId(),
-    title: 'Infotrac',
-    type: 'image',
-    page: 'homepage',
-    section: 'useful-links',
-    order: 5,
-    category: 'HomePage Useful Links',
-    src: gale,
-    externalLink: 'https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU',
-  },
-  {
-    id: makeId(),
-    title: 'EBSCO',
-    type: 'image',
-    page: 'homepage',
-    section: 'useful-links',
-    order: 6,
-    category: 'HomePage Useful Links',
-    src: ebsco,
-    externalLink: 'https://login.ebsco.com',
-  },
-  {
-    id: makeId(),
-    title: 'Virtual Tour',
-    type: 'video',
-    page: 'homepage',
-    section: 'features',
-    order: 1,
-    category: 'HomePage Features',
-    src: 'https://www.youtube.com/watch?v=Lv0URTSBniY',
-    thumbnail: 'https://img.youtube.com/vi/Lv0URTSBniY/hqdefault.jpg',
-    embedUrl: 'https://www.youtube.com/embed/Lv0URTSBniY',
-    externalLink: 'https://www.youtube.com/watch?v=Lv0URTSBniY',
-  },
-  {
-    id: makeId(),
-    title: 'Library Orientation',
-    type: 'video',
-    page: 'homepage',
-    section: 'features',
-    order: 2,
-    category: 'HomePage Features',
-    src: 'https://www.youtube.com/watch?v=HAEPrH2aYpc',
-    thumbnail: 'https://img.youtube.com/vi/HAEPrH2aYpc/hqdefault.jpg',
-    embedUrl: 'https://www.youtube.com/embed/HAEPrH2aYpc',
-    externalLink: 'https://www.youtube.com/watch?v=HAEPrH2aYpc',
-  },
-  {
-    id: makeId(),
-    title: 'About Hero Image',
-    type: 'image',
-    page: 'aboutpage',
-    section: 'hero',
-    order: 1,
-    category: 'AboutPage Hero',
-    src: heroSrc,
-  },
-  {
-    id: makeId(),
-    title: 'Discovery Icon',
-    type: 'image',
-    page: 'aboutpage',
-    section: 'icons',
-    order: 1,
-    category: 'AboutPage Icons',
-    src: iconGif1,
-  },
-  {
-    id: makeId(),
-    title: 'Learning Icon',
-    type: 'image',
-    page: 'aboutpage',
-    section: 'icons',
-    order: 2,
-    category: 'AboutPage Icons',
-    src: iconGif3,
-  },
-  {
-    id: makeId(),
-    title: 'Knowledge Icon',
-    type: 'image',
-    page: 'aboutpage',
-    section: 'icons',
-    order: 3,
-    category: 'AboutPage Icons',
-    src: iconGif2,
-  },
-  {
-    id: makeId(),
-    title: 'Networking Icon',
-    type: 'image',
-    page: 'aboutpage',
-    section: 'icons',
-    order: 4,
-    category: 'AboutPage Icons',
-    src: iconGif4,
-  },
-]
+  const source = getVideoSource(item)
+  const ytThumb = getYouTubeThumbnail(source)
+  if (ytThumb) return ytThumb
 
-function loadInitialItems(): MediaItem[] {
-  const raw = localStorage.getItem(STORAGE_KEY)
-  if (!raw) return defaultItems
-  try {
-    const parsed = JSON.parse(raw) as MediaItem[]
-    if (!parsed.length) return defaultItems
-    const storedMap = new Map(parsed.map((item) => [mediaKey(item), item]))
-    const mergedDefaults = defaultItems.map(
-      (defaultItem) => storedMap.get(mediaKey(defaultItem)) ?? defaultItem,
-    )
-    const defaultKeys = new Set(defaultItems.map(mediaKey))
-    const extraStored = parsed.filter((item) => !defaultKeys.has(mediaKey(item)))
-    return [...mergedDefaults, ...extraStored]
-  } catch {
-    return defaultItems
+  return ''
+}
+
+function getVideoEmbed(item: Partial<MediaItem>) {
+  const source = getVideoSource(item)
+  return getYouTubeEmbed(source)
+}
+
+function rowToMediaItem(row: any): MediaItem {
+  const mediaType = (row.media_type || 'image') as MediaType
+  const imageSrc = resolveMediaUrl(row.image_url || '')
+  const rawVideoUrl = row.video_url || row.external_link || ''
+
+  const item: MediaItem = {
+    id: row.id,
+    title: row.title || '',
+    type: mediaType,
+    page: row.page || 'homepage',
+    section: row.section || '',
+    order: Number(row.display_order || 1),
+    category: getDefaultCategory(row.page || 'homepage', row.section || ''),
+    src: mediaType === 'video' ? rawVideoUrl : imageSrc,
+    externalLink: row.external_link || '',
+    embedUrl: '',
+    thumbnail: '',
+    is_active: row.is_active ?? true,
   }
+
+  if (mediaType === 'video') {
+    item.embedUrl = getYouTubeEmbed(rawVideoUrl)
+    item.thumbnail =
+      resolveMediaUrl(row.thumbnail_url || '') ||
+      resolveMediaUrl(row.image_url || '') ||
+      getYouTubeThumbnail(rawVideoUrl)
+  } else {
+    item.thumbnail = imageSrc
+  }
+
+  return item
 }
 
-const items = ref<MediaItem[]>(loadInitialItems())
-
-watch(
-  items,
-  (val) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
-      window.dispatchEvent(new CustomEvent('website-media-updated'))
-    } catch (error) {
-      console.warn('Unable to save media to localStorage. File may be too large.', error)
-      openAlert('Unable to save. The uploaded file may be too large for localStorage.')
-    }
-  },
-  { deep: true },
-)
+const items = ref<MediaItem[]>([])
+const isLoading = ref(false)
+const isSaving = ref(false)
 
 const searchTerm = ref('')
 const typeFilter = ref<'all' | MediaType>('all')
 const pageFilter = ref<'all' | PageType>('all')
 const categoryFilter = ref('all')
 const selectedFileName = ref('')
-const selectedId = ref<string | null>(items.value[0]?.id ?? null)
+const selectedFile = ref<File | null>(null)
+const selectedId = ref<string | null>(null)
 
 const selectedItem = computed(
   () => items.value.find((item) => item.id === selectedId.value) ?? null,
@@ -468,11 +234,30 @@ const form = ref<MediaItem>({
   page: 'homepage',
   section: 'carousel',
   order: 1,
-  category: '',
+  category: getDefaultCategory('homepage', 'carousel'),
   src: '',
   externalLink: '',
   embedUrl: '',
   thumbnail: '',
+  is_active: true,
+})
+
+const currentFormPreview = computed(() => {
+  if (form.value.type === 'image') {
+    return resolveMediaUrl(form.value.src || form.value.thumbnail || '')
+  }
+  return getVideoThumb(form.value)
+})
+
+const currentFormVideoEmbed = computed(() => {
+  if (form.value.type !== 'video') return ''
+  return getVideoEmbed(form.value)
+})
+
+const currentFormVideoDirect = computed(() => {
+  if (form.value.type !== 'video') return ''
+  const source = getVideoSource(form.value)
+  return currentFormVideoEmbed.value ? '' : (isDirectVideoUrl(source) ? source : '')
 })
 
 const mode = ref<'create' | 'edit'>('create')
@@ -481,7 +266,7 @@ const showNoticeModal = ref(false)
 const noticeMode = ref<ModalMode>('alert')
 const noticeTitle = ref('Notice')
 const noticeMessage = ref('')
-let confirmAction: (() => void) | null = null
+let confirmAction: (() => void | Promise<void>) | null = null
 
 const availableSections = computed(() => {
   if (mode.value === 'create') {
@@ -507,10 +292,12 @@ const filteredItems = computed(() => {
         item.category.toLowerCase().includes(q) ||
         item.page.toLowerCase().includes(q) ||
         item.section.toLowerCase().includes(q)
+
       const matchesType = typeFilter.value === 'all' || item.type === typeFilter.value
       const matchesPage = pageFilter.value === 'all' || item.page === pageFilter.value
       const matchesCategory =
         categoryFilter.value === 'all' || item.category === categoryFilter.value
+
       return matchesSearch && matchesType && matchesPage && matchesCategory
     })
     .sort((a, b) => {
@@ -528,7 +315,11 @@ function openAlert(message: string, title = 'Required Fields') {
   showNoticeModal.value = true
 }
 
-function openConfirm(message: string, onConfirm: () => void, title = 'Confirm Deletion') {
+function openConfirm(
+  message: string,
+  onConfirm: () => void | Promise<void>,
+  title = 'Confirm Deletion',
+) {
   noticeMode.value = 'confirm'
   noticeTitle.value = title
   noticeMessage.value = message
@@ -541,8 +332,10 @@ function closeNoticeModal() {
   confirmAction = null
 }
 
-function handleNoticeConfirm() {
-  if (noticeMode.value === 'confirm' && confirmAction) confirmAction()
+async function handleNoticeConfirm() {
+  if (noticeMode.value === 'confirm' && confirmAction) {
+    await confirmAction()
+  }
   closeNoticeModal()
 }
 
@@ -552,21 +345,13 @@ function getNextOrder(page: PageType, section: string) {
   return Math.max(...sectionItems.map((item) => Number(item.order) || 0)) + 1
 }
 
-function getDefaultCategory(page: PageType, section: string) {
-  const found = items.value.find((item) => item.page === page && item.section === section)
-  if (found?.category) return found.category
-  const sectionLabel =
-    [...homepageSections, ...aboutpageSections].find((item) => item.value === section)?.label ??
-    section
-  return `${page === 'homepage' ? 'HomePage' : 'AboutPage'} ${sectionLabel}`
-}
-
 function normalizeTypeForSection() {
   if (!isVideoAllowedInCurrentSection.value && form.value.type === 'video') {
     form.value.type = 'image'
     form.value.externalLink = ''
     form.value.embedUrl = ''
     form.value.thumbnail = ''
+    form.value.src = ''
   }
 }
 
@@ -583,8 +368,10 @@ function resetForm() {
     externalLink: '',
     embedUrl: '',
     thumbnail: '',
+    is_active: true,
   }
   selectedFileName.value = ''
+  selectedFile.value = null
   mode.value = 'create'
 }
 
@@ -607,6 +394,9 @@ function handleTypeChange() {
     form.value.externalLink = ''
     form.value.embedUrl = ''
     form.value.thumbnail = ''
+  } else {
+    form.value.thumbnail = getVideoThumb(form.value)
+    form.value.embedUrl = getVideoEmbed(form.value)
   }
 }
 
@@ -616,8 +406,17 @@ function openAddModal() {
 }
 
 function editItem(item: MediaItem) {
-  form.value = { ...item }
+  form.value = {
+    ...item,
+    src: item.type === 'image' ? resolveMediaUrl(item.src) : item.src,
+    thumbnail:
+      item.type === 'image'
+        ? resolveMediaUrl(item.thumbnail || '')
+        : resolveMediaUrl(item.thumbnail || '') || getVideoThumb(item),
+    embedUrl: item.type === 'video' ? getVideoEmbed(item) : '',
+  }
   selectedFileName.value = ''
+  selectedFile.value = null
   mode.value = 'edit'
   selectedId.value = item.id
   showMediaModal.value = true
@@ -626,10 +425,6 @@ function editItem(item: MediaItem) {
 function validateForm(payload: MediaItem) {
   if (!payload.title.trim()) {
     openAlert('Please fill in the Title field.')
-    return false
-  }
-  if (!payload.category.trim()) {
-    openAlert('Please fill in the Category field.')
     return false
   }
   if (!payload.page.trim()) {
@@ -668,71 +463,191 @@ function validateForm(payload: MediaItem) {
     openAlert('Please provide a valid Order number.')
     return false
   }
+
   if (payload.type === 'video') {
-    const videoSource =
-      payload.externalLink?.trim() || payload.embedUrl?.trim() || payload.src.trim()
-    if (!videoSource) {
+    const videoSource = getVideoSource(payload)
+    if (!videoSource && !selectedFile.value) {
       openAlert('Please provide a video file or an external video link.')
       return false
     }
   } else {
-    if (!payload.src.trim()) {
+    if (!payload.src.trim() && !selectedFile.value) {
       openAlert('Please provide an image file or source URL.')
       return false
     }
   }
+
   return true
 }
 
-function handleSaveMedia() {
-  if (saveItem()) showMediaModal.value = false
+async function loadItems() {
+  isLoading.value = true
+  try {
+    const data = await getAllWebsiteImages()
+    items.value = data.map(rowToMediaItem)
+    selectedId.value = items.value[0]?.id ?? null
+  } catch (error) {
+    console.error('loadItems error:', error)
+    openAlert('Failed to load website media from Supabase.')
+  } finally {
+    isLoading.value = false
+  }
 }
 
-function saveItem() {
+onMounted(() => {
+  loadItems()
+})
+
+async function handleSaveMedia() {
+  const ok = await saveItem()
+  if (ok) showMediaModal.value = false
+}
+
+async function saveItem() {
   const payload: MediaItem = {
     ...form.value,
-    id: form.value.id || makeId(),
     order: Number(form.value.order) || 1,
+    category: getDefaultCategory(form.value.page, form.value.section),
   }
+
   if (!validateForm(payload)) return false
-  if (payload.type === 'video') {
-    const videoSource =
-      payload.externalLink?.trim() || payload.embedUrl?.trim() || payload.src.trim()
-    const youtubeId = extractYouTubeId(videoSource)
-    if (youtubeId) {
-      payload.thumbnail = getYouTubeThumbnail(videoSource)
-      payload.embedUrl = getYouTubeEmbed(videoSource)
-      payload.externalLink = `https://www.youtube.com/watch?v=${youtubeId}`
-      payload.src = payload.externalLink
-    } else if (!payload.src.trim()) payload.src = videoSource
-  } else {
-    payload.embedUrl = ''
-    payload.thumbnail = ''
-    payload.externalLink = payload.externalLink?.trim() || ''
-  }
-  if (mode.value === 'create') {
-    items.value.push(payload)
-    selectedId.value = payload.id
-  } else {
-    const index = items.value.findIndex((item) => item.id === payload.id)
-    if (index !== -1) {
-      items.value[index] = payload
-      selectedId.value = payload.id
+
+  isSaving.value = true
+
+  try {
+    let imageUrl: string | null = payload.type === 'image' ? (payload.src || null) : null
+    let videoUrl: string | null = null
+    let thumbnailUrl: string | null = payload.thumbnail || null
+    let externalLink: string | null = payload.externalLink || null
+
+    if (selectedFile.value) {
+      const folder = `${payload.page}/${payload.section}/${payload.type}`
+      const uploadedUrl = await uploadWebsiteImage(selectedFile.value, folder)
+
+      if (payload.type === 'image') {
+        imageUrl = uploadedUrl
+        payload.src = uploadedUrl
+        payload.thumbnail = uploadedUrl
+        thumbnailUrl = uploadedUrl
+      } else {
+        videoUrl = uploadedUrl
+        payload.src = uploadedUrl
+        payload.externalLink = ''
+        externalLink = null
+        payload.embedUrl = ''
+      }
     }
+
+    if (payload.type === 'video') {
+      const videoSource =
+        payload.externalLink?.trim() ||
+        videoUrl?.trim() ||
+        payload.src?.trim() ||
+        ''
+
+      const youtubeId = extractYouTubeId(videoSource)
+
+      if (youtubeId) {
+        thumbnailUrl = getYouTubeThumbnail(videoSource)
+        payload.thumbnail = thumbnailUrl
+        payload.embedUrl = getYouTubeEmbed(videoSource)
+        externalLink = `https://www.youtube.com/watch?v=${youtubeId}`
+        videoUrl = externalLink
+        payload.src = externalLink
+        payload.externalLink = externalLink
+      } else {
+        payload.embedUrl = ''
+        videoUrl = videoUrl || payload.src || payload.externalLink || null
+        thumbnailUrl = payload.thumbnail || null
+      }
+
+      imageUrl = thumbnailUrl || payload.thumbnail || ''
+
+      if (!imageUrl) {
+        openAlert(
+          'Video needs a thumbnail or preview image because image_url in the table cannot be empty.',
+          'Save Failed',
+        )
+        return false
+      }
+    } else {
+      videoUrl = null
+      thumbnailUrl = imageUrl
+      externalLink = payload.externalLink?.trim() || null
+      payload.embedUrl = ''
+      payload.thumbnail = imageUrl || ''
+    }
+
+    if (mode.value === 'create') {
+      const created = await createWebsiteImage({
+        page: payload.page,
+        section: payload.section,
+        image_url: imageUrl,
+        display_order: payload.order,
+        is_active: true,
+        media_type: payload.type,
+        video_url: videoUrl,
+        title: payload.title,
+        thumbnail_url: thumbnailUrl,
+        external_link: externalLink,
+      })
+
+      const newItem = rowToMediaItem(created)
+      items.value.push(newItem)
+      selectedId.value = newItem.id
+    } else {
+      const updated = await updateWebsiteImage(payload.id, {
+        page: payload.page,
+        section: payload.section,
+        image_url: imageUrl,
+        display_order: payload.order,
+        is_active: payload.is_active ?? true,
+        media_type: payload.type,
+        video_url: videoUrl,
+        title: payload.title,
+        thumbnail_url: thumbnailUrl,
+        external_link: externalLink,
+      })
+
+      const updatedItem = rowToMediaItem(updated)
+      const index = items.value.findIndex((item) => item.id === updatedItem.id)
+      if (index !== -1) items.value[index] = updatedItem
+      selectedId.value = updatedItem.id
+    }
+
+    items.value.sort((a, b) => {
+      if (a.page !== b.page) return a.page.localeCompare(b.page)
+      if (a.section !== b.section) return a.section.localeCompare(b.section)
+      return a.order - b.order
+    })
+
+    resetForm()
+    return true
+  } catch (error: any) {
+    console.error('saveItem error:', error)
+    openAlert(error?.message || 'Failed to save media to Supabase.', 'Save Failed')
+    return false
+  } finally {
+    isSaving.value = false
   }
-  resetForm()
-  return true
 }
 
 function deleteItem(id: string) {
   const itemToDelete = items.value.find((item) => item.id === id)
   if (!itemToDelete) return
+
   openConfirm(
     `Are you sure you want to delete this file: "${itemToDelete.title}"?`,
-    () => {
-      items.value = items.value.filter((item) => item.id !== id)
-      if (selectedId.value === id) selectedId.value = items.value[0]?.id ?? null
-      if (form.value.id === id) resetForm()
+    async () => {
+      try {
+        await deleteWebsiteImage(id)
+        items.value = items.value.filter((item) => item.id !== id)
+        if (selectedId.value === id) selectedId.value = items.value[0]?.id ?? null
+        if (form.value.id === id) resetForm()
+      } catch (error: any) {
+        console.error('deleteItem error:', error)
+        openAlert(error?.message || 'Failed to delete media from Supabase.', 'Delete Failed')
+      }
     },
     'Confirm Deletion',
   )
@@ -742,21 +657,24 @@ function handleMainFileChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
   if (!file) return
-  selectedFileName.value = file.name
-  const reader = new FileReader()
-  reader.onload = () => {
-    form.value.src = String(reader.result ?? '')
-    if (form.value.type === 'video') {
-      form.value.externalLink = ''
-      form.value.embedUrl = ''
-      form.value.thumbnail = ''
-    }
-  }
-  reader.readAsDataURL(file)
-}
 
-function goBack() {
-  window.history.back()
+  selectedFile.value = file
+  selectedFileName.value = file.name
+
+  if (form.value.type === 'image') {
+    const reader = new FileReader()
+    reader.onload = () => {
+      form.value.src = String(reader.result ?? '')
+      form.value.thumbnail = String(reader.result ?? '')
+    }
+    reader.readAsDataURL(file)
+  } else {
+    const blobUrl = URL.createObjectURL(file)
+    form.value.src = blobUrl
+    form.value.externalLink = ''
+    form.value.embedUrl = ''
+    form.value.thumbnail = ''
+  }
 }
 
 const totalImages = computed(() => items.value.filter((item) => item.type === 'image').length)
@@ -773,8 +691,9 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
             <span
               class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
               @click="$router.push('/admin/website')"
-              >BACK</span
             >
+              BACK
+            </span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
@@ -853,7 +772,6 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
                 <select v-model="pageFilter" class="wm-select">
                   <option value="all">All Pages</option>
                   <option value="homepage">HomePage</option>
-                  <option value="aboutpage">AboutPage</option>
                 </select>
                 <select v-model="categoryFilter" class="wm-select">
                   <option v-for="category in categories" :key="category" :value="category">
@@ -863,35 +781,56 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
               </div>
 
               <div class="wm-list">
-                <div
-                  v-for="item in filteredItems"
-                  :key="item.id"
-                  class="wm-item"
-                  :class="{ active: selectedId === item.id }"
-                  @click="selectedId = item.id"
-                >
-                  <div class="wm-thumb">
-                    <img v-if="item.type === 'image'" :src="item.src" :alt="item.title" />
-                    <img v-else-if="item.thumbnail" :src="item.thumbnail" :alt="item.title" />
-                    <video v-else :src="item.src" muted playsinline preload="metadata"></video>
-                  </div>
-                  <div class="wm-item-body">
-                    <div class="wm-item-top">
-                      <h3>{{ item.title }}</h3>
+                <div v-if="isLoading" class="wm-empty">Loading media...</div>
+
+                <template v-else>
+                  <div
+                    v-for="item in filteredItems"
+                    :key="item.id"
+                    class="wm-item"
+                    :class="{ active: selectedId === item.id }"
+                    @click="selectedId = item.id"
+                  >
+                    <div class="wm-thumb">
+                      <img
+                        v-if="item.type === 'image'"
+                        :src="item.src || item.thumbnail"
+                        :alt="item.title"
+                      />
+                      <img
+                        v-else-if="item.thumbnail"
+                        :src="item.thumbnail"
+                        :alt="item.title"
+                      />
+                      <video
+                        v-else
+                        :src="item.src"
+                        muted
+                        playsinline
+                        preload="metadata"
+                      ></video>
                     </div>
-                    <p class="wm-meta">{{ item.category }}</p>
-                    <p class="wm-item-sub">
-                      {{ item.page }} • {{ item.section }} • Order {{ item.order }}
-                    </p>
+
+                    <div class="wm-item-body">
+                      <div class="wm-item-top">
+                        <h3>{{ item.title }}</h3>
+                      </div>
+                      <p class="wm-meta">{{ item.category }}</p>
+                      <p class="wm-item-sub">
+                        {{ item.page }} • {{ item.section }} • Order {{ item.order }}
+                      </p>
+                    </div>
+
+                    <div class="wm-actions">
+                      <button class="wm-icon-btn" @click.stop="editItem(item)">Edit</button>
+                      <button class="wm-icon-btn danger" @click.stop="deleteItem(item.id)">
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  <div class="wm-actions">
-                    <button class="wm-icon-btn" @click.stop="editItem(item)">Edit</button>
-                    <button class="wm-icon-btn danger" @click.stop="deleteItem(item.id)">
-                      Delete
-                    </button>
-                  </div>
-                </div>
-                <div v-if="filteredItems.length === 0" class="wm-empty">No media found.</div>
+
+                  <div v-if="filteredItems.length === 0" class="wm-empty">No media found.</div>
+                </template>
               </div>
             </div>
           </div>
@@ -901,13 +840,15 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
               <div class="wm-card-head">
                 <h2>Preview</h2>
               </div>
+
               <div v-if="selectedItem" class="wm-preview">
                 <img
                   v-if="selectedItem.type === 'image'"
-                  :src="selectedItem.src"
+                  :src="selectedItem.src || selectedItem.thumbnail"
                   :alt="selectedItem.title"
                   class="wm-preview-media"
                 />
+
                 <div v-else class="wm-video-preview">
                   <iframe
                     v-if="selectedItem.embedUrl"
@@ -917,6 +858,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
                     allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen
                   ></iframe>
+
                   <video
                     v-else
                     :src="selectedItem.src"
@@ -925,6 +867,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
                     preload="metadata"
                   ></video>
                 </div>
+
                 <div class="wm-preview-info">
                   <h3>{{ selectedItem.title }}</h3>
                   <p><strong>Type:</strong> {{ selectedItem.type }}</p>
@@ -935,11 +878,9 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
                   <p v-if="selectedItem.externalLink">
                     <strong>Link:</strong> {{ selectedItem.externalLink }}
                   </p>
-                  <p v-if="selectedItem.embedUrl">
-                    <strong>Embed:</strong> {{ selectedItem.embedUrl }}
-                  </p>
                 </div>
               </div>
+
               <div v-else class="wm-empty">Select a media item to preview.</div>
             </div>
           </div>
@@ -952,11 +893,13 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
             <h2>{{ mode === 'create' ? 'Add Media' : 'Edit Media' }}</h2>
             <button class="wm-close" @click="showMediaModal = false">✕</button>
           </div>
+
           <div class="wm-form">
             <div class="wm-field">
               <label>Title</label>
               <input v-model="form.title" class="wm-input" type="text" />
             </div>
+
             <div class="wm-row wm-row-3">
               <div class="wm-field">
                 <label>Type</label>
@@ -965,13 +908,13 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
                   <option v-if="isVideoAllowedInCurrentSection" value="video">Video</option>
                 </select>
               </div>
+
               <div class="wm-field">
-                <label>Page</label>
-                <select v-model="form.page" class="wm-select" @change="handlePageChange">
-                  <option value="homepage">HomePage</option>
-                  <option value="aboutpage">AboutPage</option>
-                </select>
-              </div>
+  <label>Page</label>
+  <div class="wm-input" style="display: flex; align-items: center; background: #ffffff;">
+    HomePage
+  </div>
+</div>
               <div class="wm-field">
                 <label>Section</label>
                 <select v-model="form.section" class="wm-select" @change="handleSectionChange">
@@ -985,52 +928,101 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
                 </select>
               </div>
             </div>
+
             <div class="wm-row wm-row-2">
               <div class="wm-field">
                 <label>Category</label>
-                <input v-model="form.category" class="wm-input" type="text" />
+                <input v-model="form.category" class="wm-input" type="text" disabled />
               </div>
+
               <div class="wm-field">
                 <label>Order</label>
                 <input v-model.number="form.order" class="wm-input" type="number" min="1" />
               </div>
             </div>
+
             <div class="wm-field">
-              <label>Source URL / Path / Base64</label>
+              <label>{{ form.type === 'video' ? 'Video URL / Path' : 'Image URL / Path' }}</label>
               <input v-model="form.src" class="wm-input" type="text" />
             </div>
+
+            <div v-if="form.type === 'video'" class="wm-field">
+              <label>External Video Link</label>
+              <input
+                v-model="form.externalLink"
+                class="wm-input"
+                type="text"
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+            </div>
+
+            <div
+              v-if="currentFormPreview || currentFormVideoEmbed || currentFormVideoDirect"
+              class="wm-field"
+            >
+              <label>Current Preview</label>
+              <div class="wm-current-preview">
+                <img
+                  v-if="form.type === 'image' && currentFormPreview"
+                  :src="currentFormPreview"
+                  alt="Preview"
+                  class="wm-current-preview-img"
+                />
+
+                <img
+                  v-else-if="form.type === 'video' && currentFormPreview"
+                  :src="currentFormPreview"
+                  alt="Video Thumbnail"
+                  class="wm-current-preview-img"
+                />
+
+                <iframe
+                  v-if="form.type === 'video' && currentFormVideoEmbed"
+                  :src="currentFormVideoEmbed"
+                  class="wm-current-preview-frame"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+
+                <video
+                  v-else-if="form.type === 'video' && currentFormVideoDirect"
+                  :src="currentFormVideoDirect"
+                  class="wm-current-preview-video"
+                  controls
+                  preload="metadata"
+                ></video>
+              </div>
+            </div>
+
             <div class="wm-field">
               <label>Upload Main File</label>
               <label class="wm-upload-card">
                 <input
                   class="wm-file-hidden"
                   type="file"
-                  :accept="form.type === 'video' ? 'video/mp4,video/webm,video/ogg' : 'image/*'"
+                  :accept="
+                    form.type === 'video'
+                      ? 'video/mp4,video/webm,video/ogg,video/quicktime'
+                      : 'image/*'
+                  "
                   @change="handleMainFileChange"
                 />
                 <div class="wm-upload-inner">
-                  <span class="wm-upload-sub">{{
-                    selectedFileName ||
-                    (form.type === 'video' ? 'Upload Video +' : 'Upload Photo +')
-                  }}</span>
+                  <span class="wm-upload-sub">
+                    {{
+                      selectedFileName ||
+                      (form.type === 'video' ? 'Upload Video +' : 'Upload Photo +')
+                    }}
+                  </span>
                 </div>
               </label>
             </div>
-            <template v-if="form.type === 'video'">
-              <div class="wm-field">
-                <label>External Video Link</label>
-                <input
-                  v-model="form.externalLink"
-                  class="wm-input"
-                  type="text"
-                  placeholder="https://www.youtube.com/watch?v=..."
-                />
-              </div>
-            </template>
+
             <div class="wm-form-actions">
               <button class="wm-btn wm-btn-secondary" @click="resetForm">Clear</button>
-              <button class="wm-btn wm-btn-primary" @click="handleSaveMedia">
-                {{ mode === 'create' ? 'Save Media' : 'Update Media' }}
+              <button class="wm-btn wm-btn-primary" :disabled="isSaving" @click="handleSaveMedia">
+                {{ isSaving ? 'Saving...' : mode === 'create' ? 'Save Media' : 'Update Media' }}
               </button>
             </div>
           </div>
@@ -1075,6 +1067,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 </template>
 
 <style scoped>
+/* style */
 .page-layout {
   display: flex;
   height: 100vh;
@@ -1099,31 +1092,6 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 
 .wm-hero {
   margin-bottom: 22px;
-}
-
-.wm-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  border: none;
-  background: transparent;
-  padding: 0;
-  margin-bottom: 18px;
-  cursor: pointer;
-  text-transform: uppercase;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: rgba(13, 43, 15, 0.4);
-  transition: color 0.2s ease;
-}
-
-.wm-back-btn:hover {
-  color: #0d2b0f;
-}
-
-.wm-back-sep {
-  color: #c3c9bf;
 }
 
 .wm-hero-main {
@@ -1517,6 +1485,30 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   box-shadow: 0 0 0 4px rgba(249, 168, 37, 0.12);
 }
 
+.wm-current-preview {
+  width: 100%;
+  border: 1px solid rgba(13, 43, 15, 0.08);
+  border-radius: 16px;
+  background: #f5f7f5;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.wm-current-preview-img,
+.wm-current-preview-video,
+.wm-current-preview-frame {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.wm-current-preview-frame {
+  min-height: 220px;
+}
+
 .wm-file-hidden {
   display: none;
 }
@@ -1581,6 +1573,11 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 
 .wm-btn-primary:hover {
   background: #174319;
+}
+
+.wm-btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .wm-btn-secondary {
@@ -1695,6 +1692,8 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   line-height: 1.6;
   color: rgba(13, 43, 15, 0.75);
   text-align: center;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .wm-notice-actions {
@@ -1793,6 +1792,122 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 
   .wm-notice-actions .wm-btn {
     width: auto;
+  }
+}
+
+/* page entrance animations */
+.wm-hero,
+.wm-stats,
+.wm-left,
+.wm-right {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(6px);
+  animation: wmFadeSlideUp 0.7s ease forwards;
+  will-change: opacity, transform, filter;
+}
+
+.wm-hero {
+  animation-delay: 0.08s;
+}
+
+.wm-stats {
+  animation-delay: 0.18s;
+}
+
+.wm-left {
+  animation-delay: 0.3s;
+}
+
+.wm-right {
+  animation-delay: 0.42s;
+}
+
+/* stat cards stagger */
+.wm-stat {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: wmFadeSlideUpSoft 0.55s ease forwards;
+}
+
+.wm-stat:nth-child(1) {
+  animation-delay: 0.22s;
+}
+
+.wm-stat:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.wm-stat:nth-child(3) {
+  animation-delay: 0.38s;
+}
+
+/* media list items stagger */
+.wm-item {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: wmFadeSlideUpSoft 0.45s ease forwards;
+}
+
+.wm-item:nth-child(1) { animation-delay: 0.42s; }
+.wm-item:nth-child(2) { animation-delay: 0.48s; }
+.wm-item:nth-child(3) { animation-delay: 0.54s; }
+.wm-item:nth-child(4) { animation-delay: 0.60s; }
+.wm-item:nth-child(5) { animation-delay: 0.66s; }
+.wm-item:nth-child(6) { animation-delay: 0.72s; }
+.wm-item:nth-child(7) { animation-delay: 0.78s; }
+.wm-item:nth-child(8) { animation-delay: 0.84s; }
+.wm-item:nth-child(9) { animation-delay: 0.90s; }
+.wm-item:nth-child(10) { animation-delay: 0.96s; }
+.wm-item:nth-child(n + 11) { animation-delay: 1s; }
+
+/* preview card content */
+.wm-preview,
+.wm-card-head {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: wmFadeSlideUpSoft 0.55s ease forwards;
+  animation-delay: 0.48s;
+}
+
+/* modal entrance */
+.wm-modal,
+.wm-notice-card {
+  animation: wmModalPop 0.28s ease;
+}
+
+@keyframes wmFadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes wmFadeSlideUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wmModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 </style>

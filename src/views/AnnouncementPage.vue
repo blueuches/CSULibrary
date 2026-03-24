@@ -11,6 +11,7 @@
         </div>
       </div>
 
+      <!-- Month Filter -->
       <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
         <nav class="flex items-center gap-1 overflow-x-auto mx-auto pb-2 scrollbar-hide nav-reveal">
           <button
@@ -30,7 +31,8 @@
         </nav>
       </div>
 
-      <div v-if="pinnedEvents.length > 0" class="mb-15 relative event-carousel">
+      <!-- Carousel -->
+      <div v-if="pinnedEvents.length > 0" class="mb-15 relative event-carousel group/carousel">
         <div class="relative overflow-hidden rounded-[2.5rem] shadow-2xl">
           <div
             class="flex transition-transform duration-700 ease-in-out"
@@ -42,28 +44,19 @@
               class="min-w-full group relative bg-[#0d2b0f] flex flex-col md:flex-row h-auto md:h-[350px]"
             >
               <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
-                <img
-                  :src="event.image"
-                  class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                />
+                <img :src="event.image" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
               </div>
               <div class="md:w-1/2 p-10 flex flex-col justify-center space-y-4">
-                <span
-                  class="bg-yellow-400 text-green-900 self-start px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse"
-                >
-                  Pinned Highlight
+                <span class="bg-yellow-400 text-green-900 self-start px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">
+                  PINNED HIGHLIGHT
                 </span>
-                <h3
-                  class="text-3xl font-bold text-white leading-tight group-hover:text-yellow-400 transition-colors"
-                >
+                <h3 class="text-3xl font-bold text-white leading-tight group-hover:text-yellow-400 transition-colors">
                   {{ event.title }}
                 </h3>
                 <p class="text-green-100/70 text-sm leading-relaxed line-clamp-3">
                   {{ event.description }}
                 </p>
-                <div
-                  class="pt-4 flex items-center gap-3 text-yellow-400 text-xs font-bold uppercase tracking-widest"
-                >
+                <div class="pt-4 flex items-center gap-3 text-yellow-400 text-xs font-bold uppercase tracking-widest">
                   <span>{{ event.location }}</span>
                   <span class="w-1 h-1 bg-white/20 rounded-full"></span>
                   <span class="text-white/60">{{ event.time }}</span>
@@ -71,103 +64,42 @@
               </div>
             </div>
           </div>
-
-          <div
-            v-if="pinnedEvents.length > 1"
-            class="absolute inset-0 flex items-center justify-between px-4 pointer-events-none"
-          >
-            <button
-              @click="prevPinned"
-              class="pointer-events-auto bg-white/10 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover/carousel:opacity-100 transform -translate-x-4 group-hover/carousel:translate-x-0"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              @click="nextPinned"
-              class="pointer-events-auto bg-white/10 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-md transition-all opacity-0 group-hover/carousel:opacity-100 transform translate-x-4 group-hover/carousel:translate-x-0"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div v-if="pinnedEvents.length > 1" class="absolute bottom-6 right-10 flex gap-2">
-            <button
-              v-for="(_, i) in pinnedEvents"
-              :key="i"
-              @click="currentPinnedIndex = i"
-              :class="[
-                'h-1.5 rounded-full transition-all duration-300',
-                currentPinnedIndex === i ? 'w-8 bg-yellow-400' : 'w-2 bg-white/30',
-              ]"
-            ></button>
-          </div>
         </div>
       </div>
 
+      <!-- Grid Events -->
       <div>
-        <transition-group
-          name="shuffle"
-          tag="div"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
+        <transition-group name="shuffle" tag="div" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <div
             v-for="(event, index) in filteredEvents"
             :key="event.id"
             class="group cursor-pointer event-card"
             :style="{ '--i': index }"
           >
-            <div
-              class="relative aspect-[16/10] overflow-hidden rounded-3xl mb-5 bg-gray-100 shadow-sm group-hover:shadow-2xl transition-all duration-500"
-            >
-              <div
-                v-if="event.pinned"
-                class="absolute top-4 left-4 z-10 bg-yellow-400 text-green-900 px-3 py-1 rounded-full text-[9px] font-black tracking-tighter shadow-lg"
-              >
-                Pinned
+            <div class="relative aspect-[16/10] overflow-hidden rounded-3xl mb-5 bg-gray-100 shadow-sm group-hover:shadow-2xl transition-all duration-500">
+              <img :src="event.image" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+
+              <!-- Pinned Badge sa Grid -->
+              <div class="absolute top-4 left-4" v-if="event.isPinnedGrid">
+                <div class="bg-yellow-400 text-green-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg border border-yellow-500">
+                  PINNED
+                </div>
               </div>
 
-              <img
-                :src="event.image"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-
               <div class="absolute top-4 right-4">
-                <div
-                  class="backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm border border-white/20"
-                  :style="{ background: event.color, color: '#fff' }"
-                >
+                <div class="backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm border border-white/20" :style="{ background: '#0d2b0f', color: '#fff' }">
                   {{ event.month }} '{{ event.year.slice(-2) }}
                 </div>
               </div>
             </div>
 
-            <div
-              class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1"
-            >
-              <div
-                class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest"
-              >
+            <div class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1">
+              <div class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest">
                 <span>{{ event.location }}</span>
                 <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
                 <span class="text-gray-400 font-bold">{{ event.time }}</span>
               </div>
-              <h3
-                class="event-card-title text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800"
-              >
+              <h3 class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800">
                 {{ event.title }}
               </h3>
               <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
@@ -178,147 +110,97 @@
         </transition-group>
       </div>
 
-      <div v-if="filteredEvents.length === 0" class="text-center py-32 animate-fade-in">
-        <div class="flex justify-center mb-4 text-gray-300 text-6xl no-events-icon">
-          <i class="fas fa-book-open"></i>
-        </div>
-        <p class="text-gray-400 font-medium italic text-lg">
-          No events scheduled for {{ selectedEventMonth }}.
-        </p>
+      <div v-if="filteredEvents.length === 0" class="text-center py-32">
+        <p class="text-gray-400 font-medium italic text-lg">No events scheduled for {{ selectedEventMonth }}.</p>
       </div>
 
       <div class="flex justify-center mt-20">
-        <router-link
-          to="/top-borrowers"
-          class="inline-block bg-[#0d2b0f] text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-[#1b5e20] hover:scale-105 transition transform duration-300 animate-pop-in cta-btn"
-        >
+        <router-link to="/top-borrowers" class="inline-block bg-[#0d2b0f] text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-[#1b5e20] hover:scale-105 transition transform duration-300 cta-btn">
           View Top Borrowers
         </router-link>
       </div>
     </div>
-
-    <Transition name="fade">
-      <button
-        v-if="showScrollTop"
-        @click="scrollToTop"
-        class="fixed bottom-8 right-8 z-50 rounded-2xl p-4 shadow-2xl transition-all duration-300 hover:scale-110"
-        style="background: #0d2b0f"
-      >
-        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 11l7-7 7 7" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 17l7-7 7 7" />
-        </svg>
-      </button>
-    </Transition>
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { supabase } from '@/lib/supabase'
 
-// Assets
-import announcement_pic from '@/assets/images/announcementpage/a1.jpg'
-import announcement_pic2 from '@/assets/images/announcementpage/a14.jpg'
-import announcement_pic3 from '@/assets/images/announcementpage/a15.jpg'
-import announcement_pic4 from '@/assets/images/announcementpage/a16.jpg'
-import announcement_pic5 from '@/assets/images/announcementpage/a17.jpg'
-
-const months = [
-  'All',
-  'Jan',
-  'Feb',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-]
+const events = ref<any[]>([])
 const selectedEventMonth = ref('All')
-const showScrollTop = ref(false)
 const currentPinnedIndex = ref(0)
 let carouselTimer: any = null
 
-const events = [
-  {
-    id: 1,
-    title: 'Book Fair 2026',
-    month: 'March',
-    year: '2026',
-    time: '10:00 AM',
-    location: 'Main Hall',
-    description: 'Explore a diverse collection of books and meet local authors.',
-    image: announcement_pic,
-    color: '#0d2b0f',
-    pinned: false,
-  },
-  {
-    id: 2,
-    title: 'Reading Workshop',
-    month: 'Jan',
-    year: '2026',
-    time: '1:00 PM',
-    location: 'Conference Room',
-    description: 'Improve reading speed and comprehension with our expert-led session.',
-    image: announcement_pic2,
-    color: '#0d2b0f',
-    pinned: false,
-  },
-  {
-    id: 3,
-    title: 'Storytelling Session',
-    month: 'March',
-    year: '2027',
-    time: '9:00 AM',
-    location: 'Storytelling Room',
-    description: 'Interactive storytelling for kids with crafts and fun learning activities.',
-    image: announcement_pic3,
-    color: '#0d2b0f',
-    pinned: false,
-  },
-  {
-    id: 4,
-    title: 'Art Exhibition',
-    month: 'June',
-    year: '2027',
-    time: '9:00 AM',
-    location: 'Exhibit Area',
-    description: 'A celebration of local talent and contemporary visual arts.',
-    image: announcement_pic4,
-    color: '#0d2b0f',
-    pinned: true,
-  },
-  {
-    id: 5,
-    title: 'Art & Literature Exhibition',
-    month: 'Aug',
-    year: '2026',
-    time: '1:00 PM',
-    location: 'Library Museum',
-    description: 'Display of student artwork inspired by literary works, open for public viewing.',
-    image: announcement_pic5,
-    color: '#0d2b0f',
-    pinned: true,
-  },
+const months = [
+  'All','January','February','March','April','May','June','July','August','September','October','November','December'
 ]
 
-// LOGIC: Pinned Events Carousel
-const pinnedEvents = computed(() => {
-  return events.filter(
-    (e) => e.pinned && (selectedEventMonth.value === 'All' || e.month === selectedEventMonth.value),
-  )
+// Toggle mode: 'start_date' = schedule based, 'created_at' = upload based
+const pinnedMode = ref<'start_date' | 'created_at'>('start_date')
+
+const fetchEvents = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('type', 'announcement')
+      .order('start_date', { ascending: false })
+
+    if (error) throw error
+
+    // Map events
+    events.value = (data || []).map((event, index) => {
+      const date = new Date(event.start_date)
+      return {
+        ...event,
+        image: event.images,
+        month: date.toLocaleString('en-US', { month: 'long' }),
+        year: date.getFullYear().toString(),
+        time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        pinned: index < 3, // carousel top 3
+        isPinnedGrid: false,
+        isLatest: index === 0
+      }
+    })
+
+    // Decide pinned grid card based on pinnedMode
+    if (events.value.length > 0) {
+      let pinnedEvent: any
+      if (pinnedMode.value === 'start_date') {
+        pinnedEvent = events.value.reduce((prev, curr) =>
+          new Date(curr.start_date) > new Date(prev.start_date) ? curr : prev
+        )
+      } else {
+        pinnedEvent = events.value.reduce((prev, curr) =>
+          new Date(curr.created_at) > new Date(prev.created_at) ? curr : prev
+        )
+      }
+      events.value.forEach(e => (e.isPinnedGrid = false))
+      pinnedEvent.isPinnedGrid = true
+    }
+
+    startCarousel()
+  } catch (err) {
+    console.error('Error fetching events:', err)
+  }
+}
+
+const pinnedEvents = computed(() => events.value.filter(e => e.pinned))
+
+const filteredEvents = computed(() => {
+  let list = events.value.filter(e => selectedEventMonth.value === 'All' || e.month === selectedEventMonth.value)
+  
+  return list.sort((a, b) => {
+    if (a.isLatest !== b.isLatest) return a.isLatest ? -1 : 1
+    return new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
+  })
 })
 
+// CAROUSEL CONTROLS
 const nextPinned = () => {
+  if (pinnedEvents.value.length === 0) return
   currentPinnedIndex.value = (currentPinnedIndex.value + 1) % pinnedEvents.value.length
-}
-const prevPinned = () => {
-  currentPinnedIndex.value =
-    (currentPinnedIndex.value - 1 + pinnedEvents.value.length) % pinnedEvents.value.length
 }
 
 const startCarousel = () => {
@@ -327,31 +209,16 @@ const startCarousel = () => {
     carouselTimer = setInterval(nextPinned, 5000)
   }
 }
+
 const stopCarousel = () => {
   if (carouselTimer) clearInterval(carouselTimer)
 }
 
-// LOGIC: Main Grid (Pinned stay at top)
-const filteredEvents = computed(() => {
-  return events
-    .filter((e) => selectedEventMonth.value === 'All' || e.month === selectedEventMonth.value)
-    .sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
-})
-
-// Lifecycle & Utilities
-function handleScroll() {
-  showScrollTop.value = window.scrollY > 300
-}
-function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
-
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  startCarousel()
+  fetchEvents()
 })
+
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
   stopCarousel()
 })
 </script>
