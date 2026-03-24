@@ -146,64 +146,66 @@
               <span class="text-[10px] text-gray-400">Total: {{ upcomingReservations.length }}</span>
             </div>
 
-            <table class="report-table">
-              <thead>
-                <tr>
-                  <th>Date & Time</th>
-                  <th>Activity / Purpose</th>
-                  <th>Requester (ID)</th>
-                  <th>Status</th>
-                  <th class="text-right">Actions</th>
-                </tr>
-              </thead>
+            <div class="table-container">
+              <table class="report-table">
+                <thead>
+                  <tr>
+                    <th>Date & Time</th>
+                    <th>Activity / Purpose</th>
+                    <th>Requester (ID)</th>
+                    <th>Status</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
 
-              <tbody>
-                <tr v-for="res in upcomingReservations" :key="res.id">
-                  <td class="text-[11px]">
-                    <div class="font-bold">{{ res.date }}</div>
-                    <div class="text-gray-500">{{ res.time }}</div>
-                  </td>
+                <tbody>
+                  <tr v-for="res in upcomingReservations" :key="res.id">
+                    <td class="text-[11px]">
+                      <div class="font-bold">{{ res.date }}</div>
+                      <div class="text-gray-500">{{ res.time }}</div>
+                    </td>
 
-                  <td>
-                    <div class="font-medium">{{ res.activity }}</div>
-                    <div class="text-[10px] text-gray-400 italic">Room: {{ res.room_name }}</div>
-                  </td>
+                    <td>
+                      <div class="font-medium">{{ res.activity }}</div>
+                      <div class="text-[10px] text-gray-400 italic">Room: {{ res.room_name }}</div>
+                    </td>
 
-                  <td class="text-[11px]">{{ res.requester }}</td>
+                    <td class="text-[11px]">{{ res.requester }}</td>
 
-                  <td>
-                    <span :class="['badge', res.status.toLowerCase()]">
-                      {{ res.status }}
-                    </span>
-                  </td>
+                    <td>
+                      <span :class="['badge', res.status.toLowerCase()]">
+                        {{ res.status }}
+                      </span>
+                    </td>
 
-                  <td class="text-right">
-                    <div class="flex justify-end gap-3">
+                    <td class="text-right">
+                      <div class="flex justify-end gap-3">
 
-                      <button v-if="res.status === 'pending'" @click="updateStatus(res.id, 'reserved')"
-                        class="btn-accept">
-                        <i class="fas fa-check mr-1"></i> Accept
-                      </button>
+                        <button v-if="res.status === 'pending'" @click="updateStatus(res.id, 'reserved')"
+                          class="btn-accept">
+                          <i class="fas fa-check mr-1"></i> Accept
+                        </button>
 
-                      <button @click="deleteReservation(res.id)" class="btn-delete">
-                        <i class="fas fa-trash-alt mr-1"></i> Delete
-                      </button>
+                        <button @click="deleteReservation(res.id)" class="btn-delete">
+                          <i class="fas fa-trash-alt mr-1"></i> Delete
+                        </button>
 
-                    </div>
-                  </td>
+                      </div>
+                    </td>
 
 
 
-                </tr>
+                  </tr>
 
-                <tr v-if="upcomingReservations.length === 0">
-                  <td colspan="5" class="text-center py-10 text-gray-400">No reservations found.</td>
-                </tr>
-              </tbody>
-            </table>
+                  <tr v-if="upcomingReservations.length === 0">
+                    <td colspan="5" class="text-center py-10 text-gray-400">No reservations found.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+
           </div>
-
-
         </div>
 
         <!-- RIGHT -->
@@ -243,57 +245,97 @@
     </main>
 
     <div v-if="modals.booking" class="modal">
-      <div class="modal-box">
-        <h2 class="modal-title text-xl font-bold mb-4">New Reservation</h2>
+      <div class="modal-box max-w-2xl">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="modal-title text-2xl font-bold text-gray-800">New Reservation</h2>
+          <div class="text-right">
+            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
+              {{ selectedRoom?.name }}
+            </span>
+          </div>
+        </div>
 
-        <div class="space-y-3">
-          <label class="text-[10px] font-bold uppercase text-gray-500">Purpose of Use</label>
-          <input v-model="bookingForm.activity" placeholder="e.g. Thesis Defense" class="input" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <div class="grid grid-cols-1 gap-3">
+          <div class="space-y-4">
+            <div class="p-3 bg-gray-50 rounded-lg border border-gray-200 grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-400">Floor / Wing</label>
+                <p class="text-sm font-semibold">{{ selectedRoom?.floor }} - {{ selectedRoom?.wing }}</p>
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-400">Room Type</label>
+                <p class="text-sm font-semibold capitalize">{{ selectedRoom?.room_type?.replace('_', ' ') }}</p>
+              </div>
+            </div>
+
             <div>
-              <label class="text-[10px] font-bold uppercase text-gray-500">Student ID Number</label>
-              <input v-model="bookingForm.requester" list="student-ids" placeholder="Type ID Number" class="input" />
+              <label class="text-[10px] font-bold uppercase text-gray-500">Purpose of Use</label>
+              <input v-model="bookingForm.activity" placeholder="e.g. Thesis Defense" class="input" />
+            </div>
 
-              <datalist id="student-ids">
-                <option v-for="std in studentsList" :key="std.id_number" :value="std.id_number">
-                  {{ std.last_name }}, {{ std.first_name }}
-                </option>
-              </datalist>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-500">Representative (Requester)</label>
+              <input v-model="bookingForm.requester" list="student-ids" placeholder="Type ID Number" class="input" />
             </div>
 
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="text-[10px] font-bold uppercase text-gray-400">College (Auto)</label>
-                <input v-model="bookingForm.program" readonly class="input bg-gray-100" />
+                <input v-model="bookingForm.program" readonly class="input bg-gray-100 text-xs" />
               </div>
               <div>
                 <label class="text-[10px] font-bold uppercase text-gray-400">Year (Auto)</label>
-                <input v-model="bookingForm.year_level" readonly class="input bg-gray-100" />
+                <input v-model="bookingForm.year_level" readonly class="input bg-gray-100 text-xs" />
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[10px] font-bold uppercase text-gray-500">Date</label>
-              <input v-model="bookingForm.date" type="date" class="input" />
-            </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase text-gray-500">Start Time</label>
-              <input v-model="bookingForm.time" type="time" class="input" />
-            </div>
-          </div>
+          <div class="space-y-4">
+            <div class="p-4 border rounded-lg bg-blue-50/50 border-blue-100">
+              <label class="text-[10px] font-bold uppercase text-blue-600 block mb-2">Group Members
+                (Participants)</label>
+              <div class="flex gap-2">
+                <input list="student-ids" id="participant-input" placeholder="Search by ID"
+                  class="input flex-1 bg-white" />
+                <button @click="handleAddParticipantFromInput('participant-input')"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm transition-colors">Add</button>
+              </div>
 
-          <div>
-            <label class="text-[10px] font-bold uppercase text-gray-500">End Time</label>
-            <input v-model="bookingForm.endTime" type="time" class="input" />
+              <div class="flex flex-wrap gap-2 mt-3 max-h-[100px] overflow-y-auto">
+                <div v-for="p in selectedParticipants" :key="p.id_number"
+                  class="bg-white border border-blue-200 text-blue-700 px-2 py-1 rounded text-[11px] flex items-center shadow-sm">
+                  {{ p.last_name }}, {{ p.first_name[0] }}.
+                  <button @click="removeParticipant(p.id_number)"
+                    class="ml-2 text-red-500 font-bold hover:text-red-700">×</button>
+                </div>
+                <span v-if="selectedParticipants.length === 0" class="text-[10px] text-gray-400 italic">No members added
+                  yet.</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500">Date</label>
+                <input v-model="bookingForm.date" type="date" class="input" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="text-[10px] font-bold uppercase text-gray-500">Start Time</label>
+                  <input v-model="bookingForm.time" type="time" class="input" />
+                </div>
+                <div>
+                  <label class="text-[10px] font-bold uppercase text-gray-500">End Time</label>
+                  <input v-model="bookingForm.endTime" type="time" class="input" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="modal-actions mt-6">
+        <div class="modal-actions mt-8 pt-4 border-t border-gray-100">
           <button class="btn-cancel" @click="closeModals">Cancel</button>
-          <button class="btn-confirm" @click="createBooking">Create Reservation</button>
+          <button class="btn-confirm w-full md:w-auto px-10" @click="createBooking">Create Reservation</button>
         </div>
       </div>
     </div>
@@ -306,21 +348,25 @@
           <label class="text-[10px] font-bold uppercase text-gray-500">Session Title</label>
           <input v-model="bookingForm.activity" placeholder="Walk-in Session" class="input" />
 
-          <label class="text-[10px] font-bold uppercase text-gray-500">Student ID Number</label>
+          <label class="text-[10px] font-bold uppercase text-gray-500">Requester ID</label>
           <input v-model="bookingForm.requester" list="student-ids" placeholder="Enter ID Number" class="input" />
 
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[10px] font-bold uppercase text-gray-400 italic">Program</label>
-              <input v-model="bookingForm.program" readonly class="input bg-gray-50 text-[11px]" />
+          <div class="border-t pt-3 mt-3">
+            <label class="text-[10px] font-bold uppercase text-gray-500">Add Companions</label>
+            <div class="flex gap-2">
+              <input list="student-ids" id="quick-part-input" placeholder="Search Member ID" class="input text-xs" />
+              <button @click="handleAddParticipantFromInput('quick-part-input')"
+                class="bg-gray-800 text-white px-3 py-1 rounded text-xs">Add</button>
             </div>
-            <div>
-              <label class="text-[10px] font-bold uppercase text-gray-400 italic">Year Level</label>
-              <input v-model="bookingForm.year_level" readonly class="input bg-gray-50 text-[11px]" />
+            <div class="flex flex-wrap gap-1 mt-2">
+              <div v-for="p in selectedParticipants" :key="p.id_number"
+                class="bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center">
+                {{ p.id_number }} <button @click="removeParticipant(p.id_number)" class="ml-1 text-red-500">×</button>
+              </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-2 gap-2 pt-2">
             <div>
               <label class="text-[10px] font-bold uppercase text-gray-500">Starts At</label>
               <input v-model="bookingForm.time" type="time" class="input" />
@@ -338,6 +384,12 @@
         </div>
       </div>
     </div>
+
+    <datalist id="student-ids">
+      <option v-for="std in studentsList" :key="std.id_number" :value="std.id_number">
+        {{ std.last_name }}, {{ std.first_name }} ({{ std.program }})
+      </option>
+    </datalist>
 
     <!-- END SESSION -->
     <div v-if="modals.endSession" class="modal">
@@ -449,6 +501,8 @@ interface Equipment {
 const activeFloor = ref('2nd Floor')
 const activeWing = ref('Left Wing')
 const studentsList = ref<any[]>([])
+const selectedParticipants = ref<any[]>([])
+const participantSearch = ref('')
 
 /* =====================================================
   MODALS
@@ -581,6 +635,8 @@ function getRoomIcon(type: string) {
   }
 }
 
+
+
 /* =====================================================
   COMPUTED
 ===================================================== */
@@ -657,10 +713,13 @@ function openModal(type: keyof typeof modals.value, room?: Room) {
   modals.value[type] = true
 }
 
+
+
 function closeModals() {
   Object.keys(modals.value).forEach(key => {
     modals.value[key as keyof typeof modals.value] = false
   })
+  selectedParticipants.value = [];
 }
 
 /* =====================================================
@@ -680,33 +739,48 @@ function removeEquipment(index: number) {
   BOOKINGS (DB)
 ===================================================== */
 async function createBooking() {
-  const { error } = await supabase
+  const { data: reservationData, error: resError } = await supabase
     .from('room_reservations')
-    .insert([
-      {
-        room_id: selectedRoom.value?.id || null,
-        representative_student_id: bookingForm.value.requester,
-        booking_date: bookingForm.value.date,
-        start_time: bookingForm.value.time,
-        end_time: bookingForm.value.endTime,
-        purpose: bookingForm.value.activity,
-        status: 'pending',
-        program: bookingForm.value.program,
-        year_level: bookingForm.value.year_level
-      }
-    ])
+    .insert([{
+      room_id: selectedRoom.value?.id || null,
+      representative_student_id: bookingForm.value.requester,
+      booking_date: bookingForm.value.date,
+      start_time: bookingForm.value.time,
+      end_time: bookingForm.value.endTime,
+      purpose: bookingForm.value.activity,
+      status: 'pending',
+      program: bookingForm.value.program,
+      year_level: bookingForm.value.year_level
+    }])
+    .select()
+    .single()
 
-  if (error) {
-    console.error('Error creating booking:', error.message)
-    alert("Error: " + error.message)
+  if (resError) {
+    alert("Error: " + resError.message)
     return
   }
 
-  alert("Reservation saved successfully!")
+
+  if (selectedParticipants.value.length > 0) {
+    const participantsData = selectedParticipants.value.map(student => ({
+      reservation_id: reservationData.id,
+      student_id: student.id_number
+    }))
+
+    const { error: partError } = await supabase
+      .from('room_reservation_participants')
+      .insert(participantsData)
+
+    if (partError) console.error('Error adding participants:', partError.message)
+  }
+
+  alert("Reservation with participants saved!")
+  selectedParticipants.value = [] 
   await fetchRooms()
   await fetchUpcomingReservations()
   closeModals()
 }
+
 
 /* =====================================================
   SESSION (TEMP FRONTEND ONLY)
@@ -743,6 +817,38 @@ async function confirmQuickBook() {
   await fetchRooms()
   await fetchUpcomingReservations()
   closeModals()
+}
+
+/* =====================================================
+  PARTICIPANT LOGIC
+===================================================== */
+// Helper to handle the "Add" button click in modals
+function handleAddParticipantFromInput(inputId: string) {
+  const input = document.getElementById(inputId) as HTMLInputElement;
+  const idValue = input.value;
+
+  if (!idValue) return;
+
+  const student = studentsList.value.find(s => s.id_number === idValue);
+
+  if (student) {
+    // Check if they are already the requester
+    if (idValue === bookingForm.value.requester) {
+      alert("This student is already the requester.");
+      return;
+    }
+    // Check if already in participants list
+    if (!selectedParticipants.value.find(p => p.id_number === idValue)) {
+      selectedParticipants.value.push(student);
+    }
+    input.value = '';
+  } else {
+    alert("Student ID not found.");
+  }
+}
+
+function removeParticipant(id: string) {
+  selectedParticipants.value = selectedParticipants.value.filter(p => p.id_number !== id);
 }
 
 
@@ -840,6 +946,31 @@ onMounted(() => {
 
 
 <style scoped>
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid #eee;
+}
+
+
+.report-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 10;
+  box-shadow: inset 0 -1px 0 #eee;
+}
+
+.table-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
 .custom-scroll {
   height: calc(100vh - 300px);
 }
