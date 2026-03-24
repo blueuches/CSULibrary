@@ -1023,4 +1023,44 @@ const exportToCSV = () => {
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+.headBlock,
+.toolbar,
+.errorBox,
+.tableShell,
+.summaryBar {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideUp 0.6s ease forwards;
+}
+
+.headBlock {
+  animation-delay: 0.08s;
+}
+
+.toolbar {
+  animation-delay: 0.18s;
+}
+
+.errorBox,
+.tableShell {
+  animation-delay: 0.3s;
+}
+
+.summaryBar {
+  animation-delay: 0.42s;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
 </style>
