@@ -7,11 +7,8 @@
       <header class="reservation-header intro-header">
         <div class="header-left">
           <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/services')"
-              >BACK</span
-            >
+            <span class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/services')">BACK</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
@@ -19,7 +16,7 @@
           </div>
 
           <h1 class="header-title intro-title">
-            AVR <span class="text-yellow-500"> Reservation</span>
+            Room <span class="text-yellow-500"> Reservation</span>
           </h1>
 
           <p class="header-sub">
@@ -30,41 +27,34 @@
         <div class="header-right">
           <div class="date-badge">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0
               002-2V7a2 2 0 00-2-2H5a2 2 0
-              00-2 2v12a2 2 0 002 2z"
-              />
+              00-2 2v12a2 2 0 002 2z" />
             </svg>
             {{ currentDate }}
           </div>
 
-          <button class="export-btn" @click="openBookingModal">+ New Booking</button>
+          <button class="export-btn" @click="openModal('booking')">+ New Booking</button>
         </div>
       </header>
 
       <!-- KPI -->
       <div class="reservation-kpi-strip">
-        <div v-for="(stat, i) in roomStats" :key="i" class="reservation-kpi-card">
-          <div
-            class="reservation-kpi-icon"
-            :style="{ background: stat.color + '18', color: stat.color }"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              v-html="stat.icon"
-            ></svg>
+        <div v-for="(stat, i) in roomStats" :key="i" class="reservation-kpi-card flex items-center gap-3">
+          <!-- ICON -->
+          <div class="reservation-kpi-icon kpi-reservation-icon flex items-center justify-center"
+            :style="{ background: stat.color + '18', color: stat.color }">
+            <i :class="stat.icon"></i>
           </div>
 
+          <!-- VALUE -->
           <div class="reservation-kpi-body">
-            <span class="reservation-kpi-label">{{ stat.label }}</span>
-            <div class="reservation-kpi-value">{{ stat.value }}</div>
+            <div class="reservation-kpi-value">
+              {{ stat.value }}
+            </div>
+            <span class="reservation-kpi-label">
+              {{ stat.label }}
+            </span>
           </div>
         </div>
       </div>
@@ -74,100 +64,146 @@
         <div class="col-left">
           <!-- ROOMS -->
           <div class="panel">
-            <div class="panel-head">
+            <div class="panel-head flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
               <div>
-                <h2 class="panel-title">Real-Time Occupancy</h2>
-                <p class="panel-sub">Current status of Audio-Visual facilities</p>
+                <h2 class="panel-title font-black text-[#0d2b0f] uppercase text-sm tracking-tighter">Real-Time Occupancy
+                </h2>
+                <p class="panel-sub text-[10px] text-gray-400">Viewing: {{ activeFloor }} Floor | {{ activeWing }} Wing
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <div class="flex bg-gray-100 p-1 rounded-lg border border-gray-200">
+                  <button v-for="f in ['2nd Floor', '3rd Floor']" :key="f" @click="activeFloor = f"
+                    :class="activeFloor === f ? 'bg-[#0d2b0f] text-white shadow-sm' : 'text-gray-500 hover:bg-gray-200'"
+                    class="px-3 py-1 text-[10px] font-black rounded-md transition-all uppercase">
+                    {{ f.replace(' Floor', '') }} </button>
+                </div>
+
+                <div class="flex bg-yellow-100 p-1 rounded-lg border border-yellow-200">
+                  <button v-for="w in ['Left Wing', 'Right Wing']" :key="w" @click="activeWing = w"
+                    :class="activeWing === w ? 'bg-yellow-500 text-[#0d2b0f] shadow-sm' : 'text-yellow-700 hover:bg-yellow-200'"
+                    class="px-3 py-1 text-[10px] font-black rounded-md transition-all uppercase">
+                    {{ w.replace(' Wing', '') }} Wing
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div
-                v-for="room in avrRooms"
-                :key="room.id"
-                class="rounded-xl p-4 border transition-all"
-                :style="
-                  room.status === 'Occupied'
-                    ? 'border-color:#ffcdd2;background:#fff8f8'
-                    : 'border-color:#c8e6c9;background:#f9fdf9'
-                "
-              >
-                <div class="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 class="font-black text-[#0d2b0f]">
-                      {{ room.name }}
-                    </h3>
+            <div class="overflow-y-auto pr-2 max-h-125 custom-scroll">
+              <div v-if="filteredRooms.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-for="room in filteredRooms" :key="room.id" class="rounded-xl p-4 border transition-all"
+                  :style="room.status === 'Occupied' ? 'border-color:#ffcdd2;background:#fff8f8' : 'border-color:#c8e6c9;background:#f9fdf9'">
 
-                    <p class="text-xs text-gray-500">Capacity: {{ room.capacity }} pax</p>
+                  <div class="flex justify-between items-start mb-4">
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <i :class="getRoomIcon(room.room_type)"></i>
+                        <h3 class="font-black text-[#0d2b0f]">{{ room.name }}</h3>
+                      </div>
+                      <p class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">
+                        {{ room.floor }} Floor • {{ room.wing }} Wing • {{ formatRoomType(room.room_type) }}
+                      </p>
+                    </div>
+                    <span class="badge px-2 py-1 rounded text-[9px] font-black uppercase"
+                      :class="room.status === 'Occupied' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
+                      {{ room.status }}
+                    </span>
                   </div>
 
-                  <span
-                    class="badge"
-                    :class="room.status === 'Occupied' ? 'badge-red' : 'badge-green'"
-                  >
-                    {{ room.status }}
-                  </span>
+                  <div v-if="room.status === 'Occupied'" class="mb-4 bg-white/50 p-2 rounded border border-red-100">
+                    <p class="text-[10px] uppercase font-bold text-gray-400">Current Session</p>
+                    <p class="text-xs font-bold text-[#1b5e20]">{{ room.currentSession?.title }}</p>
+                    <p class="text-[10px] text-gray-500">{{ room.currentSession?.time }}</p>
+                  </div>
+                  <div v-else
+                    class="empty-state mb-4 py-2 border border-dashed border-gray-200 rounded text-center text-[10px] text-gray-400 italic">
+                    No Active Session</div>
+
+                  <div class="flex gap-2 pt-3 border-t border-black/5">
+                    <button class="btn-outline flex-1 border border-gray-300 py-1.5 rounded text-[10px] font-bold"
+                      @click="openModal('schedule', room)">View Sched</button>
+                    <button v-if="room.status === 'Occupied'"
+                      class="btn-dark flex-1 bg-[#0d2b0f] text-white py-1.5 rounded text-[10px] font-bold"
+                      @click="openModal('endSession', room)">End Session</button>
+                    <button v-else
+                      class="btn-yellow flex-1 bg-yellow-500 text-[#0d2b0f] py-1.5 rounded text-[10px] font-bold"
+                      @click="openModal('quickBook', room)">Quick Book</button>
+                  </div>
                 </div>
+              </div>
 
-                <div v-if="room.status === 'Occupied'" class="mb-4">
-                  <p class="text-[10px] uppercase font-bold text-gray-400">Current Session</p>
-
-                  <p class="text-xs font-bold text-[#1b5e20]">
-                    {{ room.currentSession?.title }}
-                  </p>
-
-                  <p class="text-[10px] text-gray-500">
-                    {{ room.currentSession?.time }}
-                  </p>
-                </div>
-
-                <div v-else class="empty-state">No Active Session</div>
-
-                <div class="flex gap-2 pt-3 border-t border-black/5">
-                  <button class="btn-outline" @click="openScheduleModal(room)">View Sched</button>
-
-                  <button
-                    v-if="room.status === 'Occupied'"
-                    class="btn-dark"
-                    @click="openEndSessionModal(room)"
-                  >
-                    End Session
-                  </button>
-
-                  <button v-else class="btn-yellow" @click="openQuickBookModal(room)">
-                    Quick Book
-                  </button>
-                </div>
+              <div v-else class="py-20 text-center border-2 border-dashed rounded-2xl">
+                <p class="text-gray-400 font-bold uppercase text-xs tracking-widest text-balance">No rooms found in the
+                  {{ activeWing }} Wing of the {{ activeFloor }} Floor.</p>
               </div>
             </div>
           </div>
 
-          <!-- RESERVATIONS -->
           <div class="panel">
-            <div class="panel-head">
-              <h2 class="panel-title text-sm">Upcoming Reservations</h2>
+            <div class="panel-head flex justify-between items-center">
+              <h2 class="panel-title text-sm">Recent & Upcoming Reservations</h2>
+              <span class="text-[10px] text-gray-400">Total: {{ upcomingReservations.length }}</span>
             </div>
 
             <table class="report-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Activity</th>
-                  <th>Requester</th>
+                  <th>Date & Time</th>
+                  <th>Activity / Purpose</th>
+                  <th>Requester (ID)</th>
                   <th>Status</th>
+                  <th class="text-right">Actions</th>
                 </tr>
               </thead>
 
               <tbody>
                 <tr v-for="res in upcomingReservations" :key="res.id">
-                  <td>{{ res.date }}</td>
-                  <td>{{ res.activity }}</td>
-                  <td>{{ res.requester }}</td>
-                  <td>{{ res.status }}</td>
+                  <td class="text-[11px]">
+                    <div class="font-bold">{{ res.date }}</div>
+                    <div class="text-gray-500">{{ res.time }}</div>
+                  </td>
+
+                  <td>
+                    <div class="font-medium">{{ res.activity }}</div>
+                    <div class="text-[10px] text-gray-400 italic">Room: {{ res.room_name }}</div>
+                  </td>
+
+                  <td class="text-[11px]">{{ res.requester }}</td>
+
+                  <td>
+                    <span :class="['badge', res.status.toLowerCase()]">
+                      {{ res.status }}
+                    </span>
+                  </td>
+
+                  <td class="text-right">
+                    <div class="flex justify-end gap-3">
+
+                      <button v-if="res.status === 'pending'" @click="updateStatus(res.id, 'reserved')"
+                        class="btn-accept">
+                        <i class="fas fa-check mr-1"></i> Accept
+                      </button>
+
+                      <button @click="deleteReservation(res.id)" class="btn-delete">
+                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                      </button>
+
+                    </div>
+                  </td>
+
+
+
+                </tr>
+
+                <tr v-if="upcomingReservations.length === 0">
+                  <td colspan="5" class="text-center py-10 text-gray-400">No reservations found.</td>
                 </tr>
               </tbody>
             </table>
           </div>
+
+
         </div>
 
         <!-- RIGHT -->
@@ -198,7 +234,7 @@
               <span class="equipment-dot" :class="item.working ? 'dot-green' : 'dot-red'"> </span>
             </div>
 
-            <button class="btn-outline mt-3 w-full" @click="openEquipmentModal">
+            <button class="btn-outline mt-3 w-full" @click="openModal('equipment')">
               Update Inventory
             </button>
           </div>
@@ -206,52 +242,114 @@
       </div>
     </main>
 
-    <!-- NEW BOOKING MODAL -->
-    <div v-if="showBookingModal" class="modal">
+    <div v-if="modals.booking" class="modal">
       <div class="modal-box">
-        <h2 class="modal-title">New Reservation</h2>
+        <h2 class="modal-title text-xl font-bold mb-4">New Reservation</h2>
 
-        <input v-model="bookingForm.activity" placeholder="Activity" class="input" />
-        <input v-model="bookingForm.requester" placeholder="Requester" class="input" />
-        <input v-model="bookingForm.date" type="date" class="input" />
-        <input v-model="bookingForm.time" placeholder="Time" class="input" />
+        <div class="space-y-3">
+          <label class="text-[10px] font-bold uppercase text-gray-500">Purpose of Use</label>
+          <input v-model="bookingForm.activity" placeholder="e.g. Thesis Defense" class="input" />
 
-        <div class="modal-actions">
-          <button class="btn-cancel" @click="closeModal">Cancel</button>
-          <button class="btn-confirm" @click="createBooking">Create</button>
+          <div class="grid grid-cols-1 gap-3">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-500">Student ID Number</label>
+              <input v-model="bookingForm.requester" list="student-ids" placeholder="Type ID Number" class="input" />
+
+              <datalist id="student-ids">
+                <option v-for="std in studentsList" :key="std.id_number" :value="std.id_number">
+                  {{ std.last_name }}, {{ std.first_name }}
+                </option>
+              </datalist>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-400">College (Auto)</label>
+                <input v-model="bookingForm.program" readonly class="input bg-gray-100" />
+              </div>
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-400">Year (Auto)</label>
+                <input v-model="bookingForm.year_level" readonly class="input bg-gray-100" />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-500">Date</label>
+              <input v-model="bookingForm.date" type="date" class="input" />
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-500">Start Time</label>
+              <input v-model="bookingForm.time" type="time" class="input" />
+            </div>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-bold uppercase text-gray-500">End Time</label>
+            <input v-model="bookingForm.endTime" type="time" class="input" />
+          </div>
+        </div>
+
+        <div class="modal-actions mt-6">
+          <button class="btn-cancel" @click="closeModals">Cancel</button>
+          <button class="btn-confirm" @click="createBooking">Create Reservation</button>
         </div>
       </div>
     </div>
 
-    <!-- QUICK BOOK MODAL -->
-    <div v-if="showQuickBookModal" class="modal">
+    <div v-if="modals.quickBook" class="modal">
       <div class="modal-box">
-        <h2 class="modal-title">Quick Book {{ selectedRoom?.name }}</h2>
+        <h2 class="modal-title text-xl font-bold mb-4">Quick Book: {{ selectedRoom?.name }}</h2>
 
-        <input v-model="bookingForm.activity" placeholder="Session Title" class="input" />
-        <input v-model="bookingForm.time" placeholder="Time" class="input" />
+        <div class="space-y-3">
+          <label class="text-[10px] font-bold uppercase text-gray-500">Session Title</label>
+          <input v-model="bookingForm.activity" placeholder="Walk-in Session" class="input" />
 
-        <div class="modal-actions">
-          <button class="btn-cancel" @click="closeModal">Cancel</button>
-          <button class="btn-confirm" @click="confirmQuickBook">Start Session</button>
+          <label class="text-[10px] font-bold uppercase text-gray-500">Student ID Number</label>
+          <input v-model="bookingForm.requester" list="student-ids" placeholder="Enter ID Number" class="input" />
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-400 italic">Program</label>
+              <input v-model="bookingForm.program" readonly class="input bg-gray-50 text-[11px]" />
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-400 italic">Year Level</label>
+              <input v-model="bookingForm.year_level" readonly class="input bg-gray-50 text-[11px]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-500">Starts At</label>
+              <input v-model="bookingForm.time" type="time" class="input" />
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-500">Ends At</label>
+              <input v-model="bookingForm.endTime" type="time" class="input" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions mt-6">
+          <button class="btn-cancel" @click="closeModals">Cancel</button>
+          <button class="btn-confirm" @click="confirmQuickBook">Start Session Now</button>
         </div>
       </div>
     </div>
 
     <!-- END SESSION -->
-    <div v-if="showEndSessionModal" class="modal">
+    <div v-if="modals.endSession" class="modal">
       <div class="modal-box text-center">
         <h2 class="modal-title">End Session?</h2>
 
         <p class="text-sm mb-4 p-5">This will free {{ selectedRoom?.name }}</p>
 
         <div class="modal-actions justify-center">
-          <button class="btn-cancel" @click="closeModal">Cancel</button>
-          <button
-            class="btn-confirm-session bg-red-700 text-white font-semibold"
-            style="padding: 10px; border-radius: 5px; font-size: 14px"
-            @click="confirmEndSession"
-          >
+          <button class="btn-cancel" @click="closeModals">Cancel</button>
+          <button class="btn-confirm-session bg-red-700 text-white font-semibold"
+            style="padding: 10px; border-radius: 5px; font-size: 14px" @click="confirmEndSession">
             End Session
           </button>
         </div>
@@ -259,36 +357,32 @@
     </div>
 
     <!-- SCHEDULE -->
-    <div v-if="showScheduleModal" class="modal">
+    <div v-if="modals.schedule" class="modal">
       <div class="modal-box">
         <h2 class="modal-title">{{ selectedRoom?.name }} Schedule</h2>
 
         <p class="text-sm text-gray-500">Schedule preview will appear here.</p>
 
         <div class="modal-actions">
-          <button class="btn-confirm" @click="closeModal">Close</button>
+          <button class="btn-confirm" @click="closeModals">Close</button>
         </div>
       </div>
     </div>
 
     <!-- EQUIPMENT MODAL -->
-    <div v-if="showEquipmentModal" class="modal">
+    <div v-if="modals.equipment" class="modal">
       <div class="modal-box">
         <h2 class="modal-title">Update Equipment Inventory</h2>
 
         <!-- ADD EQUIPMENT -->
         <div class="flex gap-2 mb-4 items-center">
-          <input
-            v-model="newEquipment"
-            placeholder="New equipment"
-            class="input"
-            style="height: 2.5rem; width: 80%; margin-bottom: 0"
-          />
+          <input v-model="newEquipment" placeholder="New equipment" class="input"
+            style="height: 2.5rem; width: 80%; margin-bottom: 0" />
           <button class="btn-confirm-add" @click="addEquipment">Add</button>
         </div>
 
         <!-- EQUIPMENT LIST -->
-        <div class="space-y-2 max-h-[200px] overflow-y-auto">
+        <div class="space-y-2 max-h-50 overflow-y-auto">
           <div v-for="(item, i) in amenities" :key="i" class="equipment-edit">
             <span>{{ item.name }}</span>
 
@@ -299,7 +393,7 @@
         </div>
 
         <div class="btn-actions-inventory">
-          <button class="btn-confirm" @click="showEquipmentModal = false">Done</button>
+          <button class="btn-confirm" @click="closeModals">Done</button>
         </div>
       </div>
     </div>
@@ -307,40 +401,112 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import '@/assets/styles/avr-reservation.css'
+import { ref, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { supabase } from '@/lib/supabase'
+import '@/assets/styles/avr-reservation.css'
+import { watch } from 'vue'
 
-const showEquipmentModal = ref(false)
+/* =====================================================
+  TYPES
+===================================================== */
+interface Session {
+  title: string
+  time: string
+}
+
+interface Room {
+  id: string
+  name: string
+  floor: string
+  wing: string
+  room_type: string
+  capacity: number
+  max_duration_minutes: number
+  created_at: string
+
+  // frontend-only
+  status: 'Available' | 'Occupied'
+  currentSession?: Session | null
+}
+
+interface Reservation {
+  id: string
+  date: string
+  activity: string
+  requester: string
+  status: string
+}
+
+interface Equipment {
+  name: string
+  working: boolean
+}
+
+/* =====================================================
+  VIEW STATE
+===================================================== */
+const activeFloor = ref('2nd Floor')
+const activeWing = ref('Left Wing')
+const studentsList = ref<any[]>([])
+
+/* =====================================================
+  MODALS
+===================================================== */
+const modals = ref({
+  booking: false,
+  quickBook: false,
+  endSession: false,
+  schedule: false,
+  equipment: false,
+})
+
+const selectedRoom = ref<Room | null>(null)
+
+/* =====================================================
+  FORMS
+===================================================== */
+const bookingForm = ref({
+  room_id: null as string | null,
+  requester: '',      // Student ID
+  program: '',        // Automatic
+  year_level: '',           // Automatic
+  activity: '',       // Purpose
+  date: '',
+  time: '',
+  endTime: '',
+  status: 'reserved',
+})
+
 const newEquipment = ref('')
 
-const currentDate = computed(() =>
-  new Date().toLocaleDateString('en-PH', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }),
-)
 
-const avrRooms = ref([
-  {
-    id: 1,
-    name: 'AVR Room 1',
-    status: 'Occupied',
-    capacity: 50,
-    currentSession: {
-      title: 'CSU Faculty Seminar',
-      time: '8:00 AM - 12:00 PM',
-    },
-  },
-  {
-    id: 2,
-    name: 'AVR Room 2',
-    status: 'Available',
-    capacity: 30,
-    currentSession: null,
-  },
+watch(() => bookingForm.value.requester, (newId) => {
+  const student = studentsList.value.find(s => s.id_number === newId)
+
+  console.log("Searching for ID:", newId)
+  console.log("Found Student:", student)
+
+  if (student) {
+    bookingForm.value.program = student.program ?? 'N/A'
+    bookingForm.value.year_level = student.year_level ?? 'N/A'
+  } else {
+    bookingForm.value.program = ''
+    bookingForm.value.year_level = ''
+  }
+})
+/* =====================================================
+  DATA (FROM DB)
+===================================================== */
+const rooms = ref<Room[]>([])
+const upcomingReservations = ref<Reservation[]>([])
+
+const amenities = ref<Equipment[]>([
+  { name: 'Projector', working: true },
+  { name: 'Sound System', working: true },
+  { name: 'Air Conditioning', working: true },
+  { name: 'Wi-Fi Router', working: true },
+  { name: '50 Chairs', working: true },
 ])
 
 const steps = [
@@ -351,73 +517,158 @@ const steps = [
   'Check room condition after use',
 ]
 
-const amenities = ref([
-  { name: 'Projector', working: true },
-  { name: 'Sound System', working: true },
-  { name: 'Air Conditioning', working: true },
-  { name: 'Wi-Fi Router', working: true },
-  { name: '50 Chairs', working: true },
-])
+/* =====================================================
+  FETCH ROOMS FROM DB
+===================================================== */
+async function fetchRooms() {
+  const { data, error } = await supabase
+    .from('rooms')
+    .select(`
+      *,
+      room_reservations (
+        status,
+        purpose,
+        start_time,
+        end_time
+      )
+    `)
+    .order('created_at', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching rooms:', error)
+    return
+  }
+
+
+  rooms.value = data.map((r: any) => {
+    const activeRes = r.room_reservations?.find((res: any) => res.status === 'ongoing')
+    const displayStatus = activeRes ? 'Occupied' : 'Available'
+
+    return {
+      id: r.id,
+      name: r.name,
+      floor: r.floor,
+      wing: r.wing,
+      room_type: r.room_type,
+      capacity: r.capacity,
+      max_duration_minutes: r.max_duration_minutes,
+      created_at: r.created_at,
+      status: displayStatus,
+
+
+      currentSession: activeRes ? {
+        title: activeRes.purpose,
+        time: `${activeRes.start_time} - ${activeRes.end_time}`
+      } : null
+    }
+  })
+}
+
+/* =====================================================
+  HELPERS
+===================================================== */
+function formatRoomType(type: string) {
+  return type.replace('_', ' ').toUpperCase()
+}
+
+function getRoomIcon(type: string) {
+  switch (type) {
+    case 'discussion': return 'fas fa-users'
+    case 'nap_pad': return 'fas fa-bed'
+    case 'quiet_room': return 'fas fa-book'
+    case 'multimedia': return 'fas fa-tv'
+    default: return 'fas fa-door-open'
+  }
+}
+
+/* =====================================================
+  COMPUTED
+===================================================== */
+const filteredRooms = computed(() =>
+  rooms.value.filter(
+    (room) =>
+      room.floor === activeFloor.value &&
+      room.wing === activeWing.value
+  )
+)
+
+const currentDate = computed(() =>
+  new Date().toLocaleDateString('en-PH', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+)
+
+async function fetchStudents() {
+  const { data, error } = await supabase
+    .from('students')
+    .select('id_number, first_name, last_name, program, year_level')
+    .order('last_name', { ascending: false })
+
+  if (error) {
+    console.error('Error:', error.message)
+    return
+  }
+
+  studentsList.value = data || []
+}
 
 const roomStats = computed(() => {
-  const available = avrRooms.value.filter((r) => r.status === 'Available').length
-  const occupied = avrRooms.value.filter((r) => r.status === 'Occupied').length
+  const total = rooms.value.length
+  const occupied = rooms.value.filter(r => r.status === 'Occupied').length
+  const available = total - occupied
+  const rate = total ? Math.round((occupied / total) * 100) : 0
 
   return [
     {
-      label: 'Available Now',
-      value: `${available} Rooms`,
+      label: 'Available',
+      value: available,
       color: '#1b5e20',
-      icon: '<path d="M5 13l4 4L19 7"/>',
+      icon: 'fas fa-door-open'
     },
-    { label: 'Occupied', value: `${occupied}`, color: '#c62828', icon: '<path d="M12 8v4l3 3"/>' },
     {
-      label: "Today's Total",
-      value: '8 Sessions',
-      color: '#0277bd',
-      icon: '<path d="M8 7V3m8 4V3"/>',
+      label: 'Occupied',
+      value: occupied,
+      color: '#c62828',
+      icon: 'fas fa-user-clock'
     },
-    { label: 'Total Room', value: '2 Rooms', color: '#0277bd', icon: '<path d="M8 7V3m8 4V3"/>' },
+    {
+      label: 'Rate',
+      value: rate + '%',
+      color: '#0277bd',
+      icon: 'fas fa-percentage'
+    },
+    {
+      label: 'Total',
+      value: total,
+      color: '#f9a825',
+      icon: 'fas fa-building'
+    }
   ]
 })
 
-const upcomingReservations = ref([
-  {
-    id: 101,
-    date: 'March 24',
-    activity: 'Thesis Defense',
-    requester: 'BSIT-4',
-    status: 'Confirmed',
-  },
-  { id: 102, date: 'March 25', activity: 'Seminar', requester: 'Faculty', status: 'Pending' },
-])
-
-const showBookingModal = ref(false)
-const showQuickBookModal = ref(false)
-const showEndSessionModal = ref(false)
-const showScheduleModal = ref(false)
-
-const selectedRoom = ref<any>(null)
-
-const bookingForm = ref({
-  activity: '',
-  requester: '',
-  date: '',
-  time: '',
-})
-
-function openEquipmentModal() {
-  showEquipmentModal.value = true
+/* =====================================================
+  MODALS
+===================================================== */
+function openModal(type: keyof typeof modals.value, room?: Room) {
+  if (room) selectedRoom.value = room
+  modals.value[type] = true
 }
 
+function closeModals() {
+  Object.keys(modals.value).forEach(key => {
+    modals.value[key as keyof typeof modals.value] = false
+  })
+}
+
+/* =====================================================
+  EQUIPMENT
+===================================================== */
 function addEquipment() {
   if (!newEquipment.value.trim()) return
-
-  amenities.value.push({
-    name: newEquipment.value,
-    working: true,
-  })
-
+  amenities.value.push({ name: newEquipment.value, working: true })
   newEquipment.value = ''
 }
 
@@ -425,64 +676,174 @@ function removeEquipment(index: number) {
   amenities.value.splice(index, 1)
 }
 
-function openBookingModal() {
-  showBookingModal.value = true
-}
+/* =====================================================
+  BOOKINGS (DB)
+===================================================== */
+async function createBooking() {
+  const { error } = await supabase
+    .from('room_reservations')
+    .insert([
+      {
+        room_id: selectedRoom.value?.id || null,
+        representative_student_id: bookingForm.value.requester,
+        booking_date: bookingForm.value.date,
+        start_time: bookingForm.value.time,
+        end_time: bookingForm.value.endTime,
+        purpose: bookingForm.value.activity,
+        status: 'pending',
+        program: bookingForm.value.program,
+        year_level: bookingForm.value.year_level
+      }
+    ])
 
-function openQuickBookModal(room: any) {
-  selectedRoom.value = room
-  showQuickBookModal.value = true
-}
-
-function openEndSessionModal(room: any) {
-  selectedRoom.value = room
-  showEndSessionModal.value = true
-}
-
-function openScheduleModal(room: any) {
-  selectedRoom.value = room
-  showScheduleModal.value = true
-}
-
-function closeModal() {
-  showBookingModal.value = false
-  showQuickBookModal.value = false
-  showEndSessionModal.value = false
-  showScheduleModal.value = false
-}
-
-function createBooking() {
-  upcomingReservations.value.push({
-    id: Date.now(),
-    date: bookingForm.value.date,
-    activity: bookingForm.value.activity,
-    requester: bookingForm.value.requester,
-    status: 'Pending',
-  })
-
-  closeModal()
-}
-
-function confirmQuickBook() {
-  selectedRoom.value.status = 'Occupied'
-
-  selectedRoom.value.currentSession = {
-    title: bookingForm.value.activity || 'Walk-in Session',
-    time: bookingForm.value.time || 'Now',
+  if (error) {
+    console.error('Error creating booking:', error.message)
+    alert("Error: " + error.message)
+    return
   }
 
-  closeModal()
+  alert("Reservation saved successfully!")
+  await fetchRooms()
+  await fetchUpcomingReservations()
+  closeModals()
+}
+
+/* =====================================================
+  SESSION (TEMP FRONTEND ONLY)
+===================================================== */
+async function confirmQuickBook() {
+  if (!selectedRoom.value) return
+
+  const now = new Date()
+  const currentTime = now.toTimeString().split(' ')[0]
+  const end = new Date(now.getTime() + (120 * 60000))
+  const endTime = end.toTimeString().split(' ')[0]
+
+  const { error } = await supabase
+    .from('room_reservations')
+    .insert([
+      {
+        room_id: selectedRoom.value.id,
+        representative_student_id: bookingForm.value.requester,
+        booking_date: now.toISOString().split('T')[0],
+        start_time: currentTime,
+        end_time: endTime,
+        purpose: bookingForm.value.activity || 'Quick Session',
+        status: 'ongoing',
+        program: bookingForm.value.program,
+        year_level: bookingForm.value.year_level
+      }
+    ])
+
+  if (error) {
+    alert("Error: " + error.message)
+    return
+  }
+
+  await fetchRooms()
+  await fetchUpcomingReservations()
+  closeModals()
+}
+
+
+/* =====================================================
+  FETCH RESERVATIONS
+===================================================== */
+async function fetchUpcomingReservations() {
+  const { data, error } = await supabase
+    .from('room_reservations')
+    .select(`
+      id,
+      booking_date,
+      start_time,
+      purpose,
+      representative_student_id,
+      status,
+      rooms ( name )
+    `)
+    .order('booking_date', { ascending: false })
+    .order('start_time', { ascending: false })
+    .limit(10)
+
+  if (error) {
+    console.error('Error:', error.message)
+    return
+  }
+
+  upcomingReservations.value = data.map((r: any) => ({
+    id: r.id,
+    date: r.booking_date,
+    time: r.start_time,
+    activity: r.purpose,
+    requester: r.representative_student_id,
+    status: r.status,
+    room_name: r.rooms?.name || 'Unknown'
+  }))
+}
+
+/* =====================================================
+  UPDATE STATUS (For Accepting)
+===================================================== */
+async function updateStatus(id: string, newStatus: string) {
+  const { error } = await supabase
+    .from('room_reservations')
+    .update({ status: newStatus })
+    .eq('id', id)
+
+  if (error) {
+    alert("Update failed: " + error.message)
+  } else {
+    // Refresh both the table and the room cards
+    await fetchUpcomingReservations()
+    await fetchRooms()
+  }
+}
+
+/* =====================================================
+  DELETE RESERVATION (For Rejecting/Removing)
+===================================================== */
+async function deleteReservation(id: string) {
+  if (!confirm("Are you sure you want to delete or reject this reservation?")) return
+
+  const { error } = await supabase
+    .from('room_reservations')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    alert("Delete failed: " + error.message)
+  } else {
+    // Refresh the data
+    await fetchUpcomingReservations()
+    await fetchRooms()
+  }
 }
 
 function confirmEndSession() {
+  if (!selectedRoom.value) return
+
   selectedRoom.value.status = 'Available'
   selectedRoom.value.currentSession = null
 
-  closeModal()
+  closeModals()
 }
+
+/* =====================================================
+  LIFECYCLE
+===================================================== */
+onMounted(() => {
+  fetchRooms()
+  fetchStudents()
+  fetchUpcomingReservations()
+})
 </script>
 
+
 <style scoped>
+.custom-scroll {
+  height: calc(100vh - 300px);
+}
+
 .col-left {
   display: flex;
   flex-direction: column;
