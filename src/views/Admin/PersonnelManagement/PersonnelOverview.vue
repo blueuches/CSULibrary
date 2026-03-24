@@ -6,17 +6,21 @@
       <!-- ===== HEADER ===== -->
       <header class="page-header">
         <div class="header-left">
-          <div class="header-breadcrumb">
+          <div class="header-breadcrumb anim-fade-in" style="animation-delay: 0s">
             <span>Admin</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
             <span>Personnel</span>
           </div>
-          <h1 class="header-title">Library <span class="text-yellow-500">Personnel</span></h1>
-          <p class="header-sub">Manage and view library staff information and assignments</p>
+          <h1 class="header-title anim-slide-up" style="animation-delay: 0.08s">
+            Library <span class="text-yellow-500">Personnel</span>
+          </h1>
+          <p class="header-sub anim-fade-in" style="animation-delay: 0.18s">
+            Manage and view library staff information and assignments
+          </p>
         </div>
-        <div class="header-right" v-if="isAdmin">
+        <div class="header-right anim-fade-in" style="animation-delay: 0.25s" v-if="isAdmin">
           <span class="admin-hero-pill">
             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -97,8 +101,6 @@
               <!-- Info -->
               <div class="featured-info">
                 <span class="featured-badge">University Librarian</span>
-
-                <!-- Edit form -->
                 <div v-if="editingId === featuredStaff.id" class="edit-fields">
                   <input
                     v-model="editForm.first_name"
@@ -128,11 +130,9 @@
                     <button @click="cancelEdit" class="btn-cancel">Cancel</button>
                   </div>
                 </div>
-
-                <!-- Display -->
                 <template v-else>
                   <h2 class="featured-name">{{ fullName(featuredStaff) }}</h2>
-<div class="featured-divider"></div>
+                  <div class="featured-divider"></div>
                   <p v-if="featuredStaff.position" class="featured-position">
                     {{ featuredStaff.position }}
                   </p>
@@ -181,7 +181,10 @@
               :key="person.id"
               class="sr-card staff-card"
               :class="{ 'admin-card': isAdmin }"
-              :style="{ transitionDelay: (index % 2) * 0.12 + 's' }"
+              :style="{
+                transitionDelay: (index % 4) * 0.1 + 's',
+                animationDelay: index * 0.07 + 's',
+              }"
             >
               <!-- Photo -->
               <div class="staff-photo-wrap">
@@ -223,7 +226,6 @@
 
               <!-- Info -->
               <div class="staff-info">
-                <!-- Edit form -->
                 <template v-if="editingId === person.id">
                   <input
                     v-model="editForm.first_name"
@@ -257,12 +259,10 @@
                     <button @click="cancelEdit" class="btn-cancel btn-cancel-sm">Cancel</button>
                   </div>
                 </template>
-
-                <!-- Display -->
-<template v-else>
-  <h3 class="staff-name">{{ fullName(person) }}</h3>
-  <div class="staff-rule"></div>
-  <p v-if="person.position" class="staff-position">{{ person.position }}</p>
+                <template v-else>
+                  <h3 class="staff-name">{{ fullName(person) }}</h3>
+                  <div class="staff-rule"></div>
+                  <p v-if="person.position" class="staff-position">{{ person.position }}</p>
                   <div v-if="isAdmin" class="card-actions">
                     <button @click="startEdit(person)" class="btn-icon">
                       <svg
@@ -461,9 +461,8 @@
         </div>
         <div class="px-6 py-5">
           <p class="delete-confirm-text">
-            Are you sure you want to remove
-            <strong>{{ fullName(deleteTarget) }}</strong>
-            from the personnel list? This cannot be undone.
+            Are you sure you want to remove <strong>{{ fullName(deleteTarget) }}</strong> from the
+            personnel list? This cannot be undone.
           </p>
         </div>
         <div class="modal-footer">
@@ -523,7 +522,6 @@ import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 import { personnelService } from '@/services/personnelService'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface PersonnelRow {
   id: string
   first_name: string | null
@@ -537,11 +535,9 @@ interface PersonnelRow {
   updated_at: string | null
 }
 
-// ─── Default avatar ───────────────────────────────────────────────────────────
 const defaultAvatar =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzBkMmIwZiIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iMzgiIHI9IjE4IiBmaWxsPSIjNjZiYjZhIi8+PHBhdGggZD0iTTEwIDkwIGMwLTIyIDEzLTM1IDQwLTM1czQwIDEzIDQwIDM1IiBmaWxsPSIjNjZiYjZhIi8+PC9zdmc+'
 
-// ─── State ────────────────────────────────────────────────────────────────────
 const staff = ref<PersonnelRow[]>([])
 const loading = ref(true)
 const isAdmin = ref(false)
@@ -559,7 +555,6 @@ const editForm = ref({
   position: '',
   role: 'staff',
 })
-
 const newForm = ref({
   first_name: '',
   last_name: '',
@@ -569,13 +564,11 @@ const newForm = ref({
   previewUrl: '',
   file: null as File | null,
 })
-
 const toast = ref({ show: false, message: '', type: 'success' as 'success' | 'error' })
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 let realtimeChannel: ReturnType<typeof supabase.channel> | null = null
 let observer: IntersectionObserver | null = null
 
-// ─── Helper: full display name ────────────────────────────────────────────────
 function fullName(person: PersonnelRow | null): string {
   if (!person) return ''
   const last = person.last_name?.trim().toUpperCase() ?? ''
@@ -585,7 +578,6 @@ function fullName(person: PersonnelRow | null): string {
   return titles ? `${name}, ${titles}` : name
 }
 
-// ─── Computed ─────────────────────────────────────────────────────────────────
 const featuredStaff = computed<PersonnelRow | undefined>(() =>
   staff.value.find((s) => s.role?.toLowerCase() === 'head' && s.is_active !== false),
 )
@@ -593,7 +585,6 @@ const otherStaff = computed<PersonnelRow[]>(() =>
   staff.value.filter((s) => s.role?.toLowerCase() !== 'head' && s.is_active !== false),
 )
 
-// ─── Fetch ────────────────────────────────────────────────────────────────────
 async function fetchPersonnel() {
   loading.value = true
   try {
@@ -607,7 +598,6 @@ async function fetchPersonnel() {
   }
 }
 
-// ─── Real-time ────────────────────────────────────────────────────────────────
 function subscribeToStaff() {
   realtimeChannel = supabase
     .channel('personnel-changes')
@@ -617,7 +607,6 @@ function subscribeToStaff() {
     .subscribe()
 }
 
-// ─── Auth ─────────────────────────────────────────────────────────────────────
 function checkAuth() {
   if (window.location.pathname.includes('/admin')) isAdmin.value = true
   supabase.auth.onAuthStateChange((_event: string, session: { user: unknown } | null) => {
@@ -625,7 +614,6 @@ function checkAuth() {
   })
 }
 
-// ─── Edit ─────────────────────────────────────────────────────────────────────
 function startEdit(person: PersonnelRow) {
   editingId.value = person.id
   editForm.value = {
@@ -656,13 +644,11 @@ async function saveEdit(person: PersonnelRow) {
     showToast('Changes saved.')
   } catch (err: any) {
     showToast('Failed to save changes.', 'error')
-    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
-// ─── Add ──────────────────────────────────────────────────────────────────────
 async function addStaff() {
   modalError.value = ''
   if (!newForm.value.first_name.trim() || !newForm.value.last_name.trim()) {
@@ -692,13 +678,11 @@ async function addStaff() {
     showToast('Staff member added.')
   } catch (err: any) {
     modalError.value = 'Failed to add staff. Please try again.'
-    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
-// ─── Delete ───────────────────────────────────────────────────────────────────
 function confirmDelete(person: PersonnelRow) {
   deleteTarget.value = person
 }
@@ -707,7 +691,6 @@ async function deleteStaff() {
   if (!deleteTarget.value) return
   saving.value = true
   try {
-    // Remove photo from storage if exists
     if (deleteTarget.value.image_url) {
       const path = deleteTarget.value.image_url.split('/personnel-photos/')[1]
       if (path)
@@ -721,13 +704,11 @@ async function deleteStaff() {
     showToast('Staff member removed.')
   } catch (err: any) {
     showToast('Failed to delete.', 'error')
-    console.error(err)
   } finally {
     saving.value = false
   }
 }
 
-// ─── Photo upload ─────────────────────────────────────────────────────────────
 async function uploadPhoto(file: File, path: string): Promise<{ url: string; path: string }> {
   const { error } = await supabase.storage
     .from('personnel-photos')
@@ -744,7 +725,6 @@ async function handlePhotoUpload(event: Event, person: PersonnelRow) {
   try {
     const path = `personnel/${Date.now()}_${file.name}`
     const { url } = await uploadPhoto(file, path)
-    // Delete old photo if exists
     if (person.image_url) {
       const oldPath = person.image_url.split('/personnel-photos/')[1]
       if (oldPath)
@@ -760,7 +740,6 @@ async function handlePhotoUpload(event: Event, person: PersonnelRow) {
     showToast('Photo updated.')
   } catch (err: any) {
     showToast('Failed to upload photo.', 'error')
-    console.error(err)
   } finally {
     saving.value = false
     ;(event.target as HTMLInputElement).value = ''
@@ -774,7 +753,6 @@ function handleNewPhotoSelect(event: Event) {
   newForm.value.previewUrl = URL.createObjectURL(file)
 }
 
-// ─── Modal helpers ────────────────────────────────────────────────────────────
 function openAddModal() {
   newForm.value = {
     first_name: '',
@@ -793,7 +771,6 @@ function closeAddModal() {
   if (newForm.value.previewUrl) URL.revokeObjectURL(newForm.value.previewUrl)
 }
 
-// ─── Toast ────────────────────────────────────────────────────────────────────
 function showToast(message: string, type: 'success' | 'error' = 'success') {
   if (toastTimer) clearTimeout(toastTimer)
   toast.value = { show: true, message, type }
@@ -802,7 +779,6 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
   }, 3200)
 }
 
-// ─── Scroll / Observer ───────────────────────────────────────────────────────
 function handleScroll() {
   showScrollTop.value = window.scrollY > 300
 }
@@ -822,7 +798,6 @@ function initObserver() {
   document.querySelectorAll('.sr-item, .sr-card').forEach((el) => observer!.observe(el))
 }
 
-// ─── Lifecycle ────────────────────────────────────────────────────────────────
 onMounted(async () => {
   await fetchPersonnel()
   subscribeToStaff()
@@ -839,6 +814,34 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ── NEW ENTRY ANIMATIONS ── */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.anim-slide-up {
+  opacity: 0;
+  animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.anim-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.5s ease both;
+}
+
 .page-header {
   display: flex;
   align-items: flex-start;
@@ -902,7 +905,6 @@ onUnmounted(() => {
   box-shadow: 0 2px 8px rgba(249, 168, 37, 0.4);
 }
 
-/* Loading */
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -1057,6 +1059,18 @@ onUnmounted(() => {
   overflow: visible;
   margin-top: 8px;
   border-bottom: 2px solid transparent;
+  /* Card pop-in animation */
+  animation: cardPopIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes cardPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 .staff-card:hover {
   box-shadow: 0 8px 32px rgba(13, 43, 15, 0.12);
@@ -1112,12 +1126,6 @@ onUnmounted(() => {
 }
 .staff-card:hover .staff-rule {
   width: 48px;
-}
-.staff-subtitle {
-  font-size: 0.75rem;
-  color: #1b5e20;
-  font-style: italic;
-  line-height: 1.5;
 }
 .staff-position {
   font-size: 0.68rem;
@@ -1543,6 +1551,7 @@ onUnmounted(() => {
   animation: spin 0.6s linear infinite;
 }
 
+/* ── SCROLL ── */
 .sr-item,
 .sr-card {
   opacity: 0;
