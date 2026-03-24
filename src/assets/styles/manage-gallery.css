@@ -773,3 +773,179 @@
   overflow: hidden;
 }
 
+/* =========================
+   PAGE ENTER ANIMATIONS
+========================= */
+
+.gallery-hero,
+.w-full.sticky.top-0,
+.wing-header,
+.btn-new-nav,
+.btn-wing-add {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(6px);
+  animation: galleryFadeUp 0.7s ease forwards;
+  will-change: opacity, transform, filter;
+}
+
+.gallery-hero {
+  animation-delay: 0.08s;
+}
+
+.w-full.sticky.top-0 {
+  animation-delay: 0.18s;
+}
+
+.wing-header {
+  animation-delay: 0.28s;
+}
+
+.btn-new-nav {
+  animation-delay: 0.22s;
+}
+
+.btn-wing-add {
+  animation-delay: 0.34s;
+}
+
+/* floor nav buttons */
+.nav-btn {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: galleryFadeUpSoft 0.5s ease forwards;
+}
+
+/* gallery cards */
+.group.relative.h-96.rounded-2xl,
+.group\/add {
+  opacity: 0;
+  transform: translateY(22px) scale(0.985);
+  filter: blur(4px);
+  animation: galleryCardIn 0.65s ease forwards;
+  will-change: opacity, transform, filter;
+}
+
+/* stagger cards per row feel */
+.group.relative.h-96.rounded-2xl:nth-child(1),
+.group\/add:nth-child(1) {
+  animation-delay: 0.34s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(2),
+.group\/add:nth-child(2) {
+  animation-delay: 0.42s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(3),
+.group\/add:nth-child(3) {
+  animation-delay: 0.50s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(4),
+.group\/add:nth-child(4) {
+  animation-delay: 0.58s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(5),
+.group\/add:nth-child(5) {
+  animation-delay: 0.66s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(6),
+.group\/add:nth-child(6) {
+  animation-delay: 0.74s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(7),
+.group\/add:nth-child(7) {
+  animation-delay: 0.82s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(8),
+.group\/add:nth-child(8) {
+  animation-delay: 0.90s;
+}
+.group.relative.h-96.rounded-2xl:nth-child(n + 9),
+.group\/add:nth-child(n + 9) {
+  animation-delay: 0.96s;
+}
+
+/* search area polish */
+.nav-search,
+.nav-right {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: galleryFadeUpSoft 0.55s ease forwards;
+  animation-delay: 0.24s;
+}
+
+/* admin buttons soft reveal */
+.admin-ctrl {
+  animation: galleryFadeUpSoft 0.45s ease forwards;
+  animation-delay: 0.55s;
+}
+
+/* modal entrance */
+.modal-sheet,
+.del-modal,
+.toast {
+  animation: galleryModalPop 0.28s ease;
+}
+
+/* optional: smoother hover */
+.group.relative.h-96.rounded-2xl {
+  transition:
+    transform 0.45s ease,
+    box-shadow 0.45s ease,
+    filter 0.45s ease;
+}
+
+.group.relative.h-96.rounded-2xl:hover {
+  box-shadow: 0 18px 48px rgba(13, 43, 15, 0.18);
+}
+
+/* =========================
+   KEYFRAMES
+========================= */
+
+@keyframes galleryFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes galleryFadeUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes galleryCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes galleryModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
