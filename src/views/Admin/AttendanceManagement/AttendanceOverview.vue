@@ -27,7 +27,12 @@
 
       <!-- ══ QUICK STAT STRIP ══ -->
       <div class="stat-strip">
-        <div v-for="s in quickStats" :key="s.label" class="qstat">
+        <div
+          v-for="(s, i) in quickStats"
+          :key="s.label"
+          class="qstat"
+          :style="{ animationDelay: 0.25 + i * 0.08 + 's' }"
+        >
           <div class="qstat-icon" v-html="s.icon"></div>
           <div>
             <p class="qstat-val">{{ s.val }}</p>
@@ -41,118 +46,114 @@
 
       <!-- ══ MAIN GRID ══ -->
       <div class="main-grid">
-        <!-- ── LEFT: Dial ── -->
-        <div class="dial-card">
-          <div class="dial-card__header">
-            <span class="section-eyebrow">Live Occupancy</span>
-            <span class="live-chip"><span class="live-dot"></span>LIVE</span>
-          </div>
+<!-- ── LEFT: Dial ── -->
+<div class="dial-card enhanced">
+  <div class="dial-card__header">
+    <span class="section-eyebrow">Live Occupancy</span>
+    <span class="live-chip"><span class="live-dot"></span>LIVE</span>
+  </div>
 
-          <div class="gauge-wrap">
-            <svg viewBox="0 0 320 320" class="gauge-svg">
-              <circle
-                cx="160"
-                cy="160"
-                r="148"
-                fill="none"
-                stroke="rgba(13,43,15,0.04)"
-                stroke-width="1"
-              />
-              <g v-for="i in 72" :key="`t${i}`">
-                <line
-                  :x1="160 + 138 * Math.cos(((i * 5 - 90) * Math.PI) / 180)"
-                  :y1="160 + 138 * Math.sin(((i * 5 - 90) * Math.PI) / 180)"
-                  :x2="
-                    160 +
-                    (i % 6 === 0 ? 124 : i % 3 === 0 ? 129 : 133) *
-                      Math.cos(((i * 5 - 90) * Math.PI) / 180)
-                  "
-                  :y2="
-                    160 +
-                    (i % 6 === 0 ? 124 : i % 3 === 0 ? 129 : 133) *
-                      Math.sin(((i * 5 - 90) * Math.PI) / 180)
-                  "
-                  :stroke="
-                    (i * 5) / 360 <= 0.94
-                      ? i % 6 === 0
-                        ? '#0d2b0f'
-                        : 'rgba(249,168,37,0.45)'
-                      : 'rgba(13,43,15,0.1)'
-                  "
-                  :stroke-width="i % 6 === 0 ? 2.5 : 1.5"
-                  stroke-linecap="round"
-                />
-              </g>
-              <circle
-                cx="160"
-                cy="160"
-                r="110"
-                fill="none"
-                stroke="rgba(13,43,15,0.07)"
-                stroke-width="18"
-              />
-              <circle
-                cx="160"
-                cy="160"
-                r="88"
-                fill="none"
-                stroke="rgba(13,43,15,0.04)"
-                stroke-width="1"
-                stroke-dasharray="4 5"
-              />
-              <circle
-                cx="160"
-                cy="160"
-                r="110"
-                fill="none"
-                stroke="url(#gaugeGrad)"
-                stroke-width="18"
-                stroke-dasharray="691.2"
-                :stroke-dashoffset="691.2 - 691.2 * 0.94"
-                stroke-linecap="round"
-                transform="rotate(-90 160 160)"
-                class="gauge-arc"
-              />
+  <div class="gauge-wrap">
+    <svg viewBox="0 0 320 320" class="gauge-svg">
 
-              <defs>
-                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="100%" stop-color="#0d2b0f" />
-                </linearGradient>
-              </defs>
-            </svg>
+      <!-- background -->
+      <circle cx="160" cy="160" r="120"
+        fill="none"
+        stroke="rgba(13,43,15,0.05)"
+        stroke-width="20" />
 
-            <div class="gauge-center">
-              <div class="gauge-num">
-                <span class="gauge-pct">94</span>
-                <span class="gauge-unit">%</span>
-              </div>
-              <span class="gauge-sublabel">OCCUPANCY</span>
-              <span class="gauge-max">AT CAPACITY</span>
-            </div>
-          </div>
+      <!-- progress -->
+      <circle cx="160" cy="160" r="120"
+        fill="none"
+        stroke="url(#gaugeGrad)"
+        stroke-width="20"
+        stroke-linecap="round"
+        :stroke-dasharray="754"
+        :stroke-dashoffset="754 - (754 * occupancyPercent / 100)"
+        transform="rotate(-90 160 160)"
+        class="gauge-arc"
+      />
 
-          <div class="flow-row">
-            <div class="flow-col">
-              <div class="flow-bar-wrap">
-                <div class="flow-bar flow-bar--in" style="width: 72%"></div>
-              </div>
-              <div class="flow-info">
-                <span class="flow-label flow-label--in">Incoming</span>
-                <span class="flow-num flow-num--in">+24</span>
-              </div>
-            </div>
-            <div class="flow-divider"></div>
-            <div class="flow-col">
-              <div class="flow-bar-wrap">
-                <div class="flow-bar flow-bar--out" style="width: 38%"></div>
-              </div>
-              <div class="flow-info">
-                <span class="flow-label">Outgoing</span>
-                <span class="flow-num flow-num--out">−12</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- glow -->
+      <circle cx="160" cy="160" r="120"
+        fill="none"
+        stroke="url(#gaugeGlow)"
+        stroke-width="28"
+        stroke-linecap="round"
+        :stroke-dasharray="754"
+        :stroke-dashoffset="754 - (754 * occupancyPercent / 100)"
+        transform="rotate(-90 160 160)"
+        class="gauge-glow"
+      />
+
+      <defs>
+        <linearGradient id="gaugeGrad">
+          <stop offset="0%" stop-color="#f9a825"/>
+          <stop offset="100%" stop-color="#0d2b0f"/>
+        </linearGradient>
+
+        <linearGradient id="gaugeGlow">
+          <stop offset="0%" stop-color="#f9a825" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#0d2b0f" stop-opacity="0.4"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <!-- CENTER -->
+    <div class="gauge-center">
+      <div class="gauge-num">
+        <span class="gauge-pct">{{ occupancyPercent }}</span>
+        <span class="gauge-unit">%</span>
+      </div>
+
+      <span class="gauge-sublabel">CURRENT OCCUPANCY</span>
+
+      <span 
+        class="gauge-status"
+        :class="{
+          low: occupancyPercent < 40,
+          mid: occupancyPercent >= 40 && occupancyPercent < 80,
+          high: occupancyPercent >= 80
+        }"
+      >
+        {{
+          occupancyPercent < 40
+            ? 'Low Usage'
+            : occupancyPercent < 80
+            ? 'Moderate'
+            : 'Near Capacity'
+        }}
+      </span>
+    </div>
+  </div>
+
+  <!-- FLOW -->
+  <div class="flow-row">
+    <div class="flow-col">
+      <div class="flow-bar-wrap">
+        <div class="flow-bar flow-bar--in" :style="{ width: occupancyPercent + '%' }"></div>
+      </div>
+      <div class="flow-info">
+        <span class="flow-label">Incoming</span>
+        <span class="flow-num flow-num--in">
+          {{ visitorsToday - currentlyInside }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flow-divider"></div>
+
+    <div class="flow-col">
+      <div class="flow-bar-wrap">
+        <div class="flow-bar flow-bar--out" :style="{ width: (100 - occupancyPercent) + '%' }"></div>
+      </div>
+      <div class="flow-info">
+        <span class="flow-label">Outgoing</span>
+        <span class="flow-num flow-num--out">{{ outgoing }}</span>
+      </div>
+    </div>
+  </div>
+</div>
 
         <!-- ── RIGHT: Controls ── -->
         <div class="controls-col">
@@ -162,7 +163,7 @@
               <h3 class="ctrl-title">Attendance <em>Overview</em></h3>
               <p class="ctrl-sub">All export data</p>
             </div>
-            <button class="sync-btn" @click="$router.push('/admin/attendance/logs')">
+            <button class="sync-btn sync-btn--1" @click="$router.push('/admin/attendance/logs')">
               <svg
                 width="14"
                 height="14"
@@ -178,7 +179,7 @@
               </svg>
               <span>Attendance Logs</span>
             </button>
-            <button class="sync-btn" @click="$router.push('/admin/attendance/import')">
+            <button class="sync-btn sync-btn--2" @click="$router.push('/admin/attendance/import')">
               <svg
                 width="14"
                 height="14"
@@ -258,7 +259,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(log, i) in exportLogs" :key="i" class="erow">
+                  <tr
+                    v-for="(log, i) in exportLogs"
+                    :key="i"
+                    class="erow"
+                    :style="{ animationDelay: 0.6 + i * 0.07 + 's' }"
+                  >
                     <td class="erow-date">
                       <span class="erow-date__main">{{ log.date }}</span>
                       <span class="erow-date__time">{{ log.time }}</span>
@@ -287,56 +293,300 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { getAttendanceLogs } from '@/services/attendanceService'
+import { getFirestore, collection, getDocs } from "firebase/firestore"
+
+import { supabase } from '@/lib/supabase'
+
+onMounted(async () => {
+  loading.value = true
+  try {
+    const { data, error } = await supabase
+      .from('attendance_logs')
+      .select('*')
+
+    if (error) {
+      console.error("Supabase error:", error)
+    } else {
+      // Assign Supabase data to logs
+      logs.value = data || []
+      console.log("Attendance Logs:", logs.value)
+    }
+  } catch (err) {
+    console.error("Fetch error:", err)
+  } finally {
+    loading.value = false
+  }
+})
+/* -----------------------------
+STATE
+------------------------------*/
+
+const logs = ref<any[]>([])
+const loading = ref(false)
+
+/* FIXED: typed number to remove TS warning */
+const LIBRARY_CAPACITY: number = 10 
+
+/* -----------------------------
+EXPORT LOGS (for table)
+------------------------------*/
+
+const barsVisible = ref(false)
+
+onMounted(() => {
+  // Trigger flow bars after gauge arc animation completes
+  setTimeout(() => {
+    barsVisible.value = true
+  }, 1600)
+})
 
 const exportLogs = ref([
-  { date: 'Mar 11, 2026', time: '09:42 AM', type: 'PDF', user: 'Maria Santos', status: 'success' },
+  {
+    date: 'Mar 11, 2026',
+    time: '09:42 AM',
+    type: 'PDF',
+    user: 'Maria Santos',
+    status: 'success'
+  },
   {
     date: 'Mar 10, 2026',
     time: '03:15 PM',
     type: 'CSV',
     user: 'Juan dela Cruz',
-    status: 'success',
+    status: 'success'
   },
-  { date: 'Mar 09, 2026', time: '11:08 AM', type: 'XLSX', user: 'Ana Reyes', status: 'success' },
-  { date: 'Mar 08, 2026', time: '02:30 PM', type: 'PDF', user: 'Jose Bautista', status: 'failed' },
-  { date: 'Mar 07, 2026', time: '08:55 AM', type: 'CSV', user: 'Maria Santos', status: 'success' },
-  { date: 'Mar 06, 2026', time: '04:20 PM', type: 'XLSX', user: 'Liza Garcia', status: 'pending' },
+  {
+    date: 'Mar 09, 2026',
+    time: '11:08 AM',
+    type: 'XLSX',
+    user: 'Ana Reyes',
+    status: 'success'
+  },
+  {
+    date: 'Mar 08, 2026',
+    time: '02:30 PM',
+    type: 'PDF',
+    user: 'Jose Bautista',
+    status: 'failed'
+  },
+  {
+    date: 'Mar 07, 2026',
+    time: '08:55 AM',
+    type: 'CSV',
+    user: 'Maria Santos',
+    status: 'success'
+  },
+  {
+    date: 'Mar 06, 2026',
+    time: '04:20 PM',
+    type: 'XLSX',
+    user: 'Liza Garcia',
+    status: 'pending'
+  }
 ])
 
-const quickStats = [
+/* -----------------------------
+FETCH ATTENDANCE
+------------------------------*/
+const fetchAttendance = async () => {
+  loading.value = true
+
+  try {
+    const db = getFirestore()
+
+    const snapshot = await getDocs(
+      collection(db, "attendance_logs")
+    )
+
+    const records = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+
+    console.log("Firestore Logs:", records)
+
+    logs.value = records
+
+  } catch (err) {
+    console.error("Firestore fetch error:", err)
+  } finally {
+    loading.value = false
+  }
+}
+// const fetchAttendance = async () => {
+//   loading.value = true
+
+//   try {
+//     const data = await getAttendanceLogs({
+//       attendanceType: 'library'
+//     })
+
+//     logs.value = data || []
+//   } catch (err) {
+//     console.error('Attendance fetch error:', err)
+//   } finally {
+//     loading.value = false
+//   }
+// }
+
+// onMounted(fetchAttendance)
+
+/* -----------------------------
+TODAY VISITORS
+------------------------------*/
+
+const visitorsToday = computed(() => {
+  const today = new Date().toISOString().split("T")[0]
+
+  return logs.value.filter((log) => {
+    if (!log.time_in) return false
+
+    const logDate = log.time_in.split("T")[0]
+
+    return logDate === today
+  }).length
+})
+
+/* -----------------------------
+CURRENTLY INSIDE
+------------------------------*/
+const currentlyInside = computed(() => {
+  // Count all today's logs
+  const today = new Date().toISOString().split("T")[0]
+
+  return logs.value.filter((log) => {
+    if (!log.time_in) return false
+    const logDate = log.time_in.split("T")[0]
+    return logDate === today
+  }).length
+})
+
+/* -----------------------------
+OUTGOING
+------------------------------*/
+
+const outgoing = computed(() => {
+  return visitorsToday.value - currentlyInside.value
+})
+
+/* -----------------------------
+OCCUPANCY %
+------------------------------*/
+
+const occupancyPercent = computed(() => {
+  if (LIBRARY_CAPACITY === 0) return 0
+
+  // Use currentlyInside to calculate the percentage
+  const percent = (currentlyInside.value / LIBRARY_CAPACITY) * 100
+  return Math.min(Math.round(percent), 100)
+})
+/* -----------------------------
+AVERAGE STAY (OVERALL)
+------------------------------*/
+const avgStay = computed(() => {
+  let total = 0
+  let count = 0
+
+  logs.value.forEach(log => {
+    if (log.time_in && log.time_out) {
+      total += new Date(log.time_out).getTime() - new Date(log.time_in).getTime()
+      count++
+    }
+  })
+
+  if (!count) return '—'
+  return Math.floor(total / count / 60000) + ' mins'
+})
+
+/* -----------------------------
+AVG STAY BY GROUP
+------------------------------*/
+const avgByGroup = (key: string) => {
+  const map: any = {}
+
+  logs.value.forEach(log => {
+    if (!log.time_in || !log.time_out) return
+
+    const group = log[key] || 'Unknown'
+    const duration =
+      new Date(log.time_out).getTime() -
+      new Date(log.time_in).getTime()
+
+    if (!map[group]) map[group] = { total: 0, count: 0 }
+
+    map[group].total += duration
+    map[group].count++
+  })
+
+  return Object.entries(map)
+    .map(([k, v]: any) => ({
+      name: k,
+      avg: Math.floor(v.total / v.count / 60000)
+    }))
+    .sort((a, b) => b.avg - a.avg)
+    .slice(0, 1)[0] // TOP ONLY (clean UI)
+}
+
+/* TOP PER CATEGORY */
+const topCollegeStay = computed(() => avgByGroup('college'))
+const topProgramStay = computed(() => avgByGroup('program'))
+const topYearStay = computed(() => avgByGroup('year_level'))
+/* -----------------------------
+QUICK STATS
+------------------------------*/
+
+const quickStats = computed(() => [
   {
-    val: '2,112',
+    val: visitorsToday.value,
     label: 'Visitors Today',
-    delta: '+8.4%',
+    delta: 'Live',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
   },
   {
-    val: '284',
-    label: 'Active Borrowers',
-    delta: '+3.2%',
+    val: avgStay.value,
+    label: 'Avg. Duration',
+    delta: 'Session',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
   },
   {
-    val: '392',
-    label: 'Books Loaned',
-    delta: '−1.1%',
-    up: false,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+    val: topCollegeStay.value ? topCollegeStay.value.name : 'N/A',
+    label: 'Top College',
+    delta: topCollegeStay.value ? `${topCollegeStay.value.avg}m avg` : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`
   },
   {
-    val: '10 AM',
-    label: 'Peak Hour',
-    delta: 'Steady',
+    val: topProgramStay.value ? topProgramStay.value.name : 'N/A',
+    label: 'Top Program',
+    delta: topProgramStay.value ? `${topProgramStay.value.avg}m avg` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`
   },
-]
+   {
+    val: topYearStay.value ? `Year ${topYearStay.value.name}` : 'N/A',
+    label: 'Most Active Year',
+    delta: topYearStay.value ? 'Top Tier' : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
+  },
+  {
+    val: currentlyInside.value,
+    label: 'Peak Occupancy',
+    delta: `${occupancyPercent.value}%`,
+    up: occupancyPercent.value > 80,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>`
+  }
+])
+
+/* -----------------------------
+SIDEBAR TAB HANDLER
+------------------------------*/
 
 const handleTabChange = (name: string) => {
   console.log('tab:', name)
@@ -345,6 +595,93 @@ const handleTabChange = (name: string) => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* ─── KEYFRAMES ─── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes scaleInBounce {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes arcDraw {
+  from {
+    stroke-dashoffset: 691.2;
+  }
+  to {
+    stroke-dashoffset: 43.9;
+  }
+}
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ping {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+@keyframes underlineGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
 
 /* ─── SHELL ─── */
 .page-shell {
@@ -370,6 +707,36 @@ const handleTabChange = (name: string) => {
   border-radius: 5px;
 }
 
+/* ─── HEADER ─── */
+.attn-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+/* ─── BREADCRUMB ─── */
+.header-breadcrumb {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(13, 43, 15, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  /* Animation */
+  animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+.header-breadcrumb svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.4;
+}
+
 /* ─── HERO TITLE ─── */
 .hero-title {
   font-family: 'Poppins', sans-serif;
@@ -379,6 +746,8 @@ const handleTabChange = (name: string) => {
   letter-spacing: -0.02em;
   margin: 0 0 8px;
   display: inline-block;
+  /* Animation */
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
 }
 .hero-word-dark {
   color: #0d2b0f;
@@ -399,22 +768,17 @@ const handleTabChange = (name: string) => {
   height: 5px;
   background: linear-gradient(to right, #0d2b0f, #e6a800);
   border-radius: 3px;
+  transform-origin: left;
+  /* Animation */
+  animation: underlineGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 .hero-subtitle {
   font-size: 0.88rem;
   font-weight: 400;
   color: #6b7280;
   margin-top: 20px;
-}
-
-/* ─── HEADER ─── */
-.attn-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
+  /* Animation */
+  animation: fadeIn 0.6s ease 0.55s both;
 }
 
 /* ─── QUICK STAT STRIP ─── */
@@ -433,6 +797,8 @@ const handleTabChange = (name: string) => {
   align-items: center;
   gap: 12px;
   box-shadow: 0 2px 12px rgba(13, 43, 15, 0.04);
+  /* Animation — delay set inline via :style */
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
@@ -496,11 +862,13 @@ const handleTabChange = (name: string) => {
 
 /* ─── DIAL CARD ─── */
 .dial-card {
-  background: white;
-  border: 1px solid rgba(13, 43, 15, 0.07);
+  background: rgb(206, 225, 207);
+  border: 1px solid rgba(177, 207, 43, 0.07);
   border-radius: 28px;
   padding: 28px 24px 24px;
   box-shadow: 0 4px 24px rgba(13, 43, 15, 0.06);
+  /* Animation */
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .dial-card__header {
   display: flex;
@@ -527,6 +895,8 @@ const handleTabChange = (name: string) => {
   font-weight: 800;
   color: #2e7d32;
   letter-spacing: 0.18em;
+  /* Animation */
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
 }
 .live-dot {
   width: 5px;
@@ -536,6 +906,7 @@ const handleTabChange = (name: string) => {
   animation: ping 2s infinite;
 }
 
+/* ─── GAUGE ─── */
 .gauge-wrap {
   position: relative;
   width: 100%;
@@ -551,7 +922,8 @@ const handleTabChange = (name: string) => {
   height: 100%;
 }
 .gauge-arc {
-  transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Animates the arc drawing from 0 → 94% fill */
+  animation: arcDraw 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
 }
 .gauge-center {
   position: relative;
@@ -574,6 +946,8 @@ const handleTabChange = (name: string) => {
   color: #0d2b0f;
   letter-spacing: -0.06em;
   line-height: 1;
+  /* Animation */
+  animation: countUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
 }
 .gauge-unit {
   font-size: 1.8rem;
@@ -581,6 +955,8 @@ const handleTabChange = (name: string) => {
   color: rgba(13, 43, 15, 0.25);
   margin-top: 8px;
   font-family: 'Poppins', sans-serif;
+  /* Animation */
+  animation: fadeIn 0.4s ease 1.3s both;
 }
 .gauge-sublabel {
   font-size: 0.5rem;
@@ -588,6 +964,8 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.32em;
   color: rgba(13, 43, 15, 0.3);
   text-transform: uppercase;
+  /* Animation */
+  animation: fadeIn 0.4s ease 1.4s both;
 }
 .gauge-max {
   background: #f9a825;
@@ -599,6 +977,8 @@ const handleTabChange = (name: string) => {
   border-radius: 20px;
   margin-top: 4px;
   box-shadow: 0 3px 12px rgba(249, 168, 37, 0.3);
+  /* Animation — bounce in after arc completes */
+  animation: scaleInBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s both;
 }
 
 /* ─── FLOW ROW ─── */
@@ -609,6 +989,8 @@ const handleTabChange = (name: string) => {
   border-radius: 16px;
   padding: 14px 20px;
   margin-top: 12px;
+  /* Animation */
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both;
 }
 .flow-col {
   flex: 1;
@@ -629,7 +1011,12 @@ const handleTabChange = (name: string) => {
 .flow-bar {
   height: 100%;
   border-radius: 2px;
-  transition: width 1s ease;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Once barsVisible = true, transition to the actual width */
+.flow-bar--animated {
+  width: var(--bar-width);
 }
 .flow-bar--in {
   background: #f9a825;
@@ -677,6 +1064,8 @@ const handleTabChange = (name: string) => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+  /* Animation */
+  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
 .ctrl-eyebrow {
   font-size: 0.58rem;
@@ -729,6 +1118,14 @@ const handleTabChange = (name: string) => {
   overflow: hidden;
   transition: all 0.2s;
 }
+/* Staggered button entrance */
+.sync-btn--1 {
+  animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+.sync-btn--2 {
+  animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.62s both;
+}
+
 .sync-btn::after {
   content: '';
   position: absolute;
@@ -753,6 +1150,8 @@ const handleTabChange = (name: string) => {
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(13, 43, 15, 0.04);
+  /* Animation */
+  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 .etable-header {
   display: flex;
@@ -815,9 +1214,13 @@ const handleTabChange = (name: string) => {
   margin-right: 5px;
   opacity: 0.6;
 }
+
+/* Table rows — staggered fadeUp, delay set inline via :style */
 .erow {
   border-bottom: 1px solid rgba(13, 43, 15, 0.04);
   transition: background 0.15s;
+  opacity: 0;
+  animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .erow:last-child {
   border-bottom: none;
@@ -925,19 +1328,6 @@ const handleTabChange = (name: string) => {
 .estatus--pending .estatus-dot {
   background: #f9a825;
   animation: ping 2s infinite;
-}
-
-/* ─── ANIMATIONS ─── */
-@keyframes ping {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
 }
 
 /* ─── RESPONSIVE ─── */
