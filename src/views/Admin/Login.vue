@@ -32,6 +32,7 @@
               Email Address
             </label>
             <input
+              v-model="email"
               type="email"
               placeholder="example@email.com"
               class="w-full px-5 py-3.5 rounded-2xl
@@ -55,6 +56,7 @@
 
             <div class="relative">
               <input
+                v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
                 class="w-full px-5 py-3.5 rounded-2xl
@@ -109,16 +111,33 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-// Import ang image gikan assets
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 import libImg from '@/assets/images/lib.jpg'
 
+const { login } = useAuth()
+const router = useRouter()
+
+const email = ref('')
+const password = ref('')
 const showPassword = ref(false)
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value
 }
 
-const handleLogin = () => {
-  console.log("Nag-login na...");
+const handleLogin = async () => {
+  try {
+    if (!email.value || !password.value) {
+      alert('Please fill in both email and password')
+      return
+    }
+
+    await login(email.value, password.value)
+    // Redirect is handled in useAuth composable
+  } catch (err: any) {
+    console.error(err)
+    alert(err.message || 'Login failed')
+  }
 }
 </script>
