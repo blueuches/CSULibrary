@@ -27,7 +27,12 @@
 
       <!-- ══ QUICK STAT STRIP ══ -->
       <div class="stat-strip">
-        <div v-for="s in quickStats" :key="s.label" class="qstat">
+        <div
+          v-for="(s, i) in quickStats"
+          :key="s.label"
+          class="qstat"
+          :style="{ animationDelay: 0.25 + i * 0.08 + 's' }"
+        >
           <div class="qstat-icon" v-html="s.icon"></div>
           <div>
             <p class="qstat-val">{{ s.val }}</p>
@@ -134,7 +139,11 @@
           <div class="flow-row">
             <div class="flow-col">
               <div class="flow-bar-wrap">
-                <div class="flow-bar flow-bar--in" style="width: 72%"></div>
+                <div
+                  class="flow-bar flow-bar--in"
+                  :class="{ 'flow-bar--animated': barsVisible }"
+                  style="--bar-width: 72%"
+                ></div>
               </div>
               <div class="flow-info">
                 <span class="flow-label flow-label--in">Incoming</span>
@@ -144,7 +153,11 @@
             <div class="flow-divider"></div>
             <div class="flow-col">
               <div class="flow-bar-wrap">
-                <div class="flow-bar flow-bar--out" style="width: 38%"></div>
+                <div
+                  class="flow-bar flow-bar--out"
+                  :class="{ 'flow-bar--animated': barsVisible }"
+                  style="--bar-width: 38%"
+                ></div>
               </div>
               <div class="flow-info">
                 <span class="flow-label">Outgoing</span>
@@ -162,7 +175,7 @@
               <h3 class="ctrl-title">Attendance <em>Overview</em></h3>
               <p class="ctrl-sub">All export data</p>
             </div>
-            <button class="sync-btn" @click="$router.push('/admin/attendance/logs')">
+            <button class="sync-btn sync-btn--1" @click="$router.push('/admin/attendance/logs')">
               <svg
                 width="14"
                 height="14"
@@ -178,7 +191,7 @@
               </svg>
               <span>Attendance Logs</span>
             </button>
-            <button class="sync-btn" @click="$router.push('/admin/attendance/import')">
+            <button class="sync-btn sync-btn--2" @click="$router.push('/admin/attendance/import')">
               <svg
                 width="14"
                 height="14"
@@ -258,7 +271,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(log, i) in exportLogs" :key="i" class="erow">
+                  <tr
+                    v-for="(log, i) in exportLogs"
+                    :key="i"
+                    class="erow"
+                    :style="{ animationDelay: 0.6 + i * 0.07 + 's' }"
+                  >
                     <td class="erow-date">
                       <span class="erow-date__main">{{ log.date }}</span>
                       <span class="erow-date__time">{{ log.time }}</span>
@@ -289,8 +307,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+
+const barsVisible = ref(false)
+
+onMounted(() => {
+  // Trigger flow bars after gauge arc animation completes
+  setTimeout(() => {
+    barsVisible.value = true
+  }, 1600)
+})
 
 const exportLogs = ref([
   { date: 'Mar 11, 2026', time: '09:42 AM', type: 'PDF', user: 'Maria Santos', status: 'success' },
@@ -346,6 +373,93 @@ const handleTabChange = (name: string) => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=DM+Sans:wght@400;500;600;700&display=swap');
 
+/* ─── KEYFRAMES ─── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes scaleInBounce {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes arcDraw {
+  from {
+    stroke-dashoffset: 691.2;
+  }
+  to {
+    stroke-dashoffset: 43.9;
+  }
+}
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ping {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+@keyframes underlineGrow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* ─── SHELL ─── */
 .page-shell {
   display: flex;
@@ -370,6 +484,36 @@ const handleTabChange = (name: string) => {
   border-radius: 5px;
 }
 
+/* ─── HEADER ─── */
+.attn-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+/* ─── BREADCRUMB ─── */
+.header-breadcrumb {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(13, 43, 15, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  /* Animation */
+  animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+.header-breadcrumb svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.4;
+}
+
 /* ─── HERO TITLE ─── */
 .hero-title {
   font-family: 'Poppins', sans-serif;
@@ -379,6 +523,8 @@ const handleTabChange = (name: string) => {
   letter-spacing: -0.02em;
   margin: 0 0 8px;
   display: inline-block;
+  /* Animation */
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
 }
 .hero-word-dark {
   color: #0d2b0f;
@@ -399,22 +545,17 @@ const handleTabChange = (name: string) => {
   height: 5px;
   background: linear-gradient(to right, #0d2b0f, #e6a800);
   border-radius: 3px;
+  transform-origin: left;
+  /* Animation */
+  animation: underlineGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 .hero-subtitle {
   font-size: 0.88rem;
   font-weight: 400;
   color: #6b7280;
   margin-top: 20px;
-}
-
-/* ─── HEADER ─── */
-.attn-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
+  /* Animation */
+  animation: fadeIn 0.6s ease 0.55s both;
 }
 
 /* ─── QUICK STAT STRIP ─── */
@@ -433,6 +574,8 @@ const handleTabChange = (name: string) => {
   align-items: center;
   gap: 12px;
   box-shadow: 0 2px 12px rgba(13, 43, 15, 0.04);
+  /* Animation — delay set inline via :style */
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
@@ -501,6 +644,8 @@ const handleTabChange = (name: string) => {
   border-radius: 28px;
   padding: 28px 24px 24px;
   box-shadow: 0 4px 24px rgba(13, 43, 15, 0.06);
+  /* Animation */
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .dial-card__header {
   display: flex;
@@ -527,6 +672,8 @@ const handleTabChange = (name: string) => {
   font-weight: 800;
   color: #2e7d32;
   letter-spacing: 0.18em;
+  /* Animation */
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
 }
 .live-dot {
   width: 5px;
@@ -536,6 +683,7 @@ const handleTabChange = (name: string) => {
   animation: ping 2s infinite;
 }
 
+/* ─── GAUGE ─── */
 .gauge-wrap {
   position: relative;
   width: 100%;
@@ -551,7 +699,8 @@ const handleTabChange = (name: string) => {
   height: 100%;
 }
 .gauge-arc {
-  transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Animates the arc drawing from 0 → 94% fill */
+  animation: arcDraw 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
 }
 .gauge-center {
   position: relative;
@@ -574,6 +723,8 @@ const handleTabChange = (name: string) => {
   color: #0d2b0f;
   letter-spacing: -0.06em;
   line-height: 1;
+  /* Animation */
+  animation: countUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
 }
 .gauge-unit {
   font-size: 1.8rem;
@@ -581,6 +732,8 @@ const handleTabChange = (name: string) => {
   color: rgba(13, 43, 15, 0.25);
   margin-top: 8px;
   font-family: 'Poppins', sans-serif;
+  /* Animation */
+  animation: fadeIn 0.4s ease 1.3s both;
 }
 .gauge-sublabel {
   font-size: 0.5rem;
@@ -588,6 +741,8 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.32em;
   color: rgba(13, 43, 15, 0.3);
   text-transform: uppercase;
+  /* Animation */
+  animation: fadeIn 0.4s ease 1.4s both;
 }
 .gauge-max {
   background: #f9a825;
@@ -599,6 +754,8 @@ const handleTabChange = (name: string) => {
   border-radius: 20px;
   margin-top: 4px;
   box-shadow: 0 3px 12px rgba(249, 168, 37, 0.3);
+  /* Animation — bounce in after arc completes */
+  animation: scaleInBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s both;
 }
 
 /* ─── FLOW ROW ─── */
@@ -609,6 +766,8 @@ const handleTabChange = (name: string) => {
   border-radius: 16px;
   padding: 14px 20px;
   margin-top: 12px;
+  /* Animation */
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both;
 }
 .flow-col {
   flex: 1;
@@ -629,7 +788,12 @@ const handleTabChange = (name: string) => {
 .flow-bar {
   height: 100%;
   border-radius: 2px;
-  transition: width 1s ease;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Once barsVisible = true, transition to the actual width */
+.flow-bar--animated {
+  width: var(--bar-width);
 }
 .flow-bar--in {
   background: #f9a825;
@@ -677,6 +841,8 @@ const handleTabChange = (name: string) => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+  /* Animation */
+  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
 .ctrl-eyebrow {
   font-size: 0.58rem;
@@ -729,6 +895,14 @@ const handleTabChange = (name: string) => {
   overflow: hidden;
   transition: all 0.2s;
 }
+/* Staggered button entrance */
+.sync-btn--1 {
+  animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+.sync-btn--2 {
+  animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.62s both;
+}
+
 .sync-btn::after {
   content: '';
   position: absolute;
@@ -753,6 +927,8 @@ const handleTabChange = (name: string) => {
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(13, 43, 15, 0.04);
+  /* Animation */
+  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 .etable-header {
   display: flex;
@@ -815,9 +991,13 @@ const handleTabChange = (name: string) => {
   margin-right: 5px;
   opacity: 0.6;
 }
+
+/* Table rows — staggered fadeUp, delay set inline via :style */
 .erow {
   border-bottom: 1px solid rgba(13, 43, 15, 0.04);
   transition: background 0.15s;
+  opacity: 0;
+  animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .erow:last-child {
   border-bottom: none;
@@ -925,19 +1105,6 @@ const handleTabChange = (name: string) => {
 .estatus--pending .estatus-dot {
   background: #f9a825;
   animation: ping 2s infinite;
-}
-
-/* ─── ANIMATIONS ─── */
-@keyframes ping {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
 }
 
 /* ─── RESPONSIVE ─── */
