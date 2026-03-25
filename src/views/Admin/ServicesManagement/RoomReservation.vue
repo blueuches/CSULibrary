@@ -102,7 +102,7 @@
                         <h3 class="font-black text-[#0d2b0f]">{{ room.name }}</h3>
                       </div>
                       <p class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">
-                        {{ room.floor }} Floor • {{ room.wing }} Wing • {{ formatRoomType(room.room_type) }}
+                        {{ room.floor }} • {{ room.wing }} • {{ formatRoomType(room.room_type) }}
                       </p>
                     </div>
                     <span class="badge px-2 py-1 rounded text-[9px] font-black uppercase"
@@ -244,28 +244,65 @@
       </div>
     </main>
 
+
+
     <div v-if="modals.booking" class="modal">
       <div class="modal-box max-w-2xl">
         <div class="flex justify-between items-center mb-6">
           <h2 class="modal-title text-2xl font-bold text-gray-800">New Reservation</h2>
           <div class="text-right">
-            <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase">
-              {{ selectedRoom?.name }}
-            </span>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500">Floor</label>
+                <select v-model="selectedFloor" class="input">
+                  <option value="">All</option>
+                  <option v-for="f in availableFloors" :key="f">{{ f }}</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500">Wing</label>
+                <select v-model="selectedWing" class="input">
+                  <option value="">All</option>
+                  <option v-for="w in availableWings" :key="w">{{ w }}</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500">Room Type</label>
+                <select v-model="selectedRoomType" class="input">
+                  <option value="">All</option>
+                  <option v-for="type in availableRoomTypes" :key="type" :value="type">
+                    {{ formatRoomType(type) }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[10px] font-bold uppercase text-gray-500">Select Room</label>
+                <select v-model="selectedRoomId" class="input">
+                  <option value="">Select Room</option>
+                  <option v-for="room in filteredRoomOptions" :key="room.id" :value="room.id">
+                    {{ room.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <div class="space-y-4">
             <div class="p-3 bg-gray-50 rounded-lg border border-gray-200 grid grid-cols-2 gap-2">
               <div>
                 <label class="text-[10px] font-bold uppercase text-gray-400">Floor / Wing</label>
-                <p class="text-sm font-semibold">{{ selectedRoom?.floor }} - {{ selectedRoom?.wing }}</p>
+                <p class="text-sm font-semibold">{{ selectedRoom?.floor || '---' }} - {{ selectedRoom?.wing || '---' }}
+                </p>
               </div>
               <div>
                 <label class="text-[10px] font-bold uppercase text-gray-400">Room Type</label>
-                <p class="text-sm font-semibold capitalize">{{ selectedRoom?.room_type?.replace('_', ' ') }}</p>
+                <p class="text-sm font-semibold capitalize">{{ selectedRoom?.room_type?.replace('_', ' ') || '---' }}
+                </p>
               </div>
             </div>
 
@@ -292,14 +329,25 @@
           </div>
 
           <div class="space-y-4">
-            <div class="p-4 border rounded-lg bg-blue-50/50 border-blue-100">
-              <label class="text-[10px] font-bold uppercase text-blue-600 block mb-2">Group Members
-                (Participants)</label>
-              <div class="flex gap-2">
+            <div class="p-4 border rounded-lg transition-all"
+              :class="selectedRoom?.room_type === 'nap_pad' ? 'bg-gray-100 border-gray-200 opacity-70' : 'bg-blue-50/50 border-blue-100'">
+
+              <label class="text-[10px] font-bold uppercase block mb-2"
+                :class="selectedRoom?.room_type === 'nap_pad' ? 'text-gray-500' : 'text-blue-600'">
+                Group Members (Participants)
+                <span v-if="selectedRoom?.room_type === 'discussion'"
+                  class="text-[9px] lowercase font-normal italic">(Required)</span>
+              </label>
+
+              <div class="flex gap-2" v-if="selectedRoom?.room_type !== 'nap_pad'">
                 <input list="student-ids" id="participant-input" placeholder="Search by ID"
                   class="input flex-1 bg-white" />
                 <button @click="handleAddParticipantFromInput('participant-input')"
                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md text-sm transition-colors">Add</button>
+              </div>
+
+              <div v-else class="text-[10px] text-gray-500 italic py-2">
+                <i class="fas fa-user-slash mr-1"></i> Individual use only (Nap Pad).
               </div>
 
               <div class="flex flex-wrap gap-2 mt-3 max-h-[100px] overflow-y-auto">
@@ -309,16 +357,25 @@
                   <button @click="removeParticipant(p.id_number)"
                     class="ml-2 text-red-500 font-bold hover:text-red-700">×</button>
                 </div>
-                <span v-if="selectedParticipants.length === 0" class="text-[10px] text-gray-400 italic">No members added
-                  yet.</span>
+                <span v-if="selectedParticipants.length === 0 && selectedRoom?.room_type !== 'nap_pad'"
+                  class="text-[10px] text-gray-400 italic">No members added yet.</span>
               </div>
             </div>
 
             <div class="grid grid-cols-1 gap-3">
-              <div>
-                <label class="text-[10px] font-bold uppercase text-gray-500">Date</label>
-                <input v-model="bookingForm.date" type="date" class="input" />
+              <div class="flex justify-between items-end">
+                <div class="flex-1">
+                  <label class="text-[10px] font-bold uppercase text-gray-500">Date</label>
+                  <input v-model="bookingForm.date" type="date" class="input" />
+                </div>
+                <div v-if="selectedRoom" class="ml-4 mb-2">
+                  <span class="text-[9px] font-black px-2 py-1 rounded bg-yellow-100 text-yellow-700 uppercase">
+                    Limit: {{ selectedRoom.room_type === 'nap_pad' ? '45 Mins' : (selectedRoom.room_type ===
+                      'discussion' ? '2 Hours' : 'N/A') }}
+                  </span>
+                </div>
               </div>
+
               <div class="grid grid-cols-2 gap-2">
                 <div>
                   <label class="text-[10px] font-bold uppercase text-gray-500">Start Time</label>
@@ -340,6 +397,9 @@
       </div>
     </div>
 
+
+
+
     <div v-if="modals.quickBook" class="modal">
       <div class="modal-box">
         <h2 class="modal-title text-xl font-bold mb-4">Quick Book: {{ selectedRoom?.name }}</h2>
@@ -351,6 +411,17 @@
           <label class="text-[10px] font-bold uppercase text-gray-500">Requester ID</label>
           <input v-model="bookingForm.requester" list="student-ids" placeholder="Enter ID Number" class="input" />
 
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-400">Program</label>
+              <input v-model="bookingForm.program" readonly class="input bg-gray-100 text-xs" />
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-gray-400">Year</label>
+              <input v-model="bookingForm.year_level" readonly class="input bg-gray-100 text-xs" />
+            </div>
+          </div>
+
           <div class="border-t pt-3 mt-3">
             <label class="text-[10px] font-bold uppercase text-gray-500">Add Companions</label>
             <div class="flex gap-2">
@@ -361,7 +432,8 @@
             <div class="flex flex-wrap gap-1 mt-2">
               <div v-for="p in selectedParticipants" :key="p.id_number"
                 class="bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center">
-                {{ p.id_number }} <button @click="removeParticipant(p.id_number)" class="ml-1 text-red-500">×</button>
+                {{ p.last_name }}, {{ p.first_name }} <button @click="removeParticipant(p.id_number)"
+                  class="ml-1 text-red-500">×</button>
               </div>
             </div>
           </div>
@@ -375,6 +447,10 @@
               <label class="text-[10px] font-bold uppercase text-gray-500">Ends At</label>
               <input v-model="bookingForm.endTime" type="time" class="input" />
             </div>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase text-gray-500">Date</label>
+            <input v-model="bookingForm.date" type="date" class="input" />
           </div>
         </div>
 
@@ -453,495 +529,355 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 import '@/assets/styles/avr-reservation.css'
-import { watch } from 'vue'
 
 /* =====================================================
-  TYPES
+  TYPES & INTERFACES
 ===================================================== */
-interface Session {
-  title: string
-  time: string
-}
-
 interface Room {
-  id: string
-  name: string
-  floor: string
-  wing: string
-  room_type: string
-  capacity: number
-  max_duration_minutes: number
-  created_at: string
-
-  // frontend-only
-  status: 'Available' | 'Occupied'
-  currentSession?: Session | null
+  id: string;
+  name: string;
+  floor: string;
+  wing: string;
+  room_type: string;
+  status: 'Available' | 'Occupied';
+  currentSession?: { title: string; time: string } | null;
 }
 
-interface Reservation {
-  id: string
-  date: string
-  activity: string
-  requester: string
-  status: string
-}
-
-interface Equipment {
-  name: string
-  working: boolean
+interface Student {
+  id_number: string;
+  first_name: string;
+  last_name: string;
+  program: string;
+  year_level: string;
 }
 
 /* =====================================================
-  VIEW STATE
+  VIEW STATE & FILTERS
 ===================================================== */
 const activeFloor = ref('2nd Floor')
 const activeWing = ref('Left Wing')
-const studentsList = ref<any[]>([])
-const selectedParticipants = ref<any[]>([])
-const participantSearch = ref('')
+const currentDate = computed(() => new Date().toLocaleDateString('en-US', {
+  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+}))
+
+// Room Dropdown Filters (Inside Modal)
+const selectedFloor = ref('')
+const selectedWing = ref('')
+const selectedRoomType = ref('')
+const selectedRoomId = ref('')
 
 /* =====================================================
-  MODALS
+  DATA REPOSITORIES
 ===================================================== */
+const rooms = ref<Room[]>([])
+const studentsList = ref<Student[]>([])
+const upcomingReservations = ref<any[]>([])
+const selectedParticipants = ref<Student[]>([])
+const newEquipment = ref('')
+
+const amenities = ref([
+  { name: 'Projector', working: true },
+  { name: 'Sound System', working: true },
+  { name: 'Aircon Units', working: false }
+])
+
+const steps = ref([
+  'Verify Student ID / Faculty ID',
+  'Check Room Availability',
+  'Log Equipment Borrowed',
+  'Issue Room Key / Access'
+])
+
 const modals = ref({
   booking: false,
   quickBook: false,
   endSession: false,
   schedule: false,
-  equipment: false,
+  equipment: false
 })
 
-const selectedRoom = ref<Room | null>(null)
-
-/* =====================================================
-  FORMS
-===================================================== */
 const bookingForm = ref({
   room_id: null as string | null,
-  requester: '',      // Student ID
-  program: '',        // Automatic
-  year_level: '',           // Automatic
-  activity: '',       // Purpose
-  date: '',
+  requester: '',
+  program: '',
+  year_level: '',
+  activity: '',
+  date: new Date().toISOString().split('T')[0],
   time: '',
   endTime: '',
-  status: 'reserved',
+  status: 'pending'
 })
 
-const newEquipment = ref('')
+/* =====================================================
+  COMPUTED PROPERTIES (FILTERING)
+===================================================== */
+const filteredRooms = computed(() =>
+  rooms.value.filter(r => r.floor === activeFloor.value && r.wing === activeWing.value)
+)
 
+const availableFloors = computed(() => [...new Set(rooms.value.map(r => r.floor))])
+const availableWings = computed(() => [...new Set(rooms.value.map(r => r.wing))])
+const availableRoomTypes = computed(() => [...new Set(rooms.value.map(r => r.room_type))])
 
+const filteredRoomOptions = computed(() => {
+  return rooms.value.filter(r => {
+    return (!selectedFloor.value || r.floor === selectedFloor.value) &&
+      (!selectedWing.value || r.wing === selectedWing.value) &&
+      (!selectedRoomType.value || r.room_type === selectedRoomType.value)
+  })
+})
+
+const selectedRoom = computed(() =>
+  rooms.value.find(r => r.id === selectedRoomId.value) || null
+)
+
+const roomStats = computed(() => [
+  { label: 'Total Rooms', value: rooms.value.length, icon: 'fas fa-door-open', color: '#0d2b0f' },
+  { label: 'Available', value: rooms.value.filter(r => r.status === 'Available').length, icon: 'fas fa-check-circle', color: '#2e7d32' },
+  { label: 'Occupied', value: rooms.value.filter(r => r.status === 'Occupied').length, icon: 'fas fa-clock', color: '#d32f2f' },
+  { label: 'Pending', value: upcomingReservations.value.filter(res => res.status === 'pending').length, icon: 'fas fa-calendar-alt', color: '#f57c00' }
+])
+
+/* =====================================================
+  WATCHERS (AUTO-FILL)
+===================================================== */
 watch(() => bookingForm.value.requester, (newId) => {
   const student = studentsList.value.find(s => s.id_number === newId)
-
-  console.log("Searching for ID:", newId)
-  console.log("Found Student:", student)
-
   if (student) {
-    bookingForm.value.program = student.program ?? 'N/A'
-    bookingForm.value.year_level = student.year_level ?? 'N/A'
+    bookingForm.value.program = student.program
+    bookingForm.value.year_level = student.year_level
   } else {
     bookingForm.value.program = ''
     bookingForm.value.year_level = ''
   }
 })
-/* =====================================================
-  DATA (FROM DB)
-===================================================== */
-const rooms = ref<Room[]>([])
-const upcomingReservations = ref<Reservation[]>([])
-
-const amenities = ref<Equipment[]>([
-  { name: 'Projector', working: true },
-  { name: 'Sound System', working: true },
-  { name: 'Air Conditioning', working: true },
-  { name: 'Wi-Fi Router', working: true },
-  { name: '50 Chairs', working: true },
-])
-
-const steps = [
-  'Verify faculty/student ID',
-  'Check approved reservation form',
-  'Inspect projector and audio system',
-  'Log start time in the system',
-  'Check room condition after use',
-]
 
 /* =====================================================
-  FETCH ROOMS FROM DB
+  SUPABASE METHODS
 ===================================================== */
-async function fetchRooms() {
-  const { data, error } = await supabase
-    .from('rooms')
-    .select(`
-      *,
-      room_reservations (
-        status,
-        purpose,
-        start_time,
-        end_time
-      )
-    `)
-    .order('created_at', { ascending: true })
+async function refreshData() {
+  const { data: roomData } = await supabase.from('rooms').select('*, room_reservations(*)').order('name')
+  const { data: resData } = await supabase.from('room_reservations').select('*, rooms(name)').order('booking_date', { ascending: false })
+  const { data: studData } = await supabase.from('students').select('*')
 
-  if (error) {
-    console.error('Error fetching rooms:', error)
-    return
+  if (roomData) {
+    rooms.value = roomData.map((r: any) => {
+      const active = r.room_reservations?.find((res: any) => res.status === 'ongoing')
+      return {
+        ...r,
+        status: active ? 'Occupied' : 'Available',
+        currentSession: active ? { title: active.purpose, time: `${active.start_time} - ${active.end_time}` } : null
+      }
+    })
   }
 
+  if (resData) {
+    upcomingReservations.value = resData.map(r => ({
+      id: r.id, date: r.booking_date, time: r.start_time, activity: r.purpose,
+      requester: r.representative_student_id, status: r.status, room_name: r.rooms?.name
+    }))
+  }
 
-  rooms.value = data.map((r: any) => {
-    const activeRes = r.room_reservations?.find((res: any) => res.status === 'ongoing')
-    const displayStatus = activeRes ? 'Occupied' : 'Available'
-
-    return {
-      id: r.id,
-      name: r.name,
-      floor: r.floor,
-      wing: r.wing,
-      room_type: r.room_type,
-      capacity: r.capacity,
-      max_duration_minutes: r.max_duration_minutes,
-      created_at: r.created_at,
-      status: displayStatus,
+  if (studData) studentsList.value = studData
+}
 
 
-      currentSession: activeRes ? {
-        title: activeRes.purpose,
-        time: `${activeRes.start_time} - ${activeRes.end_time}`
-      } : null
+
+async function createBooking() {
+  if (!selectedRoom.value) return alert("Please select a room first.");
+
+  const start = bookingForm.value.time;
+  const end = bookingForm.value.endTime;
+
+  if (start && end) {
+    // Convert time strings to Date objects for calculation
+    const startTime = new Date(`2026-01-01T${start}`);
+    const endTime = new Date(`2026-01-01T${end}`);
+
+    // Calculate difference in minutes
+    const durationInMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+
+    if (durationInMinutes <= 0) {
+      return alert("Error: End time must be after start time.");
     }
-  })
+
+    // 1. NAP PAD CONSTRAINTS (Max 45 Mins, 0 Participants)
+    if (selectedRoom.value.room_type === 'nap_pad') {
+      if (durationInMinutes > 45) {
+        return alert("Error: Nap Pad sessions are strictly limited to 45 minutes.");
+      }
+      if (selectedParticipants.value.length > 0) {
+        return alert("Error: Nap Pads are for individual use only. Please remove participants.");
+      }
+    }
+
+    // 2. DISCUSSION ROOM CONSTRAINTS (Max 2 Hours, Must have Participants)
+    if (selectedRoom.value.room_type === 'discussion') {
+      if (durationInMinutes > 120) {
+        return alert("Error: Discussion Room sessions are limited to 2 hours (120 mins).");
+      }
+      if (selectedParticipants.value.length === 0) {
+        return alert("Error: Discussion Rooms require at least one participant/companion.");
+      }
+    }
+  } else {
+    return alert("Please fill in both Start and End times.");
+  }
+
+  // --- DATABASE INSERTION (Only runs if validations pass) ---
+  const { data: res, error } = await supabase.from('room_reservations').insert([{
+    room_id: selectedRoomId.value,
+    representative_student_id: bookingForm.value.requester,
+    booking_date: bookingForm.value.date,
+    start_time: start,
+    end_time: end,
+    purpose: bookingForm.value.activity,
+    status: 'pending',
+    program: bookingForm.value.program,
+    year_level: bookingForm.value.year_level
+  }]).select().single();
+
+  if (error) return alert(error.message);
+
+  // Insert participants if any
+  if (selectedParticipants.value.length > 0) {
+    const pData = selectedParticipants.value.map(p => ({
+      reservation_id: res.id,
+      student_id: p.id_number
+    }));
+    await supabase.from('room_reservation_participants').insert(pData);
+  }
+
+  alert("Reservation successfully created!");
+  closeModals();
+  refreshData();
+}
+
+
+
+watch([() => bookingForm.value.time, () => selectedRoom.value], ([newTime, room]) => {
+  if (!newTime || !room) return;
+
+  const [hours, minutes] = newTime.split(':').map(Number);
+  const startDate = new Date();
+  startDate.setHours(hours, minutes, 0);
+
+  let duration = 60;
+  if (room.room_type === 'nap_pad') duration = 45;
+  if (room.room_type === 'discussion') duration = 120;
+
+  const endDate = new Date(startDate.getTime() + duration * 60000);
+  bookingForm.value.endTime = endDate.toTimeString().slice(0, 5);
+});
+
+// confirm booking
+
+async function confirmQuickBook() {
+  if (!selectedRoom.value) return
+  const now = new Date().toTimeString().slice(0, 5)
+
+  const { error } = await supabase.from('room_reservations').insert([{
+    room_id: selectedRoom.value.id,
+    representative_student_id: bookingForm.value.requester,
+    booking_date: new Date().toISOString().split('T')[0],
+    start_time: now,
+    end_time: bookingForm.value.endTime || '17:00',
+    purpose: bookingForm.value.activity || 'Quick Session',
+    status: 'ongoing',
+    program: bookingForm.value.program,
+    year_level: bookingForm.value.year_level
+  }])
+
+  if (error) return alert(error.message)
+  closeModals(); refreshData()
+}
+
+async function confirmEndSession() {
+  if (!selectedRoom.value) return
+  const { error } = await supabase
+    .from('room_reservations')
+    .update({ status: 'completed' })
+    .eq('room_id', selectedRoom.value.id)
+    .eq('status', 'ongoing')
+
+  if (error) alert(error.message)
+  closeModals(); refreshData()
+}
+
+async function updateStatus(id: string, status: string) {
+  await supabase.from('room_reservations').update({ status }).eq('id', id)
+  refreshData()
+}
+
+async function deleteReservation(id: string) {
+  if (confirm("Are you sure you want to delete this?")) {
+    await supabase.from('room_reservations').delete().eq('id', id)
+    refreshData()
+  }
 }
 
 /* =====================================================
   HELPERS
-===================================================== */
+==================================================== */
 function formatRoomType(type: string) {
-  return type.replace('_', ' ').toUpperCase()
+  return type?.replace('_', ' ') || 'General'
 }
 
 function getRoomIcon(type: string) {
-  switch (type) {
-    case 'discussion': return 'fas fa-users'
-    case 'nap_pad': return 'fas fa-bed'
-    case 'quiet_room': return 'fas fa-book'
-    case 'multimedia': return 'fas fa-tv'
-    default: return 'fas fa-door-open'
+  const icons: Record<string, string> = {
+    avr: 'fas fa-film',
+    discussion: 'fas fa-comments',
+    quiet_room: 'fas fa-leaf',
+    nap_pad: 'fas fa-bed'
+  }
+  return icons[type] || 'fas fa-door-closed'
+}
+
+function handleAddParticipantFromInput(inputId: string) {
+  const input = document.getElementById(inputId) as HTMLInputElement
+  const student = studentsList.value.find(s => s.id_number === input.value)
+  if (student && !selectedParticipants.value.find(p => p.id_number === student.id_number)) {
+    selectedParticipants.value.push(student)
+    input.value = ''
   }
 }
 
-
-
-/* =====================================================
-  COMPUTED
-===================================================== */
-const filteredRooms = computed(() =>
-  rooms.value.filter(
-    (room) =>
-      room.floor === activeFloor.value &&
-      room.wing === activeWing.value
-  )
-)
-
-const currentDate = computed(() =>
-  new Date().toLocaleDateString('en-PH', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-)
-
-async function fetchStudents() {
-  const { data, error } = await supabase
-    .from('students')
-    .select('id_number, first_name, last_name, program, year_level')
-    .order('last_name', { ascending: false })
-
-  if (error) {
-    console.error('Error:', error.message)
-    return
-  }
-
-  studentsList.value = data || []
+function removeParticipant(id: string) {
+  selectedParticipants.value = selectedParticipants.value.filter(p => p.id_number !== id)
 }
 
-const roomStats = computed(() => {
-  const total = rooms.value.length
-  const occupied = rooms.value.filter(r => r.status === 'Occupied').length
-  const available = total - occupied
-  const rate = total ? Math.round((occupied / total) * 100) : 0
-
-  return [
-    {
-      label: 'Available',
-      value: available,
-      color: '#1b5e20',
-      icon: 'fas fa-door-open'
-    },
-    {
-      label: 'Occupied',
-      value: occupied,
-      color: '#c62828',
-      icon: 'fas fa-user-clock'
-    },
-    {
-      label: 'Rate',
-      value: rate + '%',
-      color: '#0277bd',
-      icon: 'fas fa-percentage'
-    },
-    {
-      label: 'Total',
-      value: total,
-      color: '#f9a825',
-      icon: 'fas fa-building'
-    }
-  ]
-})
-
-/* =====================================================
-  MODALS
-===================================================== */
-function openModal(type: keyof typeof modals.value, room?: Room) {
-  if (room) selectedRoom.value = room
+function openModal(type: keyof typeof modals.value, room?: any) {
+  if (room) {
+    selectedRoomId.value = room.id
+    selectedFloor.value = room.floor
+    selectedWing.value = room.wing
+    selectedRoomType.value = room.room_type
+  }
   modals.value[type] = true
 }
 
-
-
 function closeModals() {
-  Object.keys(modals.value).forEach(key => {
-    modals.value[key as keyof typeof modals.value] = false
-  })
-  selectedParticipants.value = [];
+  Object.keys(modals.value).forEach(k => modals.value[k as keyof typeof modals.value] = false)
+  selectedParticipants.value = []
+  bookingForm.value = { room_id: null, requester: '', program: '', year_level: '', activity: '', date: new Date().toISOString().split('T')[0], time: '', endTime: '', status: 'pending' }
 }
 
-/* =====================================================
-  EQUIPMENT
-===================================================== */
 function addEquipment() {
-  if (!newEquipment.value.trim()) return
-  amenities.value.push({ name: newEquipment.value, working: true })
-  newEquipment.value = ''
+  if (newEquipment.value) {
+    amenities.value.push({ name: newEquipment.value, working: true })
+    newEquipment.value = ''
+  }
 }
 
 function removeEquipment(index: number) {
   amenities.value.splice(index, 1)
 }
 
-/* =====================================================
-  BOOKINGS (DB)
-===================================================== */
-async function createBooking() {
-  const { data: reservationData, error: resError } = await supabase
-    .from('room_reservations')
-    .insert([{
-      room_id: selectedRoom.value?.id || null,
-      representative_student_id: bookingForm.value.requester,
-      booking_date: bookingForm.value.date,
-      start_time: bookingForm.value.time,
-      end_time: bookingForm.value.endTime,
-      purpose: bookingForm.value.activity,
-      status: 'pending',
-      program: bookingForm.value.program,
-      year_level: bookingForm.value.year_level
-    }])
-    .select()
-    .single()
-
-  if (resError) {
-    alert("Error: " + resError.message)
-    return
-  }
-
-
-  if (selectedParticipants.value.length > 0) {
-    const participantsData = selectedParticipants.value.map(student => ({
-      reservation_id: reservationData.id,
-      student_id: student.id_number
-    }))
-
-    const { error: partError } = await supabase
-      .from('room_reservation_participants')
-      .insert(participantsData)
-
-    if (partError) console.error('Error adding participants:', partError.message)
-  }
-
-  alert("Reservation with participants saved!")
-  selectedParticipants.value = [] 
-  await fetchRooms()
-  await fetchUpcomingReservations()
-  closeModals()
-}
-
-
-/* =====================================================
-  SESSION (TEMP FRONTEND ONLY)
-===================================================== */
-async function confirmQuickBook() {
-  if (!selectedRoom.value) return
-
-  const now = new Date()
-  const currentTime = now.toTimeString().split(' ')[0]
-  const end = new Date(now.getTime() + (120 * 60000))
-  const endTime = end.toTimeString().split(' ')[0]
-
-  const { error } = await supabase
-    .from('room_reservations')
-    .insert([
-      {
-        room_id: selectedRoom.value.id,
-        representative_student_id: bookingForm.value.requester,
-        booking_date: now.toISOString().split('T')[0],
-        start_time: currentTime,
-        end_time: endTime,
-        purpose: bookingForm.value.activity || 'Quick Session',
-        status: 'ongoing',
-        program: bookingForm.value.program,
-        year_level: bookingForm.value.year_level
-      }
-    ])
-
-  if (error) {
-    alert("Error: " + error.message)
-    return
-  }
-
-  await fetchRooms()
-  await fetchUpcomingReservations()
-  closeModals()
-}
-
-/* =====================================================
-  PARTICIPANT LOGIC
-===================================================== */
-// Helper to handle the "Add" button click in modals
-function handleAddParticipantFromInput(inputId: string) {
-  const input = document.getElementById(inputId) as HTMLInputElement;
-  const idValue = input.value;
-
-  if (!idValue) return;
-
-  const student = studentsList.value.find(s => s.id_number === idValue);
-
-  if (student) {
-    // Check if they are already the requester
-    if (idValue === bookingForm.value.requester) {
-      alert("This student is already the requester.");
-      return;
-    }
-    // Check if already in participants list
-    if (!selectedParticipants.value.find(p => p.id_number === idValue)) {
-      selectedParticipants.value.push(student);
-    }
-    input.value = '';
-  } else {
-    alert("Student ID not found.");
-  }
-}
-
-function removeParticipant(id: string) {
-  selectedParticipants.value = selectedParticipants.value.filter(p => p.id_number !== id);
-}
-
-
-/* =====================================================
-  FETCH RESERVATIONS
-===================================================== */
-async function fetchUpcomingReservations() {
-  const { data, error } = await supabase
-    .from('room_reservations')
-    .select(`
-      id,
-      booking_date,
-      start_time,
-      purpose,
-      representative_student_id,
-      status,
-      rooms ( name )
-    `)
-    .order('booking_date', { ascending: false })
-    .order('start_time', { ascending: false })
-    .limit(10)
-
-  if (error) {
-    console.error('Error:', error.message)
-    return
-  }
-
-  upcomingReservations.value = data.map((r: any) => ({
-    id: r.id,
-    date: r.booking_date,
-    time: r.start_time,
-    activity: r.purpose,
-    requester: r.representative_student_id,
-    status: r.status,
-    room_name: r.rooms?.name || 'Unknown'
-  }))
-}
-
-/* =====================================================
-  UPDATE STATUS (For Accepting)
-===================================================== */
-async function updateStatus(id: string, newStatus: string) {
-  const { error } = await supabase
-    .from('room_reservations')
-    .update({ status: newStatus })
-    .eq('id', id)
-
-  if (error) {
-    alert("Update failed: " + error.message)
-  } else {
-    // Refresh both the table and the room cards
-    await fetchUpcomingReservations()
-    await fetchRooms()
-  }
-}
-
-/* =====================================================
-  DELETE RESERVATION (For Rejecting/Removing)
-===================================================== */
-async function deleteReservation(id: string) {
-  if (!confirm("Are you sure you want to delete or reject this reservation?")) return
-
-  const { error } = await supabase
-    .from('room_reservations')
-    .delete()
-    .eq('id', id)
-
-  if (error) {
-    alert("Delete failed: " + error.message)
-  } else {
-    // Refresh the data
-    await fetchUpcomingReservations()
-    await fetchRooms()
-  }
-}
-
-function confirmEndSession() {
-  if (!selectedRoom.value) return
-
-  selectedRoom.value.status = 'Available'
-  selectedRoom.value.currentSession = null
-
-  closeModals()
-}
-
-/* =====================================================
-  LIFECYCLE
-===================================================== */
-onMounted(() => {
-  fetchRooms()
-  fetchStudents()
-  fetchUpcomingReservations()
-})
+onMounted(refreshData)
 </script>
 
 
