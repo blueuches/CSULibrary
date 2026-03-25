@@ -1,7 +1,7 @@
 <template>
   <div 
     class="w-full min-h-screen flex items-center justify-center py-6 bg-cover bg-center bg-no-repeat relative font-poppins"
-    style="background-image: url('/Gemini_Generated_Image_sx9k3lsx9k3lsx9k.png');"
+    :style="{ backgroundImage: `url(${libImg})` }"
   >
     <div class="absolute inset-0 bg-black/20"></div>
 
@@ -32,6 +32,7 @@
               Email Address
             </label>
             <input
+              v-model="email"
               type="email"
               placeholder="example@email.com"
               class="w-full px-5 py-3.5 rounded-2xl
@@ -55,6 +56,7 @@
 
             <div class="relative">
               <input
+                v-model="password"
                 :type="showPassword ? 'text' : 'password'"
                 placeholder="••••••••"
                 class="w-full px-5 py-3.5 rounded-2xl
@@ -109,14 +111,33 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+import libImg from '@/assets/images/lib.jpg'
 
+const { login } = useAuth()
+const router = useRouter()
+
+const email = ref('')
+const password = ref('')
 const showPassword = ref(false)
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value
 }
 
-const handleLogin = () => {
-  console.log("Nag-login na...");
+const handleLogin = async () => {
+  try {
+    if (!email.value || !password.value) {
+      alert('Please fill in both email and password')
+      return
+    }
+
+    await login(email.value, password.value)
+    // Redirect is handled in useAuth composable
+  } catch (err: any) {
+    console.error(err)
+    alert(err.message || 'Login failed')
+  }
 }
 </script>

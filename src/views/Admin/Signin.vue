@@ -1,7 +1,7 @@
 <template>
   <div 
-    class="w-full min-h-screen flex items-center justify-center py-6 bg-cover bg-center bg-no-repeat relative"
-    style="background-image: url('/Gemini_Generated_Image_sx9k3lsx9k3lsx9k.png');"
+    class="w-full min-h-screen flex items-center justify-center py-6 bg-cover bg-center bg-no-repeat relative font-poppins"
+    :style="{ backgroundImage: `url(${libImg})` }"
   >
     <div class="absolute inset-0 bg-black/10"></div>
 
@@ -12,15 +12,33 @@
         </div>
 
         <form @submit.prevent="handleSignup" class="space-y-4">
-          
-          <!-- Full Name -->
+
           <div>
             <label class="block text-sm font-semibold text-white mb-1">
-              Full Name
+              First Name
             </label>
             <input
+            v-model="firstName"
               type="text"
-              placeholder="Juan Dela Cruz"
+              placeholder="Juan"
+              class="w-full px-3 py-2 rounded-xl
+                     border border-white/40 bg-white/10
+                     text-white placeholder-white/60
+                     focus:ring-2 focus:ring-green-400
+                     focus:border-green-400
+                     outline-none transition"
+              required
+            />
+          </div>
+
+                    <div>
+            <label class="block text-sm font-semibold text-white mb-1">
+              Last Name
+            </label>
+            <input
+             v-model="lastName"
+              type="text"
+              placeholder="Dela Cruz"
               class="w-full px-3 py-2 rounded-xl
                      border border-white/40 bg-white/10
                      text-white placeholder-white/60
@@ -37,6 +55,7 @@
               Email Address
             </label>
             <input
+              v-model="email"
               type="email"
               placeholder="admin@email.com"
               class="w-full px-3 py-2 rounded-xl
@@ -57,6 +76,7 @@
               </label>
             </div>
             <input
+              v-model="password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
               class="w-full px-3 py-2 rounded-xl
@@ -75,6 +95,7 @@
               Confirm Password
             </label>
             <input
+              v-model="confirmPassword"
               :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
               class="w-full px-3 py-2 rounded-xl
@@ -92,6 +113,7 @@
               Staff Code
             </label>
             <input
+              v-model="staffCode"
               :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
               class="w-full px-3 py-2 rounded-xl
@@ -133,18 +155,71 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+import libImg from '@/assets/images/lib.jpg'
+
+const { signup } = useAuth()
+const router = useRouter()
 
 const showPassword = ref(false)
+
+// form fields
+const firstName = ref('')
+const lastName = ref('')
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const staffCode = ref('')
+
+// change this later to env variable (important)
+const VALID_STAFF_CODE = 'CSULibrary#2026-3-24'
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value
 }
 
-const handleSignup = () => {
-  console.log("Nag-sign up na...");
+console.log('VALUES:', {
+  firstName: firstName.value,
+  lastName: lastName.value,
+  email: email.value,
+  password: password.value
+})
+
+const handleSignup = async () => {
+  try {
+    // 🔴 validation
+    if (!firstName.value || !lastName.value || !email.value || !password.value) {
+      alert('Please fill all fields')
+      return
+    }
+
+    if (password.value !== confirmPassword.value) {
+      alert('Passwords do not match')
+      return
+    }
+
+    // 🔐 staff code check
+    if (staffCode.value !== VALID_STAFF_CODE) {
+      alert('Invalid staff code')
+      return
+    }
+
+    // ✅ call signup directly (no splitting anymore)
+    await signup({
+      email: email.value,
+      password: password.value,
+      role: 'staff',
+      first_name: firstName.value,
+      last_name: lastName.value
+    })
+
+    alert('Signup successful!')
+    router.push('/admin')
+
+  } catch (err: any) {
+    console.error(err)
+    alert(err.message || 'Signup failed')
+  }
 }
 </script>
-
-<style scoped>
-
-</style>

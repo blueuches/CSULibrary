@@ -214,20 +214,6 @@
               style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
               class="mb-4 flex items-center gap-2"
             >
-              <svg
-                class="w-5 h-5"
-                style="color: #f9a825"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
               How to Download
             </h3>
             <div class="flex flex-col gap-3">
@@ -285,19 +271,20 @@
               v-for="(post, i) in latestPosts"
               :key="i"
               class="flex gap-3 mb-4 cursor-pointer group"
+              @click="router.push(post.route)"
             >
               <img
                 :src="post.image"
                 :alt="post.title"
-                class="w-20 h-16 object-cover rounded flex-shrink-0"
+                class="w-20 h-16 object-cover rounded flex-shrink-0 group-hover:brightness-90 transition-all duration-200"
               />
-              <div>
-                <p
-                  class="group-hover:text-[#1b5e20] transition-colors duration-200"
+              <div class="flex flex-col justify-center min-w-0">
+                <span
+                  class="group-hover:underline"
                   style="font-size: 0.85rem; font-weight: 700; color: #1b5e20; line-height: 1.4"
                 >
                   {{ post.title }}
-                </p>
+                </span>
                 <p style="font-size: 0.75rem; color: #888" class="mt-1">{{ post.date }}</p>
               </div>
             </div>
@@ -335,6 +322,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 /* ── Search ───────────────────────────────────────────── */
 const searchQuery = ref('')
@@ -342,12 +331,14 @@ const searchQuery = ref('')
 /* ── Colleges Data ────────────────────────────────────── */
 const colleges = [
   { name: 'College of Agriculture and Agri-Industries', file: 'CAA.docx', href: '#' },
-  { name: 'College of Arts and Sciences', file: 'CAS.docx', href: '#' },
+  { name: 'College of Humanities and Social Sciences', file: 'CHASS.docx', href: '#' },
   { name: 'College of Computing and Information Sciences', file: 'CCIS.docx', href: '#' },
   { name: 'College of Education', file: 'CED.docx', href: '#' },
+  { name: 'College of Mathematics Natural Sciences', file: 'CMNS.docx', href: '#' },
+
   {
     name: 'College of Engineering and Geo-Sciences',
-    file: 'College of Engineering and Geo-Sciences.docx',
+    file: 'CEGS.docx',
     href: '#',
   },
   { name: 'College of Forestry and Environmental Sciences', file: 'CoFES.docx', href: '#' },
@@ -384,29 +375,34 @@ onUnmounted(() => {
 /* ── Latest Posts ─────────────────────────────────────── */
 const latestPosts = [
   {
+    image: new URL('@/assets/images/card1.jpg', import.meta.url).href,
+    title: 'BSP Knowledge Resource Network',
+    date: 'February 19, 2026',
+    route: { name: 'bcppage' },
+  },
+  {
     image: new URL('@/assets/images/card2.jpg', import.meta.url).href,
     title: 'National Book Week Celebration',
     date: 'February 19, 2026',
+    route: { name: 'nbwcpage' },
   },
   {
     image: new URL('@/assets/images/card3.png', import.meta.url).href,
     title: 'STARBOOKS - DOST-STII',
     date: 'February 19, 2026',
+    route: { name: 'starbooks' },
   },
   {
     image: new URL('@/assets/images/reservation.jpg', import.meta.url).href,
     title: 'AVR Reservation',
     date: 'February 19, 2026',
+    route: { name: 'avr' },
   },
   {
     image: new URL('@/assets/images/top.jpg', import.meta.url).href,
     title: 'Top Library Borrowers and Visitors',
     date: 'February 19, 2026',
-  },
-  {
-    image: new URL('@/assets/images/newly_acc_books.png', import.meta.url).href,
-    title: 'Newly Acquired Books',
-    date: 'February 19, 2026',
+    route: { name: 'top-borrowers' },
   },
 ]
 </script>

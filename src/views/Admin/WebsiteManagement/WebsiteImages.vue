@@ -35,10 +35,7 @@ import gale from '@/assets/images/gale.jpg'
 import ebsco from '@/assets/images/EBSCO.jpg'
 
 const heroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
-const iconGif1 = new URL('@/assets/icons/idea.gif', import.meta.url).href
-const iconGif2 = new URL('@/assets/icons/opportunities.gif', import.meta.url).href
-const iconGif3 = new URL('@/assets/icons/student.gif', import.meta.url).href
-const iconGif4 = new URL('@/assets/icons/social-life.gif', import.meta.url).href
+
 
 type MediaType = 'image' | 'video'
 type PageType = 'homepage' | 'aboutpage'
@@ -1070,6 +1067,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 </template>
 
 <style scoped>
+/* style */
 .page-layout {
   display: flex;
   height: 100vh;
@@ -1794,6 +1792,122 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 
   .wm-notice-actions .wm-btn {
     width: auto;
+  }
+}
+
+/* page entrance animations */
+.wm-hero,
+.wm-stats,
+.wm-left,
+.wm-right {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(6px);
+  animation: wmFadeSlideUp 0.7s ease forwards;
+  will-change: opacity, transform, filter;
+}
+
+.wm-hero {
+  animation-delay: 0.08s;
+}
+
+.wm-stats {
+  animation-delay: 0.18s;
+}
+
+.wm-left {
+  animation-delay: 0.3s;
+}
+
+.wm-right {
+  animation-delay: 0.42s;
+}
+
+/* stat cards stagger */
+.wm-stat {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: wmFadeSlideUpSoft 0.55s ease forwards;
+}
+
+.wm-stat:nth-child(1) {
+  animation-delay: 0.22s;
+}
+
+.wm-stat:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.wm-stat:nth-child(3) {
+  animation-delay: 0.38s;
+}
+
+/* media list items stagger */
+.wm-item {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: wmFadeSlideUpSoft 0.45s ease forwards;
+}
+
+.wm-item:nth-child(1) { animation-delay: 0.42s; }
+.wm-item:nth-child(2) { animation-delay: 0.48s; }
+.wm-item:nth-child(3) { animation-delay: 0.54s; }
+.wm-item:nth-child(4) { animation-delay: 0.60s; }
+.wm-item:nth-child(5) { animation-delay: 0.66s; }
+.wm-item:nth-child(6) { animation-delay: 0.72s; }
+.wm-item:nth-child(7) { animation-delay: 0.78s; }
+.wm-item:nth-child(8) { animation-delay: 0.84s; }
+.wm-item:nth-child(9) { animation-delay: 0.90s; }
+.wm-item:nth-child(10) { animation-delay: 0.96s; }
+.wm-item:nth-child(n + 11) { animation-delay: 1s; }
+
+/* preview card content */
+.wm-preview,
+.wm-card-head {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: wmFadeSlideUpSoft 0.55s ease forwards;
+  animation-delay: 0.48s;
+}
+
+/* modal entrance */
+.wm-modal,
+.wm-notice-card {
+  animation: wmModalPop 0.28s ease;
+}
+
+@keyframes wmFadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes wmFadeSlideUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wmModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 </style>

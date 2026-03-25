@@ -1,10 +1,7 @@
 <template>
-  <div class="w-full !m-0 !p-0">
+  <div class="w-full">
     <!-- CAROUSEL -->
-    <div
-      v-if="isMediaLoaded && carouselItems.length"
-      class="relative w-full overflow-hidden"
-    >
+    <div v-if="isMediaLoaded && carouselItems.length" class="relative w-full overflow-hidden">
       <div
         class="flex transition-transform duration-700 ease-in-out"
         :style="{ transform: `translateX(-${currentIndex * slideWidth}%)` }"
@@ -66,7 +63,7 @@
       class="w-full flex items-center justify-center"
       :style="{ height: imageHeight, background: '#f4f6f4' }"
     >
-      <span style="color: rgba(13,43,15,0.55); font-weight: 700;">Loading carousel...</span>
+      <span style="color: rgba(13, 43, 15, 0.55); font-weight: 700">Loading carousel...</span>
     </div>
   </div>
 
@@ -684,6 +681,615 @@
     </div>
   </div>
 
+  <!-- LIBRARY SERVICES & RECOGNITION -->
+  <div
+    class="w-full px-6 py-20 relative overflow-hidden"
+    style="background: linear-gradient(160deg, #f0f4f0 0%, #e8efe8 50%, #f4f2ed 100%)"
+  >
+    <!-- Background texture grid -->
+    <div
+      class="absolute inset-0 pointer-events-none"
+      style="
+        background-image:
+          linear-gradient(rgba(13, 43, 15, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(13, 43, 15, 0.035) 1px, transparent 1px);
+        background-size: 52px 52px;
+      "
+    ></div>
+
+    <!-- Ambient glow orbs -->
+    <div
+      class="absolute pointer-events-none"
+      style="
+        width: 700px;
+        height: 700px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(27, 94, 32, 0.08) 0%, transparent 65%);
+        top: -250px;
+        right: -200px;
+      "
+    ></div>
+    <div
+      class="absolute pointer-events-none"
+      style="
+        width: 500px;
+        height: 500px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(249, 168, 37, 0.07) 0%, transparent 65%);
+        bottom: -150px;
+        left: -150px;
+      "
+    ></div>
+
+    <div class="w-full mx-auto relative" style="z-index: 2; max-width: 1400px">
+      <!-- ── HEADING ── -->
+      <div class="sr-item flex flex-col items-center mb-16 text-center">
+        <!-- Eyebrow -->
+        <div class="flex items-center gap-3">
+          <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+          <span
+            style="
+              font-size: 0.68rem;
+              font-weight: 800;
+              letter-spacing: 0.25em;
+              color: #0d2b0f;
+              text-transform: uppercase;
+            "
+            >Services & Recognition</span
+          >
+        </div>
+        <!-- Main title -->
+        <h2
+          style="
+            font-size: clamp(2rem, 4.5vw, 3.2rem);
+            font-weight: 900;
+            color: #0d2b0f;
+            line-height: 1;
+            letter-spacing: -0.035em;
+            margin: 0 0 12px;
+          "
+        >
+          Library Services
+          <span style="color: #f9a825; font-style: italic"> &amp; Recognition</span>
+        </h2>
+      </div>
+
+      <!-- ── CARDS ── -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- ── CARD 1: AVR ── -->
+        <RouterLink
+          :to="{ name: 'avr' }"
+          class="sr-card group relative flex flex-col overflow-hidden"
+          style="
+            border-radius: 20px;
+            background: #0d2b0f;
+            border: 1px solid rgba(249, 168, 37, 0.14);
+            box-shadow:
+              0 4px 32px rgba(13, 43, 15, 0.16),
+              0 1px 4px rgba(13, 43, 15, 0.08);
+            text-decoration: none;
+            transition:
+              transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.5s,
+              border-color 0.3s;
+          "
+          onmouseenter="
+            this.style.transform = 'translateY(-10px) scale(1.015)'
+            this.style.boxShadow = '0 28px 64px rgba(13,43,15,0.26),0 8px 20px rgba(13,43,15,0.12)'
+            this.style.borderColor = 'rgba(249,168,37,0.38)'
+          "
+          onmouseleave="
+            this.style.transform = 'translateY(0) scale(1)'
+            this.style.boxShadow = '0 4px 32px rgba(13,43,15,0.16),0 1px 4px rgba(13,43,15,0.08)'
+            this.style.borderColor = 'rgba(249,168,37,0.14)'
+          "
+        >
+          <!-- Image -->
+          <div class="relative overflow-hidden" style="height: 270px; flex-shrink: 0">
+            <img
+              :src="updateImage4"
+              alt="AVR"
+              class="w-full h-full object-cover"
+              style="transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+              onmouseenter="this.style.transform = 'scale(1.08)'"
+              onmouseleave="this.style.transform = 'scale(1)'"
+            />
+            <!-- Gradient overlay -->
+            <div
+              class="absolute inset-0"
+              style="
+                background: linear-gradient(
+                  to top,
+                  rgba(13, 43, 15, 0.96) 0%,
+                  rgba(13, 43, 15, 0.5) 40%,
+                  rgba(13, 43, 15, 0.05) 75%,
+                  transparent 100%
+                );
+              "
+            ></div>
+            <!-- Top-left badge -->
+            <div
+              class="absolute top-4 left-4 flex items-center gap-1.5"
+              style="
+                background: rgba(27, 94, 32, 0.88);
+                backdrop-filter: blur(8px);
+                padding: 4px 11px;
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+              "
+            >
+              <svg
+                width="9"
+                height="9"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span
+                style="
+                  font-size: 0.55rem;
+                  font-weight: 800;
+                  letter-spacing: 0.16em;
+                  color: white;
+                  text-transform: uppercase;
+                "
+                >Booking</span
+              >
+            </div>
+
+            <!-- Title inside image -->
+            <div class="absolute bottom-4 left-5 right-5">
+              <!-- Decorative line art icon -->
+              <div style="margin-bottom: 10px">
+                <svg
+                  width="36"
+                  height="36"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(249,168,37,0.75)"
+                  stroke-width="1.25"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                  <line x1="8" y1="14" x2="8" y2="14" stroke-width="2" />
+                  <line x1="12" y1="14" x2="12" y2="14" stroke-width="2" />
+                  <line x1="16" y1="14" x2="16" y2="14" stroke-width="2" />
+                  <line x1="8" y1="18" x2="8" y2="18" stroke-width="2" />
+                  <line x1="12" y1="18" x2="12" y2="18" stroke-width="2" />
+                </svg>
+              </div>
+              <h3
+                style="
+                  font-size: 1.3rem;
+                  font-weight: 900;
+                  color: white;
+                  line-height: 1.2;
+                  letter-spacing: -0.015em;
+                  margin: 0;
+                  transition: color 0.3s;
+                "
+              >
+                AVR Reservation
+              </h3>
+            </div>
+          </div>
+          <!-- Body -->
+          <div class="flex flex-col flex-1 px-5 py-4" style="background: #0d2b0f">
+            <p
+              style="
+                font-size: 0.74rem;
+                color: rgba(255, 255, 255, 0.4);
+                line-height: 1.7;
+                margin: 0 0 16px;
+                flex: 1;
+              "
+            >
+              Reserve the Audio-Visual Room for events, presentations, and official meetings.
+            </p>
+            <div
+              class="flex items-center justify-between"
+              style="padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.07)"
+            >
+              <span style="font-size: 0.62rem; color: rgba(255, 255, 255, 0.2); font-weight: 600"
+                >February 19, 2026</span
+              >
+              <span
+                class="flex items-center gap-1.5 group-hover:gap-2.5 transition-all duration-200"
+                style="
+                  font-size: 0.7rem;
+                  font-weight: 800;
+                  color: rgba(249, 168, 37, 0.7);
+                  letter-spacing: 0.04em;
+                  transition:
+                    gap 0.2s,
+                    color 0.2s;
+                "
+                onmouseenter="this.style.color = '#f9a825'"
+                onmouseleave="this.style.color = 'rgba(249,168,37,0.7)'"
+              >
+                Reserve now
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
+                </svg>
+              </span>
+            </div>
+          </div>
+          <!-- Bottom glow bar -->
+          <div
+            class="absolute bottom-0 left-0 right-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+            style="height: 3px; background: linear-gradient(to right, #1b5e20, #f9a825)"
+          ></div>
+        </RouterLink>
+
+        <!-- ── CARD 2: Top Borrowers (Featured) ── -->
+        <RouterLink
+          :to="{ name: 'top-borrowers' }"
+          class="sr-card group relative flex flex-col overflow-hidden"
+          style="
+            border-radius: 20px;
+            background: #0d2b0f;
+            border: 1px solid rgba(249, 168, 37, 0.28);
+            box-shadow:
+              0 4px 32px rgba(13, 43, 15, 0.2),
+              0 0 0 1px rgba(249, 168, 37, 0.08),
+              0 0 60px rgba(249, 168, 37, 0.04);
+            text-decoration: none;
+            transition:
+              transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.5s,
+              border-color 0.3s;
+          "
+          onmouseenter="
+            this.style.transform = 'translateY(-12px) scale(1.018)'
+            this.style.boxShadow =
+              '0 32px 72px rgba(13,43,15,0.3),0 0 0 1px rgba(249,168,37,0.5),0 0 60px rgba(249,168,37,0.1)'
+            this.style.borderColor = 'rgba(249,168,37,0.55)'
+          "
+          onmouseleave="
+            this.style.transform = 'translateY(0) scale(1)'
+            this.style.boxShadow =
+              '0 4px 32px rgba(13,43,15,0.2),0 0 0 1px rgba(249,168,37,0.08),0 0 60px rgba(249,168,37,0.04)'
+            this.style.borderColor = 'rgba(249,168,37,0.28)'
+          "
+        >
+          <!-- Image -->
+          <div class="relative overflow-hidden" style="height: 270px; flex-shrink: 0">
+            <img
+              :src="updateImage5"
+              alt="Top Borrowers"
+              class="w-full h-full object-cover"
+              style="transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+              onmouseenter="this.style.transform = 'scale(1.08)'"
+              onmouseleave="this.style.transform = 'scale(1)'"
+            />
+            <!-- Gold-tinted overlay -->
+            <div
+              class="absolute inset-0"
+              style="
+                background: linear-gradient(
+                  to top,
+                  rgba(13, 43, 15, 0.96) 0%,
+                  rgba(13, 43, 15, 0.45) 40%,
+                  rgba(120, 70, 0, 0.06) 75%,
+                  transparent 100%
+                );
+              "
+            ></div>
+            <!-- Badge -->
+            <div
+              class="absolute top-4 left-4 flex items-center gap-1.5"
+              style="background: rgba(249, 168, 37, 0.92); padding: 4px 11px; border-radius: 20px"
+            >
+              <svg
+                width="9"
+                height="9"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#0d2b0f"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="8" r="6" />
+                <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+              </svg>
+              <span
+                style="
+                  font-size: 0.55rem;
+                  font-weight: 800;
+                  letter-spacing: 0.16em;
+                  color: #0d2b0f;
+                  text-transform: uppercase;
+                "
+                >Recognition</span
+              >
+            </div>
+
+            <!-- Title -->
+            <div class="absolute bottom-4 left-5 right-5">
+              <!-- Decorative line art icon -->
+              <div style="margin-bottom: 10px">
+                <svg
+                  width="36"
+                  height="36"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(249,168,37,0.85)"
+                  stroke-width="1.25"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M8 21h8M12 17v4" />
+                  <path d="M5 3h14v6a7 7 0 01-14 0V3z" />
+                  <path d="M5 7H2a2 2 0 000 4c.93 0 1.74-.63 2-1.5" />
+                  <path d="M19 7h3a2 2 0 010 4c-.93 0-1.74-.63-2-1.5" />
+                  <line x1="9" y1="17" x2="15" y2="17" />
+                </svg>
+              </div>
+              <h3
+                style="
+                  font-size: 1.3rem;
+                  font-weight: 900;
+                  color: white;
+                  line-height: 1.2;
+                  letter-spacing: -0.015em;
+                  margin: 0;
+                "
+              >
+                Top Library Borrowers
+              </h3>
+            </div>
+          </div>
+          <!-- Body -->
+          <div class="flex flex-col flex-1 px-5 py-4" style="background: #0d2b0f">
+            <p
+              style="
+                font-size: 0.74rem;
+                color: rgba(255, 255, 255, 0.4);
+                line-height: 1.7;
+                margin: 0 0 16px;
+                flex: 1;
+              "
+            >
+              Celebrating our most active readers and frequent library visitors each semester.
+            </p>
+            <div
+              class="flex items-center justify-between"
+              style="padding-top: 12px; border-top: 1px solid rgba(249, 168, 37, 0.1)"
+            >
+              <span style="font-size: 0.62rem; color: rgba(255, 255, 255, 0.2); font-weight: 600"
+                >February 19, 2026</span
+              >
+              <span
+                class="flex items-center gap-1.5"
+                style="
+                  font-size: 0.7rem;
+                  font-weight: 800;
+                  color: #f9a825;
+                  letter-spacing: 0.04em;
+                  transition: color 0.2s;
+                "
+                onmouseenter="this.style.color = '#fde68a'"
+                onmouseleave="this.style.color = '#f9a825'"
+              >
+                View honorees
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
+                </svg>
+              </span>
+            </div>
+          </div>
+          <!-- Gold bottom bar -->
+          <div
+            class="absolute bottom-0 left-0 right-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+            style="height: 3px; background: linear-gradient(to right, #f9a825, #fde68a, #f9a825)"
+          ></div>
+        </RouterLink>
+
+        <!-- ── CARD 3: Newly Acquired ── -->
+        <RouterLink
+          :to="{ name: 'newlyacquiredbooks' }"
+          class="sr-card group relative flex flex-col overflow-hidden"
+          style="
+            border-radius: 20px;
+            background: #0d2b0f;
+            border: 1px solid rgba(249, 168, 37, 0.14);
+            box-shadow:
+              0 4px 32px rgba(13, 43, 15, 0.16),
+              0 1px 4px rgba(13, 43, 15, 0.08);
+            text-decoration: none;
+            transition:
+              transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.5s,
+              border-color 0.3s;
+          "
+          onmouseenter="
+            this.style.transform = 'translateY(-10px) scale(1.015)'
+            this.style.boxShadow = '0 28px 64px rgba(13,43,15,0.26),0 8px 20px rgba(13,43,15,0.12)'
+            this.style.borderColor = 'rgba(249,168,37,0.38)'
+          "
+          onmouseleave="
+            this.style.transform = 'translateY(0) scale(1)'
+            this.style.boxShadow = '0 4px 32px rgba(13,43,15,0.16),0 1px 4px rgba(13,43,15,0.08)'
+            this.style.borderColor = 'rgba(249,168,37,0.14)'
+          "
+        >
+          <!-- Image -->
+          <div class="relative overflow-hidden" style="height: 270px; flex-shrink: 0">
+            <img
+              :src="updateImage6"
+              alt="Newly Acquired"
+              class="w-full h-full object-cover"
+              style="transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+              onmouseenter="this.style.transform = 'scale(1.08)'"
+              onmouseleave="this.style.transform = 'scale(1)'"
+            />
+            <!-- Overlay -->
+            <div
+              class="absolute inset-0"
+              style="
+                background: linear-gradient(
+                  to top,
+                  rgba(13, 43, 15, 0.96) 0%,
+                  rgba(13, 43, 15, 0.5) 40%,
+                  rgba(13, 43, 15, 0.05) 75%,
+                  transparent 100%
+                );
+              "
+            ></div>
+            <!-- Badge -->
+            <div
+              class="absolute top-4 left-4 flex items-center gap-1.5"
+              style="
+                background: rgba(27, 94, 32, 0.88);
+                backdrop-filter: blur(8px);
+                padding: 4px 11px;
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+              "
+            >
+              <svg
+                width="9"
+                height="9"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+              </svg>
+              <span
+                style="
+                  font-size: 0.55rem;
+                  font-weight: 800;
+                  letter-spacing: 0.16em;
+                  color: white;
+                  text-transform: uppercase;
+                "
+                >New Arrivals</span
+              >
+            </div>
+
+            <!-- Title -->
+            <div class="absolute bottom-4 left-5 right-5">
+              <!-- Decorative line art icon -->
+              <div style="margin-bottom: 10px">
+                <svg
+                  width="36"
+                  height="36"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="rgba(249,168,37,0.75)"
+                  stroke-width="1.25"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                  <line x1="9" y1="7" x2="15" y2="7" />
+                  <line x1="9" y1="11" x2="15" y2="11" />
+                  <line x1="9" y1="15" x2="12" y2="15" />
+                </svg>
+              </div>
+              <h3
+                style="
+                  font-size: 1.3rem;
+                  font-weight: 900;
+                  color: white;
+                  line-height: 1.2;
+                  letter-spacing: -0.015em;
+                  margin: 0;
+                "
+              >
+                Newly Acquired Books
+              </h3>
+            </div>
+          </div>
+          <!-- Body -->
+          <div class="flex flex-col flex-1 px-5 py-4" style="background: #0d2b0f">
+            <p
+              style="
+                font-size: 0.74rem;
+                color: rgba(255, 255, 255, 0.4);
+                line-height: 1.7;
+                margin: 0 0 16px;
+                flex: 1;
+              "
+            >
+              Discover the latest additions to our growing collection of books and references.
+            </p>
+            <div
+              class="flex items-center justify-between"
+              style="padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.07)"
+            >
+              <span style="font-size: 0.62rem; color: rgba(255, 255, 255, 0.2); font-weight: 600"
+                >February 19, 2026</span
+              >
+              <span
+                class="flex items-center gap-1.5"
+                style="
+                  font-size: 0.7rem;
+                  font-weight: 800;
+                  color: rgba(249, 168, 37, 0.7);
+                  letter-spacing: 0.04em;
+                  transition: color 0.2s;
+                "
+                onmouseenter="this.style.color = '#f9a825'"
+                onmouseleave="this.style.color = 'rgba(249,168,37,0.7)'"
+              >
+                Browse collection
+                <svg
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
+                </svg>
+              </span>
+            </div>
+          </div>
+          <!-- Bottom glow bar -->
+          <div
+            class="absolute bottom-0 left-0 right-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
+            style="height: 3px; background: linear-gradient(to right, #1b5e20, #f9a825)"
+          ></div>
+        </RouterLink>
+      </div>
+    </div>
+  </div>
+
   <!-- LIBRARY UPDATES -->
   <div class="w-full px-6 py-16" style="background: #f4f6f4">
     <div class="w-[100%] mx-auto">
@@ -731,21 +1337,6 @@
               class="absolute inset-0"
               style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
             ></div>
-            <div class="absolute top-4 left-4">
-              <span
-                style="
-                  font-size: 0.6rem;
-                  font-weight: 800;
-                  letter-spacing: 0.15em;
-                  text-transform: uppercase;
-                  background: #f9a825;
-                  color: #0d2b0f;
-                  padding: 3px 10px;
-                  border-radius: 20px;
-                "
-                >News</span
-              >
-            </div>
           </div>
           <div class="p-5">
             <h3
@@ -801,21 +1392,6 @@
               class="absolute inset-0"
               style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
             ></div>
-            <div class="absolute top-4 left-4">
-              <span
-                style="
-                  font-size: 0.6rem;
-                  font-weight: 800;
-                  letter-spacing: 0.15em;
-                  text-transform: uppercase;
-                  background: #f9a825;
-                  color: #0d2b0f;
-                  padding: 3px 10px;
-                  border-radius: 20px;
-                "
-                >Event</span
-              >
-            </div>
           </div>
           <div class="p-5">
             <h3
@@ -871,21 +1447,6 @@
               class="absolute inset-0"
               style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
             ></div>
-            <div class="absolute top-4 left-4">
-              <span
-                style="
-                  font-size: 0.6rem;
-                  font-weight: 800;
-                  letter-spacing: 0.15em;
-                  text-transform: uppercase;
-                  background: #1b5e20;
-                  color: white;
-                  padding: 3px 10px;
-                  border-radius: 20px;
-                "
-                >Service</span
-              >
-            </div>
           </div>
           <div class="p-5">
             <h3
@@ -893,212 +1454,6 @@
               class="mb-3"
             >
               STARBOOKS - DOST-STII
-            </h3>
-            <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
-                >February 19, 2026</span
-              ><span
-                class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
-                style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-                >Read more
-                <svg
-                  style="width: 12px; height: 12px"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  /></svg
-              ></span>
-            </div>
-          </div>
-          <div
-            class="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-            style="background: linear-gradient(to right, #1b5e20, #f9a825)"
-          ></div>
-        </RouterLink>
-
-        <RouterLink
-          :to="{ name: 'avr' }"
-          class="sr-card group block relative overflow-hidden rounded-2xl"
-          style="box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08); background: white"
-        >
-          <div class="relative overflow-hidden" style="height: 220px">
-            <img
-              :src="updateImage4"
-              alt="AVR"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div
-              class="absolute inset-0"
-              style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
-            ></div>
-            <div class="absolute top-4 left-4">
-              <span
-                style="
-                  font-size: 0.6rem;
-                  font-weight: 800;
-                  letter-spacing: 0.15em;
-                  text-transform: uppercase;
-                  background: #1b5e20;
-                  color: white;
-                  padding: 3px 10px;
-                  border-radius: 20px;
-                "
-                >Service</span
-              >
-            </div>
-          </div>
-          <div class="p-5">
-            <h3
-              style="font-size: 0.95rem; font-weight: 800; color: #0d2b0f; line-height: 1.4"
-              class="mb-3"
-            >
-              AVR Reservation
-            </h3>
-            <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
-                >February 19, 2026</span
-              ><span
-                class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
-                style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-                >Read more
-                <svg
-                  style="width: 12px; height: 12px"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  /></svg
-              ></span>
-            </div>
-          </div>
-          <div
-            class="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-            style="background: linear-gradient(to right, #1b5e20, #f9a825)"
-          ></div>
-        </RouterLink>
-
-        <RouterLink
-          :to="{ name: 'top-borrowers' }"
-          class="sr-card group block relative overflow-hidden rounded-2xl"
-          style="
-            box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08);
-            background: white;
-            transition-delay: 0.08s;
-          "
-        >
-          <div class="relative overflow-hidden" style="height: 220px">
-            <img
-              :src="updateImage5"
-              alt="Top Borrowers"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div
-              class="absolute inset-0"
-              style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
-            ></div>
-            <div class="absolute top-4 left-4">
-              <span
-                style="
-                  font-size: 0.6rem;
-                  font-weight: 800;
-                  letter-spacing: 0.15em;
-                  text-transform: uppercase;
-                  background: #f9a825;
-                  color: #0d2b0f;
-                  padding: 3px 10px;
-                  border-radius: 20px;
-                "
-                >Recognition</span
-              >
-            </div>
-          </div>
-          <div class="p-5">
-            <h3
-              style="font-size: 0.95rem; font-weight: 800; color: #0d2b0f; line-height: 1.4"
-              class="mb-3"
-            >
-              Top Library Borrowers and Visitors
-            </h3>
-            <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
-                >February 19, 2026</span
-              ><span
-                class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
-                style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-                >Read more
-                <svg
-                  style="width: 12px; height: 12px"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  /></svg
-              ></span>
-            </div>
-          </div>
-          <div
-            class="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-            style="background: linear-gradient(to right, #1b5e20, #f9a825)"
-          ></div>
-        </RouterLink>
-
-        <RouterLink
-          :to="{ name: 'newlyacquiredbooks' }"
-          class="sr-card group block relative overflow-hidden rounded-2xl"
-          style="
-            box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08);
-            background: white;
-            transition-delay: 0.16s;
-          "
-        >
-          <div class="relative overflow-hidden" style="height: 220px">
-            <img
-              :src="updateImage6"
-              alt="Newly Acquired"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div
-              class="absolute inset-0"
-              style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
-            ></div>
-            <div class="absolute top-4 left-4">
-              <span
-                style="
-                  font-size: 0.6rem;
-                  font-weight: 800;
-                  letter-spacing: 0.15em;
-                  text-transform: uppercase;
-                  background: #1b5e20;
-                  color: white;
-                  padding: 3px 10px;
-                  border-radius: 20px;
-                "
-                >Service</span
-              >
-            </div>
-          </div>
-          <div class="p-5">
-            <h3
-              style="font-size: 0.95rem; font-weight: 800; color: #0d2b0f; line-height: 1.4"
-              class="mb-3"
-            >
-              Newly Acquired Books
             </h3>
             <div class="flex items-center justify-between">
               <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
@@ -1944,13 +2299,21 @@ const usefulImage5 = computed(() => usefulItems.value[4]?.src || gale)
 const usefulImage6 = computed(() => usefulItems.value[5]?.src || ebsco)
 
 const usefulLink1 = computed(() => usefulItems.value[0]?.externalLink || 'https://www.elib.gov.ph')
-const usefulLink2 = computed(() => usefulItems.value[1]?.externalLink || 'https://www.carsu.edu.ph/')
-const usefulLink3 = computed(() => usefulItems.value[2]?.externalLink || 'http://mylibrary.carsu.edu.ph/')
+const usefulLink2 = computed(
+  () => usefulItems.value[1]?.externalLink || 'https://www.carsu.edu.ph/',
+)
+const usefulLink3 = computed(
+  () => usefulItems.value[2]?.externalLink || 'http://mylibrary.carsu.edu.ph/',
+)
 const usefulLink4 = computed(
-  () => usefulItems.value[3]?.externalLink || 'https://www.journals.uchicago.edu/action/showPublications',
+  () =>
+    usefulItems.value[3]?.externalLink ||
+    'https://www.journals.uchicago.edu/action/showPublications',
 )
 const usefulLink5 = computed(
-  () => usefulItems.value[4]?.externalLink || 'https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU',
+  () =>
+    usefulItems.value[4]?.externalLink ||
+    'https://link.gale.com/apps/menu?userGroupName=phcarsu&prodId=MENU',
 )
 const usefulLink6 = computed(() => usefulItems.value[5]?.externalLink || 'https://login.ebsco.com')
 
