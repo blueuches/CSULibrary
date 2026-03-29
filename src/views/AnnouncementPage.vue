@@ -7,7 +7,7 @@
             <span class="kicker-line"></span>
             <span class="kicker-text">WHAT'S HAPPENING AT CSU LIBRARY</span>
           </span>
-          <h1 class="section-headline title-headline"><span>UPCOMING </span>EVENTS</h1>
+          <h1 class="section-headline title-headline"><span>ANNOUNCEMENTS & </span>EVENTS</h1>
         </div>
       </div>
 

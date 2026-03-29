@@ -15,7 +15,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>Books Analytics</span>
+            <span>Analytics</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>Books</span>
           </div>
 
           <h1 class="header-title">Library <span style="color: #f9a825">Book Analytics</span></h1>

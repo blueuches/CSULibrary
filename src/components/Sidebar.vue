@@ -105,12 +105,12 @@
         <div
           class="min-w-[40px] h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs text-white font-bold"
         >
-          ADM
+          {{ roleInitial }}
         </div>
 
         <transition name="fade-fast">
           <div v-if="!isCollapsed" class="overflow-hidden text-white uppercase">
-            <p class="text-[10px] font-black tracking-tight">Administrator</p>
+            <p class="text-[10px] font-black tracking-tight"> {{ role || 'User' }}</p>
             <p class="text-[9px] text-[#f9a825] font-bold italic opacity-90">Session Active</p>
           </div>
         </transition>
@@ -120,9 +120,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '@/lib/supabase'
+
+const firstName = ref('')
+const role = ref('')
+
+onMounted(async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('first_name, role')
+      .eq('email', user.email)
+      .single()
+
+    if (data) {
+      firstName.value = data.first_name
+      role.value = data.role
+    }
+  }
+})
 
 const router = useRouter()
 const route = useRoute()
@@ -175,7 +195,7 @@ const menuItems = [
 
   {
     name: 'ANALYTICS',
-    label: 'Analytics',
+    label: 'Bibliometrics',
     route: '/admin/analytics',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <line x1="18" y1="20" x2="18" y2="10"/>
@@ -227,6 +247,13 @@ const menuItems = [
     </svg>`,
   },
 ]
+
+const roleInitial = computed(() => {
+  if (role.value === 'staff') return 'ST'
+  if (role.value === 'admin') return 'ADM'
+  if (role.value === 'super_admin') return 'SADM'
+  return '?'
+})
 </script>
 
 <style scoped>
