@@ -26,10 +26,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>ANNOUNCEMENT MANAGEMENT</span>
+            <span>ANNOUNCEMENT</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>CREATE NEWS ANNOUNCEMENT</span>
           </div>
           <h1 class="header-title intro-title">
-            Library <span class="text-yellow-500">Announcements</span>
+            News <span class="text-yellow-500">Announcements</span>
           </h1>
           <p class="header-sub">Create a new news article for BSP, NBWC, Starbooks, and more.</p>
         </div>

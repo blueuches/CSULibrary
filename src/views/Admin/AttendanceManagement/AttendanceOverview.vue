@@ -25,6 +25,17 @@
         </div>
       </header>
 
+      <!-- ══ ATTENDANCE ACTION BUTTONS ══ -->
+<div class="attn-actions">
+  <button @click="$router.push('/admin/attendance/settings')">Settings</button>
+  <button @click="$router.push('/admin/attendance/report')">Report</button>
+  <button @click="$router.push('/admin/attendance/import')">Import Records</button>
+  <button @click="$router.push('/admin/attendance/search')">Search</button>
+  <button @click="$router.push('/admin/attendance/students')">Students</button>
+  <button @click="$router.push('/admin/attendance/ranking')">Ranking</button>
+  <button @click="$router.push('/admin/attendance/visitors')">Visitors</button>
+</div>
+
       <!-- ══ QUICK STAT STRIP ══ -->
       <div class="stat-strip">
         <div
@@ -1350,5 +1361,34 @@ const handleTabChange = (name: string) => {
   .stat-strip {
     grid-template-columns: 1fr;
   }
+}
+
+/* ─── ATTENDANCE ACTIONS ─── */
+.attn-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.attn-actions button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(13, 43, 15, 0.1);
+  background: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0d2b0f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.attn-actions button:hover {
+  background: #0d2b0f;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(13, 43, 15, 0.15);
 }
 </style>
