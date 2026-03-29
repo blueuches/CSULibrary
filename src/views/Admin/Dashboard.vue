@@ -13,12 +13,6 @@
           <div class="text-right hidden md:block">
             <p class="text-xs font-medium text-[#1b5e20]">{{ currentDate }}</p>
           </div>
-            <h1
-    @click="handleLogout"
-    class="cursor-pointer text-red-600 hover:text-red-800 font-bold"
-  >
-    LOGOUT
-  </h1>
         </div>
       </header>
 
@@ -113,18 +107,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
-import { useAuth } from '@/composables/useAuth'
-
-const { logout } = useAuth()
-
-const handleLogout = async () => {
-  try {
-    await logout()
-  } catch (err: any) {
-    console.error(err)
-    alert('Failed to logout')
-  }
-}
 
 const activeTab = ref('DASHBOARD')
 

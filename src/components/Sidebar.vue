@@ -49,7 +49,6 @@
         ]"
         class="w-full flex items-center px-4 py-3.5 rounded-xl transition-all duration-200 outline-none"
       >
-        <!-- ICON -->
         <span
           class="min-w-[32px] flex items-center justify-center transition-colors duration-200"
           :class="route.path === item.route ? 'text-[#062009]' : 'text-[#f9a825]'"
@@ -66,10 +65,42 @@
           </span>
         </transition>
       </button>
+      <!-- Logout Button -->
+      <button
+        @click="handleLogout"
+        class="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 outline-none text-white/80 hover:bg-[#ff1a1a] hover:text-white group"
+      >
+        <span class="min-w-[32px] flex items-center justify-center text-[#f9a825]">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </span>
+
+        <transition name="fade-fast">
+          <span
+            v-if="!isCollapsed"
+            class="ml-2 whitespace-nowrap uppercase tracking-widest text-[11px] font-bold text-white"
+          >
+            Logout
+          </span>
+        </transition>
+      </button>
     </nav>
 
     <!-- USER FOOTER -->
-    <div class="p-4 bg-black/20 border-t border-white/5 h-24 flex items-center">
+    <div class="p-4 bg-black/20 border-t border-white/5 flex flex-col gap-3">
+      <!-- User Info -->
       <div class="flex items-center gap-3">
         <div
           class="min-w-[40px] h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs text-white font-bold"
@@ -91,6 +122,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
 const route = useRoute()
@@ -99,6 +131,11 @@ const isCollapsed = ref(true)
 
 function goTo(path: string) {
   router.push(path)
+}
+
+async function handleLogout() {
+  await supabase.auth.signOut()
+  router.push('/admin/login')
 }
 
 const menuItems = [
