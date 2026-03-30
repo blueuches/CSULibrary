@@ -49,7 +49,6 @@
         ]"
         class="w-full flex items-center px-4 py-3.5 rounded-xl transition-all duration-200 outline-none"
       >
-        <!-- ICON -->
         <span
           class="min-w-[32px] flex items-center justify-center transition-colors duration-200"
           :class="route.path === item.route ? 'text-[#062009]' : 'text-[#f9a825]'"
@@ -66,20 +65,52 @@
           </span>
         </transition>
       </button>
+      <!-- Logout Button -->
+      <button
+        @click="handleLogout"
+        class="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 outline-none text-white/80 hover:bg-[#ff1a1a] hover:text-white group"
+      >
+        <span class="min-w-[32px] flex items-center justify-center text-[#f9a825]">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </span>
+
+        <transition name="fade-fast">
+          <span
+            v-if="!isCollapsed"
+            class="ml-2 whitespace-nowrap uppercase tracking-widest text-[11px] font-bold text-white"
+          >
+            Logout
+          </span>
+        </transition>
+      </button>
     </nav>
 
     <!-- USER FOOTER -->
-    <div class="p-4 bg-black/20 border-t border-white/5 h-24 flex items-center">
+    <div class="p-4 bg-black/20 border-t border-white/5 flex flex-col gap-3">
+      <!-- User Info -->
       <div class="flex items-center gap-3">
         <div
           class="min-w-[40px] h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs text-white font-bold"
         >
-          ADM
+          {{ roleInitial }}
         </div>
 
         <transition name="fade-fast">
           <div v-if="!isCollapsed" class="overflow-hidden text-white uppercase">
-            <p class="text-[10px] font-black tracking-tight">Administrator</p>
+            <p class="text-[10px] font-black tracking-tight"> {{ role || 'User' }}</p>
             <p class="text-[9px] text-[#f9a825] font-bold italic opacity-90">Session Active</p>
           </div>
         </transition>
@@ -89,8 +120,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { supabase } from '@/lib/supabase'
+
+const firstName = ref('')
+const role = ref('')
+
+onMounted(async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('first_name, role')
+      .eq('email', user.email)
+      .single()
+
+    if (data) {
+      firstName.value = data.first_name
+      role.value = data.role
+    }
+  }
+})
 
 const router = useRouter()
 const route = useRoute()
@@ -99,6 +151,11 @@ const isCollapsed = ref(true)
 
 function goTo(path: string) {
   router.push(path)
+}
+
+async function handleLogout() {
+  await supabase.auth.signOut()
+  router.push('/admin/login')
 }
 
 const menuItems = [
@@ -124,31 +181,7 @@ const menuItems = [
     </svg>`,
   },
 
-  {
-    name: 'PERSONNEL',
-    label: 'Personnel',
-    route: '/admin/personnel',
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>`,
-  },
-
-  {
-    name: 'ANALYTICS',
-    label: 'Analytics',
-    route: '/admin/analytics',
-    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="18" y1="20" x2="18" y2="10"/>
-      <line x1="12" y1="20" x2="12" y2="4"/>
-      <line x1="6" y1="20" x2="6" y2="14"/>
-      <line x1="2" y1="20" x2="22" y2="20"/>
-    </svg>`,
-  },
-
-  {
+    {
     name: 'ATTENDANCE',
     label: 'Attendance',
     route: '/admin/attendance',
@@ -160,12 +193,14 @@ const menuItems = [
   },
 
   {
-    name: 'SERVICES',
-    label: 'Services',
-    route: '/admin/services',
+    name: 'ANALYTICS',
+    label: 'Bibliometrics',
+    route: '/admin/analytics',
     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+      <line x1="18" y1="20" x2="18" y2="10"/>
+      <line x1="12" y1="20" x2="12" y2="4"/>
+      <line x1="6" y1="20" x2="6" y2="14"/>
+      <line x1="2" y1="20" x2="22" y2="20"/>
     </svg>`,
   },
 
@@ -180,6 +215,16 @@ const menuItems = [
   },
 
   {
+    name: 'SERVICES',
+    label: 'Services',
+    route: '/admin/services',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+    </svg>`,
+  },
+
+  {
     name: 'WEBSITE',
     label: 'Website',
     route: '/admin/website',
@@ -189,7 +234,26 @@ const menuItems = [
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
     </svg>`,
   },
+
+    {
+    name: 'PERSONNEL',
+    label: 'Users',
+    route: '/admin/personnel',
+    icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>`,
+  },
 ]
+
+const roleInitial = computed(() => {
+  if (role.value === 'staff') return 'ST'
+  if (role.value === 'admin') return 'ADM'
+  if (role.value === 'super_admin') return 'SADM'
+  return '?'
+})
 </script>
 
 <style scoped>

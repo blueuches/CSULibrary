@@ -13,12 +13,6 @@
           <div class="text-right hidden md:block">
             <p class="text-xs font-medium text-[#1b5e20]">{{ currentDate }}</p>
           </div>
-            <h1
-    @click="handleLogout"
-    class="cursor-pointer text-red-600 hover:text-red-800 font-bold"
-  >
-    LOGOUT
-  </h1>
         </div>
       </header>
 
@@ -34,7 +28,9 @@
                   <h2
                     class="text-[#0d2b0f] text-6xl md:text-7xl font-black tracking-tighter anim-slide-up"
                   >
-                    Welcome, <span class="text-[#f9a825] anim-shimmer">Admin</span>.
+                    Welcome, <span class="text-[#f9a825] anim-shimmer">
+                      {{ firstName || 'User' }}
+                    </span>.
                   </h2>
                 </div>
               </div>
@@ -111,20 +107,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
-import { useAuth } from '@/composables/useAuth'
+import { supabase } from '@/lib/supabase' // adjust path if needed
 
-const { logout } = useAuth()
+const firstName = ref('')
 
-const handleLogout = async () => {
-  try {
-    await logout()
-  } catch (err: any) {
-    console.error(err)
-    alert('Failed to logout')
+onMounted(async () => {
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    const { data, error } = await supabase
+      .from('users')
+      .select('first_name')
+      .eq('email', user.email)
+      .single()
+
+    if (data) {
+      firstName.value = data.first_name
+    }
   }
-}
+})
 
 const activeTab = ref('DASHBOARD')
 

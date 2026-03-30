@@ -159,7 +159,7 @@
                     <path d="M12 14v7" />
                   </svg>
                 </div>
-                <span class="cur-eyebrow">CURRICULUM</span>
+                <span class="cur-eyebrow">BORROWING</span>
               </div>
 
               <div class="cur-number">348</div>
@@ -180,8 +180,8 @@
                 <span class="cur-tag cur-tag--gold">Graduate</span>
               </div>
 
-              <button class="cur-cta" @click="router.push('/admin/services/curriculum')">
-                MANAGE CURRICULUM
+              <button class="cur-cta" @click="router.push('/admin/services/borrowing')">
+                MANAGE BORROWING
                 <svg
                   width="13"
                   height="13"
