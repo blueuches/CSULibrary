@@ -34,6 +34,12 @@ import ReportBooks from '@/views/Admin/Reports&Analytics/ReportBooks.vue'
 import AttendanceOverview from '@/views/Admin/AttendanceManagement/AttendanceOverview.vue'
 import AttendanceLogs from '@/views/Admin/AttendanceManagement/AttendanceLogs.vue'
 import ImportRecord from '@/views/Admin/AttendanceManagement/ImportRecord.vue'
+import AttendanceGeneral from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceGeneral.vue'
+import AttendanceRanking from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceRanking.vue'
+import AttendanceReport from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceReport.vue'
+import AttendanceSearch from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceSearch.vue'
+import SearchRecord from '@/views/Admin/AttendanceManagement/AttendanceTabs/SearchRecord.vue'
+import VisitorAttendance from '@/views/Admin/AttendanceManagement/AttendanceTabs/VisitorAttendance.vue'
 import ServicesOverview from '@/views/Admin/ServicesManagement/ServicesOverview.vue'
 import RoomReservation from '@/views/Admin/ServicesManagement/RoomReservation.vue'
 import ManageRecords from '@/views/Admin/ServicesManagement/ManageRecords.vue'
@@ -42,6 +48,7 @@ import ManageCurriculum from '@/views/Admin/ServicesManagement/ManageCurriculum.
 import ManageBorrowing from '@/views/Admin/ServicesManagement/ManageBorrowing.vue'
 import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
 import WebsiteImages from '@/views/Admin/WebsiteManagement/WebsiteImages.vue'
+import UsersManagement from '@/views/Admin/AdminManagement/UsersManagement.vue'
 import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
@@ -82,6 +89,12 @@ const router = createRouter({
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/settings', name: 'attendance-settings', component: AttendanceGeneral, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/report', name: 'attendance-report', component: AttendanceReport, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/search', name: 'attendance-search', component: AttendanceSearch, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/students', name: 'attendance-students', component: SearchRecord, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/ranking', name: 'attendance-ranking', component: AttendanceRanking, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/visitors', name: 'admin-attendance-visitors', component: VisitorAttendance, meta: { requiresAuth: true }  },
     { path: '/admin/services', name: 'admin-services', component: ServicesOverview, meta: { requiresAuth: true }  },
     { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation, meta: { requiresAuth: true }  },
     { path: '/admin/services/records', name: 'services-records', component: ManageRecords, meta: { requiresAuth: true }  },
@@ -90,7 +103,7 @@ const router = createRouter({
     { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing, meta: { requiresAuth: true }  },
     { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAuth: true }  },
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages, meta: { requiresAuth: true }  },
-
+    { path: '/admin/management', name: 'admin-management', component: UsersManagement, meta: { requiresAuth: true }  },
   ],
    scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

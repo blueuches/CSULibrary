@@ -12,7 +12,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M9 5l7 7-7 7" />
               </svg>
-              <span>User Analytics</span>
+              <span>Analytics</span>
             </div>
             <h1 class="header-title intro-title">
               Library <span class="text-yellow-500">Analytics</span>
