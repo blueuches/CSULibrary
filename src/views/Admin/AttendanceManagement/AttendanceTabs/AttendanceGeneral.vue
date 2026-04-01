@@ -1,56 +1,33 @@
 <template>
   <div class="page-shell">
-    <!-- ══ ACTUAL SIDEBAR COMPONENT ══ -->
     <Sidebar />
 
-    <!-- ══ MAIN CONTENT ══ -->
     <div class="page-scroll">
-      <!-- ── HEADER ── -->
+      <!-- HEADER -->
       <header class="attn-header">
         <div>
           <div class="header-breadcrumb">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/attendance')"
-            >
-              BACK
-            </span>
-
+            <span class="breadcrumb-back" @click="$router.push('/admin/attendance')">Back</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>ATTENDANCE</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
+            <span>settings</span>
           </div>
+
           <h1 class="hero-title">
             <span class="hero-word-dark hero-underlined">Library</span>
-            <span class="hero-word-gold"> Settings</span>
           </h1>
           <p class="hero-subtitle">Configure school info, security, and system preferences</p>
         </div>
       </header>
 
-      <!-- ── ACTION NAV ── -->
-      <div class="attn-actions">
-        <button
-          v-for="tab in actionTabs"
-          :key="tab.label"
-          :class="{ 'action-active': tab.label === 'Settings' }"
-          @click="$router.push(tab.route)"
-        >
-          {{ tab.label }}
-        </button>
-      </div>
-
-      <!-- ── FORM GRID ── -->
+      <!-- FORM GRID -->
       <div class="settings-grid">
         <!-- LEFT COL -->
         <div class="settings-col">
           <!-- School / Library Info -->
-          <div class="settings-card">
-            <div class="card-eyebrow">SCHOOL / LIBRARY INFORMATION</div>
+          <div class="settings-card" style="--delay: 0s">
+            <div class="card-eyebrow">School / Library Information</div>
             <div class="field-stack">
               <div class="field-row">
                 <label class="field-label">School Name</label>
@@ -96,7 +73,7 @@
               </div>
 
               <div class="field-row">
-                <label class="field-label">Library Open/Close</label>
+                <label class="field-label">Library Hours</label>
                 <div class="field-right time-row">
                   <input class="field-input field-input--xs" type="number" value="8" />
                   <span class="time-sep">am –</span>
@@ -108,8 +85,8 @@
           </div>
 
           <!-- Play Video / Announcements -->
-          <div class="settings-card">
-            <div class="card-eyebrow">PLAY VIDEO / SHOW ANNOUNCEMENTS</div>
+          <div class="settings-card" style="--delay: 0.2s">
+            <div class="card-eyebrow">Play Video / Show Announcements</div>
             <div class="radio-stack">
               <label class="radio-row">
                 <span class="radio-wrap">
@@ -160,8 +137,8 @@
         <!-- RIGHT COL -->
         <div class="settings-col">
           <!-- Security -->
-          <div class="settings-card">
-            <div class="card-eyebrow">SECURITY</div>
+          <div class="settings-card" style="--delay: 0.1s">
+            <div class="card-eyebrow">Security</div>
             <div class="field-row">
               <label class="field-label">Admin Password</label>
               <div class="field-right">
@@ -178,8 +155,8 @@
           </div>
 
           <!-- Software Settings -->
-          <div class="settings-card">
-            <div class="card-eyebrow">SOFTWARE SETTINGS</div>
+          <div class="settings-card" style="--delay: 0.3s">
+            <div class="card-eyebrow">Software Settings</div>
             <div class="check-stack">
               <label class="check-row">
                 <span class="check-wrap">
@@ -199,8 +176,8 @@
           </div>
 
           <!-- Admin / Librarian Info -->
-          <div class="settings-card">
-            <div class="card-eyebrow">ADMINISTRATOR / LIBRARIAN INFORMATION</div>
+          <div class="settings-card" style="--delay: 0.4s">
+            <div class="card-eyebrow">Administrator / Librarian Information</div>
             <div class="field-stack">
               <div class="field-col">
                 <label class="field-label">Complete Name</label>
@@ -257,26 +234,16 @@ import Sidebar from '@/components/Sidebar.vue'
 
 const announceMode = ref('none')
 const showPass = ref(false)
-
-const actionTabs = [
-  { label: 'Settings', route: '/admin/attendance/settings' },
-  { label: 'Report', route: '/admin/attendance/report' },
-  { label: 'Import Records', route: '/admin/attendance/import' },
-  { label: 'Search', route: '/admin/attendance/search' },
-  { label: 'Students', route: '/admin/attendance/students' },
-  { label: 'Ranking', route: '/admin/attendance/ranking' },
-  { label: 'Visitors', route: '/admin/attendance/visitors' },
-]
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,900;1,700&family=DM+Sans:wght@400;500;600;700&display=swap');
 
-/* ─── KEYFRAMES ─── */
+/* ── KEYFRAMES ── */
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -291,8 +258,18 @@ const actionTabs = [
     transform: scaleX(1);
   }
 }
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
-/* ─── SHELL ─── */
+/* ── SHELL ── */
 .page-shell {
   display: flex;
   height: 100vh;
@@ -301,7 +278,7 @@ const actionTabs = [
   font-family: 'DM Sans', sans-serif;
 }
 
-/* ─── SCROLL AREA ─── */
+/* ── SCROLL AREA ── */
 .page-scroll {
   flex: 1;
   overflow-y: auto;
@@ -317,26 +294,38 @@ const actionTabs = [
   border-radius: 5px;
 }
 
-/* ─── HEADER ─── */
+/* ── HEADER ── */
 .attn-header {
   margin-bottom: 28px;
-  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
 .header-breadcrumb {
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(6, 32, 9, 0.4);
   display: flex;
   align-items: center;
   gap: 5px;
   margin-bottom: 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(6, 32, 9, 0.38);
+  letter-spacing: 0.04em;
 }
 .header-breadcrumb svg {
-  width: 11px;
-  height: 11px;
-  opacity: 0.4;
+  width: 10px;
+  height: 10px;
+  opacity: 0.35;
+  flex-shrink: 0;
+}
+.breadcrumb-back {
+  cursor: pointer;
+  transition: color 0.18s;
+}
+.breadcrumb-back:hover {
+  color: #062009;
+}
+.breadcrumb-current {
+  color: rgba(6, 32, 9, 0.65);
+  font-weight: 700;
 }
 
 .hero-title {
@@ -351,9 +340,7 @@ const actionTabs = [
 .hero-word-dark {
   color: #062009;
 }
-.hero-word-gold {
-  color: #f9a825;
-}
+
 .hero-underlined {
   position: relative;
   display: inline-block;
@@ -368,49 +355,16 @@ const actionTabs = [
   background: linear-gradient(to right, #062009, #f9a825);
   border-radius: 3px;
   transform-origin: left;
-  animation: underlineGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+  animation: underlineGrow 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
 .hero-subtitle {
   font-size: 0.82rem;
   color: #6b7280;
   margin-top: 16px;
 }
 
-/* ─── ACTION NAV ─── */
-.attn-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 28px;
-  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-}
-.attn-actions button {
-  padding: 9px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(6, 32, 9, 0.08);
-  background: white;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #062009;
-  cursor: pointer;
-  transition: all 0.18s;
-}
-.attn-actions button:hover {
-  background: #062009;
-  color: white;
-  border-color: #062009;
-  box-shadow: 0 6px 14px rgba(6, 32, 9, 0.18);
-}
-.attn-actions button.action-active {
-  background: #062009;
-  color: #f9a825;
-  border-color: #062009;
-  box-shadow: 0 6px 14px rgba(6, 32, 9, 0.22);
-}
-
-/* ─── SETTINGS GRID ─── */
+/* ── SETTINGS GRID ── */
 .settings-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -423,19 +377,27 @@ const actionTabs = [
   gap: 16px;
 }
 
-/* ─── CARD ─── */
+/* ── CARD ── */
 .settings-card {
   background: white;
-  border: 1px solid rgba(6, 32, 9, 0.08);
+  border: 1px solid rgba(6, 32, 9, 0.07);
   border-radius: 20px;
   padding: 22px 22px 20px;
-  box-shadow: 0 2px 10px rgba(6, 32, 9, 0.04);
-  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both;
+  box-shadow: 0 2px 12px rgba(6, 32, 9, 0.05);
+  animation: cardIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s) both;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
 }
+.settings-card:hover {
+  box-shadow: 0 6px 24px rgba(6, 32, 9, 0.09);
+  transform: translateY(-1px);
+}
+
 .card-eyebrow {
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   color: #c8930a;
   text-transform: uppercase;
   margin-bottom: 16px;
@@ -443,7 +405,7 @@ const actionTabs = [
   border-bottom: 1.5px solid #f5edda;
 }
 
-/* ─── FIELDS ─── */
+/* ── FIELDS ── */
 .field-stack {
   display: flex;
   flex-direction: column;
@@ -483,11 +445,14 @@ const actionTabs = [
   font-size: 0.78rem;
   color: #062009;
   outline: none;
-  transition: border-color 0.15s;
   min-width: 0;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
 }
 .field-input:focus {
   border-color: #062009;
+  box-shadow: 0 0 0 3px rgba(6, 32, 9, 0.08);
 }
 .field-input.flex-1 {
   flex: 1;
@@ -502,6 +467,7 @@ const actionTabs = [
   width: 52px;
   text-align: center;
 }
+
 .field-meta {
   font-size: 0.66rem;
   color: #9ba390;
@@ -519,7 +485,7 @@ const actionTabs = [
   color: rgba(6, 32, 9, 0.4);
 }
 
-/* ─── GHOST BTN ─── */
+/* ── GHOST BTN ── */
 .ghost-btn {
   font-size: 0.66rem;
   font-weight: 700;
@@ -531,15 +497,20 @@ const actionTabs = [
   cursor: pointer;
   white-space: nowrap;
   transition:
-    background 0.15s,
-    border-color 0.15s;
+    background 0.18s,
+    border-color 0.18s,
+    transform 0.15s;
 }
 .ghost-btn:hover {
   background: #eaede4;
   border-color: #c5ccbe;
+  transform: translateY(-1px);
+}
+.ghost-btn:active {
+  transform: translateY(0);
 }
 
-/* ─── TOGGLE PILL ─── */
+/* ── TOGGLE PILL ── */
 .toggle-pill {
   display: flex;
   align-items: center;
@@ -555,7 +526,7 @@ const actionTabs = [
   border-radius: 999px;
   background: #d4d8ce;
   position: relative;
-  transition: background 0.2s;
+  transition: background 0.22s;
 }
 .pill-thumb {
   position: absolute;
@@ -565,7 +536,7 @@ const actionTabs = [
   height: 14px;
   border-radius: 50%;
   background: #fff;
-  transition: transform 0.2s;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
 }
 .toggle-pill input:checked + .pill-track {
@@ -580,7 +551,7 @@ const actionTabs = [
   color: rgba(6, 32, 9, 0.4);
 }
 
-/* ─── RADIO ─── */
+/* ── RADIO ── */
 .radio-stack {
   display: flex;
   flex-direction: column;
@@ -609,7 +580,7 @@ const actionTabs = [
   border: 2px solid #d4d8ce;
   position: relative;
   flex-shrink: 0;
-  transition: border-color 0.15s;
+  transition: border-color 0.18s;
 }
 .radio-wrap input:checked ~ .radio-custom {
   border-color: #062009;
@@ -631,7 +602,7 @@ const actionTabs = [
   margin-top: -4px;
 }
 
-/* ─── CHECKBOX ─── */
+/* ── CHECKBOX ── */
 .check-stack {
   display: flex;
   flex-direction: column;
@@ -661,8 +632,8 @@ const actionTabs = [
   position: relative;
   flex-shrink: 0;
   transition:
-    border-color 0.15s,
-    background 0.15s;
+    border-color 0.18s,
+    background 0.18s;
 }
 .check-wrap input:checked ~ .check-custom {
   border-color: #062009;
@@ -681,7 +652,7 @@ const actionTabs = [
   transform: rotate(45deg);
 }
 
-/* ─── ENABLE BTN ─── */
+/* ── ENABLE BTN ── */
 .enable-btn {
   display: inline-flex;
   align-items: center;
@@ -695,18 +666,25 @@ const actionTabs = [
   background: #fef9ee;
   color: #c8930a;
   cursor: pointer;
-  transition: background 0.15s;
+  transition:
+    background 0.18s,
+    transform 0.15s;
 }
 .enable-btn:hover {
   background: #faefd0;
+  transform: translateY(-1px);
+}
+.enable-btn:active {
+  transform: translateY(0);
 }
 
-/* ─── FORM ACTIONS ─── */
+/* ── FORM ACTIONS ── */
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 4px;
+  animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .cancel-btn {
   padding: 0.6rem 1.3rem;
@@ -718,10 +696,13 @@ const actionTabs = [
   font-weight: 700;
   color: rgba(6, 32, 9, 0.4);
   cursor: pointer;
-  transition: background 0.15s;
+  transition:
+    background 0.18s,
+    color 0.18s;
 }
 .cancel-btn:hover {
   background: #f0f2ec;
+  color: rgba(6, 32, 9, 0.7);
 }
 .apply-btn {
   display: inline-flex;
@@ -747,8 +728,11 @@ const actionTabs = [
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(6, 32, 9, 0.25);
 }
+.apply-btn:active {
+  transform: translateY(0);
+}
 
-/* ─── UTILITY ─── */
+/* ── UTILITIES ── */
 .ml-auto {
   margin-left: auto;
 }
@@ -756,7 +740,7 @@ const actionTabs = [
   margin-top: 1rem;
 }
 
-/* ─── RESPONSIVE ─── */
+/* ── RESPONSIVE ── */
 @media (max-width: 960px) {
   .settings-grid {
     grid-template-columns: 1fr;
