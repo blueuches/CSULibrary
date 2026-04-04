@@ -23,6 +23,17 @@
           </div>
         </div>
       </header>
+      <!-- ── ACTION NAV ── -->
+      <div class="attn-actions">
+        <button
+          v-for="tab in actionTabs"
+          :key="tab.label"
+          :class="{ 'action-active': tab.label === 'Settings' }"
+          @click="$router.push(tab.route)"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
 
       <div class="stat-strip">
         <div
@@ -69,7 +80,7 @@
                 stroke-width="20"
                 stroke-linecap="round"
                 :stroke-dasharray="754"
-                :stroke-dashoffset="754 - (754 * gaugeFillPercent / 100)"
+                :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
                 transform="rotate(-90 160 160)"
                 class="gauge-arc"
               />
@@ -83,7 +94,7 @@
                 stroke-width="28"
                 stroke-linecap="round"
                 :stroke-dasharray="754"
-                :stroke-dashoffset="754 - (754 * gaugeFillPercent / 100)"
+                :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
                 transform="rotate(-90 160 160)"
                 class="gauge-glow"
               />
@@ -113,7 +124,7 @@
                 :class="{
                   low: gaugeCount <= 10,
                   mid: gaugeCount > 10 && gaugeCount <= 30,
-                  high: gaugeCount > 30
+                  high: gaugeCount > 30,
                 }"
               >
                 {{ gaugeStatus }}
@@ -276,12 +287,28 @@ const barsVisible = ref(false)
 
 const exportLogs = ref([
   { date: 'Mar 11, 2026', time: '09:42 AM', type: 'PDF', user: 'Maria Santos', status: 'success' },
-  { date: 'Mar 10, 2026', time: '03:15 PM', type: 'CSV', user: 'Juan dela Cruz', status: 'success' },
+  {
+    date: 'Mar 10, 2026',
+    time: '03:15 PM',
+    type: 'CSV',
+    user: 'Juan dela Cruz',
+    status: 'success',
+  },
   { date: 'Mar 09, 2026', time: '11:08 AM', type: 'XLSX', user: 'Ana Reyes', status: 'success' },
   { date: 'Mar 08, 2026', time: '02:30 PM', type: 'PDF', user: 'Jose Bautista', status: 'failed' },
   { date: 'Mar 07, 2026', time: '08:55 AM', type: 'CSV', user: 'Maria Santos', status: 'success' },
-  { date: 'Mar 06, 2026', time: '04:20 PM', type: 'XLSX', user: 'Liza Garcia', status: 'pending' }
+  { date: 'Mar 06, 2026', time: '04:20 PM', type: 'XLSX', user: 'Liza Garcia', status: 'pending' },
 ])
+
+const actionTabs = [
+  { label: 'Settings', route: '/admin/attendance/settings' },
+  { label: 'Report', route: '/admin/attendance/report' },
+  { label: 'Import Records', route: '/admin/attendance/import' },
+  { label: 'Search', route: '/admin/attendance/search' },
+  { label: 'Students', route: '/admin/attendance/students' },
+  { label: 'Ranking', route: '/admin/attendance/ranking' },
+  { label: 'Visitors', route: '/admin/attendance/visitors' },
+]
 
 onMounted(async () => {
   setTimeout(() => {
@@ -297,7 +324,8 @@ const fetchAttendance = async () => {
   try {
     const { data, error } = await supabase
       .from('attendance_logs')
-      .select(`
+      .select(
+        `
         id,
         student_id,
         time_in,
@@ -314,7 +342,8 @@ const fetchAttendance = async () => {
           college,
           year_level
         )
-      `)
+      `,
+      )
       .eq('attendance_type', 'library')
       .order('time_in', { ascending: false })
 
@@ -326,7 +355,7 @@ const fetchAttendance = async () => {
 
     logs.value = (data || []).map((item: any) => ({
       ...item,
-      students: Array.isArray(item.students) ? item.students[0] ?? null : item.students
+      students: Array.isArray(item.students) ? (item.students[0] ?? null) : item.students,
     }))
 
     console.log('Joined logs:', logs.value)
@@ -384,10 +413,7 @@ const getDurationMinutes = (log: AttendanceLog) => {
   return Math.round(diff / 60000)
 }
 
-const buildGroupedVisits = (
-  items: AttendanceLog[],
-  key: 'college' | 'program' | 'year_level'
-) => {
+const buildGroupedVisits = (items: AttendanceLog[], key: 'college' | 'program' | 'year_level') => {
   const grouped: Record<string, number> = {}
 
   items.forEach((log) => {
@@ -444,9 +470,7 @@ const averageStayDuration = computed(() => {
 
   if (!durations.length) return '—'
 
-  const avg = Math.round(
-    durations.reduce((sum, minutes) => sum + minutes, 0) / durations.length
-  )
+  const avg = Math.round(durations.reduce((sum, minutes) => sum + minutes, 0) / durations.length)
 
   const hrs = Math.floor(avg / 60)
   const mins = avg % 60
@@ -467,7 +491,7 @@ const peakHours = computed(() => {
     .map(([hour, visits]) => ({
       hour: Number(hour),
       label: formatHourLabel(Number(hour)),
-      visits
+      visits,
     }))
     .sort((a, b) => b.visits - a.visits)
 })
@@ -501,50 +525,50 @@ const quickStats = computed(() => [
     label: 'Total Library Visits',
     delta: 'All',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
   },
   {
     val: topPeakHour.value ? topPeakHour.value.label : 'N/A',
     label: 'Peak Hours',
     delta: topPeakHour.value ? `${topPeakHour.value.visits} visits` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   },
   {
     val: topPeakDay.value ? topPeakDay.value.day : 'N/A',
     label: 'Peak Days',
     delta: topPeakDay.value ? `${topPeakDay.value.visits} visits` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
   },
   {
     val: averageStayDuration.value,
     label: 'Average Stay',
     delta: 'Session',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   },
   {
     val: topCollege.value ? topCollege.value.name : 'N/A',
     label: 'Visits by College',
     delta: topCollege.value ? `${topCollege.value.visits} visits` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
   },
   {
     val: topProgram.value ? topProgram.value.name : 'N/A',
     label: 'Visits by Program',
     delta: topProgram.value ? `${topProgram.value.visits} visits` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
   },
   {
     val: topYearLevel.value ? `Year ${topYearLevel.value.name}` : 'N/A',
     label: 'Visits by Year Level',
     delta: topYearLevel.value ? `${topYearLevel.value.visits} visits` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
-  }
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  },
 ])
 
 const handleTabChange = (name: string) => {
