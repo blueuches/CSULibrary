@@ -48,6 +48,7 @@ import ManageCurriculum from '@/views/Admin/ServicesManagement/ManageCurriculum.
 import ManageBorrowing from '@/views/Admin/ServicesManagement/ManageBorrowing.vue'
 import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
 import WebsiteImages from '@/views/Admin/WebsiteManagement/WebsiteImages.vue'
+import WebsiteGeneral from '@/views/Admin/WebsiteManagement/WebsiteGeneral.vue'
 import UsersManagement from '@/views/Admin/AdminManagement/UsersManagement.vue'
 import Developers from '@/views/Developers.vue'
 
@@ -103,6 +104,7 @@ const router = createRouter({
     { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing, meta: { requiresAuth: true }  },
     { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAuth: true }  },
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages, meta: { requiresAuth: true }  },
+    { path: '/admin/website/general', name: 'website-general', component: WebsiteGeneral, meta: { requiresAuth: true }  }, 
     { path: '/admin/management', name: 'admin-management', component: UsersManagement, meta: { requiresAuth: true }  },
   ],
    scrollBehavior(to, from, savedPosition) {
