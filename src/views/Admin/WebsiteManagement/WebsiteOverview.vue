@@ -13,11 +13,16 @@
       <header class="mb-10 flex items-center gap-4">
         <div>
           <div class="header-breadcrumb">
-            <span>Admin</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="inline-block w-4 h-4 mx-2">
-              <path d="M9 5l7 7-7 7"/>
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/website/general')"
+            >
+              BACK
+            </span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>Web Overview</span>
+            <span>WEBSITE MANAGEMENT</span>
           </div>
 
           <h1 class="header-title text-3xl font-black">

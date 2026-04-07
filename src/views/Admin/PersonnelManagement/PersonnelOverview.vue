@@ -7,11 +7,12 @@
       <header class="page-header">
         <div class="header-left">
           <div class="header-breadcrumb anim-fade-in" style="animation-delay: 0s">
-            <span>Admin</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>Personnel</span>
+          <span class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+            @click="$router.push('/admin/website/general')">BACK</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+          <span>Library Personnel</span>
           </div>
           <h1 class="header-title anim-slide-up" style="animation-delay: 0.08s">
             Library <span class="text-yellow-500">Personnel</span>
