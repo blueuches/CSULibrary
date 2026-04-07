@@ -68,9 +68,9 @@
         </div>
 
         <!-- ABOUT US (NO LINK) -->
-        <div class="card disabled">
+        <div @click="goTo('website-about')" class="card">
           <h3>About Us</h3>
-          <p>Coming soon</p>
+          <p>Manage Library's About displayed in the website</p>
         </div>
 
       </div>
