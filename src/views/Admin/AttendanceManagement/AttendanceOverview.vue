@@ -304,7 +304,7 @@ const actionTabs = [
   { label: 'Settings', route: '/admin/attendance/settings' },
   { label: 'Report', route: '/admin/attendance/report' },
   { label: 'Import Records', route: '/admin/attendance/import' },
-  { label: 'Search', route: '/admin/attendance/search' },
+  { label: 'Search', route: '/admin/attendance/logs' },
   { label: 'Students', route: '/admin/attendance/students' },
   { label: 'Ranking', route: '/admin/attendance/ranking' },
   { label: 'Visitors', route: '/admin/attendance/visitors' },
