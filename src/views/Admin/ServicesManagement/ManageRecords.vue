@@ -8,7 +8,7 @@
       <header class="page-header">
         <!-- Breadcrumb -->
         <div class="breadcrumb">
-          <button @click="$router.back()" class="breadcrumb-back">Back</button>
+          <button @click="$router.push('/admin/website/general')" class="breadcrumb-back">Back</button>
           <svg class="breadcrumb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
           </svg>

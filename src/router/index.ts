@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { supabase } from '@/lib/supabase'
 
 import HomePage from '../views/HomePage.vue'
 import AboutPage from '../views/AboutPage.vue'
@@ -33,6 +34,12 @@ import ReportBooks from '@/views/Admin/Reports&Analytics/ReportBooks.vue'
 import AttendanceOverview from '@/views/Admin/AttendanceManagement/AttendanceOverview.vue'
 import AttendanceLogs from '@/views/Admin/AttendanceManagement/AttendanceLogs.vue'
 import ImportRecord from '@/views/Admin/AttendanceManagement/ImportRecord.vue'
+import AttendanceGeneral from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceGeneral.vue'
+import AttendanceRanking from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceRanking.vue'
+import AttendanceReport from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceReport.vue'
+import AttendanceSearch from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceSearch.vue'
+import SearchRecord from '@/views/Admin/AttendanceManagement/AttendanceTabs/SearchRecord.vue'
+import VisitorAttendance from '@/views/Admin/AttendanceManagement/AttendanceTabs/VisitorAttendance.vue'
 import ServicesOverview from '@/views/Admin/ServicesManagement/ServicesOverview.vue'
 import RoomReservation from '@/views/Admin/ServicesManagement/RoomReservation.vue'
 import ManageRecords from '@/views/Admin/ServicesManagement/ManageRecords.vue'
@@ -41,6 +48,9 @@ import ManageCurriculum from '@/views/Admin/ServicesManagement/ManageCurriculum.
 import ManageBorrowing from '@/views/Admin/ServicesManagement/ManageBorrowing.vue'
 import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
 import WebsiteImages from '@/views/Admin/WebsiteManagement/WebsiteImages.vue'
+import WebsiteGeneral from '@/views/Admin/WebsiteManagement/WebsiteGeneral.vue'
+import ManageAbout from '@/views/Admin/WebsiteManagement/ManageAbout.vue'
+import UsersManagement from '@/views/Admin/AdminManagement/UsersManagement.vue'
 import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
@@ -66,30 +76,38 @@ const router = createRouter({
   { path: '/developers', name: 'developers', component: Developers },
 
     //admin
-    { path: '/admin', name: 'admin', component: Dashboard },
+    { path: '/admin', name: 'admin', component: Dashboard, meta: { requiresAuth: true } },
     { path: '/admin/login', name: 'login', component: Login },
     { path: '/admin/signin', name: 'signin', component: Signin },
-    { path: '/admin/announcement', name: 'announcement', component: AnnouncementOverview },
-    { path: '/admin/announcement/general', name: 'announcement-general', component: GeneralInput },
-    { path: '/admin/announcement/event', name: 'announcement-event', component: EventInput },
-    { path: '/admin/announcement/news', name: 'announcement-news', component: NewsInput },
-    { path: '/admin/personnel', name: 'admin-personnel', component: PersonnelOverview },
-    { path: '/admin/analytics', name: 'analytics', component: RAOverview },
-    { path: '/admin/analytics/display', name: 'analytics-display', component: ReportDisplay },
-    { path: '/admin/analytics/add', name: 'analytics-add', component: ReportAddInput },
-    { path: '/admin/analytics/books', name: 'announcement-books', component: ReportBooks },
-    { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview },
-    { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs },
-    { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord },
-    { path: '/admin/services', name: 'admin-services', component: ServicesOverview },
-    { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation },
-    { path: '/admin/services/records', name: 'services-records', component: ManageRecords },
-    { path: '/admin/services/gallery', name: 'services-gallery', component: ManageGallery },
-    { path: '/admin/services/curriculum', name: 'services-curriculum', component: ManageCurriculum },
-    { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing },
-    { path: '/admin/website', name: 'website', component: WebsiteOverview },
-    { path: '/admin/website/images', name: 'website-images', component: WebsiteImages },
-
+    { path: '/admin/announcement', name: 'announcement', component: AnnouncementOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/announcement/general', name: 'announcement-general', component: GeneralInput, meta: { requiresAuth: true }  },
+    { path: '/admin/announcement/event', name: 'announcement-event', component: EventInput, meta: { requiresAuth: true }  },
+    { path: '/admin/announcement/news', name: 'announcement-news', component: NewsInput, meta: { requiresAuth: true }  },
+    { path: '/admin/personnel', name: 'admin-personnel', component: PersonnelOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/analytics', name: 'analytics', component: RAOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/analytics/display', name: 'analytics-display', component: ReportDisplay, meta: { requiresAuth: true }  },
+    { path: '/admin/analytics/add', name: 'analytics-add', component: ReportAddInput, meta: { requiresAuth: true }  },
+    { path: '/admin/analytics/books', name: 'announcement-books', component: ReportBooks, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/settings', name: 'attendance-settings', component: AttendanceGeneral, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/report', name: 'attendance-report', component: AttendanceReport, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/search', name: 'attendance-search', component: AttendanceSearch, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/students', name: 'attendance-students', component: SearchRecord, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/ranking', name: 'attendance-ranking', component: AttendanceRanking, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/visitors', name: 'attendance-visitors', component: VisitorAttendance, meta: { requiresAuth: true }  },
+    { path: '/admin/services', name: 'admin-services', component: ServicesOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation, meta: { requiresAuth: true }  },
+    { path: '/admin/services/records', name: 'services-records', component: ManageRecords, meta: { requiresAuth: true }  },
+    { path: '/admin/services/gallery', name: 'services-gallery', component: ManageGallery, meta: { requiresAuth: true }  },
+    { path: '/admin/services/curriculum', name: 'services-curriculum', component: ManageCurriculum, meta: { requiresAuth: true }  },
+    { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing, meta: { requiresAuth: true }  },
+    { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/website/images', name: 'website-images', component: WebsiteImages, meta: { requiresAuth: true }  },
+    { path: '/admin/website/general', name: 'website-general', component: WebsiteGeneral, meta: { requiresAuth: true }  }, 
+    { path: '/admin/website/about', name: 'website-about', component: ManageAbout, meta: { requiresAuth: true }  }, 
+    { path: '/admin/management', name: 'admin-management', component: UsersManagement, meta: { requiresAuth: true }  },
   ],
    scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -97,6 +115,25 @@ const router = createRouter({
     }
     return { top: 0, behavior: 'smooth' }
   },
+})
+
+router.beforeEach(async (to, from, next) => {
+  const { data } = await supabase.auth.getSession()
+  const session = data.session
+
+  const requiresAuth = to.meta.requiresAuth
+
+  // Block if not logged in
+  if (requiresAuth && !session) {
+    return next('/admin/login')
+  }
+
+  // Prevent logged-in users from going back to login
+  if ((to.path === '/admin/login' || to.path === '/admin/signin') && session) {
+    return next('/admin')
+  }
+
+  next()
 })
 
 export default router

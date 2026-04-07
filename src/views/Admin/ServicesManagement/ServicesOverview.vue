@@ -90,55 +90,6 @@
             </div>
           </div>
 
-          <!-- ── RECORDS ── -->
-          <div class="bento-card card-records">
-            <div class="rec-inner">
-              <div class="rec-head">
-                <div class="rec-icon-wrap">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l5 5v11a2 2 0 0 1-2 2z"
-                    />
-                  </svg>
-                </div>
-                <span class="rec-eyebrow">RECORDS</span>
-              </div>
-
-              <div class="rec-number">12,840</div>
-              <div class="rec-meta">
-                <span class="rec-up">↑ 2.4%</span>
-                <span class="rec-since">vs last month</span>
-              </div>
-
-              <div class="rec-track">
-                <div class="rec-fill forest" style="width: 70%"></div>
-                <div class="rec-fill mustard" style="width: 20%"></div>
-                <div class="rec-fill faint" style="width: 10%"></div>
-              </div>
-
-              <button class="rec-cta" @click="router.push('/admin/services/records')">
-                VIEW ALL
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path d="M5 12h14m-7-7 7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-
           <!-- ── CURRICULUM ── -->
           <div class="bento-card card-curriculum">
             <div class="cur-inner">
@@ -159,7 +110,7 @@
                     <path d="M12 14v7" />
                   </svg>
                 </div>
-                <span class="cur-eyebrow">CURRICULUM</span>
+                <span class="cur-eyebrow">BORROWING</span>
               </div>
 
               <div class="cur-number">348</div>
@@ -180,8 +131,8 @@
                 <span class="cur-tag cur-tag--gold">Graduate</span>
               </div>
 
-              <button class="cur-cta" @click="router.push('/admin/services/curriculum')">
-                MANAGE CURRICULUM
+              <button class="cur-cta" @click="router.push('/admin/services/borrowing')">
+                MANAGE BORROWING
                 <svg
                   width="13"
                   height="13"
@@ -196,60 +147,6 @@
             </div>
           </div>
 
-          <!-- ── GALLERY ── -->
-          <div class="bento-card card-gal">
-            <div class="gal-inner">
-              <div class="gal-head">
-                <div class="gal-icon-wrap">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <path d="M21 15l-5-5L5 21" />
-                  </svg>
-                </div>
-                <span class="gal-eyebrow">GALLERY</span>
-              </div>
-
-              <div class="gal-number">2,400</div>
-              <div class="gal-label">Digital Media Files</div>
-              <div class="gal-meta">
-                <span class="gal-up">↑ 3.1%</span>
-                <span class="gal-since">vs last month</span>
-              </div>
-
-              <div class="gal-track">
-                <div class="gal-fill forest" style="width: 55%"></div>
-                <div class="gal-fill mustard" style="width: 30%"></div>
-                <div class="gal-fill faint" style="width: 15%"></div>
-              </div>
-
-              <div class="gal-tags">
-                <span class="gal-tag">Images</span>
-                <span class="gal-tag gal-tag--gold">Videos</span>
-              </div>
-
-              <button class="gal-cta" @click="router.push('/admin/services/gallery')">
-                MANAGE GALLERY
-                <svg
-                  width="13"
-                  height="13"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path d="M5 12h14m-7-7 7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
         </section>
       </div>
     </main>
