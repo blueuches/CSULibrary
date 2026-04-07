@@ -2,6 +2,18 @@
   <div class="flex h-screen overflow-hidden bg-white">
     <Sidebar />
 
+    <transition name="toast">
+      <div
+        v-if="toast.show"
+        :class="[
+          'fixed left-1/2 top-6 z-[9999] -translate-x-1/2 px-6 py-4 rounded-2xl text-base font-bold text-white shadow-2xl',
+          toast.type === 'success' ? 'bg-[#0d2b0f]' : 'bg-red-600',
+        ]"
+      >
+        {{ toast.message }}
+      </div>
+    </transition>
+
     <main
       class="flex-1 overflow-y-auto p-6 md:p-10 bg-gray-50"
       style="font-family: 'Poppins', sans-serif; color: #1a1a1a"
@@ -181,7 +193,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
 import { createEvent } from '@/services/eventService'
@@ -200,6 +212,25 @@ const formData = ref({
   datePublished: today,
 })
 
+const toast = reactive({
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error',
+})
+
+let toastTimer: ReturnType<typeof setTimeout> | null = null
+
+const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+  toast.message = message
+  toast.type = type
+  toast.show = true
+
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => {
+    toast.show = false
+  }, 2500)
+}
+
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
@@ -211,6 +242,16 @@ const handleFileUpload = (event: Event) => {
 }
 
 const submitForm = async () => {
+  if (!formData.value.title.trim()) {
+    showToast('Please enter a title', 'error')
+    return
+  }
+
+  if (!formData.value.description.trim()) {
+    showToast('Please enter description', 'error')
+    return
+  }
+
   try {
     let imageUrl = null
 
@@ -245,11 +286,13 @@ const submitForm = async () => {
       created_by: '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
     })
 
-    alert('Announcement published successfully!')
-    router.push('/admin/announcement')
+    showToast('Announcement published successfully!')
+    setTimeout(() => {
+      router.push('/admin/announcement')
+    }, 400)
   } catch (error) {
     console.error(error)
-    alert('Failed to publish announcement')
+    showToast('Failed to publish announcement', 'error')
   }
 }
 
@@ -260,4 +303,15 @@ const goBack = () => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.2s ease;
+}
+
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>

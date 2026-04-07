@@ -176,11 +176,6 @@ const libraryServices = [
     icon: Share2,
   },
   {
-    title: 'Laptop Area',
-    description: 'Comfortable spaces equipped with power outlets for your personal devices.',
-    icon: Laptop,
-  },
-  {
     title: 'Library Orientation',
     description: 'A comprehensive guide to our facilities, rules, and world-class services.',
     icon: Info,

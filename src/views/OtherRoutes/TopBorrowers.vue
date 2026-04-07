@@ -238,9 +238,6 @@
             style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
             class="mb-4 flex items-center gap-2"
           >
-            <svg class="w-5 h-5" style="color: #f9a825" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm2.7 2h8.6l.9 2H6.8l.9-2z" />
-            </svg>
             Top Students
           </h3>
           <div class="flex flex-col gap-3">
@@ -256,9 +253,59 @@
                     : 'background: #fbe9e7; border: 1px solid #ffccbc;'
               "
             >
-              <span style="font-size: 1.2rem">{{
-                index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'
-              }}</span>
+              <span>
+                <!--  Gold -->
+                <svg
+                  v-if="index === 0"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#f9a825"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="14" r="7" />
+                  <path d="M12 11v6M10 13l2-2 2 2" />
+                  <path d="M8.5 5.5L6 2h12l-2.5 3.5" />
+                  <path d="M8.5 5.5h7" />
+                </svg>
+                <!--  Silver -->
+                <svg
+                  v-else-if="index === 1"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#94a3b8"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="14" r="7" />
+                  <path d="M10 12c0-1.1.9-2 2-2s2 .9 2 2c0 1-.6 1.6-1.5 2.2L10 17h4" />
+                  <path d="M8.5 5.5L6 2h12l-2.5 3.5" />
+                  <path d="M8.5 5.5h7" />
+                </svg>
+                <!--  Bronze -->
+                <svg
+                  v-else-if="index === 2"
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#b45309"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="14" r="7" />
+                  <path d="M10 11h2.5a1.5 1.5 0 010 3H10h2.5a1.5 1.5 0 010 3H10" />
+                  <path d="M8.5 5.5L6 2h12l-2.5 3.5" />
+                  <path d="M8.5 5.5h7" />
+                </svg>
+              </span>
               <div class="flex-1 min-w-0">
                 <p style="font-size: 0.82rem; font-weight: 800; color: #0d2b0f" class="truncate">
                   {{ borrower.name }}
@@ -284,20 +331,6 @@
             style="font-size: 1rem; font-weight: 900; color: #0d2b0f"
             class="mb-4 flex items-center gap-2"
           >
-            <svg
-              class="w-5 h-5"
-              style="color: #1b5e20"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-              />
-            </svg>
             Departments
           </h3>
           <div class="flex flex-col gap-2">
@@ -320,7 +353,7 @@
         </div>
 
         <!-- Library Updates -->
-        <div class="rounded-xl p-5" style="border: 2px solid #e8f5e9; background: #f9fdf9">
+        <div>
           <h2
             style="
               font-size: 1.2rem;
@@ -337,19 +370,20 @@
             v-for="(post, i) in latestPosts"
             :key="i"
             class="flex gap-3 mb-4 cursor-pointer group"
+            @click="router.push(post.route)"
           >
             <img
               :src="post.image"
               :alt="post.title"
-              class="w-20 h-16 object-cover rounded flex-shrink-0"
+              class="w-20 h-16 object-cover rounded flex-shrink-0 group-hover:brightness-90 transition-all duration-200"
             />
-            <div>
-              <p
-                class="group-hover:text-[#1b5e20] transition-colors duration-200"
+            <div class="flex flex-col justify-center min-w-0">
+              <span
+                class="group-hover:underline"
                 style="font-size: 0.85rem; font-weight: 700; color: #1b5e20; line-height: 1.4"
               >
                 {{ post.title }}
-              </p>
+              </span>
               <p style="font-size: 0.75rem; color: #888" class="mt-1">{{ post.date }}</p>
             </div>
           </div>
@@ -386,6 +420,8 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 /* ── Scroll to Top ────────────────────────────────────── */
 const showScrollTop = ref(false)
@@ -516,29 +552,35 @@ const getInitials = (name: string) =>
 /* ── Latest Posts ─────────────────────────────────────── */
 const latestPosts = [
   {
+    image: new URL('@/assets/images/card1.jpg', import.meta.url).href,
+    title: 'BSP Knowledge Resource Network',
+    date: 'February 19, 2026',
+    route: { name: 'bcppage' },
+  },
+  {
     image: new URL('@/assets/images/card2.jpg', import.meta.url).href,
     title: 'National Book Week Celebration',
     date: 'February 19, 2026',
+    route: { name: 'nbwcpage' },
   },
   {
     image: new URL('@/assets/images/card3.png', import.meta.url).href,
     title: 'STARBOOKS - DOST-STII',
     date: 'February 19, 2026',
+    route: { name: 'starbooks' },
   },
   {
     image: new URL('@/assets/images/reservation.jpg', import.meta.url).href,
     title: 'AVR Reservation',
     date: 'February 19, 2026',
+    route: { name: 'avr' },
   },
-  {
-    image: new URL('@/assets/images/top.jpg', import.meta.url).href,
-    title: 'Top Library Borrowers and Visitors',
-    date: 'February 19, 2026',
-  },
+
   {
     image: new URL('@/assets/images/newly_acc_books.png', import.meta.url).href,
     title: 'Newly Acquired Books',
     date: 'February 19, 2026',
+    route: { name: 'newlyacquiredbooks' },
   },
 ]
 </script>
