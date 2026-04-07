@@ -973,4 +973,188 @@ const router = useRouter()
   transform: translateY(-2px);
   box-shadow: 0 10px 28px rgba(13, 43, 15, 0.25);
 }
+
+/* =========================
+   PAGE ENTER ANIMATIONS
+========================= */
+
+.dashboard-header,
+.card-hero,
+.card-records,
+.card-curriculum,
+.card-gal {
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(6px);
+  animation: servicesFadeUp 0.7s ease forwards;
+  will-change: opacity, transform, filter;
+}
+
+.dashboard-header {
+  animation-delay: 0.08s;
+}
+
+.card-hero {
+  animation-delay: 0.18s;
+}
+
+.card-records {
+  animation-delay: 0.3s;
+}
+
+.card-curriculum {
+  animation-delay: 0.4s;
+}
+
+.card-gal {
+  animation-delay: 0.5s;
+}
+
+/* inner hero content stagger */
+.hero-tag,
+.hero-bars,
+.hero-title,
+.hero-desc,
+.hero-stats-row,
+.hero-cta {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: servicesFadeUpSoft 0.55s ease forwards;
+}
+
+.hero-tag {
+  animation-delay: 0.28s;
+}
+
+.hero-bars {
+  animation-delay: 0.34s;
+}
+
+.hero-title {
+  animation-delay: 0.4s;
+}
+
+.hero-desc {
+  animation-delay: 0.48s;
+}
+
+.hero-stats-row {
+  animation-delay: 0.56s;
+}
+
+.hero-cta {
+  animation-delay: 0.64s;
+}
+
+/* smaller cards content reveal */
+.rec-head,
+.rec-number,
+.rec-meta,
+.rec-track,
+.rec-cta,
+.cur-head,
+.cur-number,
+.cur-label,
+.cur-meta,
+.cur-track,
+.cur-tags,
+.cur-cta,
+.gal-head,
+.gal-number,
+.gal-label,
+.gal-meta,
+.gal-track,
+.gal-tags,
+.gal-cta {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: servicesFadeUpSoft 0.5s ease forwards;
+}
+
+.rec-head { animation-delay: 0.38s; }
+.rec-number { animation-delay: 0.44s; }
+.rec-meta { animation-delay: 0.5s; }
+.rec-track { animation-delay: 0.56s; }
+.rec-cta { animation-delay: 0.62s; }
+
+.cur-head { animation-delay: 0.48s; }
+.cur-number { animation-delay: 0.54s; }
+.cur-label { animation-delay: 0.58s; }
+.cur-meta { animation-delay: 0.62s; }
+.cur-track { animation-delay: 0.68s; }
+.cur-tags { animation-delay: 0.74s; }
+.cur-cta { animation-delay: 0.8s; }
+
+.gal-head { animation-delay: 0.58s; }
+.gal-number { animation-delay: 0.64s; }
+.gal-label { animation-delay: 0.68s; }
+.gal-meta { animation-delay: 0.72s; }
+.gal-track { animation-delay: 0.78s; }
+.gal-tags { animation-delay: 0.84s; }
+.gal-cta { animation-delay: 0.9s; }
+
+/* optional glow entrance */
+.glow-spot-left,
+.glow-spot-right {
+  opacity: 0;
+  animation: servicesGlowIn 1s ease forwards;
+}
+
+.glow-spot-left {
+  animation-delay: 0.15s;
+}
+
+.glow-spot-right {
+  animation-delay: 0.25s;
+}
+
+/* smoother hover feel */
+.card-hero,
+.card-records,
+.card-curriculum,
+.card-gal {
+  backface-visibility: hidden;
+  transform-origin: center;
+}
+
+/* =========================
+   KEYFRAMES
+========================= */
+
+@keyframes servicesFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes servicesFadeUpSoft {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes servicesGlowIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+    filter: blur(1px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
 </style>
