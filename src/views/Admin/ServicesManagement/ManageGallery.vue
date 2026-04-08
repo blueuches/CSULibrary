@@ -567,14 +567,24 @@ const nextImg = () => {
 /* =====================================================
   PHOTO HANDLING
 ===================================================== */
-const onPhotoUpload = (e) => {
+import imageCompression from 'browser-image-compression';
+
+const onPhotoUpload = async (e) => {
   const files = Array.from(e.target.files);
-  files.forEach(file => {
-    if (form.value.images.length < 10) {
-      form.value.newFiles.push(file);
-      form.value.images.push(URL.createObjectURL(file));
+  const options = {
+    maxSizeMB: 1,          
+    maxWidthOrHeight: 1920 
+  };
+
+  for (const file of files) {
+    try {
+      const compressedFile = await imageCompression(file, options);
+      form.value.newFiles.push(compressedFile);
+      form.value.images.push(URL.createObjectURL(compressedFile));
+    } catch (error) {
+      console.error("Compression Error:", error);
     }
-  });
+  }
 };
 
 const removePhoto = (idx) => {
