@@ -10,15 +10,15 @@
       <div class="bg-white/20 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] border border-white/30 shadow-2xl">
         
         <div class="mb-10 flex items-center">
-          <button 
-            @click="$router.back()" 
+          <RouterLink 
+            to="/"
             class="p-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white/80 hover:text-white hover:bg-white/20 transition-all group shadow-lg"
             aria-label="Go back"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
             </svg>
-          </button>
+          </RouterLink>
 
           <div class="flex-1 text-center pr-10 mb-1"> 
             <h2 class="text-4xl font-black text-white tracking-tight leading-none">Login</h2>

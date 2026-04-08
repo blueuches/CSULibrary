@@ -3,7 +3,6 @@
     <Sidebar :activeTab="'ATTENDANCE'" @updateActiveTab="handleTabChange" />
 
     <div class="page-scroll">
-      <!-- ══ HEADER ══ -->
       <header class="attn-header">
         <div class="space-y-4">
           <div class="relative group">
@@ -24,19 +23,18 @@
           </div>
         </div>
       </header>
+      <!-- ── ACTION NAV ── -->
+      <div class="attn-actions">
+        <button
+          v-for="tab in actionTabs"
+          :key="tab.label"
+          :class="{ 'action-active': tab.label === 'Settings' }"
+          @click="$router.push(tab.route)"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
 
-      <!-- ══ ATTENDANCE ACTION BUTTONS ══ -->
-<div class="attn-actions">
-  <button @click="$router.push('/admin/attendance/settings')">Settings</button>
-  <button @click="$router.push('/admin/attendance/report')">Report</button>
-  <button @click="$router.push('/admin/attendance/import')">Import Records</button>
-  <button @click="$router.push('/admin/attendance/search')">Search</button>
-  <button @click="$router.push('/admin/attendance/students')">Students</button>
-  <button @click="$router.push('/admin/attendance/ranking')">Ranking</button>
-  <button @click="$router.push('/admin/attendance/visitors')">Visitors</button>
-</div>
-
-      <!-- ══ QUICK STAT STRIP ══ -->
       <div class="stat-strip">
         <div
           v-for="(s, i) in quickStats"
@@ -49,124 +47,116 @@
             <p class="qstat-val">{{ s.val }}</p>
             <p class="qstat-label">{{ s.label }}</p>
           </div>
-          <span class="qstat-badge" :class="s.up ? 'qstat-badge--up' : 'qstat-badge--dn'">{{
-            s.delta
-          }}</span>
+          <span class="qstat-badge" :class="s.up ? 'qstat-badge--up' : 'qstat-badge--dn'">
+            {{ s.delta }}
+          </span>
         </div>
       </div>
 
-      <!-- ══ MAIN GRID ══ -->
       <div class="main-grid">
-<!-- ── LEFT: Dial ── -->
-<div class="dial-card enhanced">
-  <div class="dial-card__header">
-    <span class="section-eyebrow">Live Occupancy</span>
-    <span class="live-chip"><span class="live-dot"></span>LIVE</span>
-  </div>
+        <div class="dial-card enhanced">
+          <div class="dial-card__header">
+            <span class="section-eyebrow">Live Attendance</span>
+            <span class="live-chip"><span class="live-dot"></span>LIVE</span>
+          </div>
 
-  <div class="gauge-wrap">
-    <svg viewBox="0 0 320 320" class="gauge-svg">
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 320 320" class="gauge-svg">
+              <circle
+                cx="160"
+                cy="160"
+                r="120"
+                fill="none"
+                stroke="rgba(13,43,15,0.05)"
+                stroke-width="20"
+              />
 
-      <!-- background -->
-      <circle cx="160" cy="160" r="120"
-        fill="none"
-        stroke="rgba(13,43,15,0.05)"
-        stroke-width="20" />
+              <circle
+                cx="160"
+                cy="160"
+                r="120"
+                fill="none"
+                stroke="url(#gaugeGrad)"
+                stroke-width="20"
+                stroke-linecap="round"
+                :stroke-dasharray="754"
+                :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
+                transform="rotate(-90 160 160)"
+                class="gauge-arc"
+              />
 
-      <!-- progress -->
-      <circle cx="160" cy="160" r="120"
-        fill="none"
-        stroke="url(#gaugeGrad)"
-        stroke-width="20"
-        stroke-linecap="round"
-        :stroke-dasharray="754"
-        :stroke-dashoffset="754 - (754 * occupancyPercent / 100)"
-        transform="rotate(-90 160 160)"
-        class="gauge-arc"
-      />
+              <circle
+                cx="160"
+                cy="160"
+                r="120"
+                fill="none"
+                stroke="url(#gaugeGlow)"
+                stroke-width="28"
+                stroke-linecap="round"
+                :stroke-dasharray="754"
+                :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
+                transform="rotate(-90 160 160)"
+                class="gauge-glow"
+              />
 
-      <!-- glow -->
-      <circle cx="160" cy="160" r="120"
-        fill="none"
-        stroke="url(#gaugeGlow)"
-        stroke-width="28"
-        stroke-linecap="round"
-        :stroke-dasharray="754"
-        :stroke-dashoffset="754 - (754 * occupancyPercent / 100)"
-        transform="rotate(-90 160 160)"
-        class="gauge-glow"
-      />
+              <defs>
+                <linearGradient id="gaugeGrad">
+                  <stop offset="0%" stop-color="#f9a825" />
+                  <stop offset="100%" stop-color="#0d2b0f" />
+                </linearGradient>
 
-      <defs>
-        <linearGradient id="gaugeGrad">
-          <stop offset="0%" stop-color="#f9a825"/>
-          <stop offset="100%" stop-color="#0d2b0f"/>
-        </linearGradient>
+                <linearGradient id="gaugeGlow">
+                  <stop offset="0%" stop-color="#f9a825" stop-opacity="0.4" />
+                  <stop offset="100%" stop-color="#0d2b0f" stop-opacity="0.4" />
+                </linearGradient>
+              </defs>
+            </svg>
 
-        <linearGradient id="gaugeGlow">
-          <stop offset="0%" stop-color="#f9a825" stop-opacity="0.4"/>
-          <stop offset="100%" stop-color="#0d2b0f" stop-opacity="0.4"/>
-        </linearGradient>
-      </defs>
-    </svg>
+            <div class="gauge-center">
+              <div class="gauge-num">
+                <span class="gauge-pct">{{ gaugeCount }}</span>
+              </div>
 
-    <!-- CENTER -->
-    <div class="gauge-center">
-      <div class="gauge-num">
-        <span class="gauge-pct">{{ occupancyPercent }}</span>
-        <span class="gauge-unit">%</span>
-      </div>
+              <span class="gauge-sublabel">STUDENTS TODAY</span>
 
-      <span class="gauge-sublabel">CURRENT OCCUPANCY</span>
+              <span
+                class="gauge-status"
+                :class="{
+                  low: gaugeCount <= 10,
+                  mid: gaugeCount > 10 && gaugeCount <= 30,
+                  high: gaugeCount > 30,
+                }"
+              >
+                {{ gaugeStatus }}
+              </span>
+            </div>
+          </div>
 
-      <span 
-        class="gauge-status"
-        :class="{
-          low: occupancyPercent < 40,
-          mid: occupancyPercent >= 40 && occupancyPercent < 80,
-          high: occupancyPercent >= 80
-        }"
-      >
-        {{
-          occupancyPercent < 40
-            ? 'Low Usage'
-            : occupancyPercent < 80
-            ? 'Moderate'
-            : 'Near Capacity'
-        }}
-      </span>
-    </div>
-  </div>
+          <div class="flow-row">
+            <div class="flow-col">
+              <div class="flow-bar-wrap">
+                <div class="flow-bar flow-bar--in" :style="{ width: incomingBarWidth }"></div>
+              </div>
+              <div class="flow-info">
+                <span class="flow-label">Incoming</span>
+                <span class="flow-num flow-num--in">{{ visitorsToday }}</span>
+              </div>
+            </div>
 
-  <!-- FLOW -->
-  <div class="flow-row">
-    <div class="flow-col">
-      <div class="flow-bar-wrap">
-        <div class="flow-bar flow-bar--in" :style="{ width: occupancyPercent + '%' }"></div>
-      </div>
-      <div class="flow-info">
-        <span class="flow-label">Incoming</span>
-        <span class="flow-num flow-num--in">
-          {{ visitorsToday - currentlyInside }}
-        </span>
-      </div>
-    </div>
+            <div class="flow-divider"></div>
 
-    <div class="flow-divider"></div>
+            <div class="flow-col">
+              <div class="flow-bar-wrap">
+                <div class="flow-bar flow-bar--out" :style="{ width: outgoingBarWidth }"></div>
+              </div>
+              <div class="flow-info">
+                <span class="flow-label">Outgoing</span>
+                <span class="flow-num flow-num--out">{{ outgoing }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <div class="flow-col">
-      <div class="flow-bar-wrap">
-        <div class="flow-bar flow-bar--out" :style="{ width: (100 - occupancyPercent) + '%' }"></div>
-      </div>
-      <div class="flow-info">
-        <span class="flow-label">Outgoing</span>
-        <span class="flow-num flow-num--out">{{ outgoing }}</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-        <!-- ── RIGHT: Controls ── -->
         <div class="controls-col">
           <div class="ctrl-header">
             <div>
@@ -174,6 +164,7 @@
               <h3 class="ctrl-title">Attendance <em>Overview</em></h3>
               <p class="ctrl-sub">All export data</p>
             </div>
+
             <button class="sync-btn sync-btn--1" @click="$router.push('/admin/attendance/logs')">
               <svg
                 width="14"
@@ -190,6 +181,7 @@
               </svg>
               <span>Attendance Logs</span>
             </button>
+
             <button class="sync-btn sync-btn--2" @click="$router.push('/admin/attendance/import')">
               <svg
                 width="14"
@@ -208,64 +200,22 @@
             </button>
           </div>
 
-          <!-- ══ EXPORT LOGS TABLE ══ -->
-          <div class="export-table-card">
-            <div class="etable-header">
+          <div class="export-card">
+            <div class="ecard-top">
               <div>
-                <p class="etable-eyebrow">Export History</p>
-                <h4 class="etable-title">Recent Exports</h4>
+                <p class="ecard-eyebrow">Export History</p>
+                <h4 class="ecard-title">Recent Exports</h4>
               </div>
-              <span class="etable-count">{{ exportLogs.length }} records</span>
+              <span class="ecard-count">{{ exportLogs.length }} records</span>
             </div>
+
             <div class="etable-wrap">
               <table class="etable">
                 <thead>
                   <tr>
-                    <th>
-                      <svg
-                        width="11"
-                        height="11"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                      >
-                        <rect x="3" y="4" width="18" height="18" rx="2" />
-                        <path d="M16 2v4M8 2v4M3 10h18" />
-                      </svg>
-                      Date Exported
-                    </th>
-                    <th>
-                      <svg
-                        width="11"
-                        height="11"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                      >
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                      </svg>
-                      File Type
-                    </th>
-                    <th>
-                      <svg
-                        width="11"
-                        height="11"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                      >
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                      Exported By
-                    </th>
+                    <th>Date Exported</th>
+                    <th>File Type</th>
+                    <th>Exported By</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -281,9 +231,9 @@
                       <span class="erow-date__time">{{ log.time }}</span>
                     </td>
                     <td>
-                      <span :class="['etype-badge', 'etype-badge--' + log.type.toLowerCase()]">{{
-                        log.type
-                      }}</span>
+                      <span :class="['etype-badge', 'etype-badge--' + log.type.toLowerCase()]">
+                        {{ log.type }}
+                      </span>
                     </td>
                     <td class="erow-user">
                       <div class="erow-avatar">{{ log.user.charAt(0) }}</div>
@@ -304,300 +254,322 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
-import { getAttendanceLogs } from '@/services/attendanceService'
-import { getFirestore, collection, getDocs } from "firebase/firestore"
-
 import { supabase } from '@/lib/supabase'
 
-onMounted(async () => {
-  loading.value = true
-  try {
-    const { data, error } = await supabase
-      .from('attendance_logs')
-      .select('*')
+type StudentInfo = {
+  id_number: string
+  first_name: string
+  middle_name?: string | null
+  last_name: string
+  program: string | null
+  college: string | null
+  year_level: number | string | null
+}
 
-    if (error) {
-      console.error("Supabase error:", error)
-    } else {
-      // Assign Supabase data to logs
-      logs.value = data || []
-      console.log("Attendance Logs:", logs.value)
-    }
-  } catch (err) {
-    console.error("Fetch error:", err)
-  } finally {
-    loading.value = false
-  }
-})
-/* -----------------------------
-STATE
-------------------------------*/
+type AttendanceLog = {
+  id: string
+  student_id: string
+  time_in: string | null
+  time_out: string | null
+  attendance_type: string | null
+  event_id?: string | null
+  duration_minutes?: number | null
+  students?: StudentInfo | StudentInfo[] | null
+}
 
-const logs = ref<any[]>([])
+const logs = ref<AttendanceLog[]>([])
 const loading = ref(false)
-
-/* FIXED: typed number to remove TS warning */
-const LIBRARY_CAPACITY: number = 10 
-
-/* -----------------------------
-EXPORT LOGS (for table)
-------------------------------*/
-
 const barsVisible = ref(false)
 
-onMounted(() => {
-  // Trigger flow bars after gauge arc animation completes
-  setTimeout(() => {
-    barsVisible.value = true
-  }, 1600)
-})
-
 const exportLogs = ref([
-  {
-    date: 'Mar 11, 2026',
-    time: '09:42 AM',
-    type: 'PDF',
-    user: 'Maria Santos',
-    status: 'success'
-  },
+  { date: 'Mar 11, 2026', time: '09:42 AM', type: 'PDF', user: 'Maria Santos', status: 'success' },
   {
     date: 'Mar 10, 2026',
     time: '03:15 PM',
     type: 'CSV',
     user: 'Juan dela Cruz',
-    status: 'success'
+    status: 'success',
   },
-  {
-    date: 'Mar 09, 2026',
-    time: '11:08 AM',
-    type: 'XLSX',
-    user: 'Ana Reyes',
-    status: 'success'
-  },
-  {
-    date: 'Mar 08, 2026',
-    time: '02:30 PM',
-    type: 'PDF',
-    user: 'Jose Bautista',
-    status: 'failed'
-  },
-  {
-    date: 'Mar 07, 2026',
-    time: '08:55 AM',
-    type: 'CSV',
-    user: 'Maria Santos',
-    status: 'success'
-  },
-  {
-    date: 'Mar 06, 2026',
-    time: '04:20 PM',
-    type: 'XLSX',
-    user: 'Liza Garcia',
-    status: 'pending'
-  }
+  { date: 'Mar 09, 2026', time: '11:08 AM', type: 'XLSX', user: 'Ana Reyes', status: 'success' },
+  { date: 'Mar 08, 2026', time: '02:30 PM', type: 'PDF', user: 'Jose Bautista', status: 'failed' },
+  { date: 'Mar 07, 2026', time: '08:55 AM', type: 'CSV', user: 'Maria Santos', status: 'success' },
+  { date: 'Mar 06, 2026', time: '04:20 PM', type: 'XLSX', user: 'Liza Garcia', status: 'pending' },
 ])
 
-/* -----------------------------
-FETCH ATTENDANCE
-------------------------------*/
+const actionTabs = [
+  { label: 'Settings', route: '/admin/attendance/settings' },
+  { label: 'Report', route: '/admin/attendance/report' },
+  { label: 'Import Records', route: '/admin/attendance/import' },
+  { label: 'Search', route: '/admin/attendance/search' },
+  { label: 'Students', route: '/admin/attendance/students' },
+  { label: 'Ranking', route: '/admin/attendance/ranking' },
+  { label: 'Visitors', route: '/admin/attendance/visitors' },
+]
+
+onMounted(async () => {
+  setTimeout(() => {
+    barsVisible.value = true
+  }, 1600)
+
+  await fetchAttendance()
+})
+
 const fetchAttendance = async () => {
   loading.value = true
 
   try {
-    const db = getFirestore()
+    const { data, error } = await supabase
+      .from('attendance_logs')
+      .select(
+        `
+        id,
+        student_id,
+        time_in,
+        time_out,
+        attendance_type,
+        event_id,
+        duration_minutes,
+        students!attendance_logs_student_id_fkey (
+          id_number,
+          first_name,
+          middle_name,
+          last_name,
+          program,
+          college,
+          year_level
+        )
+      `,
+      )
+      .eq('attendance_type', 'library')
+      .order('time_in', { ascending: false })
 
-    const snapshot = await getDocs(
-      collection(db, "attendance_logs")
-    )
+    if (error) {
+      console.error('Supabase fetch error:', error)
+      logs.value = []
+      return
+    }
 
-    const records = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+    logs.value = (data || []).map((item: any) => ({
+      ...item,
+      students: Array.isArray(item.students) ? (item.students[0] ?? null) : item.students,
     }))
 
-    console.log("Firestore Logs:", records)
-
-    logs.value = records
-
+    console.log('Joined logs:', logs.value)
   } catch (err) {
-    console.error("Firestore fetch error:", err)
+    console.error('Fetch error:', err)
+    logs.value = []
   } finally {
     loading.value = false
   }
 }
-// const fetchAttendance = async () => {
-//   loading.value = true
 
-//   try {
-//     const data = await getAttendanceLogs({
-//       attendanceType: 'library'
-//     })
-
-//     logs.value = data || []
-//   } catch (err) {
-//     console.error('Attendance fetch error:', err)
-//   } finally {
-//     loading.value = false
-//   }
-// }
-
-// onMounted(fetchAttendance)
-
-/* -----------------------------
-TODAY VISITORS
-------------------------------*/
-
-const visitorsToday = computed(() => {
-  const today = new Date().toISOString().split("T")[0]
-
-  return logs.value.filter((log) => {
-    if (!log.time_in) return false
-
-    const logDate = log.time_in.split("T")[0]
-
-    return logDate === today
-  }).length
-})
-
-/* -----------------------------
-CURRENTLY INSIDE
-------------------------------*/
-const currentlyInside = computed(() => {
-  // Count all today's logs
-  const today = new Date().toISOString().split("T")[0]
-
-  return logs.value.filter((log) => {
-    if (!log.time_in) return false
-    const logDate = log.time_in.split("T")[0]
-    return logDate === today
-  }).length
-})
-
-/* -----------------------------
-OUTGOING
-------------------------------*/
-
-const outgoing = computed(() => {
-  return visitorsToday.value - currentlyInside.value
-})
-
-/* -----------------------------
-OCCUPANCY %
-------------------------------*/
-
-const occupancyPercent = computed(() => {
-  if (LIBRARY_CAPACITY === 0) return 0
-
-  // Use currentlyInside to calculate the percentage
-  const percent = (currentlyInside.value / LIBRARY_CAPACITY) * 100
-  return Math.min(Math.round(percent), 100)
-})
-/* -----------------------------
-AVERAGE STAY (OVERALL)
-------------------------------*/
-const avgStay = computed(() => {
-  let total = 0
-  let count = 0
-
-  logs.value.forEach(log => {
-    if (log.time_in && log.time_out) {
-      total += new Date(log.time_out).getTime() - new Date(log.time_in).getTime()
-      count++
-    }
-  })
-
-  if (!count) return '—'
-  return Math.floor(total / count / 60000) + ' mins'
-})
-
-/* -----------------------------
-AVG STAY BY GROUP
-------------------------------*/
-const avgByGroup = (key: string) => {
-  const map: any = {}
-
-  logs.value.forEach(log => {
-    if (!log.time_in || !log.time_out) return
-
-    const group = log[key] || 'Unknown'
-    const duration =
-      new Date(log.time_out).getTime() -
-      new Date(log.time_in).getTime()
-
-    if (!map[group]) map[group] = { total: 0, count: 0 }
-
-    map[group].total += duration
-    map[group].count++
-  })
-
-  return Object.entries(map)
-    .map(([k, v]: any) => ({
-      name: k,
-      avg: Math.floor(v.total / v.count / 60000)
-    }))
-    .sort((a, b) => b.avg - a.avg)
-    .slice(0, 1)[0] // TOP ONLY (clean UI)
+const getDateObject = (value: string | null) => {
+  if (!value) return null
+  const dt = new Date(value)
+  return Number.isNaN(dt.getTime()) ? null : dt
 }
 
-/* TOP PER CATEGORY */
-const topCollegeStay = computed(() => avgByGroup('college'))
-const topProgramStay = computed(() => avgByGroup('program'))
-const topYearStay = computed(() => avgByGroup('year_level'))
-/* -----------------------------
-QUICK STATS
-------------------------------*/
+const getDateOnly = (value: string | null) => {
+  const dt = getDateObject(value)
+  if (!dt) return null
+  return dt.toISOString().split('T')[0]
+}
+
+const getHour = (value: string | null) => {
+  const dt = getDateObject(value)
+  if (!dt) return null
+  return dt.getHours()
+}
+
+const getDayName = (value: string | null) => {
+  const dt = getDateObject(value)
+  if (!dt) return 'Unknown'
+  return dt.toLocaleDateString('en-US', { weekday: 'long' })
+}
+
+const formatHourLabel = (hour: number) => {
+  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const displayHour = hour % 12 || 12
+  return `${displayHour}:00 ${suffix}`
+}
+
+const getDurationMinutes = (log: AttendanceLog) => {
+  if (typeof log.duration_minutes === 'number' && log.duration_minutes > 0) {
+    return log.duration_minutes
+  }
+
+  const timeIn = getDateObject(log.time_in)
+  const timeOut = getDateObject(log.time_out)
+
+  if (!timeIn || !timeOut) return 0
+
+  const diff = timeOut.getTime() - timeIn.getTime()
+  if (diff < 0) return 0
+
+  return Math.round(diff / 60000)
+}
+
+const buildGroupedVisits = (items: AttendanceLog[], key: 'college' | 'program' | 'year_level') => {
+  const grouped: Record<string, number> = {}
+
+  items.forEach((log) => {
+    const student = Array.isArray(log.students) ? log.students[0] : log.students
+    const value = student?.[key] ?? 'Unknown'
+    const name = String(value)
+    grouped[name] = (grouped[name] || 0) + 1
+  })
+
+  return Object.entries(grouped)
+    .map(([name, visits]) => ({ name, visits }))
+    .sort((a, b) => b.visits - a.visits)
+}
+
+const visitorsToday = computed(() => {
+  const today = new Date().toISOString().split('T')[0]
+  return logs.value.filter((log) => getDateOnly(log.time_in) === today).length
+})
+
+const currentlyInside = computed(() => visitorsToday.value)
+
+const outgoing = computed(() => 0)
+
+const gaugeCount = computed(() => visitorsToday.value)
+
+const gaugeStatus = computed(() => {
+  if (gaugeCount.value === 0) return 'No Attendance'
+  if (gaugeCount.value <= 10) return 'Low Attendance'
+  if (gaugeCount.value <= 30) return 'Moderate'
+  return 'High Attendance'
+})
+
+const gaugeFillPercent = computed(() => {
+  if (gaugeCount.value === 0) return 0
+  if (gaugeCount.value <= 10) return 35
+  if (gaugeCount.value <= 30) return 65
+  return 100
+})
+
+const flowMax = computed(() => Math.max(visitorsToday.value, outgoing.value, 1))
+
+const incomingBarWidth = computed(() => {
+  return `${Math.max((visitorsToday.value / flowMax.value) * 100, visitorsToday.value ? 12 : 0)}%`
+})
+
+const outgoingBarWidth = computed(() => {
+  return `${Math.max((outgoing.value / flowMax.value) * 100, outgoing.value ? 12 : 0)}%`
+})
+
+const averageStayDuration = computed(() => {
+  const durations = logs.value
+    .map((log) => getDurationMinutes(log))
+    .filter((minutes) => minutes > 0)
+
+  if (!durations.length) return '—'
+
+  const avg = Math.round(durations.reduce((sum, minutes) => sum + minutes, 0) / durations.length)
+
+  const hrs = Math.floor(avg / 60)
+  const mins = avg % 60
+
+  return hrs > 0 ? `${hrs}h ${mins}m` : `${mins} mins`
+})
+
+const peakHours = computed(() => {
+  const hourMap: Record<number, number> = {}
+
+  logs.value.forEach((log) => {
+    const hour = getHour(log.time_in)
+    if (hour === null) return
+    hourMap[hour] = (hourMap[hour] || 0) + 1
+  })
+
+  return Object.entries(hourMap)
+    .map(([hour, visits]) => ({
+      hour: Number(hour),
+      label: formatHourLabel(Number(hour)),
+      visits,
+    }))
+    .sort((a, b) => b.visits - a.visits)
+})
+
+const peakDays = computed(() => {
+  const dayMap: Record<string, number> = {}
+
+  logs.value.forEach((log) => {
+    const day = getDayName(log.time_in)
+    dayMap[day] = (dayMap[day] || 0) + 1
+  })
+
+  return Object.entries(dayMap)
+    .map(([day, visits]) => ({ day, visits }))
+    .sort((a, b) => b.visits - a.visits)
+})
+
+const visitsByCollege = computed(() => buildGroupedVisits(logs.value, 'college'))
+const visitsByProgram = computed(() => buildGroupedVisits(logs.value, 'program'))
+const visitsByYearLevel = computed(() => buildGroupedVisits(logs.value, 'year_level'))
+
+const topPeakHour = computed(() => peakHours.value[0] || null)
+const topPeakDay = computed(() => peakDays.value[0] || null)
+const topCollege = computed(() => visitsByCollege.value[0] || null)
+const topProgram = computed(() => visitsByProgram.value[0] || null)
+const topYearLevel = computed(() => visitsByYearLevel.value[0] || null)
 
 const quickStats = computed(() => [
   {
-    val: visitorsToday.value,
-    label: 'Visitors Today',
-    delta: 'Live',
+    val: logs.value.length,
+    label: 'Total Library Visits',
+    delta: 'All',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
   },
   {
-    val: avgStay.value,
-    label: 'Avg. Duration',
+    val: topPeakHour.value ? topPeakHour.value.label : 'N/A',
+    label: 'Peak Hours',
+    delta: topPeakHour.value ? `${topPeakHour.value.visits} visits` : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  },
+  {
+    val: topPeakDay.value ? topPeakDay.value.day : 'N/A',
+    label: 'Peak Days',
+    delta: topPeakDay.value ? `${topPeakDay.value.visits} visits` : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
+  },
+  {
+    val: averageStayDuration.value,
+    label: 'Average Stay',
     delta: 'Session',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   },
   {
-    val: topCollegeStay.value ? topCollegeStay.value.name : 'N/A',
-    label: 'Top College',
-    delta: topCollegeStay.value ? `${topCollegeStay.value.avg}m avg` : '—',
+    val: topCollege.value ? topCollege.value.name : 'N/A',
+    label: 'Visits by College',
+    delta: topCollege.value ? `${topCollege.value.visits} visits` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
   },
   {
-    val: topProgramStay.value ? topProgramStay.value.name : 'N/A',
-    label: 'Top Program',
-    delta: topProgramStay.value ? `${topProgramStay.value.avg}m avg` : '—',
+    val: topProgram.value ? topProgram.value.name : 'N/A',
+    label: 'Visits by Program',
+    delta: topProgram.value ? `${topProgram.value.visits} visits` : '—',
     up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`
-  },
-   {
-    val: topYearStay.value ? `Year ${topYearStay.value.name}` : 'N/A',
-    label: 'Most Active Year',
-    delta: topYearStay.value ? 'Top Tier' : '—',
-    up: true,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
   },
   {
-    val: currentlyInside.value,
-    label: 'Peak Occupancy',
-    delta: `${occupancyPercent.value}%`,
-    up: occupancyPercent.value > 80,
-    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 3v18"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>`
-  }
+    val: topYearLevel.value ? `Year ${topYearLevel.value.name}` : 'N/A',
+    label: 'Visits by Year Level',
+    delta: topYearLevel.value ? `${topYearLevel.value.visits} visits` : '—',
+    up: true,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  },
 ])
-
-/* -----------------------------
-SIDEBAR TAB HANDLER
-------------------------------*/
 
 const handleTabChange = (name: string) => {
   console.log('tab:', name)
