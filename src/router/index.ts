@@ -97,7 +97,7 @@ const router = createRouter({
     { path: '/admin/attendance/search', name: 'attendance-search', component: AttendanceSearch, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/students', name: 'attendance-students', component: SearchRecord, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/ranking', name: 'attendance-ranking', component: AttendanceRanking, meta: { requiresAuth: true }  },
-    { path: '/admin/attendance/visitors', name: 'attendance-visitors', component: VisitorAttendance, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/visitors', name: 'admin-attendance-visitors', component: VisitorAttendance, meta: { requiresAuth: true }  },
     { path: '/admin/services', name: 'admin-services', component: ServicesOverview, meta: { requiresAuth: true }  },
     { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation, meta: { requiresAuth: true }  },
     { path: '/admin/services/records', name: 'services-records', component: ManageRecords, meta: { requiresAuth: true }  },
