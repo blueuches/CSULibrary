@@ -225,7 +225,15 @@
               :style="{ animationDelay: `${index * 80}ms` }"
             >
               <div class="flex justify-between items-start gap-3">
-                <h3 class="text-base font-bold text-[#0d2b0f]">{{ announcement.title }}</h3>
+                <div>
+                  <span
+                    class="inline-flex mb-2 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase"
+                    :style="getBadgeColor(announcement.type)"
+                  >
+                    {{ announcement.type || 'General' }}
+                  </span>
+                  <h3 class="text-base font-bold text-[#0d2b0f]">{{ announcement.title }}</h3>
+                </div>
                 <button
                   @click="deleteNewsAnnouncement(announcement.id)"
                   class="text-gray-400 hover:text-red-500 transition-colors"
@@ -321,6 +329,36 @@ const getErrorMessage = (error: unknown) => {
   return 'Unknown error'
 }
 
+const getBadgeColor = (type?: string) => {
+  const normalizedType = type?.trim().toUpperCase() || 'NEWS'
+
+  if (normalizedType === 'NBWC') {
+    return {
+      backgroundColor: '#dbeafe',
+      color: '#1e40af',
+    }
+  }
+
+  if (normalizedType === 'BSP') {
+    return {
+      backgroundColor: '#bbf7d0',
+      color: '#14532d',
+    }
+  }
+
+  if (normalizedType === 'STARBOOKS') {
+    return {
+      backgroundColor: '#fef3c7',
+      color: '#92400e',
+    }
+  }
+
+  return {
+    backgroundColor: '#ebf5ec',
+    color: '#1b5e20',
+  }
+}
+
 const requestDelete = (message: string, action: () => Promise<void>) => {
   pendingDeleteAction = action
   confirmToast.message = message
@@ -356,13 +394,13 @@ const fetchAnnouncements = async () => {
         .order('created_at', { ascending: false }),
       supabase
         .from('announcements')
-        .select('*')
+        .select('id, title, content, type, image_url, created_at')
         .eq('type', 'general')
         .order('created_at', { ascending: false }),
       supabase
         .from('announcements')
-        .select('*')
-        .eq('type', 'news')
+        .select('id, title, content, type, image_url, created_at')
+        .in('type', ['news', 'news_nbwc', 'news_bsp', 'news_starbooks', 'NBWC', 'BSP', 'Starbooks'])
         .order('created_at', { ascending: false })
     ])
 
