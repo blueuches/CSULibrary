@@ -62,15 +62,15 @@
         </div>
 
         <!-- SERVICES (NO LINK) -->
-        <div class="card disabled">
+        <div @click="goTo('website-services')" class="card">
           <h3>Services</h3>
-          <p>Coming soon</p>
+          <p>Manage website's Services tab and Library's services</p>
         </div>
 
         <!-- ABOUT US (NO LINK) -->
-        <div class="card disabled">
+        <div @click="goTo('website-about')" class="card">
           <h3>About Us</h3>
-          <p>Coming soon</p>
+          <p>Manage Library's About displayed in the website</p>
         </div>
 
       </div>
