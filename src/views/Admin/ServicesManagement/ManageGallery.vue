@@ -5,7 +5,7 @@
 
       <!-- HERO -->
       <div class="gallery-hero">
-        <div class="header-breadcrumb !mb-2">
+        <div class="header-breadcrumb mb-2!">
           <span class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
             @click="$router.push('/admin/website/general')">BACK</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -25,7 +25,7 @@
       </div>
 
       <!-- FLOOR NAV & SEARCH -->
-      <div class="w-full sticky top-0 z-30 px-8 mt-3">
+      <div class="w-full relative top-0 z-30 px-8 mt-3">
         <div
           class="w-full backdrop-blur-md bg-white/80 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-2xl shadow-lg">
           <div class="flex gap-4">
@@ -59,6 +59,24 @@
         </div>
       </div>
 
+      <div v-if="searchQuery && filteredFloors.length === 0"
+        class="flex flex-col items-center justify-center py-24 w-full animate-fade-in">
+
+        <div class="del-icon bg-gray-100! text-gray-300! mb-4!">
+          <i class="fas fa-search-minus fa-2x"></i>
+        </div>
+
+        <h3 class="modal-title text-gray-400!">No Results Found</h3>
+        <p class="hero-subtitle mt-1! text-center!">
+          We couldn't find any matches for "<strong>{{ searchQuery }}</strong>".<br>
+          <span class="text-[0.6rem] opacity-70 text-gray-400">Try checking the spelling.</span>
+        </p>
+
+        <button @click="searchQuery = ''" class="btn-ghost mt-6 py-2! px-5! text-[0.65rem]! rounded-full!">
+          <i class="fas fa-times mr-2"></i> Clear Search
+        </button>
+      </div>
+
       <!-- SECTIONS GRID -->
       <div class="w-full px-8 flex flex-col items-center mt-12 relative z-10 pb-20">
         <transition-group name="fade" tag="div" class="w-full">
@@ -68,7 +86,7 @@
                 <div class="flex items-center gap-6 flex-1">
                   <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{ floor.name }}</span>
                   <h3 class="text-4xl font-black text-[#0d2b0f] uppercase tracking-tighter">{{ wing.name }}</h3>
-                  <div class="h-[2px] flex-grow max-w-[150px] bg-gradient-to-r from-[#0d2b0f] to-yellow-500"></div>
+                  <div class="h-0.5 grow max-w-37.5 bg-linear-to-r from-[#0d2b0f] to-yellow-500"></div>
                 </div>
                 <button class="btn-wing-add" @click="openAdd(floor.id, wing.name)">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -82,14 +100,14 @@
                 <div v-for="(section, idx) in wing.sections" :key="section.id || idx"
                   class="group relative h-96 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 bg-gray-100 border-2 cursor-pointer border-transparent hover:-translate-y-3"
                   :style="section.images.length > 0 ? {
-                    backgroundImage: `url(${section.images[0]})`,
+                    backgroundImage: `url('${section.images[0]}')`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     transitionDelay: `${(idx % 4) * 0.08}s`,
                   } : { transitionDelay: `${(idx % 4) * 0.08}s` }" @click="openViewer(section)"
                   @mouseenter="startCarousel(section)" @mouseleave="stopCarousel(section)">
                   <div
-                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500">
+                    class="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500">
                   </div>
 
                   <!-- Admin buttons -->
@@ -277,7 +295,8 @@
             <h3>Delete "{{ delTarget.sec.title }}"?</h3>
             <p>This action cannot be undone.</p>
             <div class="del-actions">
-              <button class="btn-ghost" style="background-color:green; color: white;" @click="delTarget = null">Cancel</button>
+              <button class="btn-ghost" style="background-color:green; color: white;"
+                @click="delTarget = null">Cancel</button>
               <button class="btn-danger" @click="doDelete">Yes, Delete</button>
             </div>
           </div>
@@ -368,8 +387,8 @@ const form = ref({
   title: '',
   description: '',
   note: '',
-  images: [],   
-  newFiles: []  
+  images: [],
+  newFiles: []
 });
 
 /* =====================================================
@@ -378,11 +397,13 @@ const form = ref({
 const fetchGalleryData = async () => {
   try {
     const rawSections = await getGallerySections();
+    console.log("Raw Sections from DB:", rawSections);
     // Reset all sections
     floors.value.forEach(f => f.wings.forEach(w => w.sections = []));
-    
+
     for (const sec of rawSections) {
       const imgs = await getImagesBySection(sec.id);
+      console.log(`Images for Section ${sec.section_name}:`, imgs);
       const formatted = {
         id: sec.id,
         title: sec.section_name,
@@ -484,22 +505,36 @@ const save = async () => {
 ===================================================== */
 const doDelete = async () => {
   try {
-    // Delete images first
-    const images = await getImagesBySection(delTarget.value.sec.id);
-    for (const img of images) {
-      await deleteGalleryImage(img.id);
+    const sectionId = delTarget.value.sec.id;
+    
+    //  Get image records BEFORE deleting from DB
+    const imageRecords = await getImagesBySection(sectionId);
+    
+    if (imageRecords.length > 0) {
+      //  Extract relative paths (e.g., 'sections/id/file.jpg')
+      const pathsToDelete = imageRecords.map(img => 
+        img.image_url.split('/public/gallery_images/')[1]
+      );
+
+      //  Remove files from Supabase Storage
+      const { error: storageErr } = await supabase.storage
+        .from('gallery_images')
+        .remove(pathsToDelete);
+
+      if (storageErr) console.warn("Storage cleanup failed:", storageErr.message);
     }
 
-    // Then delete the section
-    await deleteGallerySection(delTarget.value.sec.id);
+    //  Delete DB records
+    for (const img of imageRecords) await deleteGalleryImage(img.id);
+    await deleteGallerySection(sectionId);
 
-    showToast("Section removed permanently", "success");
+    showToast("Section and files deleted", "success");
     await fetchGalleryData();
     delTarget.value = null;
     viewerOpen.value = false;
   } catch (err) {
+    showToast("Delete failed", "error");
     console.error(err);
-    showToast("Delete failed: " + (err.message || err), "error");
   }
 };
 
@@ -539,7 +574,7 @@ const openViewer = async (section) => {
 
     viewerSection.value = {
       ...section,
-      images: imgs.map(i => i.image_url) 
+      images: imgs.map(i => i.image_url)
     };
   } catch (err) {
     console.error("Failed to fetch images:", err);
@@ -572,8 +607,8 @@ import imageCompression from 'browser-image-compression';
 const onPhotoUpload = async (e) => {
   const files = Array.from(e.target.files);
   const options = {
-    maxSizeMB: 1,          
-    maxWidthOrHeight: 1920 
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1920
   };
 
   for (const file of files) {
