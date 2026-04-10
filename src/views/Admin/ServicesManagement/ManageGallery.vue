@@ -2,12 +2,14 @@
   <div class="page-layout">
     <Sidebar :activeTab="'GALLERY'" />
     <div class="w-full relative overflow-y-auto flex flex-col items-center bg-white">
-
       <!-- HERO -->
       <div class="gallery-hero">
         <div class="header-breadcrumb !mb-2">
-          <span class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-            @click="$router.push('/admin/website/general')">BACK</span>
+          <span
+            class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+            @click="$router.push('/admin/website/general')"
+            >BACK</span
+          >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M9 5l7 7-7 7" />
           </svg>
@@ -20,37 +22,65 @@
         <p class="hero-subtitle">
           <span class="hero-dot-green"></span>
           Manage the CSU Library Gallery —
-          <strong>{{ totalSections }} sections · {{ totalPhotos }} photos · {{ floors.length }} floors</strong>
+          <strong
+            >{{ totalSections }} sections · {{ totalPhotos }} photos ·
+            {{ floors.length }} floors</strong
+          >
         </p>
       </div>
 
       <!-- FLOOR NAV & SEARCH -->
       <div class="w-full sticky top-0 z-30 px-8 mt-3">
         <div
-          class="w-full backdrop-blur-md bg-white/80 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-2xl shadow-lg">
+          class="w-full backdrop-blur-md bg-white/80 py-2 px-8 flex items-center justify-between border border-gray-200 rounded-2xl shadow-lg"
+        >
           <div class="flex gap-4">
-            <button v-for="(floor, i) in floors" :key="floor.id" @click="activeFloor = floor.id" :class="[
-              'px-8 py-2.5 rounded-2xl font-black transition-all duration-300 text-xs uppercase tracking-widest border-2 nav-btn',
-              activeFloor === floor.id && !searchQuery
-                ? 'bg-[#0d2b0f] border-[#0d2b0f] text-white shadow-md'
-                : 'bg-transparent border-[#0d2b0f] text-[#0d2b0f] hover:bg-[#1b5e20] hover:border-[#1b5e20] hover:text-white',
-            ]" :style="{ animationDelay: `${i * 0.12}s` }">
+            <button
+              v-for="(floor, i) in floors"
+              :key="floor.id"
+              @click="activeFloor = floor.id"
+              :class="[
+                'px-8 py-2.5 rounded-2xl font-black transition-all duration-300 text-xs uppercase tracking-widest border-2 nav-btn',
+                activeFloor === floor.id && !searchQuery
+                  ? 'bg-[#0d2b0f] border-[#0d2b0f] text-white shadow-md'
+                  : 'bg-transparent border-[#0d2b0f] text-[#0d2b0f] hover:bg-[#1b5e20] hover:border-[#1b5e20] hover:text-white',
+              ]"
+              :style="{ animationDelay: `${i * 0.12}s` }"
+            >
               {{ floor.name }}
             </button>
           </div>
 
           <div class="nav-right">
             <div class="relative nav-search">
-              <svg class="nav-search__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
+              <svg
+                class="nav-search__icon"
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <circle cx="11" cy="11" r="8" />
                 <path d="M21 21l-4.35-4.35" />
               </svg>
-              <input v-model="searchQuery" type="text" placeholder="Search Section..."
-                class="w-full pl-9 pr-4 py-3 rounded-2xl bg-gray-50 border-2 border-[#0d2b0f] text-[#0d2b0f] font-bold text-sm focus:outline-none focus:ring-4 focus:ring-[#1b5e20]/10 transition-all shadow-inner" />
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search Section..."
+                class="w-full pl-9 pr-4 py-3 rounded-2xl bg-gray-50 border-2 border-[#0d2b0f] text-[#0d2b0f] font-bold text-sm focus:outline-none focus:ring-4 focus:ring-[#1b5e20]/10 transition-all shadow-inner"
+              />
             </div>
             <button class="btn-new-nav" @click="openAdd()">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
               </svg>
               New Section
@@ -62,16 +92,33 @@
       <!-- SECTIONS GRID -->
       <div class="w-full px-8 flex flex-col items-center mt-12 relative z-10 pb-20">
         <transition-group name="fade" tag="div" class="w-full">
-          <div v-for="floor in searchQuery ? filteredFloors : activeFloorData" :key="floor.id" class="w-full mb-12">
+          <div
+            v-for="floor in searchQuery ? filteredFloors : activeFloorData"
+            :key="floor.id"
+            class="w-full mb-12"
+          >
             <div v-for="wing in floor.wings" :key="wing.name" class="mb-20">
               <div class="wing-header mb-10">
                 <div class="flex items-center gap-6 flex-1">
-                  <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{ floor.name }}</span>
-                  <h3 class="text-4xl font-black text-[#0d2b0f] uppercase tracking-tighter">{{ wing.name }}</h3>
-                  <div class="h-[2px] flex-grow max-w-[150px] bg-gradient-to-r from-[#0d2b0f] to-yellow-500"></div>
+                  <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{
+                    floor.name
+                  }}</span>
+                  <h3 class="text-4xl font-black text-[#0d2b0f] uppercase tracking-tighter">
+                    {{ wing.name }}
+                  </h3>
+                  <div
+                    class="h-[2px] flex-grow max-w-[150px] bg-gradient-to-r from-[#0d2b0f] to-yellow-500"
+                  ></div>
                 </div>
                 <button class="btn-wing-add" @click="openAdd(floor.id, wing.name)">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <svg
+                    width="11"
+                    height="11"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
                     <path d="M12 4v16m8-8H4" />
                   </svg>
                   Add to {{ wing.name }}
@@ -79,34 +126,67 @@
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                <div v-for="(section, idx) in wing.sections" :key="section.id || idx"
+                <div
+                  v-for="(section, idx) in wing.sections"
+                  :key="section.id || idx"
                   class="group relative h-96 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 bg-gray-100 border-2 cursor-pointer border-transparent hover:-translate-y-3"
-                  :style="section.images.length > 0 ? {
-                    backgroundImage: `url(${section.images[0]})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    transitionDelay: `${(idx % 4) * 0.08}s`,
-                  } : { transitionDelay: `${(idx % 4) * 0.08}s` }" @click="openViewer(section)"
-                  @mouseenter="startCarousel(section)" @mouseleave="stopCarousel(section)">
+                  :style="
+                    section.images.length > 0
+                      ? {
+                          backgroundImage: `url(${section.images[0]})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          transitionDelay: `${(idx % 4) * 0.08}s`,
+                        }
+                      : { transitionDelay: `${(idx % 4) * 0.08}s` }
+                  "
+                  @click="openViewer(section)"
+                  @mouseenter="startCarousel(section)"
+                  @mouseleave="stopCarousel(section)"
+                >
                   <div
-                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500">
-                  </div>
+                    class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500"
+                  ></div>
 
                   <!-- Admin buttons -->
                   <div class="admin-ctrl" @click.stop>
-                    <button class="ac-btn ac-btn--edit" @click="openEdit(section, floor.id, wing.name)">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    <button
+                      class="ac-btn ac-btn--edit"
+                      @click="openEdit(section, floor.id, wing.name)"
+                    >
+                      <svg
+                        width="11"
+                        height="11"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
                       </svg>
                       Edit
                     </button>
-                    <button class="ac-btn ac-btn--del" @click.stop="askDelete(section, floor.id, wing.name)">
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    <button
+                      class="ac-btn ac-btn--del"
+                      @click.stop="askDelete(section, floor.id, wing.name)"
+                    >
+                      <svg
+                        width="11"
+                        height="11"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
                       </svg>
                       Delete
                     </button>
@@ -115,32 +195,50 @@
                   <!-- Labels & Info -->
                   <div class="absolute top-3 left-3 z-10">
                     <div
-                      class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase shadow-sm bg-[#0d2b0f] text-white">
+                      class="px-3 py-1 rounded-2xl text-[10px] font-bold tracking-widest uppercase shadow-sm bg-[#0d2b0f] text-white"
+                    >
                       {{ floor.name }}
                     </div>
                   </div>
 
                   <div class="absolute inset-0 p-8 flex flex-col justify-end">
-                    <div class="w-10 h-1 bg-[#1b5e20] mb-4 rounded-full transition-all group-hover:w-20"></div>
+                    <div
+                      class="w-10 h-1 bg-[#1b5e20] mb-4 rounded-full transition-all group-hover:w-20"
+                    ></div>
                     <h4
-                      class="text-white font-black text-2xl leading-tight uppercase group-hover:text-yellow-500 transition-colors duration-300">
+                      class="text-white font-black text-2xl leading-tight uppercase group-hover:text-yellow-500 transition-colors duration-300"
+                    >
                       {{ section.title }}
                     </h4>
-                    <p v-if="section.note" class="text-[#66bb6a] text-[10px] font-bold uppercase mt-1 tracking-widest">
+                    <p
+                      v-if="section.note"
+                      class="text-[#66bb6a] text-[10px] font-bold uppercase mt-1 tracking-widest"
+                    >
                       {{ section.note }}
                     </p>
                     <p class="text-white/80 text-sm mt-4 line-clamp-3 leading-relaxed">
                       {{ section.description }}
                     </p>
                     <div class="flex items-center gap-1.5 mt-3">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)"
-                        stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.4)"
+                        stroke-width="2"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                        />
                         <circle cx="12" cy="13" r="3" />
                       </svg>
                       <span class="text-white/38 text-[10px] font-semibold">
-                        {{ section.images.length }} photo{{ section.images.length !== 1 ? 's' : '' }}
+                        {{ section.images.length }} photo{{
+                          section.images.length !== 1 ? 's' : ''
+                        }}
                       </span>
                     </div>
                   </div>
@@ -149,18 +247,29 @@
                 <!-- ADD SECTION BUTTON -->
                 <button
                   class="relative h-96 rounded-2xl border-2 border-dashed border-[#0d2b0f]/20 bg-transparent flex flex-col items-center justify-center gap-4 cursor-pointer transition-all duration-300 hover:border-[#1b5e20] hover:bg-[#f4f9f4] group/add"
-                  @click="openAdd(floor.id, wing.name)">
+                  @click="openAdd(floor.id, wing.name)"
+                >
                   <div
-                    class="w-14 h-14 rounded-2xl bg-[#0d2b0f]/05 flex items-center justify-center group-hover/add:bg-[#1b5e20]/10 transition-all">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                      class="text-[#0d2b0f]/25 group-hover/add:text-[#1b5e20] transition-colors">
+                    class="w-14 h-14 rounded-2xl bg-[#0d2b0f]/05 flex items-center justify-center group-hover/add:bg-[#1b5e20]/10 transition-all"
+                  >
+                    <svg
+                      width="26"
+                      height="26"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      class="text-[#0d2b0f]/25 group-hover/add:text-[#1b5e20] transition-colors"
+                    >
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
                   <div class="text-center px-4">
                     <p
-                      class="text-[#0d2b0f]/30 group-hover/add:text-[#1b5e20] text-[11px] font-black uppercase tracking-widest transition-colors">
-                      Add Section</p>
+                      class="text-[#0d2b0f]/30 group-hover/add:text-[#1b5e20] text-[11px] font-black uppercase tracking-widest transition-colors"
+                    >
+                      Add Section
+                    </p>
                     <p class="text-[#0d2b0f]/20 text-[10px] mt-1 font-medium">to {{ wing.name }}</p>
                   </div>
                 </button>
@@ -180,10 +289,19 @@
             <div class="modal-head">
               <div>
                 <p class="modal-mode">{{ isAdding ? '✦ New Section' : '✦ Edit Section' }}</p>
-                <h3 class="modal-title">{{ isAdding ? 'Add to Gallery' : form.title || 'Edit Section' }}</h3>
+                <h3 class="modal-title">
+                  {{ isAdding ? 'Add to Gallery' : form.title || 'Edit Section' }}
+                </h3>
               </div>
               <button class="icon-btn" @click="closeForm">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
                   <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -217,7 +335,11 @@
               </div>
               <div class="fg">
                 <label>Description <span class="req">*</span></label>
-                <textarea v-model="form.description" rows="3" placeholder="Brief description..."></textarea>
+                <textarea
+                  v-model="form.description"
+                  rows="3"
+                  placeholder="Brief description..."
+                ></textarea>
               </div>
               <div class="fg">
                 <label>Note <span class="opt">· optional · shows as green label</span></label>
@@ -229,19 +351,38 @@
                 Photos <span class="photo-pill">{{ form.images.length }} / 10</span>
               </div>
               <div class="photo-grid">
-                <div v-for="(img, i) in form.images" :key="i" class="ptile" :class="{ 'ptile--cover': i === 0 }">
+                <div
+                  v-for="(img, i) in form.images"
+                  :key="i"
+                  class="ptile"
+                  :class="{ 'ptile--cover': i === 0 }"
+                >
                   <img :src="img" :alt="`Photo ${i + 1}`" />
                   <div class="ptile-over">
                     <span v-if="i === 0" class="cover-badge">Cover</span>
                     <div class="ptile-btns">
-                      <button v-if="i > 0" class="pb pb--star" @click="setCover(i)" title="Set as cover">★</button>
+                      <button
+                        v-if="i > 0"
+                        class="pb pb--star"
+                        @click="setCover(i)"
+                        title="Set as cover"
+                      >
+                        ★
+                      </button>
                       <button class="pb pb--del" @click="removePhoto(i)" title="Remove">✕</button>
                     </div>
                   </div>
                 </div>
                 <label v-if="form.images.length < 10" class="photo-slot">
                   <input type="file" accept="image/*" multiple hidden @change="onPhotoUpload" />
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
                   <span>Upload</span>
@@ -253,11 +394,21 @@
             <!-- FOOTER -->
             <div class="modal-foot">
               <button class="btn-ghost" @click="closeForm">Cancel</button>
-              <button class="btn-save" :disabled="!form.title.trim() || !form.description.trim() || isSaving"
-                @click="save">
+              <button
+                class="btn-save"
+                :disabled="!form.title.trim() || !form.description.trim() || isSaving"
+                @click="save"
+              >
                 <span v-if="isSaving">Saving...</span>
                 <template v-else>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                   {{ isAdding ? 'Add to Gallery' : 'Save Changes' }}
@@ -277,7 +428,13 @@
             <h3>Delete "{{ delTarget.sec.title }}"?</h3>
             <p>This action cannot be undone.</p>
             <div class="del-actions">
-              <button class="btn-ghost" style="background-color:green; color: white;" @click="delTarget = null">Cancel</button>
+              <button
+                class="btn-ghost"
+                style="background-color: green; color: white"
+                @click="delTarget = null"
+              >
+                Cancel
+              </button>
               <button class="btn-danger" @click="doDelete">Yes, Delete</button>
             </div>
           </div>
@@ -290,17 +447,16 @@
           {{ toast.msg }}
         </div>
       </Transition>
-
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import Sidebar from '@/components/Sidebar.vue';
+import { ref, computed, onMounted } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
 import '@/assets/styles/manage-gallery.css'
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from '@/lib/supabase'
 import {
   getGallerySections,
   createGallerySection,
@@ -308,8 +464,8 @@ import {
   deleteGallerySection,
   getImagesBySection,
   addGalleryImage,
-  deleteGalleryImage
-} from "@/services/manageGallery";
+  deleteGalleryImage,
+} from '@/services/manageGallery'
 
 /* =====================================================
   STATE MANAGEMENT
@@ -328,7 +484,7 @@ const startCarousel = (section) => {
     setInterval(() => {
       index = (index + 1) % section.images.length
       section.images.unshift(section.images.splice(index, 1)[0])
-    }, 1200)
+    }, 1200),
   )
 }
 
@@ -341,26 +497,47 @@ const stopCarousel = (section) => {
 }
 
 const floors = ref([
-  { id: 1, name: '1st Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] },
-  { id: 2, name: '2nd Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] },
-  { id: 3, name: '3rd Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] }
-]);
+  {
+    id: 1,
+    name: '1st Floor',
+    wings: [
+      { name: 'Left Wing', sections: [] },
+      { name: 'Right Wing', sections: [] },
+    ],
+  },
+  {
+    id: 2,
+    name: '2nd Floor',
+    wings: [
+      { name: 'Left Wing', sections: [] },
+      { name: 'Right Wing', sections: [] },
+    ],
+  },
+  {
+    id: 3,
+    name: '3rd Floor',
+    wings: [
+      { name: 'Left Wing', sections: [] },
+      { name: 'Right Wing', sections: [] },
+    ],
+  },
+])
 
-const wingOptions = ['Left Wing', 'Right Wing'];
-const activeFloor = ref(1);
-const searchQuery = ref('');
-const isSaving = ref(false);
-const toast = ref(null);
+const wingOptions = ['Left Wing', 'Right Wing']
+const activeFloor = ref(1)
+const searchQuery = ref('')
+const isSaving = ref(false)
+const toast = ref(null)
 
 // Modal/UI States
-const formOpen = ref(false);
-const viewerOpen = ref(false);
-const delTarget = ref(null);
-const viewerSection = ref(null);
-const viewerImgIndex = ref(0);
+const formOpen = ref(false)
+const viewerOpen = ref(false)
+const delTarget = ref(null)
+const viewerSection = ref(null)
+const viewerImgIndex = ref(0)
 
 // Form State
-const isAdding = ref(true);
+const isAdding = ref(true)
 const form = ref({
   id: null,
   floorId: 1,
@@ -368,116 +545,116 @@ const form = ref({
   title: '',
   description: '',
   note: '',
-  images: [],   
-  newFiles: []  
-});
+  images: [],
+  newFiles: [],
+})
 
 /* =====================================================
   DATA FETCHING (SUPABASE)
 ===================================================== */
 const fetchGalleryData = async () => {
   try {
-    const rawSections = await getGallerySections();
+    const rawSections = await getGallerySections()
     // Reset all sections
-    floors.value.forEach(f => f.wings.forEach(w => w.sections = []));
-    
+    floors.value.forEach((f) => f.wings.forEach((w) => (w.sections = [])))
+
     for (const sec of rawSections) {
-      const imgs = await getImagesBySection(sec.id);
+      const imgs = await getImagesBySection(sec.id)
       const formatted = {
         id: sec.id,
         title: sec.section_name,
         description: sec.description,
         note: sec.note,
-        images: imgs.map(i => i.image_url)
-      };
-      const floorObj = floors.value.find(f => f.name === sec.floor);
+        images: imgs.map((i) => i.image_url),
+      }
+      const floorObj = floors.value.find((f) => f.name === sec.floor)
       if (floorObj) {
-        const wingObj = floorObj.wings.find(w => w.name === sec.wing);
-        if (wingObj) wingObj.sections.push(formatted);
+        const wingObj = floorObj.wings.find((w) => w.name === sec.wing)
+        if (wingObj) wingObj.sections.push(formatted)
       }
     }
   } catch (err) {
-    showToast("Failed to load gallery: " + err.message, "error");
+    showToast('Failed to load gallery: ' + err.message, 'error')
   }
-};
+}
 
-onMounted(fetchGalleryData);
+onMounted(fetchGalleryData)
 
 /* =====================================================
   IMAGE UPLOAD
 ===================================================== */
 const uploadImages = async (sectionId) => {
-  const uploadedUrls = [];
+  const uploadedUrls = []
 
   for (const file of form.value.newFiles) {
-    const filePath = `sections/${sectionId}/${Date.now()}_${file.name}`;
-    const { error } = await supabase.storage.from('gallery_images').upload(filePath, file);
-    if (error) throw error;
+    const filePath = `sections/${sectionId}/${Date.now()}_${file.name}`
+    const { error } = await supabase.storage.from('gallery_images').upload(filePath, file)
+    if (error) throw error
 
-    const { data: urlData } = supabase.storage.from('gallery_images').getPublicUrl(filePath);
-    uploadedUrls.push(urlData.publicUrl);
+    const { data: urlData } = supabase.storage.from('gallery_images').getPublicUrl(filePath)
+    uploadedUrls.push(urlData.publicUrl)
   }
 
-  return uploadedUrls;
-};
+  return uploadedUrls
+}
 
 /* =====================================================
   SAVE / ADD / EDIT
 ===================================================== */
 const save = async () => {
   if (!form.value.title || !form.value.description) {
-    showToast("Please fill in required fields", "error");
-    return;
+    showToast('Please fill in required fields', 'error')
+    return
   }
 
-  isSaving.value = true;
+  isSaving.value = true
   try {
     const sectionPayload = {
-      floor: floors.value.find(f => f.id === form.value.floorId)?.name,
+      floor: floors.value.find((f) => f.id === form.value.floorId)?.name,
       wing: form.value.wingName,
       section_name: form.value.title,
       description: form.value.description,
-      note: form.value.note
-    };
+      note: form.value.note,
+    }
 
-    let sectionId = form.value.id;
+    let sectionId = form.value.id
 
     if (isAdding.value) {
-      const created = await createGallerySection(sectionPayload);
-      sectionId = created.id;
+      const created = await createGallerySection(sectionPayload)
+      sectionId = created.id
     } else {
-      await updateGallerySection(sectionId, sectionPayload);
+      await updateGallerySection(sectionId, sectionPayload)
     }
 
     // Merge existing URLs + new uploads
-    let finalImageUrls = form.value.images.filter(img => img.startsWith('http'));
+    let finalImageUrls = form.value.images.filter((img) => img.startsWith('http'))
 
     if (form.value.newFiles.length > 0) {
-      const newUrls = await uploadImages(sectionId);
-      finalImageUrls = [...finalImageUrls, ...newUrls];
+      const newUrls = await uploadImages(sectionId)
+      finalImageUrls = [...finalImageUrls, ...newUrls]
     }
 
     // Sync DB: delete old and insert current images
-    const oldRecords = await getImagesBySection(sectionId);
-    for (const rec of oldRecords) await deleteGalleryImage(rec.id);
+    const oldRecords = await getImagesBySection(sectionId)
+    for (const rec of oldRecords) await deleteGalleryImage(rec.id)
     for (let i = 0; i < finalImageUrls.length; i++) {
       await addGalleryImage({
         section_id: sectionId,
         image_url: finalImageUrls[i],
-        display_order: i
-      });
+        display_order: i,
+      })
     }
 
-    showToast("Gallery updated successfully!");
-    await fetchGalleryData();
-    closeForm();
+    showToast('Gallery updated successfully!')
+    await fetchGalleryData()
+    closeForm()
   } catch (err) {
-    console.error("Storage/DB Error:", err);
-    showToast(err.message || "An error occurred while saving", "error");
+    console.error('Storage/DB Error:', err)
+    showToast(err.message || 'An error occurred while saving', 'error')
   } finally {
-    isSaving.value = false;
+    isSaving.value = false
   }
-};
+}
 
 /* =====================================================
    DELETE SECTION
@@ -485,145 +662,167 @@ const save = async () => {
 const doDelete = async () => {
   try {
     // Delete images first
-    const images = await getImagesBySection(delTarget.value.sec.id);
+    const images = await getImagesBySection(delTarget.value.sec.id)
     for (const img of images) {
-      await deleteGalleryImage(img.id);
+      await deleteGalleryImage(img.id)
     }
 
     // Then delete the section
-    await deleteGallerySection(delTarget.value.sec.id);
+    await deleteGallerySection(delTarget.value.sec.id)
 
-    showToast("Section removed permanently", "success");
-    await fetchGalleryData();
-    delTarget.value = null;
-    viewerOpen.value = false;
+    showToast('Section removed permanently', 'success')
+    await fetchGalleryData()
+    delTarget.value = null
+    viewerOpen.value = false
   } catch (err) {
-    console.error(err);
-    showToast("Delete failed: " + (err.message || err), "error");
+    console.error(err)
+    showToast('Delete failed: ' + (err.message || err), 'error')
   }
-};
+}
 
 // Show delete modal from grid
 const askDelete = (sec, floorId, wingName) => {
-  delTarget.value = { sec, floorId, wingName };
-};
+  delTarget.value = { sec, floorId, wingName }
+}
 
 // Show delete modal from viewer
 const askDeleteFromViewer = () => {
-  if (!viewerSection.value) return;
-  delTarget.value = { sec: viewerSection.value };
-};
+  if (!viewerSection.value) return
+  delTarget.value = { sec: viewerSection.value }
+}
 
 /* =====================================================
    MODAL & VIEWER CONTROLS
 ===================================================== */
 const openAdd = (floorId = 1, wingName = 'Left Wing') => {
-  isAdding.value = true;
-  form.value = { id: null, floorId, wingName, title: '', description: '', note: '', images: [], newFiles: [] };
-  formOpen.value = true;
-};
+  isAdding.value = true
+  form.value = {
+    id: null,
+    floorId,
+    wingName,
+    title: '',
+    description: '',
+    note: '',
+    images: [],
+    newFiles: [],
+  }
+  formOpen.value = true
+}
 
 const openEdit = (section, floorId, wingName) => {
-  isAdding.value = false;
-  form.value = { ...section, floorId, wingName, newFiles: [] };
-  formOpen.value = true;
-};
+  isAdding.value = false
+  form.value = { ...section, floorId, wingName, newFiles: [] }
+  formOpen.value = true
+}
 
 const openViewer = async (section) => {
   try {
-    viewerOpen.value = true;
-    viewerImgIndex.value = 0;
+    viewerOpen.value = true
+    viewerImgIndex.value = 0
 
     // Fetch all images for this section
-    const imgs = await getImagesBySection(section.id);
+    const imgs = await getImagesBySection(section.id)
 
     viewerSection.value = {
       ...section,
-      images: imgs.map(i => i.image_url) 
-    };
+      images: imgs.map((i) => i.image_url),
+    }
   } catch (err) {
-    console.error("Failed to fetch images:", err);
-    showToast("Failed to load images for viewer", "error");
+    console.error('Failed to fetch images:', err)
+    showToast('Failed to load images for viewer', 'error')
   }
-};
+}
 
 const closeViewer = () => {
-  viewerOpen.value = false;
-  viewerSection.value = null;
-};
+  viewerOpen.value = false
+  viewerSection.value = null
+}
 
 const prevImg = () => {
-  if (!viewerSection.value) return;
+  if (!viewerSection.value) return
   viewerImgIndex.value =
-    (viewerImgIndex.value - 1 + viewerSection.value.images.length) % viewerSection.value.images.length;
-};
+    (viewerImgIndex.value - 1 + viewerSection.value.images.length) %
+    viewerSection.value.images.length
+}
 
 const nextImg = () => {
-  if (!viewerSection.value) return;
-  viewerImgIndex.value =
-    (viewerImgIndex.value + 1) % viewerSection.value.images.length;
-};
+  if (!viewerSection.value) return
+  viewerImgIndex.value = (viewerImgIndex.value + 1) % viewerSection.value.images.length
+}
 
 /* =====================================================
   PHOTO HANDLING
 ===================================================== */
-import imageCompression from 'browser-image-compression';
+import imageCompression from 'browser-image-compression'
 
 const onPhotoUpload = async (e) => {
-  const files = Array.from(e.target.files);
+  const files = Array.from(e.target.files)
   const options = {
-    maxSizeMB: 1,          
-    maxWidthOrHeight: 1920 
-  };
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1920,
+  }
 
   for (const file of files) {
     try {
-      const compressedFile = await imageCompression(file, options);
-      form.value.newFiles.push(compressedFile);
-      form.value.images.push(URL.createObjectURL(compressedFile));
+      const compressedFile = await imageCompression(file, options)
+      form.value.newFiles.push(compressedFile)
+      form.value.images.push(URL.createObjectURL(compressedFile))
     } catch (error) {
-      console.error("Compression Error:", error);
+      console.error('Compression Error:', error)
     }
   }
-};
+}
 
 const removePhoto = (idx) => {
-  form.value.images.splice(idx, 1);
-  if (form.value.newFiles[idx]) form.value.newFiles.splice(idx, 1);
-};
+  form.value.images.splice(idx, 1)
+  if (form.value.newFiles[idx]) form.value.newFiles.splice(idx, 1)
+}
 
 const setCover = (idx) => {
-  const img = form.value.images.splice(idx, 1)[0];
-  form.value.images.unshift(img);
-};
+  const img = form.value.images.splice(idx, 1)[0]
+  form.value.images.unshift(img)
+}
 
 /* =====================================================
    SEARCH & COMPUTED DATA
 ===================================================== */
-const activeFloorData = computed(() => floors.value.filter(f => f.id === activeFloor.value));
+const activeFloorData = computed(() => floors.value.filter((f) => f.id === activeFloor.value))
 
 const filteredFloors = computed(() => {
-  if (!searchQuery.value) return floors.value;
-  const q = searchQuery.value.toLowerCase();
-  return floors.value.map(f => ({
-    ...f,
-    wings: f.wings.map(w => ({
-      ...w,
-      sections: w.sections.filter(s => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q))
-    })).filter(w => w.sections.length > 0)
-  })).filter(f => f.wings.length > 0);
-});
+  if (!searchQuery.value) return floors.value
+  const q = searchQuery.value.toLowerCase()
+  return floors.value
+    .map((f) => ({
+      ...f,
+      wings: f.wings
+        .map((w) => ({
+          ...w,
+          sections: w.sections.filter(
+            (s) => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q),
+          ),
+        }))
+        .filter((w) => w.sections.length > 0),
+    }))
+    .filter((f) => f.wings.length > 0)
+})
 
-const totalSections = computed(() => floors.value.reduce((a, f) => a + f.wings.reduce((wa, w) => wa + w.sections.length, 0), 0));
-const totalPhotos = computed(() => floors.value.reduce((a, f) => a + f.wings.reduce((wa, w) => wa + w.sections.reduce((sa, s) => sa + s.images.length, 0), 0), 0));
+const totalSections = computed(() =>
+  floors.value.reduce((a, f) => a + f.wings.reduce((wa, w) => wa + w.sections.length, 0), 0),
+)
+const totalPhotos = computed(() =>
+  floors.value.reduce(
+    (a, f) =>
+      a + f.wings.reduce((wa, w) => wa + w.sections.reduce((sa, s) => sa + s.images.length, 0), 0),
+    0,
+  ),
+)
 
 /* =====================================================
  UTILS
 ===================================================== */
-const closeForm = () => formOpen.value = false;
+const closeForm = () => (formOpen.value = false)
 const showToast = (msg, type = 'success') => {
-  toast.value = { msg, type };
-  setTimeout(() => toast.value = null, 3000);
-};
-
+  toast.value = { msg, type }
+  setTimeout(() => (toast.value = null), 3000)
+}
 </script>
