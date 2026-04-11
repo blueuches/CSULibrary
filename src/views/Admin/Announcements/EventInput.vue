@@ -33,16 +33,11 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M9 5l7 7-7 7" />
               </svg>
-              <span>ANNOUNCEMENT</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span>CREATE EVENT ANNOUNCEMENT</span>
+
+              <span>EVENT ANNOUNCEMENT</span>
             </div>
 
-            <h1 class="header-title">
-              Event <span class="text-yellow-500">Announcement</span>
-            </h1>
+            <h1 class="header-title">Event <span class="text-yellow-500">Announcement</span></h1>
 
             <p class="header-sub">Compose and publish updates for the library community.</p>
           </div>
