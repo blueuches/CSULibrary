@@ -35,6 +35,9 @@ export interface CurriculumDetail {
   legal_basis: string | null
   effectivity_term: string | null
   description: string | null
+  specialization?: string | null
+  requirements?: CurriculumRequirement[]
+  study_plan?: StudyPlanItem[]
   created_at?: string
 }
 
@@ -88,14 +91,36 @@ export interface Curriculum {
 // SPECIALIZATION
 export interface ProgramSpecialization {
   id: string
+  program_id?: string
   program_sp_name: string
-  curricula: Curriculum[]
+  program_sp_code?: string | null
+  description?: string | null
+  revision_year?: number | null
+  revision_no?: string | null
+  legal_basis?: string | null
+  effectivity_term?: string | null
+  curricula?: Curriculum[]
+}
+
+export interface ProgramStudyPlanRow {
+  id: string
+  program_id?: string | null
+  program_specialization_id?: string | null
+  year_level?: number | null
+  semester?: number | null
+  term?: string | null
+  semester_label?: string | null
+  display_order?: number | null
+  course_code?: string | null
+  course_title?: string | null
+  subject_code?: string | null
+  subject_title?: string | null
+  units?: number | null
 }
 
 
 // COLLEGE
 export interface CollegeCurriculum {
-  id: string
   code: string
   name: string
   programs: ProgramCurriculum[]
