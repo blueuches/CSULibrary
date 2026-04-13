@@ -40,6 +40,9 @@
             <span class="kpi-value status-value">{{ openCollegeName || 'None' }}</span>
           </div>
         </article>
+
+        <h1 @click="$router.push('/admin/services/curriculum/curriculum-info')">Curriculum Info</h1>
+        <h1 @click="$router.push('/admin/services/curriculum/program-study')">Program Study</h1>
       </section>
 
       <section class="panel panel--table curriculum-panel">
