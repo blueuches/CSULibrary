@@ -550,8 +550,9 @@ const openCurriculumModal = async (
     curriculumDetail.value = detail
     specializations.value = programSpecializations
 
-    if (programSpecializations.length) {
-      selectedSpecializationId.value = programSpecializations[0].id
+    const firstSpecialization = programSpecializations[0]
+    if (firstSpecialization) {
+      selectedSpecializationId.value = firstSpecialization.id
     }
 
     await loadStudyPlans()
@@ -625,8 +626,9 @@ const ensureProgramSpecializationsLoaded = async (program: ProgramCurriculum): P
     const rows = await getProgramSpecializationsByProgramId(program.id, program.name)
     programSpecializationsMap.value[program.id] = rows
 
-    if (rows.length && !selectedProgramSpecializationMap.value[program.id]) {
-      selectedProgramSpecializationMap.value[program.id] = rows[0].id
+    const firstRow = rows[0]
+    if (firstRow && !selectedProgramSpecializationMap.value[program.id]) {
+      selectedProgramSpecializationMap.value[program.id] = firstRow.id
     }
   } catch (error) {
     console.error(`Failed to load specializations for program ${program.name}:`, error)

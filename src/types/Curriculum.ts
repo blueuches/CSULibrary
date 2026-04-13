@@ -121,7 +121,6 @@ export interface ProgramStudyPlanRow {
 
 // COLLEGE
 export interface CollegeCurriculum {
-  id: string
   code: string
   name: string
   programs: ProgramCurriculum[]
