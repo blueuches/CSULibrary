@@ -2280,9 +2280,9 @@ const featureItems = computed(() => getSectionMedia('features'))
 const libraryBgImage = computed(() => librarySectionItems.value[0]?.src || designBg)
 const libraryMainImage = computed(() => librarySectionItems.value[1]?.src || photo2)
 
-const rldImage1 = computed(() => rldItems.value[0]?.src || tinay)
-const rldImage2 = computed(() => rldItems.value[1]?.src || eden)
-const rldImage3 = computed(() => rldItems.value[2]?.src || tinay)
+const rldImage1 = computed(() => rldItems.value[0]?.src || '')
+const rldImage2 = computed(() => rldItems.value[1]?.src || '')
+const rldImage3 = computed(() => rldItems.value[2]?.src || '')
 
 const updateImage1 = computed(() => updateItems.value[0]?.src || card1)
 const updateImage2 = computed(() => updateItems.value[1]?.src || card2)
