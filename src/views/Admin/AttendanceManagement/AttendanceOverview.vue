@@ -304,7 +304,7 @@ const actionTabs = [
   { label: 'Settings', route: '/admin/attendance/settings' },
   { label: 'Report', route: '/admin/attendance/report' },
   { label: 'Import Records', route: '/admin/attendance/import' },
-  { label: 'Search', route: '/admin/attendance/search' },
+  { label: 'Search', route: '/admin/attendance/logs' },
   { label: 'Students', route: '/admin/attendance/students' },
   { label: 'Ranking', route: '/admin/attendance/ranking' },
   { label: 'Visitors', route: '/admin/attendance/visitors' },
@@ -748,7 +748,7 @@ const handleTabChange = (name: string) => {
   bottom: -8px;
   left: 0;
   width: 100%;
-  height: 5px;
+  height: 3.5px;
   background: linear-gradient(to right, #0d2b0f, #e6a800);
   border-radius: 3px;
   transform-origin: left;
@@ -1124,6 +1124,52 @@ const handleTabChange = (name: string) => {
 }
 .sync-btn:hover::after {
   transform: translateX(100%);
+}
+
+/* ─── EXPORT CARD ─── */
+.export-card {
+  background: white;
+  border: 1px solid rgba(13, 43, 15, 0.07);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(13, 43, 15, 0.04);
+  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+.ecard-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid rgba(13, 43, 15, 0.06);
+}
+
+.ecard-eyebrow {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #c8930a;
+  margin: 0 0 3px;
+}
+
+.ecard-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0d2b0f;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.ecard-count {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(13, 43, 15, 0.35);
+  letter-spacing: 0.08em;
+  background: rgba(13, 43, 15, 0.05);
+  padding: 4px 10px;
+  border-radius: 20px;
 }
 
 /* ─── EXPORT LOGS TABLE ─── */

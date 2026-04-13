@@ -26,11 +26,8 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>ANNOUNCEMENT</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>CREATE GENERAL ANNOUNCEMENTS</span>
+
+            <span>GENERAL ANNOUNCEMENTS</span>
           </div>
           <h1 class="header-title intro-title">
             General <span class="text-yellow-500">Announcement</span>

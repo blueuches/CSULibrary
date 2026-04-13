@@ -45,11 +45,14 @@ import RoomReservation from '@/views/Admin/ServicesManagement/RoomReservation.vu
 import ManageRecords from '@/views/Admin/ServicesManagement/ManageRecords.vue'
 import ManageGallery from '@/views/Admin/ServicesManagement/ManageGallery.vue'
 import ManageCurriculum from '@/views/Admin/ServicesManagement/ManageCurriculum.vue'
+import CurriculumInfo from '@/views/Admin/ServicesManagement/Curriculum/CurriculumInfo.vue'
+import ProgramStudy from '@/views/Admin/ServicesManagement/Curriculum/ProgramStudy.vue'
 import ManageBorrowing from '@/views/Admin/ServicesManagement/ManageBorrowing.vue'
 import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
 import WebsiteImages from '@/views/Admin/WebsiteManagement/WebsiteImages.vue'
 import WebsiteGeneral from '@/views/Admin/WebsiteManagement/WebsiteGeneral.vue'
 import ManageAbout from '@/views/Admin/WebsiteManagement/ManageAbout.vue'
+import ManageServices from '@/views/Admin/WebsiteManagement/ManageServices.vue'
 import UsersManagement from '@/views/Admin/AdminManagement/UsersManagement.vue'
 import Developers from '@/views/Developers.vue'
 
@@ -96,17 +99,20 @@ const router = createRouter({
     { path: '/admin/attendance/search', name: 'attendance-search', component: AttendanceSearch, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/students', name: 'attendance-students', component: SearchRecord, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/ranking', name: 'attendance-ranking', component: AttendanceRanking, meta: { requiresAuth: true }  },
-    { path: '/admin/attendance/visitors', name: 'attendance-visitors', component: VisitorAttendance, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/visitors', name: 'admin-attendance-visitors', component: VisitorAttendance, meta: { requiresAuth: true }  },
     { path: '/admin/services', name: 'admin-services', component: ServicesOverview, meta: { requiresAuth: true }  },
     { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation, meta: { requiresAuth: true }  },
     { path: '/admin/services/records', name: 'services-records', component: ManageRecords, meta: { requiresAuth: true }  },
     { path: '/admin/services/gallery', name: 'services-gallery', component: ManageGallery, meta: { requiresAuth: true }  },
     { path: '/admin/services/curriculum', name: 'services-curriculum', component: ManageCurriculum, meta: { requiresAuth: true }  },
+{ path: '/admin/services/curriculum/curriculum-info', name: 'curriculum-info', component: CurriculumInfo, meta: { requiresAuth: true }  },
+{ path: '/admin/services/curriculum/program-study', name: 'program-study', component: ProgramStudy, meta: { requiresAuth: true }  },
     { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing, meta: { requiresAuth: true }  },
     { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAuth: true }  },
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages, meta: { requiresAuth: true }  },
     { path: '/admin/website/general', name: 'website-general', component: WebsiteGeneral, meta: { requiresAuth: true }  }, 
     { path: '/admin/website/about', name: 'website-about', component: ManageAbout, meta: { requiresAuth: true }  }, 
+    { path: '/admin/website/services', name: 'website-services', component: ManageServices, meta: { requiresAuth: true }  }, 
     { path: '/admin/management', name: 'admin-management', component: UsersManagement, meta: { requiresAuth: true }  },
   ],
    scrollBehavior(to, from, savedPosition) {

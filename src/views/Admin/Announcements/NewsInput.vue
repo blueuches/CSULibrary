@@ -26,10 +26,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>ANNOUNCEMENT</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
+
             <span>CREATE NEWS ANNOUNCEMENT</span>
           </div>
           <h1 class="header-title intro-title">
@@ -41,7 +38,61 @@
 
       <!-- Form Section -->
       <div class="max-w-4xl mx-auto px-4 pb-16">
-        <form @submit.prevent="submitForm" class="space-y-6">
+        <form @submit.prevent="handlePublish" class="space-y-6">
+          <!-- News Type -->
+          <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <div class="flex items-center gap-3 mb-6">
+              <div
+                class="p-3 rounded-lg"
+                style="background: linear-gradient(135deg, #2d7231, #0b2010)"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  style="color: #fdbe33"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 8h10M7 12h10M7 16h6"
+                  />
+                </svg>
+              </div>
+              <h2
+                class="text-2xl font-bold"
+                style="color: #0b2010; font-family: 'Poppins', sans-serif"
+              >
+                News Type
+              </h2>
+            </div>
+            <div
+              style="
+                height: 2px;
+                background: linear-gradient(to right, #2d7231, #fdbe33, transparent);
+                margin-bottom: 24px;
+                border-radius: 2px;
+              "
+            ></div>
+
+            <select
+              id="newsType"
+              v-model="formData.type"
+              class="w-full px-6 py-4 border-2 rounded-xl focus:outline-none transition-all input-field"
+              style="border-color: #2d7231; background-color: #fafafa; color: #0b2010"
+              required
+            >
+              <option value="NBWC">NBWC</option>
+              <option value="BSP">BSP</option>
+              <option value="Starbooks">Starbooks</option>
+            </select>
+            <p class="text-xs text-gray-500 mt-3" style="font-family: 'Poppins', sans-serif">
+              Choose where this news belongs.
+            </p>
+          </div>
+
           <!-- News Title -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
             <div class="flex items-center gap-3 mb-6">
@@ -307,7 +358,6 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
-import { createAnnouncement } from '@/services/announcementService'
 import { supabase } from '@/lib/supabase'
 import '@/assets/styles/report-analytics.css'
 
@@ -317,11 +367,13 @@ const isEditing = ref(false)
 const today = new Date().toISOString().split('T')[0] || ''
 
 const formData = ref<{
+  type: 'NBWC' | 'BSP' | 'Starbooks'
   title: string
   description: string
   attachment: File | null
   datePublished: string
 }>({
+  type: 'NBWC',
   title: '',
   description: '',
   attachment: null,
@@ -355,7 +407,7 @@ const handleFileUpload = (event: Event) => {
   }
 }
 
-const submitForm = async () => {
+const handlePublish = async () => {
   if (!formData.value.title.trim()) {
     showToast('Please enter a title', 'error')
     return
@@ -383,13 +435,29 @@ const submitForm = async () => {
       imageUrl = data.publicUrl
     }
 
-    await createAnnouncement({
-      type: 'news',
+    const payload = {
+      type: formData.value.type,
       title: formData.value.title.trim(),
       content: formData.value.description.trim(),
       image_url: imageUrl,
       event_id: null,
-    })
+    }
+
+    let { error: insertError } = await supabase.from('announcements').insert([payload])
+
+    // Some schemas restrict announcements.type (e.g. only 'news'/'general').
+    // Fallback keeps publish working while still letting users choose a news category in UI.
+    if (insertError) {
+      const fallbackPayload = {
+        ...payload,
+        type: 'news',
+      }
+
+      const fallback = await supabase.from('announcements').insert([fallbackPayload])
+      insertError = fallback.error
+    }
+
+    if (insertError) throw insertError
 
     showToast('News published successfully!')
     setTimeout(() => {
@@ -397,7 +465,8 @@ const submitForm = async () => {
     }, 400)
   } catch (error) {
     console.error('Error publishing news:', error)
-    showToast('Failed to publish news.', 'error')
+    const message = error instanceof Error ? error.message : 'Failed to publish news.'
+    showToast(message, 'error')
   }
 }
 

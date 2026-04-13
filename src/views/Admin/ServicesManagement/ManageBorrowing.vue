@@ -206,11 +206,6 @@
               <div class="loan-content">
                 <div class="loan-icon">📦</div>
                 <h3 class="loan-title">Loan Service</h3>
-                <p class="loan-sub">This module is currently under maintenance.</p>
-                <div class="loan-progress">
-                  <div class="loan-bar"></div>
-                </div>
-                <span class="loan-pct">Building... 73%</span>
               </div>
             </div>
           </Transition>
@@ -318,11 +313,11 @@ const handleCheckOut = (id) => {
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 .shell {
-  --c-bg:       #050d08;
-  --c-surface:  #0a1610;
+  --c-bg:       #ffffff;
+  --c-surface:  #012d16;
   --c-border:   rgba(74,183,100,0.12);
-  --c-text:     #d6edd9;
-  --c-muted:    rgba(180,220,185,0.4);
+  --c-text:     #4c8554;
+  --c-muted:    rgb(45, 222, 122);
   --c-accent:   #3ddc6e;
   --c-accent2:  #a3f0b0;
   --c-danger:   #ff5f6d;
@@ -416,7 +411,9 @@ const handleCheckOut = (id) => {
   font-style: normal;
   background: linear-gradient(90deg, var(--c-accent), var(--c-accent2));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 .brand-sub {
   font-size: 0.65rem;
@@ -543,14 +540,6 @@ const handleCheckOut = (id) => {
   color: var(--c-muted);
 }
 .terminal-lights { display: flex; gap: 6px; }
-.tl {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  opacity: 0.7;
-}
-.tl.red    { background: #ff5f57; }
-.tl.yellow { background: #ffbd2e; }
-.tl.green  { background: #28c840; }
 
 .terminal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem; }
 
@@ -597,7 +586,7 @@ const handleCheckOut = (id) => {
 .field-input::placeholder { color: rgba(255,255,255,0.15); }
 .field-input:focus {
   border-color: var(--c-accent);
-  background: rgba(61,220,110,0.04);
+  background: rgba(253, 253, 253, 0.04);
 }
 .field-glow {
   position: absolute; inset: 0;
@@ -676,7 +665,9 @@ const handleCheckOut = (id) => {
   font-weight: 800;
   background: linear-gradient(90deg, var(--c-accent), var(--c-accent2));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 .stat-lbl {
   font-size: 0.6rem;
