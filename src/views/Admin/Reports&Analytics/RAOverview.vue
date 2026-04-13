@@ -22,17 +22,6 @@
             </p>
           </div>
           <div class="header-right">
-            <div class="date-badge">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              {{ currentDate }}
-            </div>
             <button class="export-btn" @click="exportData">Export CSV</button>
           </div>
         </header>
@@ -176,7 +165,7 @@
                   </tbody>
                 </table>
               </div>
-              <div class="panel-footer" style="display: flex; gap: 10px;">
+              <div class="panel-footer" style="display: flex; gap: 10px">
                 <button class="report-add-section-btn">
                   <RouterLink
                     to="/admin/analytics/display"
@@ -205,7 +194,7 @@
             </div>
           </div>
 
-          <!-- CIcrle Chart -->
+          <!-- Circle Chart -->
           <div class="col-right">
             <div class="panel panel--donut">
               <div class="panel-head panel-head--center">
@@ -296,15 +285,6 @@ const chartTabs: ChartTab[] = ['Weekly', 'Monthly', 'Yearly']
 const handleTabChange = (tab: string) => {
   activeTab.value = tab
 }
-
-const currentDate = computed(() =>
-  new Date().toLocaleDateString('en-PH', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }),
-)
 
 // --- KPI Data ---
 const kpis = [

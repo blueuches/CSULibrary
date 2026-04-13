@@ -26,10 +26,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>ANNOUNCEMENT</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
+
             <span>CREATE NEWS ANNOUNCEMENT</span>
           </div>
           <h1 class="header-title intro-title">
@@ -446,9 +443,7 @@ const handlePublish = async () => {
       event_id: null,
     }
 
-    let { error: insertError } = await supabase
-      .from('announcements')
-      .insert([payload])
+    let { error: insertError } = await supabase.from('announcements').insert([payload])
 
     // Some schemas restrict announcements.type (e.g. only 'news'/'general').
     // Fallback keeps publish working while still letting users choose a news category in UI.

@@ -55,7 +55,11 @@
         <div class="panel-toolbar">
           <div class="search-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <input
               v-model="searchQuery"
@@ -66,10 +70,21 @@
           <div class="toolbar-actions">
             <span class="toolbar-chip">{{ filteredColleges.length }} matches</span>
             <button type="button" class="toolbar-btn" @click="closeAllCards">Collapse All</button>
-            <button v-if="searchQuery" type="button" class="toolbar-btn toolbar-btn--ghost" @click="searchQuery = ''">
+            <button
+              v-if="searchQuery"
+              type="button"
+              class="toolbar-btn toolbar-btn--ghost"
+              @click="searchQuery = ''"
+            >
               Clear Search
             </button>
-            <button v-if="activeCollegeId" type="button" class="toolbar-btn toolbar-btn--ghost" @click="closeAllCards" title="Close expanded card">
+            <button
+              v-if="activeCollegeId"
+              type="button"
+              class="toolbar-btn toolbar-btn--ghost"
+              @click="closeAllCards"
+              title="Close expanded card"
+            >
               Close Card
             </button>
           </div>
@@ -81,10 +96,15 @@
             <p>Fetching data from the database.</p>
           </div>
 
-          <div v-else-if="errorMessage" class="empty-search-card" style="border-color: #ef4444;">
+          <div v-else-if="errorMessage" class="empty-search-card" style="border-color: #ef4444">
             <h3>Error Loading Curriculums</h3>
             <p>{{ errorMessage }}</p>
-            <button type="button" class="toolbar-btn" @click="loadCurriculums" style="margin-top: 12px;">
+            <button
+              type="button"
+              class="toolbar-btn"
+              @click="loadCurriculums"
+              style="margin-top: 12px"
+            >
               Retry
             </button>
           </div>
@@ -132,107 +152,114 @@
 
             <Transition name="college-expand">
               <div v-if="isCollegeOpen(college.code)" class="college-body">
-              <p v-if="college.programs.length === 0" class="empty-state-text">
-                Graduate program list is not yet added.
-              </p>
-              <details
-                v-for="program in college.programs"
-                :key="program.name"
-                class="program-accordion"
-                @toggle="handleProgramToggle($event, program)"
-              >
-                <summary>
-                  <span class="program-name">{{ program.name }}</span>
-                  <span class="program-count">{{ program.curriculum.length }} semesters</span>
-                </summary>
+                <p v-if="college.programs.length === 0" class="empty-state-text">
+                  Graduate program list is not yet added.
+                </p>
+                <details
+                  v-for="program in college.programs"
+                  :key="program.name"
+                  class="program-accordion"
+                  @toggle="handleProgramToggle($event, program)"
+                >
+                  <summary>
+                    <span class="program-name">{{ program.name }}</span>
+                    <span class="program-count">{{ program.curriculum.length }} semesters</span>
+                  </summary>
 
-                <div class="program-body">
-                  <section class="program-specialization-ui">
-                    <label class="program-specialization-label">Specialization</label>
+                  <div class="program-body">
+                    <section class="program-specialization-ui">
+                      <label class="program-specialization-label">Specialization</label>
 
-                    <div v-if="loadingProgramSpecializationsMap[program.id]" class="program-specialization-empty">
-                      Loading specializations...
-                    </div>
-
-                    <select
-                      v-else-if="programSpecializationsMap[program.id]?.length"
-                      v-model="selectedProgramSpecializationMap[program.id]"
-                      class="program-specialization-select"
-                    >
-                      <option
-                        v-for="specialization in programSpecializationsMap[program.id]"
-                        :key="specialization.id"
-                        :value="specialization.id"
+                      <div
+                        v-if="loadingProgramSpecializationsMap[program.id]"
+                        class="program-specialization-empty"
                       >
-                        {{ specialization.program_sp_name }}
-                      </option>
-                    </select>
+                        Loading specializations...
+                      </div>
 
-                    <div v-else class="program-specialization-empty">
-                      No specialization available.
+                      <select
+                        v-else-if="programSpecializationsMap[program.id]?.length"
+                        v-model="selectedProgramSpecializationMap[program.id]"
+                        class="program-specialization-select"
+                      >
+                        <option
+                          v-for="specialization in programSpecializationsMap[program.id]"
+                          :key="specialization.id"
+                          :value="specialization.id"
+                        >
+                          {{ specialization.program_sp_name }}
+                        </option>
+                      </select>
+
+                      <div v-else class="program-specialization-empty">
+                        No specialization available.
+                      </div>
+                    </section>
+
+                    <section class="detail-panel detail-panel--highlight" style="margin-bottom: 16px">
+                      <div class="detail-panel-head">
+                        <h4>Curriculum Metadata</h4>
+                        <span class="detail-panel-tag">Fetched</span>
+                      </div>
+
+                      <div v-if="loadingProgramMetadataMap[program.id]" class="program-specialization-empty">
+                        Loading curriculum metadata...
+                      </div>
+
+                      <div v-else class="meta-grid">
+                        <article class="meta-card">
+                          <span>Revision Year</span>
+                          <strong>{{ resolveProgramMetadataField(program.id, 'revision_year') }}</strong>
+                        </article>
+                        <article class="meta-card">
+                          <span>Revision No.</span>
+                          <strong>{{ resolveProgramMetadataField(program.id, 'revision_no') }}</strong>
+                        </article>
+                        <article class="meta-card">
+                          <span>Legal Basis</span>
+                          <strong>{{ resolveProgramMetadataField(program.id, 'legal_basis') }}</strong>
+                        </article>
+                        <article class="meta-card">
+                          <span>Effectivity Term</span>
+                          <strong>{{ resolveProgramMetadataField(program.id, 'effectivity_term') }}</strong>
+                        </article>
+                      </div>
+                    </section>
+
+                    <div class="curriculum-actions">
+                      <button
+                        type="button"
+                        class="view-curriculum-btn"
+                        @click.prevent.stop="openCurriculumModal(college.code, program)"
+                      >
+                        View Curriculum
+                      </button>
+                      <button
+                        type="button"
+                        class="edit-curriculum-btn"
+                        @click.prevent.stop="editCurriculum(college.code, program.name)"
+                      >
+                        Edit
+                      </button>
                     </div>
-                  </section>
 
-                  <section class="detail-panel detail-panel--highlight" style="margin-bottom: 16px;">
-                    <div class="detail-panel-head">
-                      <h4>Curriculum Metadata</h4>
-                      <span class="detail-panel-tag">Fetched</span>
-                    </div>
-
-                    <div v-if="loadingProgramMetadataMap[program.id]" class="program-specialization-empty">
-                      Loading curriculum metadata...
-                    </div>
-
-                    <div v-else class="meta-grid">
-                      <article class="meta-card">
-                        <span>Revision Year</span>
-                        <strong>{{ resolveProgramMetadataField(program.id, 'revision_year') }}</strong>
-                      </article>
-                      <article class="meta-card">
-                        <span>Revision No.</span>
-                        <strong>{{ resolveProgramMetadataField(program.id, 'revision_no') }}</strong>
-                      </article>
-                      <article class="meta-card">
-                        <span>Legal Basis</span>
-                        <strong>{{ resolveProgramMetadataField(program.id, 'legal_basis') }}</strong>
-                      </article>
-                      <article class="meta-card">
-                        <span>Effectivity Term</span>
-                        <strong>{{ resolveProgramMetadataField(program.id, 'effectivity_term') }}</strong>
-                      </article>
-                    </div>
-                  </section>
-
-                  <div class="curriculum-actions">
-                    <button
-                      type="button"
-                      class="view-curriculum-btn"
-                      @click.prevent.stop="openCurriculumModal(college.code, program)"
-                    >
-                      View Curriculum
-                    </button>
-                    <button
-                      type="button"
-                      class="edit-curriculum-btn"
-                      @click.prevent.stop="editCurriculum(college.code, program.name)"
-                    >
-                      Edit
-                    </button>
+                    <p v-if="program.curriculum.length" class="program-meta-note">
+                      {{ program.curriculum.length }} curriculum revision(s) available for this
+                      program.
+                    </p>
+                    <p v-else class="program-meta-note">
+                      No curriculum revision available yet for this program.
+                    </p>
                   </div>
-
-                  <p v-if="program.curriculum.length" class="program-meta-note">
-                    {{ program.curriculum.length }} curriculum revision(s) available for this program.
-                  </p>
-                  <p v-else class="program-meta-note">
-                    No curriculum revision available yet for this program.
-                  </p>
-                </div>
-              </details>
+                </details>
               </div>
             </Transition>
           </div>
 
-          <article v-if="!isLoading && !errorMessage && filteredColleges.length === 0" class="empty-search-card">
+          <article
+            v-if="!isLoading && !errorMessage && filteredColleges.length === 0"
+            class="empty-search-card"
+          >
             <h3>No curriculum cards found</h3>
             <p>Try a different keyword or clear your search filter.</p>
           </article>
@@ -258,7 +285,9 @@
               <button type="button" class="modal-close" @click="closeCurriculumModal">Close</button>
             </header>
 
-            <div v-if="isCurriculumModalLoading" class="modal-state">Loading curriculum details...</div>
+            <div v-if="isCurriculumModalLoading" class="modal-state">
+              Loading curriculum details...
+            </div>
 
             <div v-else-if="curriculumModalError" class="modal-state modal-state--error">
               {{ curriculumModalError }}
@@ -386,7 +415,6 @@
                 </p>
               </section>
             </div>
-
           </article>
         </div>
       </Transition>
@@ -739,6 +767,4 @@ const filteredColleges = computed(() => {
 })
 </script>
 
-<style src="@/assets/styles/manage-curriculum.css">
-
-</style>
+<style src="@/assets/styles/manage-curriculum.css"></style>
