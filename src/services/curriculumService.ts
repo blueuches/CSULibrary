@@ -3,6 +3,8 @@ import type {
   CurriculumData,
   CurriculumDetail,
   CollegeCurriculum,
+  ProgramSpecialization,
+  ProgramStudyPlanRow,
   ProgramCurriculum,
   SemesterCurriculum,
 } from '@/types/Curriculum'
@@ -33,6 +35,12 @@ type ProgramWithCurriculaRow = {
     id: string
     effectivity_term: string | null
     created_at?: string
+  }>
+  program_specializations?: Array<{
+    id: string
+    program_id: string
+    program_sp_name: string
+    program_sp_code?: string | null
   }>
 }
 
@@ -112,7 +120,7 @@ export const getCurriculums = async (): Promise<CurriculumData[]> => {
         .order('code', { ascending: true }),
       supabase
         .from('programs')
-        .select('id, program_name, created_at, college_id, colleges(code, name), curricula(id, effectivity_term, created_at)')
+        .select('id, program_name, created_at, college_id, colleges(code, name), curricula(id, effectivity_term, created_at), program_specializations(id, program_id, program_sp_name, program_sp_code)')
         .eq('is_active', true)
         .order('program_name', { ascending: true }),
     ])
@@ -150,7 +158,7 @@ export const getCurriculumsByCollege = async (collegeCode: string): Promise<Curr
 
   const { data: programsData, error: programsError } = await supabase
     .from('programs')
-    .select('id, program_name, created_at, college_id, colleges(code, name), curricula(id, effectivity_term, created_at)')
+    .select('id, program_name, created_at, college_id, colleges(code, name), curricula(id, effectivity_term, created_at), program_specializations(id, program_id, program_sp_name, program_sp_code)')
     .eq('is_active', true)
     .eq('college_id', collegeData.id)
     .order('program_name', { ascending: true })
@@ -232,20 +240,217 @@ export const transformCurriculumsToCollege = (curriculumData: CurriculumData[]):
 export const getCurriculumDetailByProgramId = async (
   programId: string,
 ): Promise<CurriculumDetail | null> => {
-  const { data, error } = await supabase
+  const baseSelection =
+    'id, program_id, revision_year, revision_no, legal_basis, effectivity_term, description, created_at'
+  const extendedSelection = `${baseSelection}, specialization, requirements, study_plan`
+
+  const { data: extendedData, error: extendedError } = await supabase
     .from(CURRICULA_TABLE)
-    .select('id, program_id, revision_year, revision_no, legal_basis, effectivity_term, description, created_at')
+    .select(extendedSelection)
     .eq('program_id', programId)
     .order('revision_year', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(1)
 
-  if (error) {
-    console.error('Error fetching curriculum detail:', error)
-    throw error
+  if (!extendedError) {
+    return (extendedData?.[0] as CurriculumDetail | undefined) ?? null
   }
 
-  return (data?.[0] as CurriculumDetail | undefined) ?? null
+  // Backward-compatible fallback for environments where new optional fields are not yet in schema.
+  const { data: baseData, error: baseError } = await supabase
+    .from(CURRICULA_TABLE)
+    .select(baseSelection)
+    .eq('program_id', programId)
+    .order('revision_year', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(1)
+
+  if (baseError) {
+    console.error('Error fetching curriculum detail:', baseError)
+    throw baseError
+  }
+
+  return (baseData?.[0] as CurriculumDetail | undefined) ?? null
+}
+
+/**
+ * Fetch all specializations linked to a program.
+ */
+export const getProgramSpecializationsByProgramId = async (
+  programId: string,
+  programName?: string,
+): Promise<ProgramSpecialization[]> => {
+  const extendedSelect =
+    'id, program_id, program_sp_name, program_sp_code, description, revision_year, revision_no, legal_basis, effectivity_term'
+  const baseSelect = 'id, program_id, program_sp_name, program_sp_code'
+
+  const { data, error } = await supabase
+    .from('program_specializations')
+    .select(extendedSelect)
+    .eq('program_id', programId)
+    .order('program_sp_name', { ascending: true })
+
+  if (!error) {
+    const rows = (data as ProgramSpecialization[] | null) ?? []
+    if (rows.length) {
+      return rows
+    }
+  }
+
+  // Fallback for databases that don't yet have metadata columns on program_specializations.
+  const { data: baseData, error: baseError } = await supabase
+    .from('program_specializations')
+    .select(baseSelect)
+    .eq('program_id', programId)
+    .order('program_sp_name', { ascending: true })
+
+  if (baseError) {
+    // Last fallback: query through programs join for environments with stricter direct-table policies.
+    const { data: programRow, error: programRowError } = await supabase
+      .from('programs')
+      .select('program_specializations(id, program_id, program_sp_name, program_sp_code, description, revision_year, revision_no, legal_basis, effectivity_term)')
+      .eq('id', programId)
+      .maybeSingle()
+
+    if (programRowError) {
+      console.error('Error fetching program specializations:', programRowError)
+      throw programRowError
+    }
+
+    const joinedSpecializations = (
+      programRow as
+        | {
+            program_specializations?: ProgramSpecialization[]
+          }
+        | null
+    )?.program_specializations
+
+    return joinedSpecializations ?? []
+  }
+
+  const baseRows = (baseData as ProgramSpecialization[] | null) ?? []
+  if (baseRows.length) {
+    return baseRows
+  }
+
+  // Fallback by program name context for datasets where program_id linkage is inconsistent.
+  if (programName) {
+    const { data: joinedRows, error: joinedRowsError } = await supabase
+      .from('program_specializations')
+      .select('id, program_id, program_sp_name, program_sp_code, description, revision_year, revision_no, legal_basis, effectivity_term, programs(id, program_name)')
+
+    if (!joinedRowsError && joinedRows) {
+      const mapped = (joinedRows as Array<{
+        id: string
+        program_id?: string
+        program_sp_name: string
+        program_sp_code?: string | null
+        description?: string | null
+        revision_year?: number | null
+        revision_no?: string | null
+        legal_basis?: string | null
+        effectivity_term?: string | null
+        programs?: { id?: string; program_name?: string } | Array<{ id?: string; program_name?: string }> | null
+      }>)
+        .filter((row) => {
+          const rel = Array.isArray(row.programs) ? row.programs[0] : row.programs
+          return rel?.id === programId || rel?.program_name === programName || row.program_id === programId
+        })
+        .map((row) => ({
+          id: row.id,
+          program_id: row.program_id,
+          program_sp_name: row.program_sp_name,
+          program_sp_code: row.program_sp_code,
+          description: row.description,
+          revision_year: row.revision_year,
+          revision_no: row.revision_no,
+          legal_basis: row.legal_basis,
+          effectivity_term: row.effectivity_term,
+        }))
+
+      if (mapped.length) {
+        return mapped
+      }
+    }
+  }
+
+  return []
+}
+
+/**
+ * Fetch a single specialization row by id.
+ */
+export const getProgramSpecializationById = async (
+  specializationId: string,
+): Promise<ProgramSpecialization | null> => {
+  const extendedSelect =
+    'id, program_id, program_sp_name, program_sp_code, description, revision_year, revision_no, legal_basis, effectivity_term'
+  const baseSelect = 'id, program_id, program_sp_name, program_sp_code'
+
+  const { data, error } = await supabase
+    .from('program_specializations')
+    .select(extendedSelect)
+    .eq('id', specializationId)
+    .maybeSingle()
+
+  if (!error) {
+    return (data as ProgramSpecialization | null) ?? null
+  }
+
+  // Fallback for databases that don't yet have metadata columns on program_specializations.
+  const { data: baseData, error: baseError } = await supabase
+    .from('program_specializations')
+    .select(baseSelect)
+    .eq('id', specializationId)
+    .maybeSingle()
+
+  if (baseError) {
+    console.error('Error fetching specialization metadata:', baseError)
+    throw baseError
+  }
+
+  return (baseData as ProgramSpecialization | null) ?? null
+}
+
+/**
+ * Fetch study plans for a specialization, falling back to program-level plans when needed.
+ */
+export const getProgramStudyPlans = async (
+  programId: string,
+  programSpecializationId?: string | null,
+): Promise<ProgramStudyPlanRow[]> => {
+  if (programSpecializationId) {
+    const { data: specializationPlans, error: specializationPlansError } = await supabase
+      .from('program_study_plans')
+      .select('*')
+      .eq('program_specialization_id', programSpecializationId)
+      .order('year_level', { ascending: true })
+      .order('semester', { ascending: true })
+      .order('display_order', { ascending: true })
+
+    if (!specializationPlansError && specializationPlans?.length) {
+      return specializationPlans as ProgramStudyPlanRow[]
+    }
+
+    if (specializationPlansError) {
+      console.error('Error fetching specialization study plans:', specializationPlansError)
+    }
+  }
+
+  const { data: programPlans, error: programPlansError } = await supabase
+    .from('program_study_plans')
+    .select('*')
+    .eq('program_id', programId)
+    .order('year_level', { ascending: true })
+    .order('semester', { ascending: true })
+    .order('display_order', { ascending: true })
+
+  if (programPlansError) {
+    console.error('Error fetching program study plans:', programPlansError)
+    return []
+  }
+
+  return (programPlans as ProgramStudyPlanRow[] | null) ?? []
 }
 
 /**
