@@ -681,12 +681,12 @@
     </div>
   </div>
 
-  <!-- LIBRARY SERVICES & RECOGNITION -->
+  <!-- LIBRARY SERVICES & RECOGNITION — commented out: wala pami data ana, i-uncomment kung ready na -->
+  <!--
   <div
     class="w-full px-6 py-20 relative overflow-hidden"
     style="background: linear-gradient(160deg, #f0f4f0 0%, #e8efe8 50%, #f4f2ed 100%)"
   >
-    <!-- Background texture grid -->
     <div
       class="absolute inset-0 pointer-events-none"
       style="
@@ -697,7 +697,6 @@
       "
     ></div>
 
-    <!-- Ambient glow orbs -->
     <div
       class="absolute pointer-events-none"
       style="
@@ -722,9 +721,7 @@
     ></div>
 
     <div class="w-full mx-auto relative" style="z-index: 2; max-width: 1400px">
-      <!-- ── HEADING ── -->
       <div class="sr-item flex flex-col items-center mb-16 text-center">
-        <!-- Eyebrow -->
         <div class="flex items-center gap-3">
           <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
           <span
@@ -738,7 +735,6 @@
             >Services & Recognition</span
           >
         </div>
-        <!-- Main title -->
         <h2
           style="
             font-size: clamp(2rem, 4.5vw, 3.2rem);
@@ -754,9 +750,7 @@
         </h2>
       </div>
 
-      <!-- ── CARDS ── -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- ── CARD 1: AVR ── -->
         <RouterLink
           :to="{ name: 'avr' }"
           class="sr-card group relative flex flex-col overflow-hidden"
@@ -784,7 +778,6 @@
             this.style.borderColor = 'rgba(249,168,37,0.14)'
           "
         >
-          <!-- Image -->
           <div class="relative overflow-hidden" style="height: 270px; flex-shrink: 0">
             <img
               :src="updateImage4"
@@ -794,7 +787,6 @@
               onmouseenter="this.style.transform = 'scale(1.08)'"
               onmouseleave="this.style.transform = 'scale(1)'"
             />
-            <!-- Gradient overlay -->
             <div
               class="absolute inset-0"
               style="
@@ -807,7 +799,6 @@
                 );
               "
             ></div>
-            <!-- Top-left badge -->
             <div
               class="absolute top-4 left-4 flex items-center gap-1.5"
               style="
@@ -845,9 +836,7 @@
               >
             </div>
 
-            <!-- Title inside image -->
             <div class="absolute bottom-4 left-5 right-5">
-              <!-- Decorative line art icon -->
               <div style="margin-bottom: 10px">
                 <svg
                   width="36"
@@ -885,7 +874,6 @@
               </h3>
             </div>
           </div>
-          <!-- Body -->
           <div class="flex flex-col flex-1 px-5 py-4" style="background: #0d2b0f">
             <p
               style="
@@ -933,14 +921,12 @@
               </span>
             </div>
           </div>
-          <!-- Bottom glow bar -->
           <div
             class="absolute bottom-0 left-0 right-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
             style="height: 3px; background: linear-gradient(to right, #1b5e20, #f9a825)"
           ></div>
         </RouterLink>
 
-        <!-- ── CARD 2: Top Borrowers (Featured) ── -->
         <RouterLink
           :to="{ name: 'top-borrowers' }"
           class="sr-card group relative flex flex-col overflow-hidden"
@@ -971,7 +957,6 @@
             this.style.borderColor = 'rgba(249,168,37,0.28)'
           "
         >
-          <!-- Image -->
           <div class="relative overflow-hidden" style="height: 270px; flex-shrink: 0">
             <img
               :src="updateImage5"
@@ -981,7 +966,6 @@
               onmouseenter="this.style.transform = 'scale(1.08)'"
               onmouseleave="this.style.transform = 'scale(1)'"
             />
-            <!-- Gold-tinted overlay -->
             <div
               class="absolute inset-0"
               style="
@@ -994,7 +978,6 @@
                 );
               "
             ></div>
-            <!-- Badge -->
             <div
               class="absolute top-4 left-4 flex items-center gap-1.5"
               style="background: rgba(249, 168, 37, 0.92); padding: 4px 11px; border-radius: 20px"
@@ -1024,9 +1007,7 @@
               >
             </div>
 
-            <!-- Title -->
             <div class="absolute bottom-4 left-5 right-5">
-              <!-- Decorative line art icon -->
               <div style="margin-bottom: 10px">
                 <svg
                   width="36"
@@ -1059,7 +1040,6 @@
               </h3>
             </div>
           </div>
-          <!-- Body -->
           <div class="flex flex-col flex-1 px-5 py-4" style="background: #0d2b0f">
             <p
               style="
@@ -1105,14 +1085,12 @@
               </span>
             </div>
           </div>
-          <!-- Gold bottom bar -->
           <div
             class="absolute bottom-0 left-0 right-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
             style="height: 3px; background: linear-gradient(to right, #f9a825, #fde68a, #f9a825)"
           ></div>
         </RouterLink>
 
-        <!-- ── CARD 3: Newly Acquired ── -->
         <RouterLink
           :to="{ name: 'newlyacquiredbooks' }"
           class="sr-card group relative flex flex-col overflow-hidden"
@@ -1140,7 +1118,6 @@
             this.style.borderColor = 'rgba(249,168,37,0.14)'
           "
         >
-          <!-- Image -->
           <div class="relative overflow-hidden" style="height: 270px; flex-shrink: 0">
             <img
               :src="updateImage6"
@@ -1150,7 +1127,6 @@
               onmouseenter="this.style.transform = 'scale(1.08)'"
               onmouseleave="this.style.transform = 'scale(1)'"
             />
-            <!-- Overlay -->
             <div
               class="absolute inset-0"
               style="
@@ -1163,7 +1139,6 @@
                 );
               "
             ></div>
-            <!-- Badge -->
             <div
               class="absolute top-4 left-4 flex items-center gap-1.5"
               style="
@@ -1199,9 +1174,7 @@
               >
             </div>
 
-            <!-- Title -->
             <div class="absolute bottom-4 left-5 right-5">
-              <!-- Decorative line art icon -->
               <div style="margin-bottom: 10px">
                 <svg
                   width="36"
@@ -1234,7 +1207,6 @@
               </h3>
             </div>
           </div>
-          <!-- Body -->
           <div class="flex flex-col flex-1 px-5 py-4" style="background: #0d2b0f">
             <p
               style="
@@ -1280,7 +1252,6 @@
               </span>
             </div>
           </div>
-          <!-- Bottom glow bar -->
           <div
             class="absolute bottom-0 left-0 right-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"
             style="height: 3px; background: linear-gradient(to right, #1b5e20, #f9a825)"
@@ -1289,6 +1260,8 @@
       </div>
     </div>
   </div>
+  -->
+  <!-- END LIBRARY SERVICES & RECOGNITION -->
 
   <!-- LIBRARY UPDATES -->
   <div class="w-full px-6 py-16" style="background: #f4f6f4">
