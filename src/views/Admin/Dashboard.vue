@@ -22,20 +22,17 @@
         <transition name="fade" mode="out-in">
           <div :key="activeTab" class="w-full max-w-6xl py-12">
             <div v-if="activeTab === 'DASHBOARD'" class="space-y-12">
-              <!-- Welcome heading -->
               <div class="space-y-4">
                 <div class="space-y-2">
                   <h2
                     class="text-[#0d2b0f] text-6xl md:text-7xl font-black tracking-tighter anim-slide-up"
                   >
-                    Welcome, <span class="text-[#f9a825] anim-shimmer">
-                      {{ firstName || 'User' }}
-                    </span>.
+                    Welcome,
+                    <span class="text-[#f9a825] anim-shimmer"> {{ firstName || 'User' }} </span>.
                   </h2>
                 </div>
               </div>
 
-              <!-- Stat cards -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
                 <div
                   v-for="(stat, i) in quickStats"
@@ -50,21 +47,27 @@
                   <h3
                     class="text-[#1b5e20] text-3xl font-black tracking-tight transition-colors duration-300 group-hover:text-white anim-count"
                   >
-                    {{ stat.value }}
+                    <span v-if="typeof stat.value === 'number'">
+                      {{ stat.value }}
+                    </span>
+
+                    <span v-else-if="stat.value && stat.value !== '—'">
+                      {{ stat.value }}
+                    </span>
+
+                    <span v-else class="opacity-40"> — </span>
                   </h3>
                   <p
                     class="text-[#1b5e20] text-[10px] uppercase font-bold tracking-[0.2em] mt-1 transition-colors duration-300 group-hover:text-white/90"
                   >
                     {{ stat.label }}
                   </p>
-                  <!-- Card bottom accent -->
                   <div
                     class="w-0 group-hover:w-8 h-0.5 bg-[#f9a825] mt-3 transition-all duration-300 rounded-full"
                   ></div>
                 </div>
               </div>
 
-              <!-- Quote -->
               <div
                 class="relative py-4 max-w-2xl mx-auto anim-fade-in"
                 style="animation-delay: 0.5s"
@@ -79,7 +82,6 @@
                 >
                   — {{ currentQuote.author }}
                 </p>
-                <!-- Animated underline -->
                 <div
                   class="mt-4 mx-auto w-16 h-0.5 bg-gradient-to-r from-[#1b5e20] to-[#f9a825] rounded-full anim-expand"
                 ></div>
@@ -109,77 +111,16 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
-import { supabase } from '@/lib/supabase' // adjust path if needed
+import { supabase } from '@/lib/supabase'
 
 const firstName = ref('')
 
-onMounted(async () => {
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (user) {
-    const { data, error } = await supabase
-      .from('users')
-      .select('first_name')
-      .eq('email', user.email)
-      .single()
-
-    if (data) {
-      firstName.value = data.first_name
-    }
-  }
-})
-
-const activeTab = ref('DASHBOARD')
-
-const quickStats = ref([
-  {
-    label: 'Total Books',
-    value: '12,450',
-    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-    </svg>`,
-  },
-  {
-    label: 'Borrowed',
-    value: '382',
-    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-      <line x1="12" y1="6" x2="16" y2="6"/>
-      <line x1="12" y1="10" x2="16" y2="10"/>
-    </svg>`,
-  },
-  {
-    label: 'Overdue',
-    value: '12',
-    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="12" y1="8" x2="12" y2="12"/>
-      <line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>`,
-  },
-  {
-    label: 'Active Visitors',
-    value: '84',
-    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>`,
-  },
-])
-
-const currentQuote = ref({
-  text: 'A library is not a luxury but one of the necessities of life.',
-  author: 'Henry Ward Beecher',
-})
-
+// ACTIVE TAB HANDLER
 const handleTabChange = (name: string) => {
   activeTab.value = name
 }
 
+// CURRENT DATE
 const currentDate = computed(() =>
   new Date().toLocaleDateString('en-PH', {
     weekday: 'long',
@@ -188,6 +129,181 @@ const currentDate = computed(() =>
     year: 'numeric',
   }),
 )
+
+// QUOTE
+const currentQuote = ref({
+  text: 'A library is not a luxury but one of the necessities of life.',
+  author: 'Henry Ward Beecher',
+})
+
+// actual values
+const usersLoggedIn = ref(0)
+const topDepartment = ref('—')
+const monthlyAttendance = ref(0)
+const activeVisitors = ref(0)
+
+// display values
+const displayUsers = ref<number | null>(null)
+const displayMonthly = ref<number | null>(null)
+const displayVisitors = ref<number | null>(null)
+
+const animateValue = (displayRef: any, finalValue: number, duration = 800) => {
+  if (finalValue === 0) {
+    displayRef.value = 0
+    return
+  }
+
+  let start = finalValue * 0.3
+  const increment = (finalValue - start) / (duration / 16)
+
+  displayRef.value = Math.floor(start)
+
+  const counter = setInterval(() => {
+    start += increment
+
+    if (start >= finalValue) {
+      displayRef.value = finalValue
+      clearInterval(counter)
+    } else {
+      displayRef.value = Math.floor(start)
+    }
+  }, 16)
+}
+
+onMounted(async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (user) {
+    const { data } = await supabase
+      .from('users')
+      .select('first_name')
+      .eq('email', user.email)
+      .single()
+
+    if (data) firstName.value = data.first_name
+  }
+
+  // USERS LOGGED IN
+  const { count: activeCount } = await supabase
+    .from('users')
+    .select('*', { count: 'exact', head: true })
+    .eq('is_active', true)
+
+  usersLoggedIn.value = activeCount ?? 0
+
+  // TOP DEPARTMENT
+  const { data: attendanceData } = await supabase.from('attendance_logs').select('student_id')
+
+  if (attendanceData && attendanceData.length > 0) {
+    const studentIds = [...new Set(attendanceData.map((a) => a.student_id))]
+
+    const { data: studentsData } = await supabase
+      .from('students')
+      .select('id_number, college')
+      .in('id_number', studentIds)
+
+    if (studentsData) {
+      const collegeMap: Record<string, string> = {}
+      studentsData.forEach((s) => {
+        collegeMap[s.id_number] = s.college
+      })
+
+      const collegeCounts: Record<string, number> = {}
+      attendanceData.forEach((a) => {
+        const college = collegeMap[a.student_id]
+        if (college) {
+          collegeCounts[college] = (collegeCounts[college] ?? 0) + 1
+        }
+      })
+
+      const top = Object.entries(collegeCounts).sort((a, b) => b[1] - a[1])[0]
+      if (top) topDepartment.value = top[0]
+    }
+  }
+
+  // MONTHLY ATTENDANCE
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString()
+
+  const { count: monthCount } = await supabase
+    .from('attendance_logs')
+    .select('*', { count: 'exact', head: true })
+    .gte('time_in', startOfMonth)
+    .lte('time_in', endOfMonth)
+
+  monthlyAttendance.value = monthCount ?? 0
+
+  // ACTIVE VISITORS (today)
+  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
+  const endOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+  ).toISOString()
+
+  const { count: todayCount } = await supabase
+    .from('attendance_logs')
+    .select('*', { count: 'exact', head: true })
+    .gte('time_in', startOfDay)
+    .lte('time_in', endOfDay)
+
+  activeVisitors.value = todayCount ?? 0
+
+  // RUN ANIMATION (after fetch)
+  animateValue(displayUsers, usersLoggedIn.value)
+  animateValue(displayMonthly, monthlyAttendance.value)
+  animateValue(displayVisitors, activeVisitors.value)
+})
+
+const activeTab = ref('DASHBOARD')
+
+const quickStats = computed(() => [
+  {
+    label: 'Users Logged In',
+    value: displayUsers.value,
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>`,
+  },
+  {
+    label: 'Top Department',
+    value: topDepartment.value,
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>`,
+  },
+  {
+    label: 'Total Monthly Attendance',
+    value: displayMonthly.value,
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+      <path d="M8 14l2.5 2.5L16 11"/>
+    </svg>`,
+  },
+  {
+    label: 'Active Visitors',
+    value: displayVisitors.value,
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>`,
+  },
+])
 </script>
 
 <style scoped>
@@ -201,7 +317,6 @@ h3 {
   letter-spacing: -0.02em;
 }
 
-/* ── SLIDE UP ── */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -216,7 +331,6 @@ h3 {
   animation: slideUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ── FADE IN ── */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -230,7 +344,6 @@ h3 {
   animation: fadeIn 0.7s ease both;
 }
 
-/* ── CARD POP IN ── */
 @keyframes cardIn {
   from {
     opacity: 0;
@@ -246,7 +359,6 @@ h3 {
   animation: cardIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ── EXPAND LINE ── */
 @keyframes expand {
   from {
     width: 0;
@@ -262,7 +374,6 @@ h3 {
   animation: expand 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
 }
 
-/* ── GOLD SHIMMER on "Admin" text ── */
 @keyframes shimmer {
   0% {
     background-position: -200% center;
@@ -280,7 +391,6 @@ h3 {
   animation: shimmer 3s linear infinite;
 }
 
-/* ── PAGE TRANSITION ── */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
