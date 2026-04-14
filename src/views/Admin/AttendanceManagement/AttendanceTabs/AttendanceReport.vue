@@ -8,30 +8,38 @@
     <main class="report-root flex-1 overflow-y-auto">
 
       <!-- HEADER -->
-      <header class="report-header relative z-[60] overflow-visible">
-        <div class="header-left">
-          <div class="flex items-center justify-between gap-4 flex-wrap">
-            <div class="header-breadcrumb">
-              <span>Admin</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span>Reporting</span>
-            </div>
-          </div>
-          <h1 class="header-title intro-title">
-            Library <span class="text-yellow-500">Reporting</span>
-          </h1>
-          <p class="header-sub">Generate and review reports by department, course, and duration.</p>
-        </div>
-      </header>
+        <header class="attn-header">
+          <div class="header-breadcrumb text-gray-400">
+            <button
+              @click="$router.back()"
+              class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
+            >
+              <span class="uppercase tracking-widest">Back</span>
+            </button>
 
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+
+            <span class="text-gray-400 transition font-bold">
+              Manage Services
+            </span>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="hero-word-dark hero-underlined">Library</span>
+            <span class="hero-word-gold"> Report</span>
+          </h1>
+          <p class="hero-subtitle">
+            Generate and review reports by department, course, and duration.
+          </p>
+        </header>
       <!-- CONTENT -->
       <div class="p-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
           <!-- LEFT PANEL: Filters -->
-          <div class="bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden">
+          <div class="panel-animate bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden" style="animation-delay: 0.1s">
 
             <!-- Card Header -->
             <div class="px-6 py-4 border-b border-[#d4e4da]">
@@ -41,7 +49,7 @@
             <div class="px-6 py-5 space-y-5">
 
               <!-- Department -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.18s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Department</label>
                 <div class="relative">
                   <select
@@ -59,7 +67,7 @@
               </div>
 
               <!-- Course -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.24s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Course</label>
                 <div class="relative">
                   <select
@@ -79,7 +87,7 @@
               <div class="h-px bg-[#d4e4da]" />
 
               <!-- Duration -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.30s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Duration</label>
                 <div class="space-y-3">
 
@@ -93,7 +101,7 @@
                       <span v-if="durationType === 'day'" class="w-1.5 h-1.5 rounded-full bg-white" />
                     </span>
                     <span class="text-sm text-[#3d6455]">Specific day</span>
-                    <span v-if="durationType === 'day'" class="ml-auto text-xs font-medium text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-3 py-1">
+                    <span v-if="durationType === 'day'" class="ml-auto text-xs font-medium text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-3 py-1 badge-pop">
                       {{ todayLabel }}
                     </span>
                   </label>
@@ -108,7 +116,7 @@
                       <span v-if="durationType === 'month'" class="w-1.5 h-1.5 rounded-full bg-white" />
                     </span>
                     <span class="text-sm text-[#3d6455]">Specific month</span>
-                    <div v-if="durationType === 'month'" class="ml-auto flex gap-2">
+                    <div v-if="durationType === 'month'" class="ml-auto flex gap-2 badge-pop">
                       <select v-model="selectedMonth" class="bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-2 py-1 text-xs text-[#0d2b0f] outline-none focus:border-[#0d2b0f]">
                         <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
                       </select>
@@ -128,7 +136,7 @@
                       <span v-if="durationType === 'semester'" class="w-1.5 h-1.5 rounded-full bg-white" />
                     </span>
                     <span class="text-sm text-[#3d6455]">Semester</span>
-                    <div v-if="durationType === 'semester'" class="ml-auto">
+                    <div v-if="durationType === 'semester'" class="ml-auto badge-pop">
                       <select v-model="selectedSemester" class="bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-2 py-1 text-xs text-[#0d2b0f] outline-none focus:border-[#0d2b0f]">
                         <option>1st Semester</option>
                         <option>2nd Semester</option>
@@ -143,7 +151,7 @@
               <div class="h-px bg-[#d4e4da]" />
 
               <!-- Period Range -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.36s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Period</label>
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-medium text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-3 py-1.5 flex-1 text-center">{{ todayLabel }}</span>
@@ -153,11 +161,39 @@
               </div>
 
               <!-- School Year -->
-              <div class="flex items-center gap-3">
+              <div class="field-animate flex items-center gap-3" style="animation-delay: 0.42s">
                 <span class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">School year</span>
                 <span class="ml-auto text-xs font-semibold text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-4 py-1.5">2025 — 2026</span>
               </div>
 
+            </div>
+
+            <!-- Color Palette -->
+            <div class="field-animate bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden" style="animation-delay: 0.48s">
+              <div class="px-6 py-4 border-b border-[#d4e4da]">
+                <p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Color Palette</p>
+              </div>
+              <div class="px-6 py-5 space-y-4">
+                <div class="relative">
+                  <select
+                    v-model="selectedPalette"
+                    class="w-full bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-3 py-2 text-sm text-[#0d2b0f] appearance-none outline-none focus:border-[#0d2b0f] transition-colors"
+                  >
+                    <option v-for="(_, name) in palettes" :key="name" :value="name">{{ name }}</option>
+                  </select>
+                  <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#4a7060]">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  </span>
+                </div>
+                <div class="flex gap-2 p-3 bg-[#f0f4f1] rounded-xl border border-[#d4e4da]">
+                  <div
+                    v-for="(color, i) in palettes[selectedPalette]"
+                    :key="color"
+                    class="palette-swatch w-8 h-8 rounded-md border border-white/10 flex-1"
+                    :style="{ background: color, animationDelay: `${i * 50}ms` }"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -165,7 +201,7 @@
           <div class="space-y-6">
 
             <!-- Chart Display Options -->
-            <div class="bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden">
+            <div class="panel-animate bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden" style="animation-delay: 0.2s">
               <div class="px-6 py-4 border-b border-[#d4e4da]">
                 <p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Chart Display</p>
               </div>
@@ -193,31 +229,38 @@
               </div>
             </div>
 
-            <!-- Color Palette -->
-            <div class="bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden">
-              <div class="px-6 py-4 border-b border-[#d4e4da]">
-                <p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Color Palette</p>
+            <!-- Sample Chart Panel -->
+            <div class="panel-animate bg-white rounded-2xl border border-[#c2d4cb] p-6" style="animation-delay: 0.3s">
+              <div class="flex justify-between mb-3">
+                <p class="text-sm font-semibold text-[#0d2b0f]">Sample Chart</p>
+                <button
+                  @click="downloadChart"
+                  class="text-xs px-3 py-1 bg-[#0d2b0f] text-white rounded-lg transition-transform active:scale-95 hover:bg-[#183d1b]"
+                >
+                  Download
+                </button>
               </div>
-              <div class="px-6 py-5 space-y-4">
-                <div class="relative">
-                  <select
-                    v-model="selectedPalette"
-                    class="w-full bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-3 py-2 text-sm text-[#0d2b0f] appearance-none outline-none focus:border-[#0d2b0f] transition-colors"
-                  >
-                    <option v-for="(_, name) in palettes" :key="name" :value="name">{{ name }}</option>
-                  </select>
-                  <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#4a7060]">
-                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                  </span>
+
+              <div class="space-y-6">
+
+                <!-- BAR -->
+                <div class="chart-block">
+                  <p class="text-xs mb-2 font-semibold text-[#0d2b0f]">Bar Chart</p>
+                  <canvas ref="barCanvas"></canvas>
                 </div>
-                <div class="flex gap-2 p-3 bg-[#f0f4f1] rounded-xl border border-[#d4e4da]">
-                  <div
-                    v-for="color in palettes[selectedPalette]"
-                    :key="color"
-                    class="w-8 h-8 rounded-md border border-white/10 flex-1"
-                    :style="{ background: color }"
-                  />
+
+                <!-- PIE -->
+                <div class="chart-block">
+                  <p class="text-xs mb-2 font-semibold text-[#0d2b0f]">Pie Chart</p>
+                  <canvas ref="pieCanvas"></canvas>
                 </div>
+
+                <!-- LINE -->
+                <div class="chart-block">
+                  <p class="text-xs mb-2 font-semibold text-[#0d2b0f]">Line Chart</p>
+                  <canvas ref="lineCanvas"></canvas>
+                </div>
+
               </div>
             </div>
 
@@ -225,14 +268,15 @@
             <button
               @click="generateReport"
               :disabled="isGenerating"
-              class="w-full py-3 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+              class="generate-btn w-full py-3 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
               :class="isGenerating ? 'bg-[#8ab5a0] text-[#3d6455]' : 'bg-[#0d2b0f] text-white hover:bg-[#183d1b] active:scale-[0.98]'"
+              style="animation-delay: 0.45s"
             >
               {{ isGenerating ? 'Generating...' : 'Generate Report' }}
             </button>
 
             <!-- Progress + Status -->
-            <div v-if="isGenerating || statusMsg" class="space-y-2">
+            <div v-if="isGenerating || statusMsg" class="space-y-2 status-animate">
               <div class="h-1 w-full bg-[#d4e4da] rounded-full overflow-hidden">
                 <div
                   class="h-full bg-[#0d2b0f] rounded-full transition-all duration-300 ease-out"
@@ -261,9 +305,18 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import Chart from 'chart.js/auto'
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+// ── Chart Ref ────────────────────────────────────────────────────────────────
+const barCanvas  = ref<HTMLCanvasElement | null>(null)
+const pieCanvas  = ref<HTMLCanvasElement | null>(null)
+const lineCanvas = ref<HTMLCanvasElement | null>(null)
 
+let barChart: Chart | null = null
+let pieChart: Chart | null = null
+let lineChart: Chart | null = null
+
+// ── Data ─────────────────────────────────────────────────────────────────────
 const departments: Record<string, string[]> = {
   'College of Engineering and Geo Science': [
     'BS Agricultural and Biosystem Engineering',
@@ -292,7 +345,6 @@ const departments: Record<string, string[]> = {
   ],
   'College of Agriculture and Agri-Industries': [
     'BS Agriculture'
-
   ],
   'College of Forestry and Environmental Sciences': [
     'BS Agroforestry',
@@ -300,7 +352,7 @@ const departments: Record<string, string[]> = {
     'BS Forestry'
   ],
   'College of Humanities and Social Sciences': [
-    'BA Sociology',
+    'AB Sociology',
     'BS Psychology',
     'BS Social Work'
   ],
@@ -329,8 +381,7 @@ const palettes: Record<string, string[]> = {
 const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
 const years  = ['2024', '2025', '2026']
 
-// ── State ─────────────────────────────────────────────────────────────────────
-
+// ── State ────────────────────────────────────────────────────────────────────
 const selectedDept     = ref('')
 const selectedCourse   = ref('')
 const durationType     = ref<'day' | 'month' | 'semester'>('day')
@@ -345,21 +396,99 @@ const progress     = ref(0)
 const statusMsg    = ref('')
 const statusColor  = ref<'blue' | 'yellow' | 'green'>('blue')
 
-// ── Computed ──────────────────────────────────────────────────────────────────
-
+// ── Computed ─────────────────────────────────────────────────────────────────
 const availableCourses = computed(() =>
   selectedDept.value ? departments[selectedDept.value] : []
 )
 
 const todayLabel = computed(() => {
   const d = new Date()
-  return d.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 })
 
-// ── Methods ───────────────────────────────────────────────────────────────────
-
+// ── Methods ──────────────────────────────────────────────────────────────────
 function onDeptChange() {
   selectedCourse.value = ''
+}
+
+function getMockData() {
+  const rand = () => Math.floor(Math.random() * 100 + 50)
+  return {
+    labels: ['1st Year', '2nd Year', '3rd Year', '4th Year'],
+    data: [rand(), rand(), rand(), rand()]
+  }
+}
+
+function renderCharts() {
+  const mock = getMockData()
+
+  if (barChart) barChart.destroy()
+  if (pieChart) pieChart.destroy()
+  if (lineChart) lineChart.destroy()
+
+  if (barCanvas.value) {
+    barChart = new Chart(barCanvas.value, {
+      type: 'bar',
+      data: {
+        labels: mock.labels,
+        datasets: [{
+          label: 'Bar Data',
+          data: mock.data,
+          backgroundColor: palettes[selectedPalette.value],
+          borderRadius: 6
+        }]
+      }
+    })
+  }
+
+  if (pieCanvas.value) {
+    pieChart = new Chart(pieCanvas.value, {
+      type: 'pie',
+      data: {
+        labels: mock.labels,
+        datasets: [{
+          data: mock.data,
+          backgroundColor: palettes[selectedPalette.value]
+        }]
+      }
+    })
+  }
+
+  if (lineCanvas.value) {
+    lineChart = new Chart(lineCanvas.value, {
+      type: 'line',
+      data: {
+        labels: mock.labels,
+        datasets: [{
+          label: 'Line Data',
+          data: mock.data,
+          borderColor: palettes[selectedPalette.value]?.[0] ?? '#0d2b0f',
+          backgroundColor: palettes[selectedPalette.value]?.[0] ?? '#0d2b0f',
+          tension: 0.4
+        }]
+      }
+    })
+  }
+}
+
+function downloadChart() {
+  const charts = [
+    { instance: barChart, name: 'bar' },
+    { instance: pieChart, name: 'pie' },
+    { instance: lineChart, name: 'line' }
+  ]
+  charts.forEach(({ instance, name }) => {
+    if (!instance) return
+    const link = document.createElement('a')
+    link.href = instance.toBase64Image()
+    link.download = `${selectedCourse.value}-${name}.png`
+    link.click()
+  })
 }
 
 function generateReport() {
@@ -391,6 +520,7 @@ function generateReport() {
     isGenerating.value = false
     statusMsg.value    = 'Report generated successfully.'
     statusColor.value  = 'green'
+    renderCharts()
     setTimeout(() => {
       statusMsg.value = ''
       progress.value  = 0
@@ -401,7 +531,7 @@ function generateReport() {
 
 <style scoped>
 .report-root {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .report-header {
@@ -409,8 +539,6 @@ function generateReport() {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid #dfe6dd;
-  background: #f0f4f1;
   margin-top: 0;
 }
 
@@ -420,37 +548,168 @@ function generateReport() {
   gap: 0.2rem;
 }
 
+/* ─── BREADCRUMB ─── */
 .header-breadcrumb {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #4a7060;
-  margin-bottom: 0.35rem;
+  gap: 6px;
+  margin-bottom: 8px;
+  animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
-.header-breadcrumb svg {
-  width: 0.9rem;
-  height: 0.9rem;
-  color: #4a7060;
+/* ─── HERO TITLE ─── */
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  display: inline-block;
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
 }
-
-.header-title {
-  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
-  font-weight: 800;
-  color: #0d2b0f;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  font-family: 'DM Sans', sans-serif;
+.hero-word-dark  { color: #0d2b0f; }
+.hero-word-gold  { color: #e6a800; }
+.hero-underlined {
+  position: relative;
+  display: inline-block;
 }
-
-.header-sub {
-  font-size: 0.82rem;
-  color: #5b725d;
+.hero-underlined::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #0d2b0f, #e6a800);
+  border-radius: 3px;
+  transform-origin: left;
+  animation: underlineGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+.hero-subtitle {
+  font-size: 0.88rem;
   font-weight: 400;
-  margin-top: 0.15rem;
+  color: #6b7280;
+  margin-top: 20px;
+  animation: fadeIn 0.6s ease 0.55s both;
+}
+
+/* ─── PANEL ENTRANCE ─── */
+.panel-animate {
+  opacity: 0;
+  animation: panelIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── FIELD ENTRANCE (staggered rows inside panel) ─── */
+.field-animate {
+  opacity: 0;
+  animation: fieldIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fieldIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ─── PALETTE SWATCH POP ─── */
+.palette-swatch {
+  animation: swatchPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes swatchPop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── RADIO BADGE POP (duration sub-options) ─── */
+.badge-pop {
+  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes badgePop {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+/* ─── CHART BLOCK REVEAL ─── */
+.chart-block {
+  opacity: 0;
+  animation: chartReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+@keyframes chartReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── GENERATE BUTTON ─── */
+.generate-btn {
+  opacity: 0;
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+/* ─── STATUS ANIMATE ─── */
+.status-animate {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* ─── KEYFRAMES ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes underlineGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 </style>

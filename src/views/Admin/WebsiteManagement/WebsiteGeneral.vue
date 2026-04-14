@@ -62,9 +62,9 @@
         </div>
 
         <!-- SERVICES (NO LINK) -->
-        <div class="card disabled">
+        <div @click="goTo('website-services')" class="card">
           <h3>Services</h3>
-          <p>Coming soon</p>
+          <p>Manage website's Services tab and Library's services</p>
         </div>
 
         <!-- ABOUT US (NO LINK) -->

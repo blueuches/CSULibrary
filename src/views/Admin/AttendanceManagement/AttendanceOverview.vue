@@ -304,7 +304,7 @@ const actionTabs = [
   { label: 'Settings', route: '/admin/attendance/settings' },
   { label: 'Report', route: '/admin/attendance/report' },
   { label: 'Import Records', route: '/admin/attendance/import' },
-  { label: 'Search', route: '/admin/attendance/search' },
+  { label: 'Search', route: '/admin/attendance/logs' },
   { label: 'Students', route: '/admin/attendance/students' },
   { label: 'Ranking', route: '/admin/attendance/ranking' },
   { label: 'Visitors', route: '/admin/attendance/visitors' },
@@ -700,18 +700,15 @@ const handleTabChange = (name: string) => {
   flex-wrap: wrap;
 }
 
-/* ─── BREADCRUMB ─── */
 .header-breadcrumb {
+  font-family: 'Poppins', sans-serif;
   font-size: 0.65rem;
-  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.35);
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 8px;
-  /* Animation */
   animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 .header-breadcrumb svg {
