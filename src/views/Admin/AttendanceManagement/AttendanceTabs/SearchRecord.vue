@@ -6,7 +6,7 @@
     <div class="flex-1 p-4 lg:p-8 font-sans text-slate-700 overflow-y-auto">
 
       <!-- HEADER -->
-      <header class="attn-header mb-8">
+      <header class="attn-header mb-5">
         <div class="mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
           <div>
@@ -29,7 +29,7 @@
           </div>
 
           <!-- SEARCH -->
-          <div class="relative w-full lg:w-[40%] group">
+          <div class="relative w-full lg:w-[40%] group" style="margin-bottom: -50px;">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <i class="fas fa-search text-slate-300 group-focus-within:text-[#4A6741] transition-colors"></i>
             </div>
