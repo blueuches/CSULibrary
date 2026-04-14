@@ -228,11 +228,11 @@
                 <div>
                   <span
                     class="inline-flex mb-2 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase"
-                    :style="getBadgeColor(announcement.type)"
+                    :style="getBadgeColor(extractNewsCategory(announcement.title).category)"
                   >
-                    {{ announcement.type || 'General' }}
+                    {{ getNewsTypeDisplay(extractNewsCategory(announcement.title).category) }}
                   </span>
-                  <h3 class="text-base font-bold text-[#0d2b0f]">{{ announcement.title }}</h3>
+                  <h3 class="text-base font-bold text-[#0d2b0f]">{{ extractNewsCategory(announcement.title).cleanTitle }}</h3>
                 </div>
                 <button
                   @click="deleteNewsAnnouncement(announcement.id)"
@@ -329,8 +329,22 @@ const getErrorMessage = (error: unknown) => {
   return 'Unknown error'
 }
 
-const getBadgeColor = (type?: string) => {
-  const normalizedType = type?.trim().toUpperCase() || 'NEWS'
+const extractNewsCategory = (title?: string): { category: string; cleanTitle: string } => {
+  if (!title) return { category: 'News', cleanTitle: title || '' }
+  
+  const match = title.match(/^\[([^\]]+)\]\s*(.*)$/)
+  if (match) {
+    const cat = match[1].trim()
+    return {
+      category: cat,
+      cleanTitle: match[2]
+    }
+  }
+  return { category: 'News', cleanTitle: title }
+}
+
+const getBadgeColor = (category?: string) => {
+  const normalizedType = category?.trim().toUpperCase() || 'NEWS'
 
   if (normalizedType === 'NBWC') {
     return {
@@ -357,6 +371,11 @@ const getBadgeColor = (type?: string) => {
     backgroundColor: '#ebf5ec',
     color: '#1b5e20',
   }
+}
+
+const getNewsTypeDisplay = (category?: string): string => {
+  if (!category) return 'News'
+  return category
 }
 
 const requestDelete = (message: string, action: () => Promise<void>) => {
@@ -400,7 +419,7 @@ const fetchAnnouncements = async () => {
       supabase
         .from('announcements')
         .select('id, title, content, type, image_url, created_at')
-        .in('type', ['news', 'news_nbwc', 'news_bsp', 'news_starbooks', 'NBWC', 'BSP', 'Starbooks'])
+        .eq('type', 'news')
         .order('created_at', { ascending: false })
     ])
 
