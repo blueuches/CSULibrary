@@ -37,7 +37,7 @@
       </div>
     </transition>
 
-    <main class="report-root flex-1 overflow-y-auto">
+    <main ref="reportRootRef" class="report-root flex-1 overflow-y-auto">
       <!-- HEADER -->
       <header class="report-header intro-header relative z-[60] overflow-visible">
         <div class="header-left">
@@ -263,6 +263,20 @@
         </article>
       </section>
     </main>
+
+    <button
+      v-show="showScrollTop"
+      @click="scrollToTop"
+      class="scroll-top-btn"
+      aria-label="Scroll to top"
+      title="Scroll to top"
+      type="button"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -296,6 +310,8 @@ const newsAnnouncements = ref<GeneralAnnouncement[]>([])
 const isLoading = ref(true)
 const dropdownOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
+const reportRootRef = ref<HTMLElement | null>(null)
+const showScrollTop = ref(false)
 const toast = reactive({
   show: false,
   message: '',
@@ -334,10 +350,10 @@ const extractNewsCategory = (title?: string): { category: string; cleanTitle: st
   
   const match = title.match(/^\[([^\]]+)\]\s*(.*)$/)
   if (match) {
-    const cat = match[1].trim()
+    const cat = (match[1] ?? 'News').trim()
     return {
       category: cat,
-      cleanTitle: match[2]
+      cleanTitle: (match[2] ?? '').trim()
     }
   }
   return { category: 'News', cleanTitle: title }
@@ -503,17 +519,70 @@ function handleClickOutside(e: MouseEvent) {
   }
 }
 
+function handleScrollDepth() {
+  const scrollTop = reportRootRef.value?.scrollTop ?? window.scrollY
+  showScrollTop.value = scrollTop > 300
+}
+
+function scrollToTop() {
+  if (reportRootRef.value) {
+    reportRootRef.value.scrollTo({ top: 0, behavior: 'smooth' })
+    return
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 onMounted(() => {
   fetchAnnouncements()
   document.addEventListener('mousedown', handleClickOutside)
+  if (reportRootRef.value) {
+    reportRootRef.value.addEventListener('scroll', handleScrollDepth)
+  } else {
+    window.addEventListener('scroll', handleScrollDepth)
+  }
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', handleClickOutside)
+  if (reportRootRef.value) {
+    reportRootRef.value.removeEventListener('scroll', handleScrollDepth)
+  }
+  window.removeEventListener('scroll', handleScrollDepth)
 })
 </script>
 
 <style scoped>
+.scroll-top-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 80;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: #06260f;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-2px);
+}
+
+.scroll-top-btn:active {
+  transform: translateY(0);
+}
+
+.scroll-top-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .action-btn {
   border-radius: 0.75rem;
   border: 1px solid #0d2b0f;

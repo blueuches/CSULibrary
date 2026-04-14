@@ -2,7 +2,7 @@
   <div class="flex h-screen w-full overflow-hidden bg-white">
     <Sidebar />
 
-    <main class="flex-1 overflow-y-auto relative">
+    <main ref="recordsMainRef" class="flex-1 overflow-y-auto relative">
 
       <!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
       <header class="page-header">
@@ -213,6 +213,19 @@
           </div>
         </div>
       </div>
+
+      <button
+        v-show="showScrollTop"
+        @click="scrollToTop"
+        class="scroll-top-btn"
+        aria-label="Scroll to top"
+        type="button"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+        </svg>
+      </button>
     </main>
   </div>
 
@@ -415,7 +428,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onBeforeUnmount, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { createClient } from '@supabase/supabase-js'
 
@@ -647,6 +660,21 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 const records = ref<RecordItem[]>([])
 const loading = ref(false)
 const loadError = ref<string | null>(null)
+const recordsMainRef = ref<HTMLElement | null>(null)
+const showScrollTop = ref(false)
+
+const handleScrollDepth = () => {
+  const scrollTop = recordsMainRef.value?.scrollTop ?? window.scrollY
+  showScrollTop.value = scrollTop > 300
+}
+
+const scrollToTop = () => {
+  if (recordsMainRef.value) {
+    recordsMainRef.value.scrollTo({ top: 0, behavior: 'smooth' })
+    return
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 function makeDraft(r: RecordItem): DraftForm {
   return {
@@ -690,7 +718,21 @@ async function loadRecords() {
   }
 }
 
-onMounted(() => loadRecords())
+onMounted(() => {
+  loadRecords()
+  if (recordsMainRef.value) {
+    recordsMainRef.value.addEventListener('scroll', handleScrollDepth)
+  } else {
+    window.addEventListener('scroll', handleScrollDepth)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (recordsMainRef.value) {
+    recordsMainRef.value.removeEventListener('scroll', handleScrollDepth)
+  }
+  window.removeEventListener('scroll', handleScrollDepth)
+})
 
 // ─── Edit ─────────────────────────────────────────────────────────────────────
 function toggleEdit(record: RecordItem) {
@@ -1006,5 +1048,36 @@ function confirmIconSelection() {
   .page-header { padding: 24px 20px 20px; }
   .page-content { padding: 24px 20px 60px; }
   .header-title-row { flex-direction: column; align-items: flex-start; }
+}
+
+.scroll-top-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 90;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: #06260f;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-2px);
+}
+
+.scroll-top-btn:active {
+  transform: translateY(0);
+}
+
+.scroll-top-btn svg {
+  width: 18px;
+  height: 18px;
 }
 </style>
