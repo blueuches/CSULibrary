@@ -43,7 +43,7 @@
         :key="item.name"
         @click="goTo(item.route)"
         :class="[
-          route.path === item.route
+          isActiveRoute(item.route)
             ? 'bg-white font-black shadow-xl scale-105'
             : 'text-white/80 hover:bg-white/10 hover:text-white',
         ]"
@@ -51,7 +51,7 @@
       >
         <span
           class="min-w-[32px] flex items-center justify-center transition-colors duration-200"
-          :class="route.path === item.route ? 'text-[#062009]' : 'text-[#f9a825]'"
+          :class="isActiveRoute(item.route) ? 'text-[#062009]' : 'text-[#f9a825]'"
           v-html="item.icon"
         ></span>
 
@@ -59,7 +59,7 @@
           <span
             v-if="!isCollapsed"
             class="ml-2 whitespace-nowrap uppercase tracking-widest text-[11px] font-bold"
-            :class="route.path === item.route ? 'text-[#062009]' : 'text-white'"
+            :class="isActiveRoute(item.route) ? 'text-[#062009]' : 'text-white'"
           >
             {{ item.label }}
           </span>
@@ -254,6 +254,31 @@ const roleInitial = computed(() => {
   if (role.value === 'super_admin') return 'SADM'
   return '?'
 })
+
+const activeMenuRoute = computed(() => {
+  const currentPath = route.path
+
+  const matches = menuItems
+    .map((item) => item.route)
+    .filter((itemRoute) => {
+      if (itemRoute === '/admin') {
+        return currentPath === '/admin'
+      }
+
+      return currentPath === itemRoute || currentPath.startsWith(`${itemRoute}/`)
+    })
+
+  if (!matches.length) {
+    return ''
+  }
+
+  // Keep only one active sidebar item by preferring the most specific route.
+  return matches.sort((a, b) => b.length - a.length)[0]
+})
+
+const isActiveRoute = (itemRoute: string): boolean => {
+  return activeMenuRoute.value === itemRoute
+}
 </script>
 
 <style scoped>
