@@ -1174,7 +1174,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 .wm-subtitle {
   color: #5f7566;
   margin: 14px 0 0;
-  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  font-size: 0.90rem;
   line-height: 1.45;
   max-width: 980px;
 }
