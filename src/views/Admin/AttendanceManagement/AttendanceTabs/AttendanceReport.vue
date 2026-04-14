@@ -260,6 +260,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { jsPDF } from 'jspdf'
 import Sidebar from '@/components/Sidebar.vue'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -292,7 +293,6 @@ const departments: Record<string, string[]> = {
   ],
   'College of Agriculture and Agri-Industries': [
     'BS Agriculture'
-
   ],
   'College of Forestry and Environmental Sciences': [
     'BS Agroforestry',
@@ -362,40 +362,173 @@ function onDeptChange() {
   selectedCourse.value = ''
 }
 
-function generateReport() {
+async function generateReport() {
   if (!selectedDept.value) {
-    statusMsg.value   = 'Please select a department first.'
+    statusMsg.value = 'Please select a department first.'
     statusColor.value = 'yellow'
-    progress.value    = 0
+    progress.value = 0
     return
   }
+
   if (!selectedCourse.value) {
-    statusMsg.value   = 'Please select a course first.'
+    statusMsg.value = 'Please select a course first.'
     statusColor.value = 'yellow'
-    progress.value    = 0
+    progress.value = 0
     return
   }
 
   isGenerating.value = true
-  statusMsg.value    = 'Generating report…'
-  statusColor.value  = 'blue'
-  progress.value     = 0
+  statusMsg.value = 'Generating PDF report...'
+  statusColor.value = 'blue'
+  progress.value = 10
 
-  const iv = setInterval(() => {
-    progress.value = Math.min(progress.value + Math.random() * 18, 94)
-  }, 200)
+  try {
+    const doc = new jsPDF('l', 'mm', 'a4')
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const pageHeight = doc.internal.pageSize.getHeight()
 
-  setTimeout(() => {
-    clearInterval(iv)
-    progress.value     = 100
+    const extractedDate = new Date().toLocaleDateString('en-US', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+
+    const extractedTime = new Date().toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit'
+    })
+
+    // White background
+    doc.setFillColor(255, 255, 255)
+    doc.rect(0, 0, pageWidth, pageHeight, 'F')
+
+    // Default colors
+    doc.setTextColor(40, 40, 40)
+    doc.setDrawColor(120, 120, 120)
+    doc.setLineWidth(0.4)
+
+    // ===== LOGO PLACEHOLDER =====
+    const logoX = 12
+    const logoY = 10
+    const logoW = 20
+    const logoH = 20
+
+    doc.rect(logoX, logoY, logoW, logoH)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(8)
+    doc.setTextColor(120, 120, 120)
+    doc.text('LOGO', logoX + (logoW / 2), logoY + 11, { align: 'center' })
+
+    // ===== HEADER =====
+    doc.setTextColor(40, 40, 40)
+
+    doc.setFont('times', 'bold')
+    doc.setFontSize(20)
+    doc.text('Caraga State University', 38, 18)
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(12)
+    doc.text('Ampayon, Butuan City', 38, 27)
+
+    doc.setFont('times', 'bold')
+    doc.setFontSize(13)
+    doc.text(`Extracted: ${extractedDate}`, 210, 18)
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(11)
+    doc.text(extractedTime, 233, 27)
+
+    doc.setFont('times', 'normal')
+    doc.setFontSize(10)
+
+    const headerLine =
+      `College: ${selectedDept.value} | Program: ${selectedCourse.value} | Month: ${selectedMonth.value} | Year: ${selectedYear.value} | School Year: 2025 to 2026`
+
+    doc.text(headerLine, 38, 35)
+
+    progress.value = 30
+
+    // ===== LEFT MAIN CONTENT =====
+    // increased height so the lower part is occupied more
+    const leftX = 18
+    const leftY = 42
+    const leftW = 165
+    const leftH = 122
+
+    doc.setDrawColor(120, 120, 120)
+    doc.rect(leftX, leftY, leftW, leftH)
+
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(10)
+    doc.setTextColor(80, 80, 80)
+    doc.text('CHART / TABLE AREA', leftX + leftW / 2, leftY + 8, { align: 'center' })
+
+    // sample inner grid placeholder
+    doc.setDrawColor(180, 180, 180)
+
+    // more rows to occupy the taller area
+    for (let i = 1; i <= 8; i++) {
+      const lineY = leftY + 10 + i * 13
+      doc.line(leftX + 1, lineY, leftX + leftW - 1, lineY)
+    }
+
+    for (let i = 1; i <= 6; i++) {
+      const lineX = leftX + i * 24
+      doc.line(lineX, leftY + 10, lineX, leftY + leftH - 1)
+    }
+
+    progress.value = 55
+
+    // ===== RIGHT LEGEND + DESCRIPTION =====
+    // moved slightly up and increased height to match left section better
+    const sideX = 192
+    const sideY = 48
+    const sideW = 85
+    const sideH = 108
+
+    doc.setDrawColor(120, 120, 120)
+    doc.rect(sideX, sideY, sideW, sideH)
+    doc.line(sideX, sideY + 25, sideX + sideW, sideY + 25)
+
+    doc.setFont('times', 'normal')
+    doc.setFontSize(10.5)
+    doc.setTextColor(40, 40, 40)
+    doc.text('Legend:', sideX + 2, sideY + 6)
+    doc.text('Horizontal Bar', sideX + 2, sideY + 12)
+    doc.text('X-axis', sideX + 2, sideY + 18)
+    doc.text('Y-axis', sideX + 2, sideY + 24)
+
+    doc.text('Description:', sideX + 2, sideY + 31)
+
+    const description =
+      `The chart presents the selected library report data for ${selectedCourse.value} under ${selectedDept.value}. This report uses a landscape layout with the main visualization on the left and the legend and description panel on the right.`
+
+    const wrappedDesc = doc.splitTextToSize(description, sideW - 4)
+    doc.text(wrappedDesc, sideX + 2, sideY + 38)
+
+    progress.value = 80
+
+    // Footer - pushed lower
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(9)
+    doc.setTextColor(90, 90, 90)
+    doc.text('Generated by ACCESS', pageWidth / 2, pageHeight - 4, { align: 'center' })
+
+    progress.value = 100
+    doc.save('Library_Report.pdf')
+
     isGenerating.value = false
-    statusMsg.value    = 'Report generated successfully.'
-    statusColor.value  = 'green'
-    setTimeout(() => {
-      statusMsg.value = ''
-      progress.value  = 0
-    }, 3500)
-  }, 2400)
+    statusMsg.value = 'PDF report generated successfully.'
+    statusColor.value = 'green'
+  } catch (error) {
+    console.error(error)
+    isGenerating.value = false
+    statusMsg.value = 'Failed to generate PDF report.'
+    statusColor.value = 'yellow'
+    progress.value = 0
+  }
 }
 </script>
 
