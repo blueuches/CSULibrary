@@ -36,7 +36,6 @@ import ebsco from '@/assets/images/EBSCO.jpg'
 
 const heroSrc = new URL('@/assets/csu.jpg', import.meta.url).href
 
-
 type MediaType = 'image' | 'video'
 type PageType = 'homepage' | 'aboutpage'
 type ModalMode = 'alert' | 'confirm'
@@ -58,10 +57,7 @@ type MediaItem = {
 
 const homepageSections = [
   { value: 'carousel', label: 'Carousel' },
-  { value: 'library-section', label: 'Library Section' },
   { value: 'read-learn-discover', label: 'Read Learn Discover' },
-  { value: 'library-updates', label: 'Library Updates' },
-  { value: 'useful-links', label: 'Useful Links' },
   { value: 'features', label: 'Features' },
 ]
 
@@ -72,10 +68,19 @@ const aboutpageSections = [
 
 const createAllowedHomepageSections = [
   { value: 'carousel', label: 'Carousel' },
+  { value: 'read-learn-discover', label: 'Read Learn Discover' },
   { value: 'features', label: 'Features' },
 ]
 
 const createAllowedAboutpageSections = [{ value: 'icons', label: 'Icons' }]
+
+const sectionOrderLimits: Record<string, number> = {
+  carousel: 10,
+  'read-learn-discover': 3,
+  features: 10,
+  hero: 1,
+  icons: 4,
+}
 
 const assetUrlMap: Record<string, string> = {
   '/src/assets/images/img.jpg': photo1,
@@ -151,6 +156,14 @@ function getDefaultCategory(page: PageType, section: string) {
     section
 
   return `${page === 'homepage' ? 'HomePage' : 'AboutPage'} ${sectionLabel}`
+}
+
+function getSectionLimit(section: string) {
+  return sectionOrderLimits[section] ?? 999
+}
+
+function getSectionLabel(section: string) {
+  return [...homepageSections, ...aboutpageSections].find((item) => item.value === section)?.label ?? section
 }
 
 function getVideoSource(item: Partial<MediaItem>) {
@@ -341,8 +354,12 @@ async function handleNoticeConfirm() {
 
 function getNextOrder(page: PageType, section: string) {
   const sectionItems = items.value.filter((item) => item.page === page && item.section === section)
+  const limit = getSectionLimit(section)
+
   if (!sectionItems.length) return 1
-  return Math.max(...sectionItems.map((item) => Number(item.order) || 0)) + 1
+
+  const nextOrder = Math.max(...sectionItems.map((item) => Number(item.order) || 0)) + 1
+  return Math.min(nextOrder, limit)
 }
 
 function normalizeTypeForSection() {
@@ -384,7 +401,14 @@ function handlePageChange() {
 }
 
 function handleSectionChange() {
-  if (!form.value.id) form.value.order = getNextOrder(form.value.page, form.value.section)
+  const limit = getSectionLimit(form.value.section)
+
+  if (!form.value.id) {
+    form.value.order = getNextOrder(form.value.page, form.value.section)
+  } else {
+    form.value.order = Math.min(Number(form.value.order) || 1, limit)
+  }
+
   form.value.category = getDefaultCategory(form.value.page, form.value.section)
   normalizeTypeForSection()
 }
@@ -438,9 +462,11 @@ function validateForm(payload: MediaItem) {
   if (
     mode.value === 'create' &&
     payload.page === 'homepage' &&
-    !['carousel', 'features'].includes(payload.section)
+    !['carousel', 'read-learn-discover', 'features'].includes(payload.section)
   ) {
-    openAlert('New media for HomePage can only be added inside Carousel or Features.')
+    openAlert(
+      'New media for HomePage can only be added inside Carousel, Read Learn Discover, or Features.',
+    )
     return false
   }
   if (mode.value === 'create' && payload.page === 'aboutpage' && payload.section !== 'icons') {
@@ -461,6 +487,14 @@ function validateForm(payload: MediaItem) {
   }
   if (!payload.order || Number(payload.order) < 1) {
     openAlert('Please provide a valid Order number.')
+    return false
+  }
+
+  const sectionLimit = getSectionLimit(payload.section)
+  if (Number(payload.order) > sectionLimit) {
+    openAlert(
+      `Only ${sectionLimit} item${sectionLimit > 1 ? 's' : ''} are allowed for ${getSectionLabel(payload.section)}.`,
+    )
     return false
   }
 
@@ -509,6 +543,8 @@ async function saveItem() {
     order: Number(form.value.order) || 1,
     category: getDefaultCategory(form.value.page, form.value.section),
   }
+
+  payload.order = Math.min(payload.order, getSectionLimit(payload.section))
 
   if (!validateForm(payload)) return false
 
@@ -937,7 +973,13 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
 
               <div class="wm-field">
                 <label>Order</label>
-                <input v-model.number="form.order" class="wm-input" type="number" min="1" />
+                <input
+  v-model.number="form.order"
+  class="wm-input"
+  type="number"
+  min="1"
+  :max="getSectionLimit(form.section)"
+/>
               </div>
             </div>
 
@@ -1079,7 +1121,7 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
   min-height: 100vh;
   width: 100%;
   overflow-y: auto;
-  background: #f5f3ef;
+  background-color: var(--color-gray-50);
   padding: 28px 28px 24px;
   box-sizing: border-box;
 }

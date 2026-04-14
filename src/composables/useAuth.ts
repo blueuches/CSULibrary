@@ -54,6 +54,7 @@ export function useAuth() {
       .select(`
         id,
         role,
+        email,
         first_name,
         last_name
       `)

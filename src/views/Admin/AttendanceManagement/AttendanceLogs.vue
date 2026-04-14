@@ -43,19 +43,19 @@ const fetchAttendanceLogs = async () => {
   errorMessage.value = ""
 
   try {
-  const data = await getAttendanceLogs()
-  logs.value = data || []
-} catch (error: unknown) {
-  console.error("Failed to fetch attendance logs:", error)
+    const data = await getAttendanceLogs()
+    logs.value = data || []
+  } catch (error: unknown) {
+    console.error("Failed to fetch attendance logs:", error)
 
-  if (error instanceof Error) {
-    errorMessage.value = error.message
-  } else {
-    errorMessage.value = "Failed to load attendance logs."
+    if (error instanceof Error) {
+      errorMessage.value = error.message
+    } else {
+      errorMessage.value = "Failed to load attendance logs."
+    }
+  } finally {
+    loading.value = false
   }
-} finally {
-  loading.value = false
-}
 }
 
 onMounted(() => {
@@ -115,6 +115,18 @@ const uniqueAttendanceTypes = computed(() => {
     .filter(Boolean) as string[]
 
   return [...new Set(values)].sort((a, b) => a.localeCompare(b))
+})
+
+const hasActiveFilters = computed(() => {
+  return (
+    !!search.value ||
+    !!selectedProgram.value ||
+    !!selectedCollege.value ||
+    !!selectedYearLevel.value ||
+    !!selectedAttendanceType.value ||
+    !!selectedStatus.value ||
+    !!selectedDate.value
+  )
 })
 
 const filteredLogs = computed(() => {
@@ -272,241 +284,239 @@ const exportToCSV = () => {
 
 <template>
   <div class="layoutShell">
-  <div class="sidebarWrap">
-    <Sidebar />
-  </div>
+    <div class="sidebarWrap">
+      <Sidebar />
+    </div>
 
-  <main class="mainArea">
+    <main class="mainArea">
       <div class="page">
         <div class="wrap">
-          <div class="card">
-            <div class="headBlock">
-              <div class="header-breadcrumb !mb-2">
-                <span
-                  class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-                  @click="$router.push('/admin/attendance')"
-                >
-                  BACK
-                </span>
+          <div class="headBlock">
+            <div class="header-breadcrumb !mb-2">
+              <span
+                class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+                @click="$router.push('/admin/attendance')"
+              >
+                BACK
+              </span>
 
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M9 5l7 7-7 7" />
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+
+              <span>Attendance</span>
+            </div>
+
+            <div class="titleHero">
+              <h1 class="heroTitle">
+                <span class="heroTitlePrimary">Attendance</span>
+                <span class="heroTitleAccent">Logs</span>
+              </h1>
+
+              <div class="heroUnderline"></div>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="toolbarLeft">
+              <div class="stackCol">
+                <select v-model="selectedProgram" class="control selectControl">
+                  <option value="">All Programs</option>
+                  <option
+                    v-for="program in uniquePrograms"
+                    :key="program"
+                    :value="program"
+                  >
+                    {{ program }}
+                  </option>
+                </select>
+
+                <input
+                  v-model="selectedDate"
+                  type="date"
+                  class="control inputControl dateControl"
+                />
+              </div>
+
+              <div class="stackCol">
+                <select v-model="selectedCollege" class="control selectControl">
+                  <option value="">All Colleges</option>
+                  <option
+                    v-for="college in uniqueColleges"
+                    :key="college"
+                    :value="college"
+                  >
+                    {{ college }}
+                  </option>
+                </select>
+
+                <button
+                  @click="clearFilters"
+                  :class="['control actionBtn clearButton', { clearButtonActive: hasActiveFilters }]"
+                >
+                  Reset
+                </button>
+              </div>
+
+              <select v-model="selectedYearLevel" class="control selectControl narrow">
+                <option value="">All Year</option>
+                <option
+                  v-for="year in uniqueYearLevels"
+                  :key="year"
+                  :value="year"
+                >
+                  {{ year }}
+                </option>
+              </select>
+
+              <select
+                v-model="selectedAttendanceType"
+                class="control selectControl medium"
+              >
+                <option value="">All Types</option>
+                <option
+                  v-for="type in uniqueAttendanceTypes"
+                  :key="type"
+                  :value="type"
+                >
+                  {{ type }}
+                </option>
+              </select>
+            </div>
+
+            <div class="toolbarRight">
+              <button @click="exportToCSV" class="exportBtn">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 3v12" />
+                  <path d="M7 10l5 5 5-5" />
+                  <path d="M5 21h14" />
                 </svg>
+                <span>Export CSV</span>
+              </button>
 
-                <span>Attendance</span>
-              </div>
+              <input
+                v-model="search"
+                type="text"
+                placeholder="Search ID number or student name..."
+                class="control searchControl"
+              />
+            </div>
+          </div>
 
-              <div class="titleHero">
-                <h1 class="heroTitle">
-                  <span class="heroTitlePrimary">Attendance</span>
-                  <span class="heroTitleAccent">Logs</span>
-                </h1>
+          <div v-if="errorMessage" class="errorBox">
+            {{ errorMessage }}
+          </div>
 
-                <div class="heroUnderline"></div>
-              </div>
+          <div class="tableShell">
+            <div class="tableScroll">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>ID Number</th>
+                    <th>Student Name</th>
+                    <th>Program</th>
+                    <th>College</th>
+                    <th>Year Level</th>
+                    <th>Attendance Type</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Duration</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr v-if="loading">
+                    <td colspan="9" class="empty">
+                      Loading attendance logs...
+                    </td>
+                  </tr>
+
+                  <tr v-else-if="filteredLogs.length === 0">
+                    <td colspan="9" class="empty">
+                      No attendance records found.
+                      <div class="emptyHint">
+                        Try changing your search or filter selection.
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr
+                    v-for="log in paginatedLogs"
+                    :key="log.id"
+                  >
+                    <td data-label="ID Number" class="strong">
+                      {{ normalizeStudent(log.students).id_number || "--" }}
+                    </td>
+                    <td data-label="Student Name" class="strong">
+                      {{
+                        `${normalizeStudent(log.students).first_name || ""} ${normalizeStudent(log.students).last_name || ""}`.trim() || "--"
+                      }}
+                    </td>
+                    <td data-label="Program">
+                      {{ normalizeStudent(log.students).program || "--" }}
+                    </td>
+                    <td data-label="College">
+                      {{ normalizeStudent(log.students).college || "--" }}
+                    </td>
+                    <td data-label="Year Level">
+                      {{ normalizeStudent(log.students).year_level || "--" }}
+                    </td>
+                    <td data-label="Attendance Type">
+                      {{ log.attendance_type || "--" }}
+                    </td>
+                    <td data-label="Time In">
+                      {{ formatDateTime(log.time_in) }}
+                    </td>
+                    <td data-label="Time Out">
+                      {{ formatDateTime(log.time_out) }}
+                    </td>
+                    <td data-label="Duration" class="muted">
+                      {{ log.duration_minutes ? `${log.duration_minutes} mins` : "--" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
-            <div class="toolbar">
-              <div class="toolbarLeft">
-                <div class="stackCol">
-                  <select v-model="selectedProgram" class="control selectControl">
-                    <option value="">All Programs</option>
-                    <option
-                      v-for="program in uniquePrograms"
-                      :key="program"
-                      :value="program"
-                    >
-                      {{ program }}
-                    </option>
-                  </select>
+            <div class="foot">
+              <div class="footText">
+                Tip: Use the filters and search to narrow down records faster.
+              </div>
 
-                  <input
-                    v-model="selectedDate"
-                    type="date"
-                    class="control inputControl dateControl"
-                  />
-                </div>
-
-                <div class="stackCol">
-                  <select v-model="selectedCollege" class="control selectControl">
-                    <option value="">All Colleges</option>
-                    <option
-                      v-for="college in uniqueColleges"
-                      :key="college"
-                      :value="college"
-                    >
-                      {{ college }}
-                    </option>
-                  </select>
-
-                  <button @click="clearFilters" class="control actionBtn clearButton">
-                    Reset
-                  </button>
-                </div>
-
-                <select v-model="selectedYearLevel" class="control selectControl narrow">
-                  <option value="">All Year</option>
-                  <option
-                    v-for="year in uniqueYearLevels"
-                    :key="year"
-                    :value="year"
-                  >
-                    {{ year }}
-                  </option>
-                </select>
-
-                <select
-                  v-model="selectedAttendanceType"
-                  class="control selectControl medium"
+              <div class="pager" v-if="filteredLogs.length > itemsPerPage">
+                <button
+                  v-if="currentPage < totalPages"
+                  class="pagerBtn"
+                  @click="goToNextPage"
                 >
-                  <option value="">All Types</option>
-                  <option
-                    v-for="type in uniqueAttendanceTypes"
-                    :key="type"
-                    :value="type"
-                  >
-                    {{ type }}
-                  </option>
-                </select>
+                  Next
+                </button>
               </div>
-
-              <div class="toolbarRight">
-  <button @click="exportToCSV" class="exportBtn">
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M12 3v12" />
-    <path d="M7 10l5 5 5-5" />
-    <path d="M5 21h14" />
-  </svg>
-  <span>Export CSV</span>
-</button>
-
-  <input
-    v-model="search"
-    type="text"
-    placeholder="Search ID number or student name..."
-    class="control searchControl"
-  />
-</div>
             </div>
+          </div>
 
-
-            <div v-if="errorMessage" class="errorBox">
-              {{ errorMessage }}
-            </div>
-
-            <div class="tableShell">
-              <div class="tableScroll">
-                <table class="tbl">
-                  <thead>
-                    <tr>
-                      <th>ID Number</th>
-                      <th>Student Name</th>
-                      <th>Program</th>
-                      <th>College</th>
-                      <th>Year Level</th>
-                      <th>Attendance Type</th>
-                      <th>Time In</th>
-                      <th>Time Out</th>
-                      <th>Duration</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr v-if="loading">
-                      <td colspan="9" class="empty">
-                        Loading attendance logs...
-                      </td>
-                    </tr>
-
-                    <tr v-else-if="filteredLogs.length === 0">
-                      <td colspan="9" class="empty">
-                        No attendance records found.
-                        <div class="emptyHint">
-                          Try changing your search or filter selection.
-                        </div>
-                      </td>
-                    </tr>
-
-                    <tr
-                      v-for="log in paginatedLogs"
-                      :key="log.id"
-                    >
-                      <td data-label="ID Number" class="strong">
-                        {{ normalizeStudent(log.students).id_number || "--" }}
-                      </td>
-                      <td data-label="Student Name" class="strong">
-                        {{
-                          `${normalizeStudent(log.students).first_name || ""} ${normalizeStudent(log.students).last_name || ""}`.trim() || "--"
-                        }}
-                      </td>
-                      <td data-label="Program">
-                        {{ normalizeStudent(log.students).program || "--" }}
-                      </td>
-                      <td data-label="College">
-                        {{ normalizeStudent(log.students).college || "--" }}
-                      </td>
-                      <td data-label="Year Level">
-                        {{ normalizeStudent(log.students).year_level || "--" }}
-                      </td>
-                      <td data-label="Attendance Type">
-                        {{ log.attendance_type || "--" }}
-                      </td>
-                      <td data-label="Time In">
-                        {{ formatDateTime(log.time_in) }}
-                      </td>
-                      <td data-label="Time Out">
-                        {{ formatDateTime(log.time_out) }}
-                      </td>
-                      <td data-label="Duration" class="muted">
-                        {{ log.duration_minutes ? `${log.duration_minutes} mins` : "--" }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="foot">
-  <div class="footText">
-    Tip: Use the filters and search to narrow down records faster.
-  </div>
-
-  <div class="pager" v-if="filteredLogs.length > itemsPerPage">
-
-    <button
-      v-if="currentPage < totalPages"
-      class="pagerBtn"
-      @click="goToNextPage"
-    >
-      Next
-    </button>
-  </div>
-</div>
-            </div>
-
-            <div class="summaryBar">
-  <span class="summaryText">
-    Showing
-    <span class="summaryStrong">
-      {{ filteredLogs.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }}
-    </span>
-    -
-    <span class="summaryStrong">
-      {{ Math.min(currentPage * itemsPerPage, filteredLogs.length) }}
-    </span>
-    of <span class="summaryStrong">{{ filteredLogs.length }}</span> records
-  </span>
-</div>
-
+          <div class="summaryBar">
+            <span class="summaryText">
+              Showing
+              <span class="summaryStrong">
+                {{ filteredLogs.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }}
+              </span>
+              -
+              <span class="summaryStrong">
+                {{ Math.min(currentPage * itemsPerPage, filteredLogs.length) }}
+              </span>
+              of <span class="summaryStrong">{{ filteredLogs.length }}</span> records
+            </span>
           </div>
         </div>
       </div>
@@ -519,8 +529,8 @@ const exportToCSV = () => {
   --primary: #0d2b0f;
   --primary-2: #165b1b;
 
-  --bg: #f7f2e8;
-  --bg-strip: #efe7d9;
+  --background-color: var(--color-slate-50);
+  /* --bg-strip: #efe7d9; */
   --card: rgba(255, 255, 255, 0.92);
 
   --border: rgba(13, 43, 15, 0.09);
@@ -540,18 +550,6 @@ const exportToCSV = () => {
   width: 100%;
   height: 100%;
   margin: 0;
-}
-
-.card {
-  min-height: calc(100vh - 40px);
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  box-shadow: 0 14px 40px var(--shadow);
-  overflow: hidden;
 }
 
 .headBlock {
@@ -759,16 +757,50 @@ const exportToCSV = () => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: 160ms ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .clearButton {
-  background: linear-gradient(180deg, #f9fbf8 0%, var(--bg-strip) 100%);
-  color: rgba(13, 43, 15, 0.8);
+  background: linear-gradient(180deg, #f9fbf8);
+  color: rgba(13, 43, 15, 0.78);
+  border: 1px solid rgba(13, 43, 15, 0.1);
 }
 
 .clearButton:hover {
-  background: linear-gradient(180deg, #ffffff 0%, #e8ddcb 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #ece6d8 100%);
+  color: #0d2b0f;
+  border-color: rgba(13, 43, 15, 0.18);
+  box-shadow: 0 10px 20px rgba(13, 43, 15, 0.08);
+  transform: translateY(-1px);
+}
+
+.clearButton:active {
+  transform: translateY(0);
+}
+
+.clearButton:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(239, 183, 45, 0.22),
+    0 10px 20px rgba(13, 43, 15, 0.08);
+}
+
+.clearButtonActive {
+  background: linear-gradient(180deg, #efb72d 0%, #dca514 100%);
+  color: #0d2b0f;
+  border-color: rgba(205, 145, 9, 0.45);
+  box-shadow: 0 10px 22px rgba(239, 183, 45, 0.22);
+}
+
+.clearButtonActive:hover {
+  background: linear-gradient(180deg, #f3bf3b 0%, #d69d09 100%);
+  color: #08210b;
+  box-shadow: 0 12px 24px rgba(239, 183, 45, 0.28);
 }
 
 .summaryBar {
