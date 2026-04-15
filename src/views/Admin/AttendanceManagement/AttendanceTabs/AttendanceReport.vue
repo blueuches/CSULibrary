@@ -380,7 +380,7 @@ const palettes: Record<string, string[]> = {
 }
 
 const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
-const years  = ['2024', '2025', '2026']
+const years  = ['2024', '2025', '2026', '2027']
 
 // ── State ────────────────────────────────────────────────────────────────────
 const selectedDept     = ref('')
