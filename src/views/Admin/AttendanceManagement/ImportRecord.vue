@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
     <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
-
+ 
     <main class="report-root flex-1 overflow-y-auto">
       <!-- HEADER -->
       <header class="report-header">
@@ -17,15 +17,15 @@
             </svg>
             <span>STUDENT RECORDS</span>
           </div>
-
+ 
           <h1 class="header-title">Import <span style="color: #f9a825">Student Records</span></h1>
-
+ 
           <p class="header-sub">
             Upload a dataset and synchronize it with the CSU student database.
           </p>
         </div>
       </header>
-
+ 
       <!-- STEPPER -->
       <section class="panel">
         <div class="stepper">
@@ -62,10 +62,10 @@
           </div>
         </div>
       </section>
-
+ 
       <!-- MAIN PANEL -->
       <section class="panel import-panel">
-
+ 
         <!-- ── STEP 1: UPLOAD ── -->
         <div v-if="currentStep === 0" class="step-content">
           <div class="panel-head">
@@ -74,7 +74,7 @@
               <p class="panel-sub">Upload an XLSX or XLS file containing CSU student records</p>
             </div>
           </div>
-
+ 
           <div
             class="drop-zone"
             :class="{ dragging: isDragging, hasFile: !!uploadedFile }"
@@ -90,7 +90,7 @@
               accept=".xlsx,.xls"
               @change="handleFileUpload"
             />
-
+ 
             <div v-if="!uploadedFile" class="drop-zone-inner">
               <div class="drop-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -100,7 +100,7 @@
               <p class="upload-main"><strong>Click to browse</strong> or drag & drop</p>
               <p class="upload-sub">Supports .xlsx and .xls formats · Large files (10k+ rows) supported</p>
             </div>
-
+ 
             <div v-else class="drop-zone-file">
               <div class="file-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -118,7 +118,7 @@
               </button>
             </div>
           </div>
-
+ 
           <!-- Column preview after parsing -->
           <div v-if="detectedColumns.length > 0" class="column-preview">
             <p class="column-preview-label">
@@ -143,7 +143,7 @@
             </p>
           </div>
         </div>
-
+ 
         <!-- ── STEP 2: VALIDATE ── -->
         <div v-if="currentStep === 1" class="step-content">
           <div class="panel-head">
@@ -152,7 +152,7 @@
               <p class="panel-sub">Confirm the records detected from the uploaded file</p>
             </div>
           </div>
-
+ 
           <table class="report-table">
             <tbody>
               <tr>
@@ -204,7 +204,7 @@
               </tr>
             </tbody>
           </table>
-
+ 
           <!-- Sample rows preview -->
           <div v-if="sampleRows.length > 0" class="sample-preview">
             <p class="sample-label">Preview (first 3 rows)</p>
@@ -224,7 +224,7 @@
             </div>
           </div>
         </div>
-
+ 
         <!-- ── STEP 3: SYNC ── -->
         <div v-if="currentStep === 2" class="step-content">
           <div class="panel-head">
@@ -235,38 +235,85 @@
               </p>
             </div>
           </div>
-
+ 
           <!-- Idle state -->
-          <div v-if="syncStatus === 'idle'" class="sync-info-box">
-            <div class="sync-info-row">
-              <div class="sync-info-icon insert">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
-              </div>
-              <div>
-                <p class="sync-info-title">Insert new students</p>
-                <p class="sync-info-desc">Students not yet in the database will be added.</p>
+          <div v-if="syncStatus === 'idle'">
+ 
+            <!-- ── SYNC MODE TOGGLE ── -->
+            <div class="sync-mode-toggle">
+              <p class="sync-mode-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline w-4 h-4 mr-1 opacity-60">
+                  <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+                Import Mode
+              </p>
+              <div class="sync-mode-options">
+                <button
+                  class="sync-mode-option"
+                  :class="{ selected: syncMode === 'partial' }"
+                  @click="syncMode = 'partial'"
+                >
+                  <div class="sync-mode-option-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                      <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span>Partial Update</span>
+                    <span class="sync-mode-badge safe">Safe</span>
+                  </div>
+                  <p class="sync-mode-desc">Only inserts and updates the records in your file. Nothing is deleted. Use this when uploading a subset of students.</p>
+                </button>
+                <button
+                  class="sync-mode-option"
+                  :class="{ selected: syncMode === 'full' }"
+                  @click="syncMode = 'full'"
+                >
+                  <div class="sync-mode-option-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                      <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
+                    <span>Full Sync</span>
+                    <span class="sync-mode-badge destructive">Deletes records</span>
+                  </div>
+                  <p class="sync-mode-desc">Replaces the entire database with this file. Students absent from the file will be permanently deleted.</p>
+                </button>
               </div>
             </div>
-            <div class="sync-info-row">
-              <div class="sync-info-icon update">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+ 
+            <!-- What will happen cards -->
+            <div class="sync-info-box">
+              <div class="sync-info-row">
+                <div class="sync-info-icon insert">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+                </div>
+                <div>
+                  <p class="sync-info-title">Insert new students</p>
+                  <p class="sync-info-desc">Students not yet in the database will be added.</p>
+                </div>
               </div>
-              <div>
-                <p class="sync-info-title">Update existing students</p>
-                <p class="sync-info-desc">Matching ID numbers will have their records refreshed.</p>
+              <div class="sync-info-row">
+                <div class="sync-info-icon update">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </div>
+                <div>
+                  <p class="sync-info-title">Update existing students</p>
+                  <p class="sync-info-desc">Matching ID numbers will have their records refreshed.</p>
+                </div>
               </div>
-            </div>
-            <div class="sync-info-row">
-              <div class="sync-info-icon delete">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-              </div>
-              <div>
-                <p class="sync-info-title">Remove graduated students</p>
-                <p class="sync-info-desc">Students in the database but absent from the file will be deleted (graduated/unenrolled).</p>
+              <div class="sync-info-row" :class="{ 'sync-info-row--muted': syncMode === 'partial' }">
+                <div class="sync-info-icon delete">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </div>
+                <div>
+                  <p class="sync-info-title">
+                    Remove graduated students
+                    <span v-if="syncMode === 'partial'" class="sync-skip-badge">Skipped in Partial Update</span>
+                  </p>
+                  <p class="sync-info-desc">Students in the database but absent from the file will be deleted (graduated/unenrolled).</p>
+                </div>
               </div>
             </div>
           </div>
-
+ 
           <!-- Loading state -->
           <div v-if="syncStatus === 'loading'" class="loading-state">
             <div class="progress-track">
@@ -300,7 +347,7 @@
               Please keep this tab open until the import completes.
             </p>
           </div>
-
+ 
           <!-- Success state -->
           <div v-if="syncStatus === 'success'" class="success-state">
             <div class="success-icon-wrap">
@@ -333,7 +380,7 @@
               Import Another File
             </button>
           </div>
-
+ 
           <!-- Error state -->
           <div v-if="syncStatus === 'error'" class="error-state">
             <div class="error-icon-wrap">
@@ -346,7 +393,7 @@
             <button class="retry-btn" @click="syncStatus = 'idle'">Try Again</button>
           </div>
         </div>
-
+ 
         <!-- ── CONTROLS ── -->
         <div class="step-controls" v-if="syncStatus !== 'loading' && syncStatus !== 'success'">
           <button v-if="currentStep > 0 && syncStatus !== 'loading'" class="nav-btn" @click="goBack">
@@ -355,7 +402,7 @@
             </svg>
             Back
           </button>
-
+ 
           <button
             v-if="currentStep === 0"
             class="nav-btn primary"
@@ -368,7 +415,7 @@
               <path d="M9 5l7 7-7 7" />
             </svg>
           </button>
-
+ 
           <button
             v-if="currentStep === 1"
             class="nav-btn primary"
@@ -379,7 +426,7 @@
               <path d="M9 5l7 7-7 7" />
             </svg>
           </button>
-
+ 
           <button
             v-if="currentStep === 2 && syncStatus === 'idle'"
             class="nav-btn primary import-btn"
@@ -395,22 +442,26 @@
     </main>
   </div>
 </template>
-
+ 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import * as XLSX from 'xlsx'
 import { createClient } from '@supabase/supabase-js'
 import Sidebar from '@/components/Sidebar.vue'
-
+ 
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
-
+ 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const BATCH_SIZE = 500
-
+ 
+// Safety threshold: block Full Sync if the file would delete more than
+// 50% of the existing database. Prevents accidental mass-deletion from partial files.
+const DELETE_THRESHOLD = 0.5
+ 
 // Column mapping: Excel header → DB column
 const COLUMN_MAP: Record<string, string> = {
   'id_number': 'id_number',
@@ -432,32 +483,36 @@ const COLUMN_MAP: Record<string, string> = {
   'Gender': 'gender',
   'is_active': 'is_active',
 }
-
+ 
 const REQUIRED_COLUMNS = ['id_number', 'ID Number', 'Student ID']
-
+ 
 // ── State ─────────────────────────────────────────────────────────────────────
 const activeTab = ref('REPORTS')
 const handleTabChange = (name: string) => { activeTab.value = name }
-
+ 
 const currentStep = ref(0)
 const steps = [
   { title: 'Upload', sub: 'Select dataset' },
   { title: 'Validate', sub: 'Check records' },
   { title: 'Sync', sub: 'Update database' },
 ]
-
+ 
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const uploadedFile = ref<File | null>(null)
 const isDragging = ref(false)
 const isParsing = ref(false)
-
+ 
 const fileName = ref('')
 const recordCount = ref(0)
 const detectedColumns = ref<string[]>([])
 const parsedRows = ref<Record<string, any>[]>([])
 const sampleRows = ref<Record<string, any>[]>([])
 const columnWarning = ref('')
-
+ 
+// Sync mode: 'partial' = upsert only (safe), 'full' = upsert + delete (destructive)
+type SyncMode = 'partial' | 'full'
+const syncMode = ref<SyncMode>('partial')
+ 
 // Sync state
 type SyncStatus = 'idle' | 'loading' | 'success' | 'error'
 const syncStatus = ref<SyncStatus>('idle')
@@ -468,17 +523,17 @@ const processedCount = ref(0)
 const currentPhase = ref('')
 const importLogs = ref<string[]>([])
 const errorMessage = ref('')
-
+ 
 const syncResult = ref({ inserted: 0, updated: 0, deleted: 0 })
-
+ 
 // ── Computed ──────────────────────────────────────────────────────────────────
 const isMappedColumn = (col: string) => Object.keys(COLUMN_MAP).includes(col)
-
+ 
 // ── File Handling ─────────────────────────────────────────────────────────────
 function triggerFileInput() {
   fileInputRef.value?.click()
 }
-
+ 
 function handleDrop(e: DragEvent) {
   isDragging.value = false
   const file = e.dataTransfer?.files?.[0]
@@ -486,12 +541,12 @@ function handleDrop(e: DragEvent) {
     processFile(file)
   }
 }
-
+ 
 function handleFileUpload(e: Event) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (file) processFile(file)
 }
-
+ 
 function processFile(file: File) {
   uploadedFile.value = file
   fileName.value = file.name
@@ -501,7 +556,7 @@ function processFile(file: File) {
   sampleRows.value = []
   recordCount.value = 0
 }
-
+ 
 function removeFile() {
   uploadedFile.value = null
   fileName.value = ''
@@ -512,13 +567,13 @@ function removeFile() {
   columnWarning.value = ''
   if (fileInputRef.value) fileInputRef.value.value = ''
 }
-
+ 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B'
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
 }
-
+ 
 // ── Parse Excel ───────────────────────────────────────────────────────────────
 async function parseExcel(file: File): Promise<Record<string, any>[]> {
   return new Promise((resolve, reject) => {
@@ -538,11 +593,11 @@ async function parseExcel(file: File): Promise<Record<string, any>[]> {
     reader.readAsArrayBuffer(file)
   })
 }
-
+ 
 // ── Map row to DB record ──────────────────────────────────────────────────────
 function mapRow(row: Record<string, any>): Record<string, any> | null {
   const mapped: Record<string, any> = {}
-
+ 
   for (const [excelCol, dbCol] of Object.entries(COLUMN_MAP)) {
     if (row[excelCol] !== undefined) {
       let val = row[excelCol]
@@ -551,39 +606,39 @@ function mapRow(row: Record<string, any>): Record<string, any> | null {
       mapped[dbCol] = val
     }
   }
-
+ 
   if (!mapped.id_number) return null
-
+ 
   // Ensure id_number is always a string
   mapped.id_number = String(mapped.id_number).trim()
   mapped.is_active = mapped.is_active ?? true
-
+ 
   return mapped
 }
-
+ 
 // ── Go to Validate (parse file) ───────────────────────────────────────────────
 async function goToValidate() {
   if (!uploadedFile.value) return
   isParsing.value = true
   columnWarning.value = ''
-
+ 
   try {
     const rows = await parseExcel(uploadedFile.value)
     if (rows.length === 0) throw new Error('The file appears to be empty.')
-
+ 
     detectedColumns.value = Object.keys(rows[0])
-
+ 
     // Check for required ID column
     const hasIdCol = REQUIRED_COLUMNS.some(c => detectedColumns.value.includes(c))
     if (!hasIdCol) {
       columnWarning.value = `Warning: No recognized ID column found. Expected one of: ${REQUIRED_COLUMNS.join(', ')}`
     }
-
+ 
     const mapped = rows.map(mapRow).filter(Boolean) as Record<string, any>[]
     parsedRows.value = mapped
     recordCount.value = mapped.length
     sampleRows.value = rows.slice(0, 3)
-
+ 
     currentStep.value = 1
   } catch (err: any) {
     columnWarning.value = `Parse error: ${err.message}`
@@ -591,16 +646,16 @@ async function goToValidate() {
     isParsing.value = false
   }
 }
-
+ 
 function goBack() {
   if (currentStep.value > 0) currentStep.value--
   syncStatus.value = 'idle'
 }
-
+ 
 // ── Main Import ───────────────────────────────────────────────────────────────
 async function importStudents() {
   if (parsedRows.value.length === 0) return
-
+ 
   syncStatus.value = 'loading'
   progressPercent.value = 0
   currentBatch.value = 0
@@ -608,72 +663,91 @@ async function importStudents() {
   importLogs.value = []
   syncResult.value = { inserted: 0, updated: 0, deleted: 0 }
   errorMessage.value = ''
-
+ 
   try {
     const rows = parsedRows.value
     const incomingIds = new Set(rows.map((r) => r.id_number))
     const batches = chunkArray(rows, BATCH_SIZE)
     totalBatches.value = batches.length
-
+ 
     // ── Phase 1: Fetch existing IDs ───────────────────────────────────────────
     currentPhase.value = 'Fetching existing records'
     addLog('📋 Fetching existing student IDs from database...')
-
+ 
     const existingIds = await fetchAllExistingIds()
     addLog(`Found ${existingIds.size.toLocaleString()} existing records in DB.`)
-
+ 
     // ── Phase 2: Upsert in batches ────────────────────────────────────────────
     currentPhase.value = 'Upserting records'
     addLog(`Starting upsert — ${rows.length.toLocaleString()} records in ${batches.length} batches...`)
-
+ 
     for (let i = 0; i < batches.length; i++) {
       currentBatch.value = i + 1
       const batch = batches[i]
-
+ 
       const { error } = await supabase
-        .from('students')
+        .from('students_test')
         .upsert(batch, { onConflict: 'id_number' })
-
+ 
       if (error) throw new Error(`Batch ${i + 1} upsert failed: ${error.message}`)
-
+ 
       processedCount.value += batch.length
       progressPercent.value = Math.round((processedCount.value / rows.length) * 80) // 80% for upsert
       addLog(`✓ Batch ${i + 1}/${batches.length} — ${processedCount.value.toLocaleString()} rows upserted`)
     }
-
+ 
     // Estimate inserts vs updates (approximate)
     syncResult.value.inserted = rows.filter((r) => !existingIds.has(r.id_number)).length
     syncResult.value.updated = rows.filter((r) => existingIds.has(r.id_number)).length
-
-    // ── Phase 3: Delete stale records ─────────────────────────────────────────
-    currentPhase.value = 'Removing stale records'
-    addLog('🗑️ Identifying records to delete (no longer enrolled)...')
-
-    const idsToDelete = [...existingIds].filter((id) => !incomingIds.has(id))
-
-    if (idsToDelete.length > 0) {
-      addLog(`Deleting ${idsToDelete.length.toLocaleString()} stale student records...`)
-      const deleteBatches = chunkArray(idsToDelete, 500)
-
-      for (const batch of deleteBatches) {
-        const { error } = await supabase
-          .from('students')
-          .delete()
-          .in('id_number', batch)
-
-        if (error) throw new Error(`Delete failed: ${error.message}`)
+ 
+    // ── Phase 3: Delete stale records (Full Sync only) ────────────────────────
+    if (syncMode.value === 'full') {
+      currentPhase.value = 'Removing stale records'
+      addLog('🗑️ Identifying records to delete (no longer enrolled)...')
+ 
+      const idsToDelete = [...existingIds].filter((id) => !incomingIds.has(id))
+ 
+      if (idsToDelete.length > 0) {
+        // ── Safety threshold guard ──────────────────────────────────────────
+        // Block the delete if it would wipe out more than DELETE_THRESHOLD (50%)
+        // of the database. This prevents accidental mass-deletion when a partial
+        // file is accidentally uploaded with Full Sync mode selected.
+        const deletionRatio = idsToDelete.length / existingIds.size
+        if (deletionRatio > DELETE_THRESHOLD) {
+          throw new Error(
+            `Blocked: This would delete ${idsToDelete.length.toLocaleString()} records ` +
+            `(${Math.round(deletionRatio * 100)}% of the database). ` +
+            `This usually means the uploaded file is a partial dataset. ` +
+            `Switch to Partial Update mode, or upload the complete student list to use Full Sync.`
+          )
+        }
+ 
+        addLog(`Deleting ${idsToDelete.length.toLocaleString()} stale student records...`)
+        const deleteBatches = chunkArray(idsToDelete, 500)
+ 
+        for (const batch of deleteBatches) {
+          const { error } = await supabase
+            .from('students_test')
+            .delete()
+            .in('id_number', batch)
+ 
+          if (error) throw new Error(`Delete failed: ${error.message}`)
+        }
+ 
+        syncResult.value.deleted = idsToDelete.length
+        addLog(`✓ Deleted ${idsToDelete.length.toLocaleString()} stale records`)
+      } else {
+        addLog('✓ No stale records to delete')
       }
-
-      syncResult.value.deleted = idsToDelete.length
-      addLog(`✓ Deleted ${idsToDelete.length.toLocaleString()} stale records`)
     } else {
-      addLog('✓ No stale records to delete')
+      // Partial Update — skip delete phase entirely
+      addLog('⏭️ Partial Update mode — delete phase skipped. No records removed.')
     }
-
+ 
     progressPercent.value = 100
     currentPhase.value = 'Done'
     addLog('🎉 Import complete!')
-
+ 
     await sleep(500)
     syncStatus.value = 'success'
   } catch (err: any) {
@@ -682,30 +756,30 @@ async function importStudents() {
     addLog(`❌ Error: ${err.message}`)
   }
 }
-
+ 
 // ── Fetch all existing IDs (paginated, handles 10k+) ─────────────────────────
 async function fetchAllExistingIds(): Promise<Set<string>> {
   const allIds = new Set<string>()
   const pageSize = 1000
   let from = 0
-
+ 
   while (true) {
     const { data, error } = await supabase
-      .from('students')
+      .from('students_test')
       .select('id_number')
       .range(from, from + pageSize - 1)
-
+ 
     if (error) throw new Error(`Failed to fetch existing IDs: ${error.message}`)
     if (!data || data.length === 0) break
-
+ 
     data.forEach((row) => allIds.add(row.id_number))
     if (data.length < pageSize) break
     from += pageSize
   }
-
+ 
   return allIds
 }
-
+ 
 // ── Reset ─────────────────────────────────────────────────────────────────────
 function resetImport() {
   removeFile()
@@ -714,19 +788,20 @@ function resetImport() {
   progressPercent.value = 0
   importLogs.value = []
   syncResult.value = { inserted: 0, updated: 0, deleted: 0 }
+  syncMode.value = 'partial' // Reset to safe default
 }
-
+ 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const chunks: T[][] = []
   for (let i = 0; i < arr.length; i += size) chunks.push(arr.slice(i, i + size))
   return chunks
 }
-
+ 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
 }
-
+ 
 function addLog(msg: string) {
   const time = new Date().toLocaleTimeString('en-US', { hour12: false })
   importLogs.value.push(`[${time}] ${msg}`)
@@ -818,6 +893,108 @@ function addLog(msg: string) {
 
 .step-connector-line.filled {
   background: #f9a825;
+}
+
+/* ─── Sync Mode Toggle ──────────────────────────── */
+.sync-mode-toggle {
+  margin-bottom: 20px;
+}
+ 
+.sync-mode-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(13, 43, 15, 0.45);
+  margin-bottom: 10px;
+}
+ 
+.sync-mode-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+ 
+.sync-mode-option {
+  text-align: left;
+  background: white;
+  border: 1.5px solid var(--border, #e0ddd8);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+ 
+.sync-mode-option:hover {
+  border-color: rgba(13, 43, 15, 0.3);
+  background: rgba(13, 43, 15, 0.02);
+}
+ 
+.sync-mode-option.selected {
+  border-color: #0d2b0f;
+  background: rgba(13, 43, 15, 0.04);
+  box-shadow: 0 0 0 3px rgba(13, 43, 15, 0.06);
+}
+ 
+.sync-mode-option-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #0d2b0f;
+  margin-bottom: 6px;
+}
+ 
+.sync-mode-desc {
+  font-size: 0.75rem;
+  color: rgba(13, 43, 15, 0.5);
+  line-height: 1.5;
+  margin: 0;
+}
+ 
+.sync-mode-badge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 99px;
+  margin-left: auto;
+}
+ 
+.sync-mode-badge.safe {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+}
+ 
+.sync-mode-badge.destructive {
+  background: rgba(198, 40, 40, 0.08);
+  color: #c62828;
+}
+ 
+.sync-info-row--muted {
+  opacity: 0.4;
+}
+ 
+.sync-skip-badge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: rgba(13, 43, 15, 0.07);
+  color: rgba(13, 43, 15, 0.5);
+  border-radius: 99px;
+  padding: 2px 8px;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+ 
+@media (max-width: 768px) {
+  .sync-mode-options {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ── IMPORT PANEL ─────────────────────────────────── */
