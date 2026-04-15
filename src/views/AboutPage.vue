@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, type DirectiveBinding } from 'vue'
+import { supabase } from '@/lib/supabase'
 
 type MediaType = 'image' | 'video'
 type PageType = 'homepage' | 'aboutpage'
@@ -16,6 +17,23 @@ type MediaItem = {
   externalLink?: string
   embedUrl?: string
   thumbnail?: string
+}
+
+type AboutRow = {
+  id?: string
+  title: string
+  description: string
+  edited_by?: string | null
+  edited_at?: string | null
+  order_num?: number | null
+}
+
+type AboutContent = {
+  vision: string
+  mission: string
+  goal: string
+  objectives: string[]
+  rules: string[]
 }
 
 const STORAGE_KEY = 'website-media-v11'
@@ -44,27 +62,36 @@ const defaultIconMedia = [
   },
 ]
 
-const objectives = [
-  '1. Ensure the provision and maintainance of efficient facilities and equipment to support high-quality library services and operations.;',
-  '2. Employ committed and competent library personnel to deliver excellent library services.;',
-  '3. Build a collection that meets the standards of modern libraries-not only within Caraga, but also at the national and international levels.;',
-  '4. Establish linkages with local, national, and international academic and research networks to access updated technological information.;',
-  '5. Provide library personnel with a dynamic program for professional development and continous learning.;',
-  '6. Develop and implement a robust monitoring and evaluation system to assess library performance and identify strategies for improvement.;',
-]
-
-const rules = [
-  '1. Always use appropriate voice level.',
-  '2. No eating and drinking at reader’s area.',
-  '3. Keep away books from rain, water and dust.',
-  '4. Do not write or draw anything in our books.',
-  '5. Cellular Phone should be put to silent mode.',
-  '6. Answering phone calls inside the library is not allowed.',
-  '7. Walk quietly into the library.',
-  '8. Never run around the hallway outside the library premises.',
-]
+const defaultAboutContent: AboutContent = {
+  vision:
+    "The CSU-HERO Learning Commons envisions itself as a prenier repository of knowledge, champoining the university's commitment to becoming a socially engaged, digitally innovative, and entrepreneurial institution-excelling in science, engineering, and the arts by 2028.",
+  mission:
+    "The CSU-HERO Learning Commons provides resources and delivers essentials services that align with the University's mission as a transformative institution. It remains committed to the fostering a sustainable future for the regiion, the nation, and beyond.",
+  goal:
+    'To ensure a well-organized library system with a vast collection of information and education materials that support the academic programs of the University and respond to the evolving needs of society within the region.',
+  objectives: [
+    'Ensure the provision and maintainance of efficient facilities and equipment to support high-quality library services and operations.;',
+    'Employ committed and competent library personnel to deliver excellent library services.;',
+    'Build a collection that meets the standards of modern libraries-not only within Caraga, but also at the national and international levels.;',
+    'Establish linkages with local, national, and international academic and research networks to access updated technological information.;',
+    'Provide library personnel with a dynamic program for professional development and continous learning.;',
+    'Develop and implement a robust monitoring and evaluation system to assess library performance and identify strategies for improvement.;',
+  ],
+  rules: [
+    'Always use appropriate voice level.',
+    'No eating and drinking at reader’s area.',
+    'Keep away books from rain, water and dust.',
+    'Do not write or draw anything in our books.',
+    'Cellular Phone should be put to silent mode.',
+    'Answering phone calls inside the library is not allowed.',
+    'Walk quietly into the library.',
+    'Never run around the hallway outside the library premises.',
+  ],
+}
 
 const mediaItems = ref<MediaItem[]>([])
+const aboutContent = ref<AboutContent>({ ...defaultAboutContent })
+const loadingAbout = ref(false)
 
 function loadMedia() {
   try {
@@ -72,6 +99,67 @@ function loadMedia() {
   } catch {
     mediaItems.value = []
   }
+}
+
+function normalizeMultiline(text: string): string[] {
+  return text
+    .split('\n')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+function stripLeadingNumber(text: string): string {
+  return text.replace(/^\s*\d+\.\s*/, '').trim()
+}
+
+function applyRowsToContent(rows: AboutRow[]) {
+  const mapped: AboutContent = { ...defaultAboutContent }
+
+  for (const row of rows) {
+    const key = row.title?.toLowerCase()?.trim()
+
+    if (key === 'vision') mapped.vision = row.description || defaultAboutContent.vision
+    if (key === 'mission') mapped.mission = row.description || defaultAboutContent.mission
+    if (key === 'goal') mapped.goal = row.description || defaultAboutContent.goal
+
+    if (key === 'objectives') {
+      mapped.objectives = row.description
+        ? normalizeMultiline(row.description).map(stripLeadingNumber)
+        : defaultAboutContent.objectives.map(stripLeadingNumber)
+    }
+
+    if (key === 'rules') {
+      mapped.rules = row.description
+        ? normalizeMultiline(row.description).map(stripLeadingNumber)
+        : defaultAboutContent.rules.map(stripLeadingNumber)
+    }
+  }
+
+  aboutContent.value = mapped
+}
+
+async function loadAboutContent() {
+  loadingAbout.value = true
+
+  const { data, error } = await supabase
+    .from('about')
+    .select('id, title, description, edited_by, edited_at, order_num')
+    .order('order_num', { ascending: true })
+
+  loadingAbout.value = false
+
+  if (error) {
+    console.error('Failed to load about content:', error)
+    aboutContent.value = { ...defaultAboutContent }
+    return
+  }
+
+  if (!data || data.length === 0) {
+    aboutContent.value = { ...defaultAboutContent }
+    return
+  }
+
+  applyRowsToContent(data as AboutRow[])
 }
 
 const heroMedia = computed(() =>
@@ -94,6 +182,10 @@ const heroImageSrc = computed(() => {
 
 function handleMediaUpdated() {
   loadMedia()
+}
+
+function handleAboutUpdated() {
+  loadAboutContent()
 }
 
 let io: IntersectionObserver | null = null
@@ -150,15 +242,19 @@ const vReveal = {
   },
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadMedia()
   window.addEventListener('website-media-updated', handleMediaUpdated)
+  window.addEventListener('website-about-updated', handleAboutUpdated)
+
+  await loadAboutContent()
 })
 
 onBeforeUnmount(() => {
   io?.disconnect()
   io = null
   window.removeEventListener('website-media-updated', handleMediaUpdated)
+  window.removeEventListener('website-about-updated', handleAboutUpdated)
 })
 </script>
 
@@ -219,9 +315,7 @@ onBeforeUnmount(() => {
               <h3 class="green-heading with-accent">Vision</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  The CSU-HERO Learning Commons envisions itself as a prenier repository of knowledge, 
-                  champoining the university's commitment to becoming a socially engaged, digitally innovative, 
-                  and entrepreneurial institution-excelling in science, engineering, and the arts by 2028.
+                  {{ aboutContent.vision }}
                 </p>
               </div>
             </div>
@@ -234,9 +328,7 @@ onBeforeUnmount(() => {
               <h3 class="green-heading with-accent">Mission</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  The CSU-HERO Learning Commons provides resources and delivers essentials services that align with the 
-                  University's mission as a transformative institution. It remains committed to the fostering a sustainable
-                  future for the regiion, the nation, and beyond.
+                  {{ aboutContent.mission }}
                 </p>
               </div>
             </div>
@@ -249,9 +341,7 @@ onBeforeUnmount(() => {
               <h3 class="green-heading with-accent">Goal</h3>
               <div class="card-body">
                 <p class="section-paragraph">
-                  To ensure a well-organized library system with a vast collection of information
-                  and education materials that support the academic programs of the University and 
-                  respond to the evolving needs of society within the region.
+                  {{ aboutContent.goal }}
                 </p>
               </div>
             </div>
@@ -264,10 +354,16 @@ onBeforeUnmount(() => {
           <div class="content-box fixed-card">
             <div class="section-block no-top-space">
               <h3 class="green-heading with-accent bottom-box">Objectives</h3>
-              <div class="card-body no-scroll">
-                <ol class="custom-list list-tight">
-                  <li v-for="(item, i) in objectives" :key="i">{{ item }}</li>
-                </ol>
+              <div class="card-body hide-scrollbar">
+                <div class="custom-list-counter">
+                  <div
+                    v-for="(item, i) in aboutContent.objectives"
+                    :key="i"
+                    class="custom-list-item"
+                  >
+                    {{ item }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -277,14 +373,24 @@ onBeforeUnmount(() => {
           <div class="content-box fixed-card">
             <div class="section-block no-top-space">
               <h3 class="green-heading with-accent bottom-box">Rules and Regulation</h3>
-              <div class="card-body no-scroll">
-                <ol class="custom-list list-tight">
-                  <li v-for="(item, i) in rules" :key="i">{{ item }}</li>
-                </ol>
+              <div class="card-body hide-scrollbar">
+                <div class="custom-list-counter">
+                  <div
+                    v-for="(item, i) in aboutContent.rules"
+                    :key="i"
+                    class="custom-list-item"
+                  >
+                    {{ item }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div v-if="loadingAbout" class="loading-text">
+        Loading about content...
       </div>
     </div>
   </section>
@@ -493,7 +599,6 @@ onBeforeUnmount(() => {
   flex-direction: column;
   overflow: hidden;
 }
-
 .no-top-space {
   margin-top: 0;
   height: 100%;
@@ -528,9 +633,12 @@ onBeforeUnmount(() => {
   overflow-y: auto;
   padding-right: 4px;
 }
-.no-scroll {
-  overflow-y: visible !important;
-  padding-right: 0 !important;
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 .section-paragraph {
   margin: 0 0 0 34px;
@@ -538,21 +646,31 @@ onBeforeUnmount(() => {
   line-height: 1.5;
   color: var(--text-color);
 }
-.custom-list {
+.custom-list-counter {
   margin: 0 0 0 34px;
-  padding-left: 20px;
+  counter-reset: item;
+}
+.custom-list-item {
+  counter-increment: item;
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 28px;
   color: var(--text-color);
   line-height: 1.32;
   font-size: 0.98rem;
 }
-.custom-list li {
-  margin-bottom: 8px;
+.custom-list-item::before {
+  content: counter(item) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 600;
 }
-.list-tight {
-  line-height: 1.3;
-}
-.list-tight li {
-  margin-bottom: 8px;
+.loading-text {
+  margin-top: 18px;
+  text-align: center;
+  color: #475569;
+  font-weight: 500;
 }
 @media (max-width: 1100px) {
   .page-inner {

@@ -237,11 +237,13 @@
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(6px);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center; 
+  justify-content: center; 
   z-index: 100;
   padding: 20px;
+  overflow: hidden;
 }
+
 .modal-sheet {
   background: white;
   border-radius: 20px;
@@ -592,12 +594,18 @@
 .del-modal {
   background: white;
   border-radius: 20px;
-  padding: 36px;
+  padding: 28px; 
   width: 100%;
   max-width: 380px;
   text-align: center;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
 .del-icon {
   width: 56px;
   height: 56px;

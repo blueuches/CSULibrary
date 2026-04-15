@@ -2,245 +2,94 @@
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
     <Sidebar :activeTab="'SERVICES'" />
 
-    <main class="report-root curriculum-root">
-      <header class="report-header intro-header">
-        <div class="header-left">
-          <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/services')"
-              >BACK</span
-            >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>MANAGE CURRICULUM</span>
-          </div>
-          <h1 class="header-title intro-title">
-            College <span class="text-yellow-500">Curriculum</span>
-          </h1>
-          <p class="header-sub">
-            Browse colleges, inspect program flow, and review semester subjects in one place.
-          </p>
+    <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
+      <header class="mb-6">
+        <div class="mb-2 flex items-center gap-2 text-xs font-bold tracking-wide text-slate-500">
+          <span>ADMIN</span>
+          <span>/</span>
+          <span>MANAGE CURRICULUM</span>
         </div>
+        <h1 class="text-3xl font-extrabold tracking-tight text-[#164d23]">
+          College <span class="text-[#f9a825]">Curriculum</span>
+        </h1>
+        <p class="mt-2 text-sm text-slate-600">Select a college to open its programs and view curriculum details.</p>
       </header>
 
-      <section class="kpi-strip">
-        <article class="kpi-card">
-          <div class="kpi-body">
-            <span class="kpi-label">Visible Colleges</span>
-            <span class="kpi-value">{{ filteredColleges.length }}</span>
-          </div>
+      <section class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Visible Colleges</p>
+          <p class="mt-1 text-2xl font-bold text-[#164d23]">{{ visibleCollegeCount }}</p>
         </article>
-        <article class="kpi-card">
-          <div class="kpi-body">
-            <span class="kpi-label">Programs</span>
-            <span class="kpi-value">{{ totalPrograms }}</span>
-          </div>
+
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Programs</p>
+          <p class="mt-1 text-2xl font-bold text-[#164d23]">{{ totalProgramCount }}</p>
         </article>
-        <article class="kpi-card">
-          <div class="kpi-body">
-            <span class="kpi-label">Open College</span>
-            <span class="kpi-value status-value">{{ openCollegeName || 'None' }}</span>
-          </div>
+
+        <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Open College</p>
+          <p class="mt-1 text-2xl font-bold text-[#f9a825]">{{ openCollegeLabel }}</p>
         </article>
       </section>
 
-      <section class="panel panel--table curriculum-panel">
-        <div class="panel-head">
-          <div>
-            <h2 class="panel-title">Curriculum Cards</h2>
-            <p class="panel-sub">
-              Click a college card to open its program and curriculum dropdown list.
-            </p>
-          </div>
-        </div>
-
-        <div class="panel-toolbar">
-          <div class="search-wrap">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search college, program, or code..."
-            />
-          </div>
-          <div class="toolbar-actions">
-            <span class="toolbar-chip">{{ filteredColleges.length }} matches</span>
-            <button type="button" class="toolbar-btn" @click="closeAllCards">Collapse All</button>
-            <button v-if="searchQuery" type="button" class="toolbar-btn toolbar-btn--ghost" @click="searchQuery = ''">
-              Clear Search
-            </button>
-            <button v-if="activeCollegeId" type="button" class="toolbar-btn toolbar-btn--ghost" @click="closeAllCards" title="Close expanded card">
-              Close Card
-            </button>
-          </div>
-        </div>
-
-        <section class="college-grid">
-          <div v-if="isLoading" class="empty-search-card">
-            <h3>Loading curriculums...</h3>
-            <p>Fetching data from the database.</p>
-          </div>
-
-          <div v-else-if="errorMessage" class="empty-search-card" style="border-color: #ef4444;">
-            <h3>Error Loading Curriculums</h3>
-            <p>{{ errorMessage }}</p>
-            <button type="button" class="toolbar-btn" @click="loadCurriculums" style="margin-top: 12px;">
-              Retry
-            </button>
-          </div>
-
-          <div
-            v-for="college in filteredColleges"
-            v-else
-            :key="college.code"
-            class="college-card"
-            :class="[
-              { 'college-card--open': isCollegeOpen(college.code) },
-              isCollegeOpen(college.code) ? 'border-emerald-500 shadow-xl' : '',
-              isCollegeDisabled(college) ? 'college-card--disabled' : '',
-            ]"
-          >
-            <button
-              type="button"
-              class="college-trigger"
-              @click="toggleCollege(college)"
-              :aria-expanded="isCollegeOpen(college.code)"
-              :disabled="isCollegeDisabled(college)"
-            >
-              <div class="college-trigger-left">
-                <span class="college-code">{{ college.code }}</span>
-                <span class="college-name">{{ college.name }}</span>
-              </div>
-              <div class="college-trigger-right">
-                <span v-if="college.programs.length > 0" class="college-count"
-                  >{{ college.programs.length }} programs</span
-                >
-                <span v-else class="college-count">No programs yet</span>
-                <svg
-                  class="chevron"
-                  :class="{ 'chevron--open': isCollegeOpen(college.code) }"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  aria-hidden="true"
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-              </div>
-            </button>
-
-            <Transition name="college-expand">
-              <div v-if="isCollegeOpen(college.code)" class="college-body">
-              <p v-if="college.programs.length === 0" class="empty-state-text">
-                Graduate program list is not yet added.
-              </p>
-              <details
-                v-for="program in college.programs"
-                :key="program.name"
-                class="program-accordion"
-              >
-                <summary>
-                  <span class="program-name">{{ program.name }}</span>
-                  <span class="program-count">{{ program.curriculum.length }} semesters</span>
-                </summary>
-
-                <div class="program-body">
-                  <div class="curriculum-actions">
-                    <button
-                      type="button"
-                      class="view-curriculum-btn"
-                      @click.prevent.stop="openCurriculumModal(college.code, program)"
-                    >
-                      View Curriculum
-                    </button>
-                    <button
-                      type="button"
-                      class="edit-curriculum-btn"
-                      @click.prevent.stop="editCurriculum(college.code, program.name)"
-                    >
-                      Edit
-                    </button>
-                  </div>
-
-                  <p v-if="program.curriculum.length" class="program-meta-note">
-                    {{ program.curriculum.length }} curriculum revision(s) available for this program.
-                  </p>
-                  <p v-else class="program-meta-note">
-                    No curriculum revision available yet for this program.
-                  </p>
-                </div>
-              </details>
-              </div>
-            </Transition>
-          </div>
-
-          <article v-if="!isLoading && !errorMessage && filteredColleges.length === 0" class="empty-search-card">
-            <h3>No curriculum cards found</h3>
-            <p>Try a different keyword or clear your search filter.</p>
-          </article>
-        </section>
+      <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <button
+          v-for="college in colleges"
+          :key="college.code"
+          type="button"
+          class="rounded-xl border border-[#d8e3db] bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#164d23] hover:shadow-md"
+          @click="openCollege(college.code)"
+        >
+          <p class="text-lg font-bold text-[#164d23]">{{ college.code }}</p>
+          <p class="mt-1 text-sm font-medium text-slate-700">{{ college.name }}</p>
+          <p class="mt-3 text-xs font-semibold text-slate-500">{{ college.programs.length }} programs</p>
+        </button>
       </section>
 
-      <Transition name="modal-fade">
+      <Transition name="fade-pop">
         <div
-          v-if="isCurriculumModalOpen"
-          class="curriculum-modal-overlay"
+          v-if="selectedCollege"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
           role="dialog"
           aria-modal="true"
-          aria-label="Curriculum details"
-          @click.self="closeCurriculumModal"
+          aria-label="Program list"
+          @click.self="closeProgramModal"
         >
-          <article class="curriculum-modal">
-            <header class="curriculum-modal-head">
+          <article class="w-full max-w-3xl rounded-xl bg-white shadow-2xl">
+            <header class="flex items-start justify-between gap-4 rounded-t-xl bg-[#164d23] px-6 py-4 text-white">
               <div>
-                <p class="modal-badge">{{ modalCollegeCode }}</p>
-                <h3>{{ modalProgramName }}</h3>
-                <p class="modal-subtitle">Curriculum detail fetched from the database.</p>
+                <p class="text-xs font-semibold uppercase tracking-wide text-[#f9e6a6]">{{ selectedCollege.code }}</p>
+                <h2 class="text-xl font-bold">{{ selectedCollege.name }}</h2>
+                <p class="mt-1 text-sm text-emerald-100">Select a program to view its curriculum details.</p>
               </div>
-              <button type="button" class="modal-close" @click="closeCurriculumModal">Close</button>
+              <button
+                type="button"
+                class="rounded-md border border-white/40 px-3 py-1 text-lg font-bold leading-none text-white hover:bg-white/15"
+                @click="closeProgramModal"
+                aria-label="Close program modal"
+              >
+                X
+              </button>
             </header>
 
-            <div v-if="isCurriculumModalLoading" class="modal-state">Loading curriculum details...</div>
-
-            <div v-else-if="curriculumModalError" class="modal-state modal-state--error">
-              {{ curriculumModalError }}
+            <div class="max-h-[70vh] overflow-y-auto px-6 py-5">
+              <div class="space-y-2">
+                <div
+                  v-for="program in selectedCollege.programs"
+                  :key="program.id"
+                  class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+                >
+                  <p class="text-sm font-medium text-slate-800">{{ program.name }}</p>
+                  <button
+                    type="button"
+                    class="rounded-lg bg-[#164d23] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white hover:bg-[#123d1c]"
+                    @click="viewCurriculum(program.id, program.name)"
+                  >
+                    View Curriculum
+                  </button>
+                </div>
+              </div>
             </div>
-
-            <div v-else-if="activeCurriculumDetail" class="curriculum-modal-body">
-              <section class="description-panel">
-                <h4>Description</h4>
-                <p>
-                  {{ activeCurriculumDetail.description || 'No description provided for this curriculum revision.' }}
-                </p>
-              </section>
-
-              <section class="meta-grid">
-                <article class="meta-card">
-                  <span>Revision Year</span>
-                  <strong>{{ activeCurriculumDetail.revision_year ?? 'N/A' }}</strong>
-                </article>
-                <article class="meta-card">
-                  <span>Revision No.</span>
-                  <strong>{{ activeCurriculumDetail.revision_no || 'N/A' }}</strong>
-                </article>
-                <article class="meta-card">
-                  <span>Legal Basis</span>
-                  <strong>{{ activeCurriculumDetail.legal_basis || 'N/A' }}</strong>
-                </article>
-                <article class="meta-card">
-                  <span>Effectivity Term</span>
-                  <strong>{{ activeCurriculumDetail.effectivity_term || 'N/A' }}</strong>
-                </article>
-
-                <button type="button" class="modal-close" @click="closeCurriculumModal">Open Program Study</button>
-              </section>
-            </div>
-
           </article>
         </div>
       </Transition>
@@ -249,154 +98,189 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
-import {
-  getCurriculums,
-  getCurriculumDetailByProgramId,
-  transformCurriculumsToCollege,
-} from '@/services/curriculumService'
-import type { CollegeCurriculum, CurriculumDetail, ProgramCurriculum } from '@/types/Curriculum'
-import '@/assets/styles/report-analytics.css'
+import { supabase } from '@/lib/supabase'
 
-// State management
-const colleges = ref<CollegeCurriculum[]>([])
-const isLoading = ref(false)
-const errorMessage = ref<string | null>(null)
+type ProgramItem = {
+  id: string
+  name: string
+}
 
-// Curriculum detail modal state
-const isCurriculumModalOpen = ref(false)
-const isCurriculumModalLoading = ref(false)
-const curriculumModalError = ref<string | null>(null)
-const modalProgramName = ref('')
-const modalCollegeCode = ref('')
-const activeCurriculumDetail = ref<CurriculumDetail | null>(null)
+type CollegeItem = {
+  code: string
+  name: string
+  programs: ProgramItem[]
+}
 
-// Track which college card is currently open (by unique college id/code)
-const activeCollegeId = ref<string | null>(null)
-const openCollegeName = ref<string>('None')
+const router = useRouter()
 
-const loadCurriculums = async (): Promise<void> => {
-  isLoading.value = true
-  errorMessage.value = null
+const collegeProgramMap = reactive<CollegeItem[]>([
+  {
+    code: 'COFES',
+    name: 'College of Forestry and Environmental Science',
+    programs: [
+      { id: 'cofes-bs-forestry-general-forestry', name: 'Bachelor of Science in Forestry (General Forestry)' },
+      { id: 'cofes-bs-environmental-science-bses', name: 'Bachelor of Science in Environmental Science (BSES)' },
+      { id: 'cofes-bs-agroforestry-bsaf', name: 'Bachelor of Science in Agroforestry (BSAF)' },
+    ],
+  },
+  {
+    code: 'CMNS',
+    name: 'College of Mathematics and Natural Sciences',
+    programs: [
+      { id: 'cmns-bs-physics', name: 'Bachelor of Science in Physics' },
+      { id: 'cmns-bs-mathematics', name: 'Bachelor of Science in Mathematics' },
+      { id: 'cmns-bs-marine-biology', name: 'Bachelor of Science in Marine Biology' },
+      { id: 'cmns-bs-chemistry', name: 'Bachelor of Science in Chemistry' },
+      { id: 'cmns-bs-biology-microbiology', name: 'Bachelor of Science in Biology (Major in Microbiology)' },
+      { id: 'cmns-bs-biology-medical-biology', name: 'Bachelor of Science in Biology (Major in Medical Biology)' },
+      { id: 'cmns-bs-applied-mathematics', name: 'Bachelor of Science in Applied Mathematics' },
+      { id: 'cmns-bs-biodiversity-conservation', name: 'Bachelor of Science in Biodiversity Conservation' },
+    ],
+  },
+  {
+    code: 'CHASS',
+    name: 'College of Humanities, Arts, and Social Sciences',
+    programs: [
+      { id: 'chass-bs-social-work', name: 'Bachelor of Science in Social Work' },
+      { id: 'chass-bs-psychology', name: 'Bachelor of Science in Psychology' },
+      { id: 'chass-bs-sociology', name: 'Bachelor of Science in Sociology' },
+    ],
+  },
+  {
+    code: 'CEGS',
+    name: 'College of Engineering and Geosciences',
+    programs: [
+      { id: 'cegs-bs-mining-engineering', name: 'Bachelor of Science in Mining Engineering' },
+      { id: 'cegs-bs-geology', name: 'Bachelor of Science in Geology' },
+      { id: 'cegs-bs-geodetic-engineering', name: 'Bachelor of Science in Geodetic Engineering' },
+      { id: 'cegs-bs-electronics-engineering', name: 'Bachelor of Science in Electronics Engineering' },
+      { id: 'cegs-bs-civil-engineering', name: 'Bachelor of Science in Civil Engineering' },
+      { id: 'cegs-bs-agricultural-and-biosystems-engineering', name: 'Bachelor of Science in Agricultural and Biosystems Engineering' },
+    ],
+  },
+  {
+    code: 'CED',
+    name: 'College of Education',
+    programs: [
+      { id: 'ced-bse-science', name: 'Bachelor of Secondary Education (Science)' },
+      { id: 'ced-bse-mathematics', name: 'Bachelor of Secondary Education (Mathematics)' },
+      { id: 'ced-bse-filipino', name: 'Bachelor of Secondary Education (Filipino)' },
+      { id: 'ced-bse-english', name: 'Bachelor of Secondary Education (English)' },
+      { id: 'ced-beed', name: 'Bachelor of Elementary Education' },
+    ],
+  },
+  {
+    code: 'CCIS',
+    name: 'College of Computing and Information Sciences',
+    programs: [
+      { id: 'ccis-bs-information-technology', name: 'Bachelor of Science in Information Technology' },
+      { id: 'ccis-bs-information-system', name: 'Bachelor of Science in Information System' },
+      { id: 'ccis-bs-computer-science', name: 'Bachelor of Science in Computer Science' },
+    ],
+  },
+  {
+    code: 'CAA',
+    name: 'College of Agriculture and Agribusiness',
+    programs: [
+      { id: 'caa-bs-agriculture-soil-science', name: 'Bachelor of Science in Agriculture (Soil Science)' },
+      { id: 'caa-bs-agriculture-horticulture', name: 'Bachelor of Science in Agriculture (Horticulture)' },
+      { id: 'caa-bs-agriculture-crop-protection', name: 'Bachelor of Science in Agriculture (Crop Protection)' },
+      { id: 'caa-bs-agriculture-animal-science', name: 'Bachelor of Science in Agriculture (Animal Science)' },
+      { id: 'caa-bs-agriculture-agronomy', name: 'Bachelor of Science in Agriculture (Agronomy)' },
+      { id: 'caa-bs-agriculture-agricultural-economics', name: 'Bachelor of Science in Agriculture (Agriculture Economics)' },
+    ],
+  },
+  {
+    code: 'GS',
+    name: 'Graduate Studies',
+    programs: [
+      { id: 'gs-placeholder-1', name: 'Graduate Program' },
+    ],
+  },
+])
 
+const selectedCollegeCode = ref<string | null>(null)
+
+const colleges = computed(() => collegeProgramMap)
+
+const selectedCollege = computed(() => {
+  if (!selectedCollegeCode.value) return null
+  return colleges.value.find((item) => item.code === selectedCollegeCode.value) ?? null
+})
+
+const visibleCollegeCount = computed(() => colleges.value.length)
+
+const totalProgramCount = computed(() =>
+  colleges.value.reduce((sum, college) => sum + college.programs.length, 0),
+)
+
+const openCollegeLabel = computed(() => selectedCollege.value?.code ?? 'None')
+
+const openCollege = (collegeCode: string): void => {
+  selectedCollegeCode.value = collegeCode
+}
+
+const closeProgramModal = (): void => {
+  selectedCollegeCode.value = null
+}
+
+const viewCurriculum = async (programId: string, programName: string): Promise<void> => {
   try {
-    const curriculumData = await getCurriculums()
-    colleges.value = transformCurriculumsToCollege(curriculumData)
-    console.log('Loaded curriculums:', colleges.value)
-  } catch (error) {
-    console.error('Failed to load curriculums:', error)
-    errorMessage.value = 'Failed to load curriculums. Please try again.'
-    colleges.value = []
-  } finally {
-    isLoading.value = false
+    const { data: program, error } = await supabase
+      .from('programs')
+      .select('id')
+      .eq('program_name', programName)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Error fetching program:', error)
+      alert('Error loading program. Please try again.')
+      return
+    }
+
+    if (!program) {
+      console.error('Program not found:', programName)
+      alert('Program not found in database.')
+      return
+    }
+
+    await router.push({
+      name: 'curriculum-info-dynamic',
+      params: { programId: program.id },
+    })
+    closeProgramModal()
+  } catch (err) {
+    console.error('Navigation error:', err)
+    alert('An error occurred. Please try again.')
   }
 }
 
-const closeCurriculumModal = (): void => {
-  isCurriculumModalOpen.value = false
-  isCurriculumModalLoading.value = false
-  curriculumModalError.value = null
-  activeCurriculumDetail.value = null
-}
-
-const openCurriculumModal = async (
-  collegeCode: string,
-  program: ProgramCurriculum,
-): Promise<void> => {
-  modalCollegeCode.value = collegeCode
-  modalProgramName.value = program.name
-  isCurriculumModalOpen.value = true
-  isCurriculumModalLoading.value = true
-  curriculumModalError.value = null
-  activeCurriculumDetail.value = null
-
-  try {
-    activeCurriculumDetail.value = await getCurriculumDetailByProgramId(program.id)
-  } catch (error) {
-    console.error('Failed to load curriculum detail:', error)
-    curriculumModalError.value = 'Failed to load curriculum details. Please try again.'
-  } finally {
-    isCurriculumModalLoading.value = false
-  }
-}
-
-const editCurriculum = (collegeCode: string, programName: string): void => {
-  const message = `Edit requested for ${collegeCode} - ${programName}`
-  console.log(message)
-  window.alert(message)
-}
-
-const isCollegeDisabled = (college: CollegeCurriculum): boolean => {
-  return college.programs.length === 0
-}
-
-const closeAllCards = (): void => {
-  activeCollegeId.value = null
-  openCollegeName.value = 'None'
-}
-
-/**
- * Toggle a specific college card open/closed.
- * Only one card can be open at a time.
- * Clicking the same card again closes it.
- */
-const toggleCollege = (college: CollegeCurriculum): void => {
-  if (isCollegeDisabled(college)) {
-    return
-  }
-
-  if (activeCollegeId.value === college.code) {
-    activeCollegeId.value = null
-    openCollegeName.value = 'None'
-  } else {
-    activeCollegeId.value = college.code
-    openCollegeName.value = college.code
-  }
-}
-
-const isCollegeOpen = (collegeCode: string): boolean => {
-  return activeCollegeId.value === collegeCode
-}
-
-const handleEscapeKey = (event: KeyboardEvent): void => {
-  if (event.key === 'Escape' && isCurriculumModalOpen.value) {
-    closeCurriculumModal()
+const onEscape = (event: KeyboardEvent): void => {
+  if (event.key === 'Escape' && selectedCollege.value) {
+    closeProgramModal()
   }
 }
 
 onMounted(() => {
-  void loadCurriculums()
-  window.addEventListener('keydown', handleEscapeKey)
+  window.addEventListener('keydown', onEscape)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleEscapeKey)
-})
-
-const totalPrograms = computed(() =>
-  colleges.value.reduce((sum, college) => sum + college.programs.length, 0),
-)
-
-const searchQuery = ref('')
-
-const filteredColleges = computed(() => {
-  const query = searchQuery.value.trim().toLowerCase()
-  if (!query) return colleges.value
-
-  return colleges.value.filter((college) => {
-    const collegeMatch =
-      college.code.toLowerCase().includes(query) || college.name.toLowerCase().includes(query)
-
-    const programMatch = college.programs.some((program) =>
-      program.name.toLowerCase().includes(query),
-    )
-
-    return collegeMatch || programMatch
-  })
+  window.removeEventListener('keydown', onEscape)
 })
 </script>
 
-<style src="@/assets/styles/manage-curriculum.css">
+<style scoped>
+.fade-pop-enter-active,
+.fade-pop-leave-active {
+  transition: opacity 0.2s ease;
+}
 
+.fade-pop-enter-from,
+.fade-pop-leave-to {
+  opacity: 0;
+}
 </style>

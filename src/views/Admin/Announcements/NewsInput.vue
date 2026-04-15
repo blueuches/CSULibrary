@@ -26,10 +26,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>ANNOUNCEMENT</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
+
             <span>CREATE NEWS ANNOUNCEMENT</span>
           </div>
           <h1 class="header-title intro-title">
@@ -87,9 +84,9 @@
               style="border-color: #2d7231; background-color: #fafafa; color: #0b2010"
               required
             >
-              <option value="NBWC">NBWC</option>
-              <option value="BSP">BSP</option>
-              <option value="Starbooks">Starbooks</option>
+              <option value="news_nbwc">NBWC</option>
+              <option value="news_bsp">BSP</option>
+              <option value="news_starbooks">Starbooks</option>
             </select>
             <p class="text-xs text-gray-500 mt-3" style="font-family: 'Poppins', sans-serif">
               Choose where this news belongs.
@@ -370,13 +367,13 @@ const isEditing = ref(false)
 const today = new Date().toISOString().split('T')[0] || ''
 
 const formData = ref<{
-  type: 'NBWC' | 'BSP' | 'Starbooks'
+  type: 'news_nbwc' | 'news_bsp' | 'news_starbooks'
   title: string
   description: string
   attachment: File | null
   datePublished: string
 }>({
-  type: 'NBWC',
+  type: 'news_nbwc',
   title: '',
   description: '',
   attachment: null,
@@ -439,30 +436,19 @@ const handlePublish = async () => {
     }
 
     const payload = {
-      type: formData.value.type,
-      title: formData.value.title.trim(),
+      type: 'news',
+      title: `[${formData.value.type.toUpperCase().replace('NEWS_', '')}] ${formData.value.title.trim()}`,
       content: formData.value.description.trim(),
       image_url: imageUrl,
       event_id: null,
     }
 
-    let { error: insertError } = await supabase
-      .from('announcements')
-      .insert([payload])
+    const { error: insertError } = await supabase.from('announcements').insert([payload])
 
-    // Some schemas restrict announcements.type (e.g. only 'news'/'general').
-    // Fallback keeps publish working while still letting users choose a news category in UI.
     if (insertError) {
-      const fallbackPayload = {
-        ...payload,
-        type: 'news',
-      }
-
-      const fallback = await supabase.from('announcements').insert([fallbackPayload])
-      insertError = fallback.error
+      console.error('Insert error details:', insertError.message || insertError)
+      throw insertError
     }
-
-    if (insertError) throw insertError
 
     showToast('News published successfully!')
     setTimeout(() => {

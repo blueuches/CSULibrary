@@ -20,39 +20,20 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>Analytics</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>Report Display</span>
+            <span>Reports & Analytics</span>
           </div>
 
           <div class="rp-title-wrap">
             <h1 class="rp-title">
               <span class="rp-title--dark">Report</span> <span class="rp-title--gold">Display</span>
             </h1>
-            <div class="rp-title-tag">
-              <span class="dot"></span>
-              Library borrowing rankings — <strong>{{ currentPeriod }}</strong>
-            </div>
+            <p class="header-sub">
+              Reports display for the top borrowers, top colleges, and top departments
+            </p>
           </div>
         </div>
 
         <div class="rp-header__right">
-          <div class="date-pill">
-            <svg
-              width="13"
-              height="13"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <path d="M16 2v4M8 2v4M3 10h18" />
-            </svg>
-            {{ currentDate }}
-          </div>
           <button class="edit-btn" @click="openEditModal">
             <svg
               width="14"
@@ -721,12 +702,6 @@ function saveEdits() {
   opacity: 0.4;
 }
 
-.rp-title-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
 .rp-title {
   font-family: 'Poppins', sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
@@ -754,14 +729,6 @@ function saveEdits() {
   color: #f9a825;
 }
 
-.rp-title-tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--ink-60);
-}
 .dot {
   width: 6px;
   height: 6px;
@@ -876,9 +843,6 @@ function saveEdits() {
   color: var(--ink-30);
   transition: color 0.2s;
   font-family: 'Playfair Display', serif;
-}
-.tab-btn--on .tab-num {
-  color: rgba(255, 255, 255, 0.45);
 }
 
 .tab-label {

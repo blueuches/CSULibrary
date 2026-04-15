@@ -45,6 +45,8 @@ import RoomReservation from '@/views/Admin/ServicesManagement/RoomReservation.vu
 import ManageRecords from '@/views/Admin/ServicesManagement/ManageRecords.vue'
 import ManageGallery from '@/views/Admin/ServicesManagement/ManageGallery.vue'
 import ManageCurriculum from '@/views/Admin/ServicesManagement/ManageCurriculum.vue'
+import CurriculumInfo from '@/views/Admin/ServicesManagement/Curriculum/CurriculumInfo.vue'
+import ProgramStudy from '@/views/Admin/ServicesManagement/Curriculum/ProgramStudy.vue'
 import ManageBorrowing from '@/views/Admin/ServicesManagement/ManageBorrowing.vue'
 import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
 import WebsiteImages from '@/views/Admin/WebsiteManagement/WebsiteImages.vue'
@@ -103,6 +105,9 @@ const router = createRouter({
     { path: '/admin/services/records', name: 'services-records', component: ManageRecords, meta: { requiresAuth: true }  },
     { path: '/admin/services/gallery', name: 'services-gallery', component: ManageGallery, meta: { requiresAuth: true }  },
     { path: '/admin/services/curriculum', name: 'services-curriculum', component: ManageCurriculum, meta: { requiresAuth: true }  },
+  { path: '/admin/services/curriculum/curriculum-info', name: 'curriculum-info', component: CurriculumInfo, meta: { requiresAuth: true }  },
+  { path: '/admin/curriculum/info/:programId/:specializationId?', name: 'curriculum-info-dynamic', component: CurriculumInfo, meta: { requiresAuth: true }  },
+{ path: '/admin/services/curriculum/program-study/:programId/:specializationId?', name: 'program-study', component: ProgramStudy, meta: { requiresAuth: true }  },
     { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing, meta: { requiresAuth: true }  },
     { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAuth: true }  },
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages, meta: { requiresAuth: true }  },
