@@ -12,11 +12,17 @@
         <div class="header-left">
           <div class="flex items-center justify-between gap-4 flex-wrap">
             <div class="header-breadcrumb">
-              <span>Admin</span>
+              <button
+                type="button"
+                @click="goBack"
+                class="breadcrumb-back"
+              >
+                Back
+              </button>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M9 5l7 7-7 7" />
               </svg>
-              <span>Reporting</span>
+              <span>Library Reporting</span>
             </div>
           </div>
           <h1 class="header-title intro-title">
@@ -260,6 +266,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { jsPDF } from 'jspdf'
 import Sidebar from '@/components/Sidebar.vue'
 
@@ -331,6 +338,8 @@ const years  = ['2024', '2025', '2026']
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
+const router = useRouter()
+
 const selectedDept     = ref('')
 const selectedCourse   = ref('')
 const durationType     = ref<'day' | 'month' | 'semester'>('day')
@@ -357,6 +366,14 @@ const todayLabel = computed(() => {
 })
 
 // ── Methods ───────────────────────────────────────────────────────────────────
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/admin/attendance')
+  }
+}
 
 function onDeptChange() {
   selectedCourse.value = ''
@@ -451,7 +468,6 @@ async function generateReport() {
     progress.value = 30
 
     // ===== LEFT MAIN CONTENT =====
-    // increased height so the lower part is occupied more
     const leftX = 18
     const leftY = 42
     const leftW = 165
@@ -465,10 +481,8 @@ async function generateReport() {
     doc.setTextColor(80, 80, 80)
     doc.text('CHART / TABLE AREA', leftX + leftW / 2, leftY + 8, { align: 'center' })
 
-    // sample inner grid placeholder
     doc.setDrawColor(180, 180, 180)
 
-    // more rows to occupy the taller area
     for (let i = 1; i <= 8; i++) {
       const lineY = leftY + 10 + i * 13
       doc.line(leftX + 1, lineY, leftX + leftW - 1, lineY)
@@ -482,7 +496,6 @@ async function generateReport() {
     progress.value = 55
 
     // ===== RIGHT LEGEND + DESCRIPTION =====
-    // moved slightly up and increased height to match left section better
     const sideX = 192
     const sideY = 48
     const sideW = 85
@@ -510,7 +523,6 @@ async function generateReport() {
 
     progress.value = 80
 
-    // Footer - pushed lower
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(9)
     doc.setTextColor(90, 90, 90)
@@ -555,29 +567,51 @@ async function generateReport() {
 
 .header-breadcrumb {
   display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #4a7060;
-  margin-bottom: 0.35rem;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(13, 43, 15, 0.4);
 }
 
 .header-breadcrumb svg {
   width: 0.9rem;
   height: 0.9rem;
-  color: #4a7060;
+  color: rgba(13, 43, 15, 0.4);
+}
+
+.breadcrumb-back {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.breadcrumb-back:hover {
+  opacity: 0.75;
+  color: #000000;
+}
+
+.breadcrumb-back:active {
+  transform: translateY(1px);
 }
 
 .header-title {
-  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
-  font-weight: 800;
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
   color: #0d2b0f;
-  line-height: 1.15;
+  line-height: 1.1;
   letter-spacing: -0.01em;
-  font-family: 'DM Sans', sans-serif;
 }
 
 .header-sub {

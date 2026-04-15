@@ -457,7 +457,7 @@ const exportToCSV = () => {
                     <td data-label="ID Number" class="strong">
                       {{ normalizeStudent(log.students).id_number || "--" }}
                     </td>
-                    <td data-label="Student Name" class="strong">
+                    <td data-label="Student Name">
                       {{
                         `${normalizeStudent(log.students).first_name || ""} ${normalizeStudent(log.students).last_name || ""}`.trim() || "--"
                       }}
@@ -708,8 +708,8 @@ const exportToCSV = () => {
 .inputControl,
 .searchControl,
 .actionBtn {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 0.65rem;
+  font-weight: 700;
 }
 
 .searchControl {
@@ -885,7 +885,7 @@ const exportToCSV = () => {
 .tbl td {
   padding: 14px 16px;
   border-top: 1px solid var(--border);
-  font-size: 14px;
+  font-size: 0.65rem;
   color: rgba(13, 43, 15, 0.85);
   vertical-align: middle;
   white-space: nowrap;
