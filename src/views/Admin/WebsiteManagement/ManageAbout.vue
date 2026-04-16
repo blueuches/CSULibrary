@@ -393,12 +393,12 @@ onBeforeUnmount(() => {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>Manage About</span>
+            <span>Manage About Us</span>
           </div>
 
           <h1 class="hero-title">
             <span class="hero-title--underlined">Manage</span>
-            <span class="hero-title--gold"> About</span>
+            <span class="hero-title--gold"> About Us</span>
           </h1>
 
           <p class="manage-subtitle">
