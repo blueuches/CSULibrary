@@ -92,6 +92,7 @@ const defaultAboutContent: AboutContent = {
 const mediaItems = ref<MediaItem[]>([])
 const aboutContent = ref<AboutContent>({ ...defaultAboutContent })
 const loadingAbout = ref(false)
+const showScrollTop = ref(false)
 
 function loadMedia() {
   try {
@@ -188,6 +189,14 @@ function handleAboutUpdated() {
   loadAboutContent()
 }
 
+function handleScroll() {
+  showScrollTop.value = window.scrollY > 300
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 let io: IntersectionObserver | null = null
 
 const ensureObserver = (): IntersectionObserver | null => {
@@ -244,6 +253,7 @@ const vReveal = {
 
 onMounted(async () => {
   loadMedia()
+  window.addEventListener('scroll', handleScroll)
   window.addEventListener('website-media-updated', handleMediaUpdated)
   window.addEventListener('website-about-updated', handleAboutUpdated)
 
@@ -253,6 +263,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   io?.disconnect()
   io = null
+  window.removeEventListener('scroll', handleScroll)
   window.removeEventListener('website-media-updated', handleMediaUpdated)
   window.removeEventListener('website-about-updated', handleAboutUpdated)
 })
@@ -393,6 +404,19 @@ onBeforeUnmount(() => {
         Loading about content...
       </div>
     </div>
+
+    <button
+      v-show="showScrollTop"
+      @click="scrollToTop"
+      class="scroll-top-btn"
+      aria-label="Scroll to top"
+      type="button"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+      </svg>
+    </button>
   </section>
 </template>
 
@@ -672,6 +696,38 @@ onBeforeUnmount(() => {
   color: #475569;
   font-weight: 500;
 }
+
+.scroll-top-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 70;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: #06260f;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-2px);
+}
+
+.scroll-top-btn:active {
+  transform: translateY(0);
+}
+
+.scroll-top-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 @media (max-width: 1100px) {
   .page-inner {
     padding: 0 24px !important;

@@ -137,7 +137,7 @@
                 type="submit"
                 class="flex-[2] py-4 rounded-2xl font-bold bg-[#0d2b0f] hover:bg-[#1b5e20] text-white shadow-lg hover:brightness-110 active:scale-95 transition-all"
               >
-                Publish Announcement
+                {{ isEditing ? 'Update Announcement' : 'Publish Announcement' }}
               </button>
             </div>
           </form>
@@ -192,13 +192,17 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
-import { createEvent } from '@/services/eventService'
+import { createEvent, updateEvent } from '@/services/eventService'
 import { supabase } from '@/lib/supabase'
 
 const router = useRouter()
+const route = useRoute()
+const isEditing = ref(false)
+const editingId = ref<string | null>(null)
+const existingImageUrl = ref<string | null>(null)
 
 const today = new Date().toISOString().split('T')[0]
 
@@ -240,6 +244,44 @@ const handleFileUpload = (event: Event) => {
   }
 }
 
+const toDateInputValue = (dateString?: string | null) => {
+  if (!dateString) return today
+  const date = new Date(dateString)
+  if (Number.isNaN(date.getTime())) return today
+  return date.toISOString().split('T')[0] || today
+}
+
+const loadForEdit = async (id: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) throw error
+    if (!data || data.type !== 'announcement') {
+      throw new Error('Event announcement not found.')
+    }
+
+    formData.value.title = data.title || ''
+    formData.value.description = data.description || ''
+    formData.value.datePublished = toDateInputValue(data.start_date)
+
+    existingImageUrl.value = data.images || null
+    imagePreview.value = data.images || null
+
+    editingId.value = String(data.id)
+    isEditing.value = true
+  } catch (error) {
+    console.error('Error loading event announcement for edit:', error)
+    showToast('Failed to load announcement', 'error')
+    setTimeout(() => {
+      router.push('/admin/announcement')
+    }, 600)
+  }
+}
+
 const submitForm = async () => {
   if (!formData.value.title.trim()) {
     showToast('Please enter a title', 'error')
@@ -252,7 +294,7 @@ const submitForm = async () => {
   }
 
   try {
-    let imageUrl = null
+    let imageUrl = existingImageUrl.value
 
     if (formData.value.attachment) {
       const file = formData.value.attachment
@@ -272,7 +314,7 @@ const submitForm = async () => {
     const dateValue = formData.value.datePublished || new Date().toISOString()
     const year = new Date(dateValue).getFullYear()
 
-    await createEvent({
+    const payload = {
       type: 'announcement',
       title: formData.value.title,
       description: formData.value.description,
@@ -283,9 +325,15 @@ const submitForm = async () => {
       location: 'Library',
       is_active: true,
       created_by: '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
-    })
+    }
 
-    showToast('Announcement published successfully!')
+    if (isEditing.value && editingId.value) {
+      await updateEvent(editingId.value, payload)
+    } else {
+      await createEvent(payload)
+    }
+
+    showToast(isEditing.value ? 'Announcement updated successfully!' : 'Announcement published successfully!')
     setTimeout(() => {
       router.push('/admin/announcement')
     }, 400)
@@ -298,6 +346,13 @@ const submitForm = async () => {
 const goBack = () => {
   router.push('/admin/announcement')
 }
+
+onMounted(() => {
+  const id = route.query.id
+  if (typeof id === 'string' && id.trim()) {
+    loadForEdit(id)
+  }
+})
 </script>
 
 <style scoped>
