@@ -304,6 +304,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { jsPDF } from 'jspdf'
 import Sidebar from '@/components/Sidebar.vue'
 import Chart from 'chart.js/auto'
@@ -383,6 +384,8 @@ const months = ['January','February','March','April','May','June','July','August
 const years  = ['2024', '2025', '2026', '2027']
 
 // ── State ────────────────────────────────────────────────────────────────────
+const router = useRouter()
+
 const selectedDept     = ref('')
 const selectedCourse   = ref('')
 const durationType     = ref<'day' | 'month' | 'semester'>('day')
@@ -412,7 +415,16 @@ const todayLabel = computed(() => {
   })
 })
 
-// ── Methods ──────────────────────────────────────────────────────────────────
+// ── Methods ───────────────────────────────────────────────────────────────────
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/admin/attendance')
+  }
+}
+
 function onDeptChange() {
   selectedCourse.value = ''
 }
@@ -510,7 +522,6 @@ async function generateReport() {
     progress.value = 30
 
     // ===== LEFT MAIN CONTENT =====
-    // increased height so the lower part is occupied more
     const leftX = 18
     const leftY = 42
     const leftW = 165
@@ -524,10 +535,8 @@ async function generateReport() {
     doc.setTextColor(80, 80, 80)
     doc.text('CHART / TABLE AREA', leftX + leftW / 2, leftY + 8, { align: 'center' })
 
-    // sample inner grid placeholder
     doc.setDrawColor(180, 180, 180)
 
-    // more rows to occupy the taller area
     for (let i = 1; i <= 8; i++) {
       const lineY = leftY + 10 + i * 13
       doc.line(leftX + 1, lineY, leftX + leftW - 1, lineY)
@@ -541,7 +550,6 @@ async function generateReport() {
     progress.value = 55
 
     // ===== RIGHT LEGEND + DESCRIPTION =====
-    // moved slightly up and increased height to match left section better
     const sideX = 192
     const sideY = 48
     const sideW = 85
@@ -569,7 +577,6 @@ async function generateReport() {
 
     progress.value = 80
 
-    // Footer - pushed lower
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(9)
     doc.setTextColor(90, 90, 90)
@@ -666,6 +673,51 @@ async function generateReport() {
 .panel-animate {
   opacity: 0;
   animation: panelIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(13, 43, 15, 0.4);
+}
+
+.header-breadcrumb svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  color: rgba(13, 43, 15, 0.4);
+}
+
+.breadcrumb-back {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.breadcrumb-back:hover {
+  opacity: 0.75;
+  color: #000000;
+}
+
+.breadcrumb-back:active {
+  transform: translateY(1px);
+}
+
+.header-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #0d2b0f;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
 }
 
 @keyframes panelIn {
