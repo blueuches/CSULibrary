@@ -180,70 +180,6 @@
           mission goals and objectives of the State College to respond to the changing needs of the
           clientele and the curricular offerings.
         </p>
-        <div class="grid grid-cols-3 gap-4 mt-2">
-          <div
-            class="sr-card flex flex-col items-center border border-white/20 rounded-lg p-4 bg-white/5 hover:bg-white/10 hover:border-[#f9a825] hover:scale-105 transition-all duration-300 cursor-pointer"
-          >
-            <svg
-              class="w-8 h-8 mb-2"
-              style="color: #f9a825"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-              />
-            </svg>
-            <span style="font-size: 1.4rem; font-weight: 900; color: #f9a825">10,000+</span>
-            <span class="text-white/80 text-sm text-center">Books</span>
-          </div>
-          <div
-            class="sr-card flex flex-col items-center border border-white/20 rounded-lg p-4 bg-white/5 hover:bg-white/10 hover:border-[#f9a825] hover:scale-105 transition-all duration-300 cursor-pointer"
-            style="transition-delay: 0.1s"
-          >
-            <svg
-              class="w-8 h-8 mb-2"
-              style="color: #f9a825"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-              />
-            </svg>
-            <span style="font-size: 1.4rem; font-weight: 900; color: #f9a825">500+</span>
-            <span class="text-white/80 text-sm text-center">Journals</span>
-          </div>
-          <div
-            class="sr-card flex flex-col items-center border border-white/20 rounded-lg p-4 bg-white/5 hover:bg-white/10 hover:border-[#f9a825] hover:scale-105 transition-all duration-300 cursor-pointer"
-            style="transition-delay: 0.2s"
-          >
-            <svg
-              class="w-8 h-8 mb-2"
-              style="color: #f9a825"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
-              />
-            </svg>
-            <span style="font-size: 1.4rem; font-weight: 900; color: #f9a825">5,000+</span>
-            <span class="text-white/80 text-sm text-center">Students Served</span>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -1294,71 +1230,39 @@
         </h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <RouterLink
-          :to="{ name: 'bcppage' }"
-          class="sr-card group block relative overflow-hidden rounded-2xl"
-          style="box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08); background: white"
+      <!-- Loading skeleton -->
+      <div v-if="isAnnouncementsLoading" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div
+          v-for="n in 3"
+          :key="n"
+          class="rounded-2xl overflow-hidden"
+          style="background: white; box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08)"
         >
-          <div class="relative overflow-hidden" style="height: 220px">
-            <img
-              :src="updateImage1"
-              alt="BSP"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div
-              class="absolute inset-0"
-              style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
-            ></div>
-          </div>
-          <div class="p-5">
-            <h3
-              style="font-size: 0.95rem; font-weight: 800; color: #0d2b0f; line-height: 1.4"
-              class="mb-3"
-            >
-              BSP Knowledge Resource Network
-            </h3>
-            <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
-                >February 19, 2026</span
-              ><span
-                class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
-                style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-                >Read more
-                <svg
-                  style="width: 12px; height: 12px"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  /></svg
-              ></span>
+          <div class="animate-pulse">
+            <div style="height: 220px; background: #e8efe8"></div>
+            <div class="p-5">
+              <div
+                style="height: 14px; background: #e8efe8; border-radius: 4px; margin-bottom: 8px"
+              ></div>
+              <div style="height: 14px; background: #e8efe8; border-radius: 4px; width: 60%"></div>
             </div>
           </div>
-          <div
-            class="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-            style="background: linear-gradient(to right, #1b5e20, #f9a825)"
-          ></div>
-        </RouterLink>
+        </div>
+      </div>
 
+      <!-- Dynamic announcements from Supabase -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <RouterLink
-          :to="{ name: 'nbwcpage' }"
+          v-for="(announcement, index) in latestAnnouncements"
+          :key="announcement.id"
+          :to="getAnnouncementRoute(announcement)"
           class="sr-card group block relative overflow-hidden rounded-2xl"
-          style="
-            box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08);
-            background: white;
-            transition-delay: 0.08s;
-          "
+          :style="`box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08); background: white; transition-delay: ${index * 0.08}s`"
         >
           <div class="relative overflow-hidden" style="height: 220px">
             <img
-              :src="updateImage2"
-              alt="National Book Week"
+              :src="announcement.image_url ?? undefined"
+              :alt="announcement.title"
               class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
             <div
@@ -1371,67 +1275,13 @@
               style="font-size: 0.95rem; font-weight: 800; color: #0d2b0f; line-height: 1.4"
               class="mb-3"
             >
-              National Book Week Celebration
+              {{ announcement.title }}
             </h3>
             <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
-                >February 19, 2026</span
-              ><span
-                class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
-                style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
-                >Read more
-                <svg
-                  style="width: 12px; height: 12px"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  /></svg
-              ></span>
-            </div>
-          </div>
-          <div
-            class="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-            style="background: linear-gradient(to right, #1b5e20, #f9a825)"
-          ></div>
-        </RouterLink>
-
-        <RouterLink
-          :to="{ name: 'starbooks' }"
-          class="sr-card group block relative overflow-hidden rounded-2xl"
-          style="
-            box-shadow: 0 2px 16px rgba(13, 43, 15, 0.08);
-            background: white;
-            transition-delay: 0.16s;
-          "
-        >
-          <div class="relative overflow-hidden" style="height: 220px">
-            <img
-              :src="updateImage3"
-              alt="STARBOOKS"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div
-              class="absolute inset-0"
-              style="background: linear-gradient(to top, rgba(13, 43, 15, 0.7) 0%, transparent 60%)"
-            ></div>
-          </div>
-          <div class="p-5">
-            <h3
-              style="font-size: 0.95rem; font-weight: 800; color: #0d2b0f; line-height: 1.4"
-              class="mb-3"
-            >
-              STARBOOKS - DOST-STII
-            </h3>
-            <div class="flex items-center justify-between">
-              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600"
-                >February 19, 2026</span
-              ><span
+              <span style="font-size: 0.72rem; color: #aaa; font-weight: 600">{{
+                formatAnnouncementDate(announcement.created_at)
+              }}</span>
+              <span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
                 style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
                 >Read more
@@ -2105,6 +1955,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { getImagesByPage } from '@/services/websiteImageService'
+import { supabase } from '@/lib/supabase'
 
 import photo1 from '@/assets/images/img.jpg'
 import photo2 from '@/assets/images/lib.jpg'
@@ -2142,6 +1993,64 @@ type MediaItem = {
   thumbnail?: string
 }
 type CarouselDisplayItem = { id: string; type: MediaType; src: string; alt: string }
+
+type AnnouncementRow = {
+  id: string
+  type: string | null
+  title: string
+  image_url: string | null
+  created_at: string
+}
+
+// Map announcement title keywords to their fixed route names
+function getAnnouncementRoute(announcement: AnnouncementRow): { name: string } {
+  const title = announcement.title.toLowerCase()
+  if (title.includes('bsp') || title.includes('bangko sentral')) return { name: 'bcppage' }
+  if (title.includes('national book week') || title.includes('nbwc')) return { name: 'nbwcpage' }
+  if (title.includes('starbooks') || title.includes('dost')) return { name: 'starbooks' }
+  // Fallback: return bcppage if unknown
+  return { name: 'bcppage' }
+}
+
+function formatAnnouncementDate(dateStr: string): string {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+const latestAnnouncements = ref<AnnouncementRow[]>([])
+const isAnnouncementsLoading = ref(true)
+
+async function loadAnnouncements() {
+  isAnnouncementsLoading.value = true
+  try {
+    // Fetch latest 3 unique news announcements (distinct by title, latest first)
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('id, type, title, image_url, created_at')
+      .eq('type', 'news')
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    // Deduplicate by title — keep only the latest per title
+    const seen = new Set<string>()
+    const unique: AnnouncementRow[] = []
+    for (const row of data ?? []) {
+      const key = row.title.trim().toLowerCase()
+      if (!seen.has(key)) {
+        seen.add(key)
+        unique.push(row)
+      }
+      if (unique.length === 3) break
+    }
+    latestAnnouncements.value = unique
+  } catch (error) {
+    console.error('Failed to load announcements:', error)
+    latestAnnouncements.value = []
+  } finally {
+    isAnnouncementsLoading.value = false
+  }
+}
 
 const STORAGE_KEY = 'website-media-v11'
 const isMediaLoaded = ref(false)
@@ -2398,7 +2307,7 @@ async function handleMediaUpdated() {
 }
 
 onMounted(async () => {
-  await loadMediaFromSupabase()
+  await Promise.all([loadMediaFromSupabase(), loadAnnouncements()])
   autoplayInterval = setInterval(next, 3000)
   window.addEventListener('scroll', handleScroll)
   window.addEventListener('website-media-updated', handleMediaUpdated as EventListener)

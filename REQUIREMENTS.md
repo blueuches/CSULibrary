@@ -12,3 +12,6 @@ npm install firebase
 npm install xlsl
 
 npm install browser-image-compression
+
+npm install jspdf jspdf-autotable html2canvas
+

@@ -807,11 +807,10 @@ const handleTabChange = (name: string) => {
 }
 
 .header-breadcrumb {
+  font-family: 'Poppins', sans-serif;
   font-size: 0.65rem;
-  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.35);
   display: flex;
   align-items: center;
   gap: 6px;

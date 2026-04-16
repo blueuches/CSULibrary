@@ -3,18 +3,33 @@
     <Sidebar :activeTab="'SERVICES'"></Sidebar>
 
     <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
-      <header class="mb-6">
-        <div class="mb-2 flex items-center gap-2 text-xs font-bold tracking-wide text-slate-500">
-          <span>ADMIN</span>
-          <span>/</span>
-          <span>CURRICULUM</span>
+      <header class="report-header intro-header">
+        <div class="header-left">
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/services/curriculum/curriculum-info')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+
+            <span>Curriculum</span>
+          </div>
+          <h1 class="header-title intro-title">
+            <span class="text-[#0d2b0f]">Program</span>
+            <span class="text-yellow-500"> Study</span>
+          </h1>
+          <p class="header-sub">
+            Create a new curriculum information to share with the academic community.
+          </p>
         </div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-[#164d23]">
-          Program <span class="text-[#f9a825]">Study</span>
-        </h1>
       </header>
 
-      <section class="mx-auto flex w-full max-w-6xl flex-col gap-6 rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+      <section
+        class="mx-auto flex w-full max-w-6xl flex-col gap-6 rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
+      >
         <div class="flex items-center justify-between gap-4">
           <h2 class="text-xl font-bold uppercase tracking-wide text-[#164d23]">
             Four-Year Degree Plan
@@ -24,7 +39,10 @@
           </p>
         </div>
 
-        <div v-if="isLoading" class="rounded-lg border border-slate-200 bg-slate-50 px-6 py-8 text-center">
+        <div
+          v-if="isLoading"
+          class="rounded-lg border border-slate-200 bg-slate-50 px-6 py-8 text-center"
+        >
           <p class="text-sm text-slate-600">Loading program study plan...</p>
         </div>
 
@@ -38,7 +56,9 @@
             <div v-for="yearNum in 4" :key="`year-${yearNum}`" class="space-y-4">
               <!-- Year Header -->
               <div class="flex items-center gap-3 border-b-2 border-[#164d23]/20 pb-3">
-                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-[#164d23] text-sm font-bold text-white">
+                <div
+                  class="flex h-8 w-8 items-center justify-center rounded-full bg-[#164d23] text-sm font-bold text-white"
+                >
                   {{ yearNum }}
                 </div>
                 <h3 class="text-lg font-bold uppercase tracking-wide text-[#164d23]">
@@ -53,16 +73,23 @@
                   :key="`${yearNum}-${semesterNum}`"
                   class="rounded-lg border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5 shadow-sm transition hover:shadow-md"
                 >
-                  <div class="mb-4 flex items-center justify-between border-b border-[#164d23]/10 pb-3">
+                  <div
+                    class="mb-4 flex items-center justify-between border-b border-[#164d23]/10 pb-3"
+                  >
                     <h4 class="text-sm font-bold uppercase tracking-wide text-[#164d23]">
                       Semester {{ semesterNum }}
                     </h4>
-                    <span class="rounded-full bg-[#f9a825]/20 px-2 py-1 text-xs font-semibold text-[#f9a825]">
+                    <span
+                      class="rounded-full bg-[#f9a825]/20 px-2 py-1 text-xs font-semibold text-[#f9a825]"
+                    >
                       {{ getSemesterBlockData(yearNum, semesterNum).rows.length }} courses
                     </span>
                   </div>
 
-                  <ul v-if="getSemesterBlockData(yearNum, semesterNum).rows.length" class="space-y-3">
+                  <ul
+                    v-if="getSemesterBlockData(yearNum, semesterNum).rows.length"
+                    class="space-y-3"
+                  >
                     <li
                       v-for="row in getSemesterBlockData(yearNum, semesterNum).rows"
                       :key="row.id"
@@ -72,18 +99,20 @@
                         <p class="font-semibold text-slate-900 text-sm">
                           {{ row.course_code || row.subject_code || 'N/A' }}
                         </p>
-                        <span v-if="row.units" class="whitespace-nowrap rounded-md bg-[#164d23]/10 px-2 py-1 text-xs font-semibold text-[#164d23]">
+                        <span
+                          v-if="row.units"
+                          class="whitespace-nowrap rounded-md bg-[#164d23]/10 px-2 py-1 text-xs font-semibold text-[#164d23]"
+                        >
                           {{ row.units }} units
                         </span>
                       </div>
-                      <p class="text-xs text-slate-600">{{ row.course_title || row.subject_title || 'Untitled' }}</p>
+                      <p class="text-xs text-slate-600">
+                        {{ row.course_title || row.subject_title || 'Untitled' }}
+                      </p>
                     </li>
                   </ul>
 
-                  <div
-                    v-else
-                    class="flex items-center justify-center py-6 text-center"
-                  >
+                  <div v-else class="flex items-center justify-center py-6 text-center">
                     <p class="text-sm text-slate-500">No courses for this semester</p>
                   </div>
                 </article>
@@ -94,7 +123,9 @@
           <!-- Unassigned Courses Section -->
           <div v-if="unassignedRows.length" class="mt-10 space-y-4">
             <div class="flex items-center gap-3 border-b-2 border-amber-500/30 pb-3">
-              <div class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-white">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 text-sm font-bold text-white"
+              >
                 !
               </div>
               <h3 class="text-lg font-bold uppercase tracking-wide text-amber-700">
@@ -113,11 +144,16 @@
                     <p class="font-semibold text-slate-900 text-sm">
                       {{ row.course_code || row.subject_code || 'N/A' }}
                     </p>
-                    <span v-if="row.units" class="whitespace-nowrap rounded-md bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">
+                    <span
+                      v-if="row.units"
+                      class="whitespace-nowrap rounded-md bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700"
+                    >
                       {{ row.units }} units
                     </span>
                   </div>
-                  <p class="text-xs text-slate-600">{{ row.course_title || row.subject_title || 'Untitled' }}</p>
+                  <p class="text-xs text-slate-600">
+                    {{ row.course_title || row.subject_title || 'Untitled' }}
+                  </p>
                   <p class="text-xs text-amber-600 font-medium">
                     {{ row.semester_label || 'No semester label provided' }}
                   </p>
@@ -174,7 +210,10 @@ const normalizeText = (value: string): string =>
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
 
-const matchesSemesterBlock = (row: ProgramStudyPlanRow, block: Omit<SemesterBlock, 'rows'>): boolean => {
+const matchesSemesterBlock = (
+  row: ProgramStudyPlanRow,
+  block: Omit<SemesterBlock, 'rows'>,
+): boolean => {
   if (row.year_level != null && row.semester != null) {
     return Number(row.year_level) === block.year && Number(row.semester) === block.semester
   }
@@ -187,7 +226,11 @@ const matchesSemesterBlock = (row: ProgramStudyPlanRow, block: Omit<SemesterBloc
     return false
   }
 
-  return semesterLabel === blockLabel || semesterLabel.includes(blockLabel) || semesterLabel.includes(blockKey)
+  return (
+    semesterLabel === blockLabel ||
+    semesterLabel.includes(blockLabel) ||
+    semesterLabel.includes(blockKey)
+  )
 }
 
 const semesterBlocks = computed<SemesterBlock[]>(() => {
@@ -207,13 +250,15 @@ const unassignedRows = computed(() => {
 
 // Helper to get semester block data for a specific year and semester
 const getSemesterBlockData = (year: number, semester: number): SemesterBlock => {
-  return semesterBlocks.value.find((block) => block.year === year && block.semester === semester) || {
-    key: `${year}-${semester}`,
-    label: `Year ${year}, Semester ${semester}`,
-    year,
-    semester,
-    rows: [],
-  }
+  return (
+    semesterBlocks.value.find((block) => block.year === year && block.semester === semester) || {
+      key: `${year}-${semester}`,
+      label: `Year ${year}, Semester ${semester}`,
+      year,
+      semester,
+      rows: [],
+    }
+  )
 }
 
 onMounted(() => {
@@ -226,7 +271,6 @@ watch(
     void fetchCurriculumData(route, { allowAllStudyPlans: true })
   },
 )
-
 </script>
 
 <style scoped>

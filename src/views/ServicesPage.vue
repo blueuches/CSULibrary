@@ -12,7 +12,7 @@
       class="absolute bottom-20 left-1/2 w-72 h-72 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"
     ></div>
 
-    <!-- HEADER: same style as Upcoming Events -->
+    <!-- HEADER -->
     <div class="relative z-10 mt-16 mb-6 text-center reveal-header">
       <div class="flex items-center justify-center gap-3 mb-2">
         <span class="block w-10 h-[2px] bg-yellow-500 rounded-full"></span>
@@ -43,10 +43,35 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+      <!-- LOADING -->
+      <div v-if="store.loading" class="flex items-center justify-center py-32">
+        <div class="flex flex-col items-center gap-4">
+          <div
+            class="w-10 h-10 border-4 border-[#1b5e20] border-t-transparent rounded-full animate-spin"
+          ></div>
+          <p class="text-sm text-gray-500">Loading services...</p>
+        </div>
+      </div>
+
+      <!-- ERROR -->
+      <div v-else-if="store.error" class="flex items-center justify-center py-32">
+        <div class="text-center">
+          <p class="text-red-500 font-semibold mb-2">Could not load services</p>
+          <p class="text-sm text-gray-400 mb-4">{{ store.error }}</p>
+          <button
+            @click="store.fetchServices()"
+            class="bg-[#0d2b0f] text-white px-4 py-2 rounded-lg text-sm"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+
+      <!-- GRID -->
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
         <div
-          v-for="(service, index) in libraryServices"
-          :key="index"
+          v-for="service in store.services"
+          :key="service.id"
           class="reveal-card group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 border border-gray-100"
         >
           <div
@@ -81,43 +106,39 @@
             </p>
           </div>
         </div>
+
+        <!-- EMPTY -->
+        <div
+          v-if="!store.loading && store.services.length === 0"
+          class="col-span-full text-center py-20"
+        >
+          <p class="text-gray-400 text-lg">No services available at the moment.</p>
+        </div>
       </div>
     </div>
   </div>
 
   <Transition name="fade">
     <button
-      v-if="showScrollTop"
+      v-show="showScrollTop"
       @click="scrollToTop"
-      class="fixed bottom-8 right-8 z-50 rounded-2xl p-4 shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-green-900 active:scale-95"
-      style="background: #0d2b0f"
+      class="fixed bottom-5 right-5 z-50 w-11 h-11 rounded-xl bg-[#06260f] text-white grid place-items-center shadow-2xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
       aria-label="Scroll to top"
+      type="button"
     >
-      <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="3"
-          d="M5 11l7-7 7 7M5 17l7-7 7 7"
-        />
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
       </svg>
     </button>
   </Transition>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import {
-  BookOpen,
-  Monitor,
-  Laptop,
-  PlayCircle,
-  Share2,
-  Info,
-  Book,
-  List,
-  Users,
-} from 'lucide-vue-next'
+import { ref, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { useServicesStore } from '@/services/manageService'
+
+const store = useServicesStore()
 
 const showScrollTop = ref(false)
 let observer: IntersectionObserver | null = null
@@ -130,72 +151,45 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+function setupObserver() {
+  if (observer) observer.disconnect()
 
-  const observerOptions = { threshold: 0.1 }
-
-  observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('show-card')
-      } else {
-        entry.target.classList.remove('show-card')
-      }
-    });
-  }, observerOptions)
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show-card')
+        } else {
+          entry.target.classList.remove('show-card')
+        }
+      })
+    },
+    { threshold: 0.1 },
+  )
 
   document.querySelectorAll('.reveal-card').forEach((card) => observer?.observe(card))
+}
+
+// Re-run observer after services load so cards animate in
+watch(
+  () => store.services.length,
+  async () => {
+    await nextTick()
+    setupObserver()
+  },
+)
+
+onMounted(async () => {
+  window.addEventListener('scroll', handleScroll)
+  await store.fetchServices()
+  await nextTick()
+  setupObserver()
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
   if (observer) observer.disconnect()
 })
-
-const libraryServices = [
-  {
-    title: 'Online Public Access Catalog (OPAC)',
-    description: 'Electronic catalog for searching available library materials with ease.',
-    icon: BookOpen,
-  },
-  {
-    title: 'Audio Visual Room',
-    description: 'Experience digital learning through our collection of interactive CDs and DVDs.',
-    icon: PlayCircle,
-  },
-  {
-    title: 'eLibrary',
-    description:
-      'Instant access to premium online journals, e-books, and global digital resources.',
-    icon: Monitor,
-  },
-  {
-    title: 'Automated Circulation',
-    description: 'Efficient and computerized system for borrowing and returning library materials.',
-    icon: Share2,
-  },
-  {
-    title: 'Library Orientation',
-    description: 'A comprehensive guide to our facilities, rules, and world-class services.',
-    icon: Info,
-  },
-  {
-    title: 'Library Instruction',
-    description: 'Empowering students with the skills to navigate and use resources effectively.',
-    icon: Users,
-  },
-  {
-    title: 'Book Display / New Arrival',
-    description: 'Be the first to explore our latest acquisitions and featured collections.',
-    icon: Book,
-  },
-  {
-    title: 'Bibliographic Assistance',
-    description: 'Expert librarians help you curate subject-based bibliographies for research.',
-    icon: List,
-  },
-]
 </script>
 
 <style scoped>
@@ -203,7 +197,6 @@ const libraryServices = [
   font-family: 'Poppins', sans-serif;
 }
 
-/* --- REVEAL ANIMATION --- */
 .reveal-card {
   opacity: 0;
   transform: translateY(40px);
@@ -215,7 +208,6 @@ const libraryServices = [
   transform: translateY(0);
 }
 
-/* --- BACKGROUND BLOBS --- */
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
@@ -240,7 +232,6 @@ const libraryServices = [
   animation-delay: 4s;
 }
 
-/* --- TRANSITIONS --- */
 .fade-enter-active,
 .fade-leave-active {
   transition:

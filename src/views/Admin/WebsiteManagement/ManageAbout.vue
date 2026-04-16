@@ -611,6 +611,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
+
     </section>
   </div>
 </template>
@@ -975,6 +976,7 @@ onBeforeUnmount(() => {
   color: #475569;
   font-weight: 500;
 }
+
 
 .modal-backdrop {
   position: fixed;
