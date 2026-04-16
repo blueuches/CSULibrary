@@ -1,6 +1,18 @@
 <template>
   <div class="w-full py-6 px-4 max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <!-- Loading State -->
+    <div v-if="isLoading" class="flex flex-col items-center justify-center py-32 gap-4">
+      <div class="w-10 h-10 rounded-full border-4 border-[#1b5e20] border-t-transparent animate-spin"></div>
+      <span style="color: #888; font-size: 0.9rem">Loading article...</span>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="!announcement" class="text-center py-32">
+      <p style="color: #888">Failed to load article. Please try again later.</p>
+      <button @click="loadAnnouncement" class="mt-4 px-4 py-2 rounded text-white text-sm" style="background: #1b5e20">Retry</button>
+    </div>
+
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       <!-- LEFT: Article (2/3) -->
       <div class="lg:col-span-2">
         <!-- Back Button + Tags -->
@@ -10,106 +22,62 @@
             class="inline-flex items-center gap-1 text-sm font-semibold text-[#1b5e20] hover:underline"
           >
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M15 19l-7-7 7-7"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
             </svg>
             Back
           </button>
-
-          <span
-            style="
-              font-size: 0.75rem;
-              font-weight: 700;
-              color: #1b5e20;
-              border-left: 3px solid #1b5e20;
-              padding-left: 8px;
-            "
-            >News</span
-          >
-          <span
-            style="
-              font-size: 0.75rem;
-              font-weight: 700;
-              color: #1b5e20;
-              border-left: 3px solid #f9a825;
-              padding-left: 8px;
-            "
-            >Caraga State University Library</span
-          >
+          <span style="font-size: 0.75rem; font-weight: 700; color: #1b5e20; border-left: 3px solid #1b5e20; padding-left: 8px">News</span>
+          <span style="font-size: 0.75rem; font-weight: 700; color: #1b5e20; border-left: 3px solid #f9a825; padding-left: 8px">Caraga State University Library</span>
         </div>
 
         <!-- Title -->
-        <h1
-          style="font-size: 2rem; font-weight: 900; color: #0d2b0f; line-height: 1.3"
-          class="mb-4"
-        >
-          National Book Week Celebration
+        <h1 style="font-size: 2rem; font-weight: 900; color: #0d2b0f; line-height: 1.3" class="mb-4">
+          {{ announcement.title }}
         </h1>
 
         <!-- Meta -->
         <div class="flex gap-4 mb-6" style="font-size: 0.8rem; color: #666">
           <span class="flex items-center gap-1">
-            <svg
-              class="w-4 h-4"
-              style="color: #1b5e20"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
+            <svg class="w-4 h-4" style="color: #1b5e20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            February 19, 2026
+            {{ formatDate(announcement.created_at) }}
           </span>
         </div>
 
         <!-- Main Image -->
-        <div class="mb-8">
+        <div v-if="announcement.image_url" class="mb-8">
           <img
-            src="@/assets/images/card2.jpg"
-            alt="National Book Week Celebration"
+            :src="announcement.image_url"
+            :alt="announcement.title"
             class="w-full object-cover rounded-sm"
           />
         </div>
 
-        <!-- Paragraph 1 -->
-        <p class="mb-6" style="font-size: 1rem; color: #222; line-height: 1.8; text-align: justify">
-          CSU Library Celebrates 84th National Book Week with the theme "Connected Actions.
-          Collective Vision: Libraries Transforming Society"
-        </p>
+        <!-- Content paragraphs -->
+        <template v-if="contentParagraphs.length">
+          <p
+            v-for="(para, i) in contentParagraphs"
+            :key="i"
+            class="mb-6"
+            style="font-size: 1rem; color: #222; line-height: 1.8; text-align: justify"
+          >
+            {{ para }}
+          </p>
+        </template>
 
-        <!-- Paragraph 2 -->
-        <p class="mb-6" style="font-size: 1rem; color: #222; line-height: 1.8; text-align: justify">
-          The National Book Week is an annual celebration that aims to promote reading and literacy
-          among Filipinos. The CSU Library actively participates in this event by organizing various
-          activities for students, faculty, and staff.
-        </p>
-
-        <!-- ACTIVITIES SECTION -->
-        <div class="mt-8">
+        <!-- ACTIVITIES SECTION (from extra_data.tabs in DB) -->
+        <div v-if="tabs.length" class="mt-8">
           <!-- Header -->
           <div class="mb-6 px-4 py-3 rounded-sm" style="background: #1b5e20">
-            <h2 style="font-size: 1.2rem; font-weight: 900; color: white; letter-spacing: 0.05em">
-              Activities
-            </h2>
+            <h2 style="font-size: 1.2rem; font-weight: 900; color: white; letter-spacing: 0.05em">Activities</h2>
           </div>
 
           <!-- Tabs + Carousel Layout -->
           <div class="flex flex-col md:flex-row gap-6 mb-8">
             <!-- Image Carousel -->
             <div class="flex-1">
-              <p
-                class="text-center mb-3"
-                style="font-size: 0.9rem; font-weight: 700; color: #0d2b0f"
-              >
+              <p class="text-center mb-3" style="font-size: 0.9rem; font-weight: 700; color: #0d2b0f">
                 {{ tabs[activeTab]?.label }} Photos
               </p>
               <div class="relative overflow-hidden rounded-lg">
@@ -122,18 +90,10 @@
                     :key="i"
                     class="min-w-full"
                   >
-                    <img
-                      :src="img"
-                      class="w-full object-contain rounded-lg"
-                      style="max-height: 500px"
-                    />
+                    <img :src="img" class="w-full object-contain rounded-lg" style="max-height: 500px" />
                   </div>
                 </div>
-                <!-- Dots -->
-                <div
-                  v-if="(tabs[activeTab]?.images ?? []).length > 1"
-                  class="flex justify-center gap-2 mt-3"
-                >
+                <div v-if="(tabs[activeTab]?.images ?? []).length > 1" class="flex justify-center gap-2 mt-3">
                   <button
                     v-for="(_, i) in tabs[activeTab]?.images ?? []"
                     :key="i"
@@ -145,18 +105,14 @@
               </div>
             </div>
 
-            <!-- Tabs -->
+            <!-- Tab Buttons -->
             <div class="flex md:flex-col gap-2">
               <button
                 v-for="(tab, i) in tabs"
                 :key="i"
                 @click="setTab(i)"
                 class="px-6 py-3 text-sm font-bold rounded-sm transition-all duration-200"
-                :style="
-                  activeTab === i
-                    ? 'background: #f9a825; color: #0d2b0f;'
-                    : 'background: #1b5e20; color: white;'
-                "
+                :style="activeTab === i ? 'background: #f9a825; color: #0d2b0f;' : 'background: #1b5e20; color: white;'"
               >
                 {{ tab.label }}
               </button>
@@ -166,13 +122,9 @@
           <!-- Prize Details -->
           <div v-for="(tab, i) in tabs" :key="i" class="mb-6">
             <div class="px-4 py-2 mb-3 rounded-sm" style="background: #1b5e20">
-              <h3 style="font-size: 1rem; font-weight: 900; color: white">
-                {{ tab.contestTitle }}
-              </h3>
+              <h3 style="font-size: 1rem; font-weight: 900; color: white">{{ tab.contestTitle }}</h3>
             </div>
-            <p class="mb-2" style="font-size: 0.9rem; color: #444">
-              The winners received the following prizes:
-            </p>
+            <p class="mb-2" style="font-size: 0.9rem; color: #444">The winners received the following prizes:</p>
             <ul class="space-y-1">
               <li v-for="(prize, j) in tab.prizes" :key="j" style="font-size: 0.9rem; color: #222">
                 <span style="font-weight: 700">{{ prize.place }}</span> - {{ prize.description }}
@@ -180,61 +132,42 @@
             </ul>
           </div>
         </div>
-
-        <!-- Blockquote -->
-        <blockquote class="my-8 pl-6" style="border-left: 4px solid #1b5e20; position: relative">
-          <span
-            style="
-              font-size: 4rem;
-              font-weight: 900;
-              color: #1b5e20;
-              opacity: 0.2;
-              position: absolute;
-              top: -10px;
-              left: 12px;
-              line-height: 1;
-            "
-            >"</span
-          >
-          <p style="font-size: 1rem; font-style: italic; color: #0d2b0f; line-height: 1.8">
-            "Connected Actions. Collective Vision: Libraries Transforming Society."
-          </p>
-        </blockquote>
       </div>
 
-      <!-- Library Updates -->
+      <!-- RIGHT: Library Updates -->
       <div>
-        <h2
-          style="
-            font-size: 1.2rem;
-            font-weight: 900;
-            color: #0d2b0f;
-            border-bottom: 3px solid #f9a825;
-            padding-bottom: 8px;
-          "
-          class="mb-4"
-        >
+        <h2 style="font-size: 1.2rem; font-weight: 900; color: #0d2b0f; border-bottom: 3px solid #f9a825; padding-bottom: 8px" class="mb-4">
           LIBRARY UPDATES
         </h2>
-        <div
-          v-for="(post, i) in latestPosts"
-          :key="i"
-          class="flex gap-3 mb-4 cursor-pointer group"
-          @click="router.push(post.route)"
-        >
-          <img
-            :src="post.image"
-            :alt="post.title"
-            class="w-20 h-16 object-cover rounded flex-shrink-0 group-hover:brightness-90 transition-all duration-200"
-          />
-          <div class="flex flex-col justify-center min-w-0">
-            <span
-              class="group-hover:underline"
-              style="font-size: 0.85rem; font-weight: 700; color: #1b5e20; line-height: 1.4"
-            >
-              {{ post.title }}
-            </span>
-            <p style="font-size: 0.75rem; color: #888" class="mt-1">{{ post.date }}</p>
+
+        <div v-if="isSidebarLoading" class="space-y-4">
+          <div v-for="n in 4" :key="n" class="flex gap-3 animate-pulse">
+            <div class="w-20 h-16 rounded flex-shrink-0" style="background: #e8efe8"></div>
+            <div class="flex-1 flex flex-col gap-2 justify-center">
+              <div style="height: 12px; background: #e8efe8; border-radius: 4px"></div>
+              <div style="height: 10px; background: #e8efe8; border-radius: 4px; width: 60%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else>
+          <div
+            v-for="(post, i) in sidebarPosts"
+            :key="i"
+            class="flex gap-3 mb-4 cursor-pointer group"
+            @click="router.push(getAnnouncementRoute(post))"
+          >
+            <img
+              :src="post.image_url ?? undefined"
+              :alt="post.title"
+              class="w-20 h-16 object-cover rounded flex-shrink-0 group-hover:brightness-90 transition-all duration-200"
+            />
+            <div class="flex flex-col justify-center min-w-0">
+              <span class="group-hover:underline" style="font-size: 0.85rem; font-weight: 700; color: #1b5e20; line-height: 1.4">
+                {{ post.title }}
+              </span>
+              <p style="font-size: 0.75rem; color: #888" class="mt-1">{{ formatDate(post.created_at) }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -249,18 +182,8 @@
         style="background: #0d2b0f"
       >
         <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M5 11l7-7 7 7"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2.5"
-            d="M5 17l7-7 7 7"
-          />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
         </svg>
       </button>
     </Transition>
@@ -268,131 +191,123 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { supabase } from '@/lib/supabase'
+
 const router = useRouter()
-
-import card1 from '@/assets/images/card1.jpg'
-import card3 from '@/assets/images/card3.png'
-import reservation from '@/assets/images/reservation.jpg'
-import top from '@/assets/images/top.jpg'
-import newlyAccBooks from '@/assets/images/newly_acc_books.png'
-import poster3 from '@/assets/images/poster3.jpg'
-
+const showScrollTop = ref(false)
 const activeTab = ref(0)
 const carouselIndex = ref(0)
-const showScrollTop = ref(false)
+
+type Prize = { place: string; description: string }
+type Tab = { label: string; contestTitle: string; images: string[]; prizes: Prize[] }
+
+type AnnouncementRow = {
+  id: string
+  title: string
+  content: string | null
+  image_url: string | null
+  created_at: string
+  slug?: string | null
+  extra_data?: any
+}
+
+type SidebarPost = {
+  id: string
+  title: string
+  image_url: string | null
+  created_at: string
+  slug?: string | null
+}
+
+const announcement = ref<AnnouncementRow | null>(null)
+const isLoading = ref(true)
+const sidebarPosts = ref<SidebarPost[]>([])
+const isSidebarLoading = ref(true)
+
+const tabs = computed<Tab[]>(() => {
+  return (announcement.value?.extra_data?.tabs ?? []) as Tab[]
+})
 
 function setTab(i: number) {
   activeTab.value = i
   carouselIndex.value = 0
 }
 
-const handleScroll = () => {
-  showScrollTop.value = window.scrollY > 300
+async function loadAnnouncement() {
+  isLoading.value = true
+  try {
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('id, title, content, image_url, created_at, slug, extra_data')
+      .eq('slug', 'nbwc')
+      .single()
+    if (error) throw error
+    announcement.value = data
+  } catch (e) {
+    console.error('Failed to load NBWC announcement:', e)
+    announcement.value = null
+  } finally {
+    isLoading.value = false
+  }
 }
 
-const scrollToTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+async function loadSidebarPosts() {
+  isSidebarLoading.value = true
+  try {
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('id, title, image_url, created_at, slug')
+      .eq('type', 'news')
+      .neq('slug', 'nbwc')
+      .not('slug', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(4)
+    if (error) throw error
+    sidebarPosts.value = data ?? []
+  } catch (e) {
+    console.error('Failed to load sidebar posts:', e)
+    sidebarPosts.value = []
+  } finally {
+    isSidebarLoading.value = false
+  }
 }
 
-onMounted(() => {
+function getAnnouncementRoute(post: SidebarPost) {
+  if (post.slug === 'bsp') return { name: 'bcppage' }
+  if (post.slug === 'starbooks') return { name: 'starbooks' }
+  return { name: 'nbwcpage' }
+}
+
+const contentParagraphs = computed(() => {
+  if (!announcement.value?.content) return []
+  return announcement.value.content.split('\n\n').filter((p) => p.trim())
+})
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+const handleScroll = () => { showScrollTop.value = window.scrollY > 300 }
+const scrollToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }) }
+
+onMounted(async () => {
   window.scrollTo({ top: 0, behavior: 'instant' })
   window.addEventListener('scroll', handleScroll)
+  await Promise.all([loadAnnouncement(), loadSidebarPosts()])
 })
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
-
-const tabs = [
-  {
-    label: 'Poster',
-    contestTitle: 'Poster Making Contest',
-    images: [poster3, poster3, poster3],
-    prizes: [
-      { place: '1st prize', description: '₱2,000 and Certificate of Recognition from CSU Library' },
-      { place: '2nd prize', description: '₱1,000 and Certificate of Recognition from CSU Library' },
-      { place: '3rd prize', description: '₱600 and Certificate of Recognition from CSU Library' },
-      { place: 'Consolation', description: '₱200 for consolation price' },
-    ],
-  },
-  {
-    label: 'Essay',
-    contestTitle: 'Essay Writing Contest',
-    images: [poster3, poster3, poster3],
-    prizes: [
-      { place: '1st prize', description: '₱2,000 and Certificate of Recognition from CSU Library' },
-      { place: '2nd prize', description: '₱1,000 and Certificate of Recognition from CSU Library' },
-      { place: '3rd prize', description: '₱600 and Certificate of Recognition from CSU Library' },
-      { place: 'Consolation', description: '₱200 for consolation price' },
-    ],
-  },
-  {
-    label: 'Quiz',
-    contestTitle: 'Quiz Contest',
-    images: [poster3, poster3, poster3],
-    prizes: [
-      { place: '1st prize', description: '₱2,000 and Certificate of Recognition from CSU Library' },
-      { place: '2nd prize', description: '₱1,000 and Certificate of Recognition from CSU Library' },
-      { place: '3rd prize', description: '₱600 and Certificate of Recognition from CSU Library' },
-      { place: 'Consolation', description: '₱200 for consolation price' },
-    ],
-  },
-  {
-    label: 'Shelfie',
-    contestTitle: 'CSU Library Shelfie Contest',
-    images: [poster3, poster3, poster3],
-    prizes: [
-      { place: '1st prize', description: '₱1,000 and Certificate of Recognition from CSU Library' },
-      { place: '2nd prize', description: '₱500 and Certificate of Recognition from CSU Library' },
-      { place: '3rd prize', description: '₱300 and Certificate of Recognition from CSU Library' },
-      { place: 'Consolation', description: '₱200 for consolation price' },
-    ],
-  },
-]
-
-const latestPosts = [
-  {
-    image: new URL('@/assets/images/card1.jpg', import.meta.url).href,
-    title: 'BSP Knowledge Resource Network',
-    date: 'February 19, 2026',
-    route: { name: 'bcppage' },
-  },
-  {
-    image: new URL('@/assets/images/card3.png', import.meta.url).href,
-    title: 'STARBOOKS - DOST-STII',
-    date: 'February 19, 2026',
-    route: { name: 'starbooks' },
-  },
-  {
-    image: new URL('@/assets/images/reservation.jpg', import.meta.url).href,
-    title: 'AVR Reservation',
-    date: 'February 19, 2026',
-    route: { name: 'avr' },
-  },
-  {
-    image: new URL('@/assets/images/top.jpg', import.meta.url).href,
-    title: 'Top Library Borrowers and Visitors',
-    date: 'February 19, 2026',
-    route: { name: 'top-borrowers' },
-  },
-  {
-    image: new URL('@/assets/images/newly_acc_books.png', import.meta.url).href,
-    title: 'Newly Acquired Books',
-    date: 'February 19, 2026',
-    route: { name: 'newlyacquiredbooks' },
-  },
-]
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

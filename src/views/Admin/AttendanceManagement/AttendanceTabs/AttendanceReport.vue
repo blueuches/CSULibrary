@@ -372,6 +372,7 @@ import { ref, computed, nextTick } from 'vue'
 import { jsPDF } from 'jspdf'
 import Sidebar from '@/components/Sidebar.vue'
 import Chart from 'chart.js/auto'
+import { useRouter } from 'vue-router'
 
 // ── Chart Refs ────────────────────────────────────────────────────────────────
 const barCanvas  = ref<HTMLCanvasElement | null>(null)
@@ -448,6 +449,8 @@ const months = ['January','February','March','April','May','June','July','August
 const years  = ['2024', '2025', '2026', '2027']
 
 // ── State ────────────────────────────────────────────────────────────────────
+const router = useRouter()
+
 const selectedDept     = ref('')
 const selectedCourse   = ref('')
 const durationType     = ref<'day' | 'month' | 'semester'>('day')
@@ -481,7 +484,16 @@ const todayLabel = computed(() => {
   })
 })
 
-// ── Methods ──────────────────────────────────────────────────────────────────
+// ── Methods ───────────────────────────────────────────────────────────────────
+
+function goBack() {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/admin/attendance')
+  }
+}
+
 function onDeptChange() {
   selectedCourse.value = ''
 }

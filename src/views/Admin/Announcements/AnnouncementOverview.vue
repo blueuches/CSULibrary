@@ -37,7 +37,7 @@
       </div>
     </transition>
 
-    <main class="report-root flex-1 overflow-y-auto">
+    <main ref="reportRootRef" class="report-root flex-1 overflow-y-auto">
       <!-- HEADER -->
       <header class="report-header intro-header relative z-[60] overflow-visible">
         <div class="header-left">
@@ -88,186 +88,182 @@
       </div>
 
       <!-- ANNOUNCEMENTS SECTION -->
-      <section v-else class="relative z-0 grid grid-cols-1 items-start gap-6 lg:grid-cols-3 p-6">
-        <!-- GENERAL ANNOUNCEMENTS -->
-        <article class="rounded-2xl border border-[#dfe6dd] bg-white p-6 shadow-sm">
-          <div class="mb-5 flex items-center justify-between">
-            <h2 class="text-xl font-bold text-[#0d2b0f]">General Announcements</h2>
-            <span class="rounded-full bg-[#ebf5ec] px-3 py-1 text-xs font-semibold text-[#1b5e20]">
-              {{ generalAnnouncements.length }} posts
-            </span>
+      <section v-else class="overview-shell">
+        <div class="overview-kpis">
+          <div class="kpi-card">
+            <p class="kpi-label">Total Posts</p>
+            <p class="kpi-value">{{ eventAnnouncements.length + generalAnnouncements.length + newsAnnouncements.length }}</p>
           </div>
-
-          <div v-if="generalAnnouncements.length === 0" class="empty-state">
-            No general updates yet.
+          <div class="kpi-card">
+            <p class="kpi-label">This Week</p>
+            <p class="kpi-value">{{ thisWeekCount }}</p>
           </div>
+          <div class="kpi-card">
+            <p class="kpi-label">Latest Batch</p>
+            <p class="kpi-value">{{ latestBatchCount }}</p>
+          </div>
+        </div>
 
-          <div v-else class="space-y-4">
-            <div
-              v-for="(announcement, index) in generalAnnouncements"
-              :key="announcement.id"
-              class="announcement-card group relative rounded-xl border border-[#e7ece7] bg-[#fbfdfb] p-4 hover:shadow-md transition-all"
-              :style="{ animationDelay: `${index * 80}ms` }"
-            >
-              <div class="flex justify-between items-start gap-3">
-                <h3 class="text-base font-bold text-[#0d2b0f]">{{ announcement.title }}</h3>
-                <button
-                  @click="deleteGeneralAnnouncement(announcement.id)"
-                  class="text-gray-400 hover:text-red-500 transition-colors"
-                  title="Delete General Update"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-
-              <img
-                v-if="announcement.image_url"
-                :src="announcement.image_url"
-                class="w-full h-40 object-cover rounded-lg mt-3 mb-3"
-              />
-
-              <p class="mt-2 text-sm leading-6 text-[#3f5641]">{{ announcement.content }}</p>
-
-              <div class="mt-3 flex justify-end text-xs font-medium text-[#5b725d]">
-                <p><strong>Posted:</strong> {{ formatDate(announcement.created_at) }}</p>
-              </div>
-
-              <p class="mt-5 text-[10px] uppercase tracking-wider text-gray-400">ID: {{ announcement.id }}</p>
+        <div class="stack-flow">
+          <article class="stack-panel">
+            <div class="panel-head">
+              <h2 class="panel-title">Event Announcements</h2>
+              <span class="panel-badge panel-badge-amber">{{ eventAnnouncements.length }} posts</span>
             </div>
-          </div>
-        </article>
-
-        <!-- EVENT ANNOUNCEMENTS -->
-        <article class="rounded-2xl border border-[#dfe6dd] bg-white p-6 shadow-sm">
-          <div class="mb-5 flex items-center justify-between">
-            <h2 class="text-xl font-bold text-[#0d2b0f]">Event Announcements</h2>
-            <span class="rounded-full bg-[#fff5e5] px-3 py-1 text-xs font-semibold text-[#9a4b00]">
-              {{ eventAnnouncements.length }} posts
-            </span>
-          </div>
-
-          <div v-if="eventAnnouncements.length === 0" class="empty-state">
-            No event announcements yet.
-          </div>
-
-          <div v-else class="space-y-4">
-            <div
-              v-for="(event, index) in eventAnnouncements"
-              :key="event.id"
-              class="announcement-card group relative rounded-xl border border-[#e7ece7] bg-[#fbfdfb] p-4 hover:shadow-md transition-all"
-              :style="{ animationDelay: `${index * 80}ms` }"
-            >
-             <!-- TITLE + EDIT/DELETE BUTTONS -->
-              <div class="flex justify-between items-start">
-                <h3 class="text-base font-bold text-[#0d2b0f]">{{ event.title }}</h3>
-                <div class="flex gap-2">
-                  <!-- EDIT BUTTON -->
-                  <RouterLink
-                    :to="`/admin/announcement/event?id=${event.id}`"
-                    class="text-gray-400 hover:text-blue-500 transition-colors"
-                    title="Edit Announcement"
-                  >
+            <div v-if="eventAnnouncements.length === 0" class="empty-state">No event announcements yet.</div>
+            <div v-else class="stack-list">
+              <div v-for="event in eventAnnouncements" :key="event.id" class="row-card row-card-clickable" @click="openEventPreview(event)">
+                <div v-if="event.images" class="row-thumb-wrap" @click="openEventPreview(event)"><img :src="event.images" class="row-thumb" /></div>
+                <div v-else class="row-thumb-wrap row-thumb-fallback" @click="openEventPreview(event)">EVENT</div>
+                <div class="row-body" @click="openEventPreview(event)">
+                  <h3 class="row-title">{{ event.title }}</h3>
+                  <p class="row-text">{{ event.description }}</p>
+                  <div class="row-meta row-meta-split">
+                    <p><strong>Event Date:</strong> {{ formatDate(event.start_date) }}</p>
+                    <p><strong>Location:</strong> {{ event.location }}</p>
+                  </div>
+                </div>
+                <div class="row-actions">
+                  <RouterLink :to="`/admin/announcement/event?id=${event.id}`" class="icon-action" title="Edit Announcement" @click.stop>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                   </RouterLink>
-                  <!-- DELETE BUTTON -->
-                  <button @click="deleteAnnouncement(event.id)" class="text-gray-400 hover:text-red-500 transition-colors" title="Delete Announcement">
+                  <button @click.stop="deleteAnnouncement(event.id)" class="icon-action icon-action-danger" title="Delete Announcement">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
                   </button>
                 </div>
               </div>
-            <!-- IMAGE -->
-              <img
-                v-if="event.images"
-                :src="event.images"
-                class="w-full h-40 object-cover rounded-lg mt-3 mb-3"
-              />
-
-              <!-- DESCRIPTION -->
-              <p class="mt-2 text-sm leading-6 text-[#3f5641]">{{ event.description }}</p>
-
-              <!-- DETAILS -->
-              <div class="mt-3 flex justify-between text-xs font-medium text-[#5b725d]">
-                <p><strong>Event Date:</strong> {{ formatDate(event.start_date) }}</p>
-                <p><strong>Location:</strong> {{ event.location }}</p>
-              </div>
-
-              <!-- ID -->
-              <p class="mt-5 text-[10px] uppercase tracking-wider text-gray-400">ID: {{ event.id }}</p>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <!-- NEWS -->
-        <article class="rounded-2xl border border-[#dfe6dd] bg-white p-6 shadow-sm">
-          <div class="mb-5 flex items-center justify-between">
-            <h2 class="text-xl font-bold text-[#0d2b0f]">News</h2>
-            <span class="rounded-full bg-[#ebf5ec] px-3 py-1 text-xs font-semibold text-[#1b5e20]">
-              {{ newsAnnouncements.length }} posts
-            </span>
-          </div>
-
-          <div v-if="newsAnnouncements.length === 0" class="empty-state">
-            No news yet.
-          </div>
-
-          <div v-else class="space-y-4">
-            <div
-              v-for="(announcement, index) in newsAnnouncements"
-              :key="announcement.id"
-              class="announcement-card group relative rounded-xl border border-[#e7ece7] bg-[#fbfdfb] p-4 hover:shadow-md transition-all"
-              :style="{ animationDelay: `${index * 80}ms` }"
-            >
-              <div class="flex justify-between items-start gap-3">
-                <div>
-                  <span
-                    class="inline-flex mb-2 rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase"
-                    :style="getBadgeColor(extractNewsCategory(announcement.title).category)"
-                  >
-                    {{ getNewsTypeDisplay(extractNewsCategory(announcement.title).category) }}
-                  </span>
-                  <h3 class="text-base font-bold text-[#0d2b0f]">{{ extractNewsCategory(announcement.title).cleanTitle }}</h3>
+          <article class="stack-panel">
+            <div class="panel-head">
+              <h2 class="panel-title">General Announcements</h2>
+              <span class="panel-badge">{{ generalAnnouncements.length }} posts</span>
+            </div>
+            <div v-if="generalAnnouncements.length === 0" class="empty-state">No general updates yet.</div>
+            <div v-else class="stack-list">
+              <div v-for="announcement in generalAnnouncements" :key="announcement.id" class="row-card row-card-clickable" @click="openGeneralPreview(announcement)">
+                <div v-if="announcement.image_url" class="row-thumb-wrap" @click="openGeneralPreview(announcement)"><img :src="announcement.image_url" class="row-thumb" /></div>
+                <div v-else class="row-thumb-wrap row-thumb-fallback" @click="openGeneralPreview(announcement)">GENERAL</div>
+                <div class="row-body" @click="openGeneralPreview(announcement)">
+                  <h3 class="row-title">{{ announcement.title }}</h3>
+                  <p class="row-text">{{ announcement.content }}</p>
+                  <div class="row-meta row-meta-right">
+                    <p><strong>Posted:</strong> {{ formatDate(announcement.created_at) }}</p>
+                  </div>
                 </div>
-                <button
-                  @click="deleteNewsAnnouncement(announcement.id)"
-                  class="text-gray-400 hover:text-red-500 transition-colors"
-                  title="Delete News"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+                <div class="row-actions">
+                  <RouterLink :to="`/admin/announcement/general?id=${announcement.id}`" class="icon-action" title="Edit General Announcement" @click.stop>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </RouterLink>
+                  <button @click.stop="deleteGeneralAnnouncement(announcement.id)" class="icon-action icon-action-danger" title="Delete General Update">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
               </div>
-
-              <img
-                v-if="announcement.image_url"
-                :src="announcement.image_url"
-                class="w-full h-40 object-cover rounded-lg mt-3 mb-3"
-              />
-
-              <p class="mt-2 text-sm leading-6 text-[#3f5641]">{{ announcement.content }}</p>
-
-              <div class="mt-3 flex justify-end text-xs font-medium text-[#5b725d]">
-                <p><strong>Posted:</strong> {{ formatDate(announcement.created_at) }}</p>
-              </div>
-
-              <p class="mt-5 text-[10px] uppercase tracking-wider text-gray-400">ID: {{ announcement.id }}</p>
             </div>
-          </div>
-        </article>
+          </article>
+
+          <article class="stack-panel">
+            <div class="panel-head">
+              <h2 class="panel-title">News</h2>
+              <span class="panel-badge">{{ newsAnnouncements.length }} posts</span>
+            </div>
+            <div v-if="newsAnnouncements.length === 0" class="empty-state">No news yet.</div>
+            <div v-else class="stack-list">
+              <div
+                v-for="announcement in newsAnnouncements"
+                :key="announcement.id"
+                class="row-card row-card-clickable"
+                @click="openNewsPreview(announcement)"
+              >
+                <div v-if="announcement.image_url" class="row-thumb-wrap" @click="openNewsPreview(announcement)"><img :src="announcement.image_url" class="row-thumb" /></div>
+                <div v-else class="row-thumb-wrap row-thumb-fallback" @click="openNewsPreview(announcement)">NEWS</div>
+                <div class="row-body" @click="openNewsPreview(announcement)">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase" :style="getBadgeColor(extractNewsCategory(announcement.title).category)">
+                      {{ getNewsTypeDisplay(extractNewsCategory(announcement.title).category) }}
+                    </span>
+                  </div>
+                  <h3 class="row-title">{{ extractNewsCategory(announcement.title).cleanTitle }}</h3>
+                  <p class="row-text">{{ announcement.content }}</p>
+                  <div class="row-meta row-meta-right">
+                    <p><strong>Posted:</strong> {{ formatDate(announcement.created_at) }}</p>
+                  </div>
+                </div>
+                <div class="row-actions">
+                  <RouterLink :to="`/admin/announcement/news?id=${announcement.id}`" class="icon-action" title="Edit News" @click.stop>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </RouterLink>
+                  <button @click.stop="deleteNewsAnnouncement(announcement.id)" class="icon-action icon-action-danger" title="Delete News">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
       </section>
     </main>
+
+    <transition name="fade-modal">
+      <div v-if="activePreview" class="news-preview-overlay" @click="closePreview">
+        <article class="news-preview-card" @click.stop>
+          <button class="news-preview-close" type="button" @click="closePreview" aria-label="Close preview">×</button>
+
+          <div class="news-preview-head">
+            <span
+              class="inline-flex rounded-full px-3 py-1 text-[11px] font-bold tracking-wide uppercase"
+              :style="activePreview.badgeStyle"
+            >
+              {{ activePreview.badgeLabel }}
+            </span>
+            <p class="news-preview-date">{{ activePreview.metaLabel }}: {{ formatDate(activePreview.metaDate) }}</p>
+          </div>
+
+          <h3 class="news-preview-title">{{ activePreview.title }}</h3>
+
+          <img v-if="activePreview.imageUrl" :src="activePreview.imageUrl" class="news-preview-image" />
+
+          <p v-if="activePreview.location" class="news-preview-extra">
+            <strong>Location:</strong> {{ activePreview.location }}
+          </p>
+
+          <p class="news-preview-content">{{ activePreview.content }}</p>
+        </article>
+      </div>
+    </transition>
+
+    <button
+      v-show="showScrollTop"
+      @click="scrollToTop"
+      class="scroll-top-btn"
+      aria-label="Scroll to top"
+      title="Scroll to top"
+      type="button"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+      </svg>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, reactive, ref, onMounted, onBeforeUnmount } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
@@ -290,12 +286,26 @@ interface GeneralAnnouncement {
   created_at: string
 }
 
+type PreviewItem = {
+  title: string
+  content: string
+  imageUrl: string | null
+  metaLabel: string
+  metaDate: string
+  location?: string
+  badgeLabel: string
+  badgeStyle: Record<string, string>
+}
+
 const eventAnnouncements = ref<EventAnnouncement[]>([])
 const generalAnnouncements = ref<GeneralAnnouncement[]>([])
 const newsAnnouncements = ref<GeneralAnnouncement[]>([])
 const isLoading = ref(true)
 const dropdownOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
+const reportRootRef = ref<HTMLElement | null>(null)
+const showScrollTop = ref(false)
+const activePreview = ref<PreviewItem | null>(null)
 const toast = reactive({
   show: false,
   message: '',
@@ -308,6 +318,31 @@ const confirmToast = reactive({
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 let pendingDeleteAction: (() => Promise<void>) | null = null
+
+const thisWeekCount = computed(() => {
+  const now = Date.now()
+  const weekMs = 7 * 24 * 60 * 60 * 1000
+  const isWithinWeek = (value: string | null | undefined) => {
+    if (!value) return false
+    const time = new Date(value).getTime()
+    if (Number.isNaN(time)) return false
+    return Math.abs(now - time) <= weekMs
+  }
+
+  return [
+    ...eventAnnouncements.value.map((item) => item.start_date),
+    ...generalAnnouncements.value.map((item) => item.created_at),
+    ...newsAnnouncements.value.map((item) => item.created_at),
+  ].filter((value) => isWithinWeek(value)).length
+})
+
+const latestBatchCount = computed(() => {
+  return (
+    Math.min(eventAnnouncements.value.length, 5) +
+    Math.min(generalAnnouncements.value.length, 5) +
+    Math.min(newsAnnouncements.value.length, 5)
+  )
+})
 
 const showToast = (message: string, type: 'success' | 'error' = 'success') => {
   toast.message = message
@@ -334,10 +369,10 @@ const extractNewsCategory = (title?: string): { category: string; cleanTitle: st
   
   const match = title.match(/^\[([^\]]+)\]\s*(.*)$/)
   if (match) {
-    const cat = match[1].trim()
+    const cat = (match[1] ?? 'News').trim()
     return {
       category: cat,
-      cleanTitle: match[2]
+      cleanTitle: (match[2] ?? '').trim()
     }
   }
   return { category: 'News', cleanTitle: title }
@@ -503,25 +538,419 @@ function handleClickOutside(e: MouseEvent) {
   }
 }
 
+function handleScrollDepth() {
+  const scrollTop = reportRootRef.value?.scrollTop ?? window.scrollY
+  showScrollTop.value = scrollTop > 300
+}
+
+function scrollToTop() {
+  if (reportRootRef.value) {
+    reportRootRef.value.scrollTo({ top: 0, behavior: 'smooth' })
+    return
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function openEventPreview(event: EventAnnouncement) {
+  activePreview.value = {
+    title: event.title,
+    content: event.description,
+    imageUrl: event.images || null,
+    metaLabel: 'Event Date',
+    metaDate: event.start_date,
+    location: event.location,
+    badgeLabel: 'Event',
+    badgeStyle: {
+      backgroundColor: '#fff5e5',
+      color: '#9a4b00',
+    },
+  }
+}
+
+function openGeneralPreview(announcement: GeneralAnnouncement) {
+  activePreview.value = {
+    title: announcement.title,
+    content: announcement.content,
+    imageUrl: announcement.image_url || null,
+    metaLabel: 'Posted',
+    metaDate: announcement.created_at,
+    badgeLabel: 'General',
+    badgeStyle: {
+      backgroundColor: '#ebf5ec',
+      color: '#1b5e20',
+    },
+  }
+}
+
+function openNewsPreview(announcement: GeneralAnnouncement) {
+  const newsMeta = extractNewsCategory(announcement.title)
+  activePreview.value = {
+    title: newsMeta.cleanTitle,
+    content: announcement.content,
+    imageUrl: announcement.image_url || null,
+    metaLabel: 'Posted',
+    metaDate: announcement.created_at,
+    badgeLabel: getNewsTypeDisplay(newsMeta.category),
+    badgeStyle: getBadgeColor(newsMeta.category),
+  }
+}
+
+function closePreview() {
+  activePreview.value = null
+}
+
+function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    closePreview()
+  }
+}
+
 onMounted(() => {
   fetchAnnouncements()
   document.addEventListener('mousedown', handleClickOutside)
+  document.addEventListener('keydown', handleKeydown)
+  if (reportRootRef.value) {
+    reportRootRef.value.addEventListener('scroll', handleScrollDepth)
+  } else {
+    window.addEventListener('scroll', handleScrollDepth)
+  }
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('mousedown', handleClickOutside)
+  document.removeEventListener('keydown', handleKeydown)
+  if (reportRootRef.value) {
+    reportRootRef.value.removeEventListener('scroll', handleScrollDepth)
+  }
+  window.removeEventListener('scroll', handleScrollDepth)
 })
 </script>
 
 <style scoped>
+.overview-shell {
+  position: relative;
+  z-index: 0;
+  padding: 2rem;
+}
+
+.overview-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.kpi-card {
+  border: 1px solid #dfe6dd;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbf8 100%);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+
+.kpi-label {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.kpi-value {
+  font-size: 1.85rem;
+  line-height: 1.1;
+  color: #0d2b0f;
+  font-weight: 900;
+  margin-top: 6px;
+}
+
+.overview-grid {
+  display: block;
+}
+
+.stack-flow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.stack-panel {
+  border: 1px solid #dfe6dd;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(13, 43, 15, 0.06);
+  padding: 18px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edf2ed;
+}
+
+.panel-title {
+  color: #0d2b0f;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.panel-badge {
+  border-radius: 999px;
+  background: #ebf5ec;
+  color: #1b5e20;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.panel-badge-amber {
+  background: #fff5e5;
+  color: #9a4b00;
+}
+
+
+.stack-list {
+  display: grid;
+  gap: 14px;
+  max-height: calc(100vh - 360px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.row-card {
+  border: 1px solid #e7ece7;
+  background: #fbfdfb;
+  border-radius: 14px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  animation: cardFadeIn 0.35s ease both;
+}
+
+.row-card:hover {
+  box-shadow: 0 8px 20px rgba(13, 43, 15, 0.1);
+  transform: translateY(-1px);
+}
+
+.row-card-clickable {
+  cursor: pointer;
+}
+
+.row-thumb-wrap {
+  width: 100%;
+  height: 112px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e7ece7;
+}
+
+.row-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.row-thumb-fallback {
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #446648;
+  background: linear-gradient(135deg, #edf4ee 0%, #dae8dc 100%);
+}
+
+.row-body {
+  min-width: 0;
+}
+
+.row-title {
+  color: #0d2b0f;
+  font-size: 1.08rem;
+  line-height: 1.3;
+  font-weight: 800;
+}
+
+.icon-action {
+  color: #9ca3af;
+  padding: 2px;
+  transition: color 0.2s ease;
+}
+
+.icon-action:hover {
+  color: #2563eb;
+}
+
+.icon-action-danger:hover {
+  color: #ef4444;
+}
+
+.row-text {
+  margin-top: 4px;
+  color: #3f5641;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.row-meta {
+  margin-top: 10px;
+  color: #5b725d;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.row-meta-split {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.row-meta-right {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.row-actions {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+}
+
+.news-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(12, 18, 13, 0.38);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  pointer-events: auto;
+}
+
+.news-preview-card {
+  width: min(760px, 100%);
+  max-height: min(86vh, 920px);
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #dae5dc;
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+  padding: 20px 22px 22px;
+  position: relative;
+}
+
+.news-preview-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: 0;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.news-preview-close:hover {
+  color: #111827;
+}
+
+.news-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.news-preview-date {
+  color: #5b725d;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.news-preview-title {
+  margin-top: 12px;
+  color: #0d2b0f;
+  font-size: 1.75rem;
+  line-height: 1.25;
+  font-weight: 900;
+}
+
+.news-preview-image {
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 14px;
+}
+
+.news-preview-content {
+  margin-top: 14px;
+  color: #2f4333;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.news-preview-extra {
+  margin-top: 12px;
+  color: #36533a;
+  font-size: 1.05rem;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 80;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: #06260f;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-2px);
+}
+
+.scroll-top-btn:active {
+  transform: translateY(0);
+}
+
+.scroll-top-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 .action-btn {
   border-radius: 0.75rem;
   border: 1px solid #0d2b0f;
   background: #0d2b0f;
   color: #ffffff;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  padding: 0.7rem 1rem;
+  padding: 0.8rem 1.2rem;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -585,10 +1014,6 @@ onBeforeUnmount(() => {
   color: #1b5e20;
 }
 
-.announcement-card {
-  animation: cardFadeIn 0.35s ease both;
-}
-
 @keyframes cardFadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -603,5 +1028,51 @@ onBeforeUnmount(() => {
 .toast-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+}
+
+.fade-modal-enter-active,
+.fade-modal-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-modal-enter-from,
+.fade-modal-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 1280px) {
+  .stack-list {
+    max-height: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .overview-shell {
+    padding: 1.15rem;
+  }
+
+  .overview-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .row-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .row-thumb-wrap {
+    height: 176px;
+  }
+
+  .row-meta-split {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
 }
 </style>

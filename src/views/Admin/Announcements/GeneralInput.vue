@@ -297,15 +297,17 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
-import { createAnnouncement } from '@/services/announcementService'
 import { supabase } from '@/lib/supabase'
 import '@/assets/styles/report-analytics.css'
 
 const router = useRouter()
+const route = useRoute()
 const isEditing = ref(false)
+const editingId = ref<string | null>(null)
+const existingImageUrl = ref<string | null>(null)
 
 const today = new Date().toISOString().split('T')[0] || ''
 
@@ -326,6 +328,13 @@ const toast = reactive({
   message: '',
   type: 'success' as 'success' | 'error',
 })
+
+const toDateInputValue = (dateString?: string | null) => {
+  if (!dateString) return today
+  const date = new Date(dateString)
+  if (Number.isNaN(date.getTime())) return today
+  return date.toISOString().split('T')[0] || today
+}
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -348,6 +357,35 @@ const handleFileUpload = (event: Event) => {
   }
 }
 
+const loadForEdit = async (id: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('id, title, content, image_url, created_at, type')
+      .eq('id', id)
+      .eq('type', 'general')
+      .single()
+
+    if (error) throw error
+    if (!data) throw new Error('General announcement not found.')
+
+    formData.value.title = data.title || ''
+    formData.value.description = data.content || ''
+    formData.value.datePublished = toDateInputValue(data.created_at)
+    existingImageUrl.value = data.image_url || null
+
+    editingId.value = data.id as string
+    isEditing.value = true
+  } catch (error) {
+    console.error('Error loading general announcement for edit:', error)
+    const message = error instanceof Error ? error.message : 'Failed to load announcement.'
+    showToast(message, 'error')
+    setTimeout(() => {
+      router.push('/admin/announcement')
+    }, 600)
+  }
+}
+
 const submitForm = async () => {
   if (!formData.value.title.trim()) {
     showToast('Please enter a title', 'error')
@@ -359,7 +397,7 @@ const submitForm = async () => {
   }
 
   try {
-    let imageUrl: string | undefined = undefined
+    let imageUrl: string | null = existingImageUrl.value
 
     if (formData.value.attachment) {
       const file = formData.value.attachment
@@ -376,15 +414,31 @@ const submitForm = async () => {
       imageUrl = data.publicUrl
     }
 
-    await createAnnouncement({
+    const datePublished = formData.value.datePublished || today
+    const createdAt = `${datePublished}T00:00:00.000Z`
+
+    const payload = {
       type: 'general',
       title: formData.value.title.trim(),
       content: formData.value.description.trim(),
       image_url: imageUrl,
       event_id: null,
-    })
+      created_at: createdAt,
+    }
 
-    showToast('General announcement published successfully!')
+    if (isEditing.value && editingId.value) {
+      const { error: updateError } = await supabase
+        .from('announcements')
+        .update(payload)
+        .eq('id', editingId.value)
+
+      if (updateError) throw updateError
+    } else {
+      const { error: insertError } = await supabase.from('announcements').insert([payload])
+      if (insertError) throw insertError
+    }
+
+    showToast(isEditing.value ? 'General announcement updated successfully!' : 'General announcement published successfully!')
     setTimeout(() => {
       router.push('/admin/announcement')
     }, 400)
@@ -397,6 +451,13 @@ const submitForm = async () => {
 const goBack = () => {
   router.push('/admin/announcement')
 }
+
+onMounted(() => {
+  const id = route.query.id
+  if (typeof id === 'string' && id.trim()) {
+    loadForEdit(id)
+  }
+})
 </script>
 
 <style scoped>
