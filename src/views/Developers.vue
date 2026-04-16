@@ -65,12 +65,6 @@
                   "{{ selectedMember.bio }}"
                 </p>
               </div>
-
-              <div class="mt-10">
-                <button @click="closeModal" class="w-full py-4 text-white rounded-2xl font-black uppercase tracking-widest transition-all active:scale-95 shadow-md hover:brightness-110" style="background-color: #2e7d32;">
-                  Back to Team
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -94,18 +88,53 @@ const selectedMember = ref<Member | null>(null);
 
 const teamMembers = ref<Member[]>([
   { 
-    name: "Member Name 1", 
+    name: "Eden Grace M. Bughao", 
     role: "Role Title", 
     image: "https://i.pravatar.cc/150?u=1", 
-    bio: "Bio details here using the specific #2e7d32 green theme." 
+    bio: "4th Year BS Information Technology student with interests in web development and database systems. Dedicated to creating efficient and scalable solutions for real-world problems." 
   },
-  { name: "Member Name 2", role: "Role Title", image: "https://i.pravatar.cc/150?u=2", bio: "Bio details here..." },
-  { name: "Member Name 3", role: "Role Title", image: "https://i.pravatar.cc/150?u=3", bio: "Bio details here..." },
-  { name: "Member Name 4", role: "Role Title", image: "https://i.pravatar.cc/150?u=4", bio: "Bio details here..." },
-  { name: "Member Name 5", role: "Role Title", image: "https://i.pravatar.cc/150?u=5", bio: "Bio details here..." },
-  { name: "Member Name 6", role: "Role Title", image: "https://i.pravatar.cc/150?u=6", bio: "Bio details here..." },
-  { name: "Member Name 7", role: "Role Title", image: "https://i.pravatar.cc/150?u=7", bio: "Bio details here..." },
-  { name: "Member Name 8", role: "Role Title", image: "https://i.pravatar.cc/150?u=8", bio: "Bio details here..." },
+  { 
+    name: "Omaimah K. Ameril", 
+    role: "Role Title", 
+    image: "https://i.pravatar.cc/150?u=2", 
+    bio: "4th Year BS Information Technology student with interests in software development and system design. Passionate about building functional and user-friendly applications." 
+  },
+  { 
+    name: "Pearl Janette G. Cacayan", 
+    role: "Role Title", 
+    image: "https://i.pravatar.cc/150?u=3", 
+    bio: "4th Year BS Information Technology student with interest in backend development. Focused on building reliable and efficient applications."
+  },
+  { 
+    name: "Dyanna Joy C. Castro", 
+    role: "Role Title", 
+    image: "https://i.pravatar.cc/150?u=4", 
+    bio: "4th Year BS Information Technology student with interest in mobile and web development. Interested in building practical and innovative applications." 
+  },
+  { 
+    name: "Jenny Mae De La Torre", 
+    role: "Role Title", 
+    image: "https://i.pravatar.cc/150?u=5", 
+    bio: "4th Year BS Information Technology student with strong interest in backend development and system architecture. Focused on creating reliable and efficient systems." 
+  },
+  { 
+    name: "Christine Mae L. Lagura", 
+    role: "Role Title", 
+    image: "https://i.pravatar.cc/150?u=6", 
+    bio: "4th Year BS Information Technology student with interest in software engineering and project development. Interested in building real-world systems." 
+  },
+  { 
+    name: "Reonest Arjayle Espina", 
+    role: "Role Title", 
+    image: "https://i.pravatar.cc/150?u=7", 
+    bio: "4th Year BS Information Technology student with interest in backend development and system optimization. Focused on improving performance and reliability of systems." 
+  },
+  { 
+    name: "Marry Joy L. Bersabal", 
+    role: "Role Title", 
+    image: "https://i.pravatar.cc/150?u=8", 
+    bio: "4th Year BS Information Technology student with interest in UI/UX design and frontend development. Passionate about crafting clean, intuitive, and accessible user interfaces." 
+  },
 ]);
 
 const openModal = (member: Member) => {
