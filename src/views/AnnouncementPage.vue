@@ -120,6 +120,21 @@
         </router-link>
       </div>
     </div>
+
+    <!-- SCROLL TO TOP -->
+    <Transition name="fade">
+      <button
+        v-if="showScrollTop"
+        @click="scrollToTop"
+        class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
+        style="background: #0d2b0f"
+      >
+        <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+        </svg>
+      </button>
+    </Transition>
   </section>
 </template>
 
@@ -130,6 +145,7 @@ import { supabase } from '@/lib/supabase'
 const events = ref<any[]>([])
 const selectedEventMonth = ref('All')
 const currentPinnedIndex = ref(0)
+const showScrollTop = ref(false)
 let carouselTimer: any = null
 
 const months = [
@@ -214,12 +230,22 @@ const stopCarousel = () => {
   if (carouselTimer) clearInterval(carouselTimer)
 }
 
+const handleScroll = () => {
+  showScrollTop.value = window.scrollY > 300
+}
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
 onMounted(() => {
   fetchEvents()
+  window.addEventListener('scroll', handleScroll)
 })
 
 onUnmounted(() => {
   stopCarousel()
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 

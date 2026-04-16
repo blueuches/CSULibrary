@@ -2,7 +2,7 @@
   <div class="flex h-screen w-full overflow-hidden bg-white">
     <Sidebar />
 
-    <main class="flex-1 overflow-y-auto relative">
+    <main ref="recordsMainRef" class="flex-1 overflow-y-auto relative">
 
       <!-- ═══ PAGE HEADER ═══════════════════════════════════════════════════ -->
       <header class="page-header">
@@ -213,6 +213,7 @@
           </div>
         </div>
       </div>
+
     </main>
   </div>
 
@@ -647,6 +648,7 @@ function showToast(message: string, type: 'success' | 'error' = 'success') {
 const records = ref<RecordItem[]>([])
 const loading = ref(false)
 const loadError = ref<string | null>(null)
+const recordsMainRef = ref<HTMLElement | null>(null)
 
 function makeDraft(r: RecordItem): DraftForm {
   return {
@@ -690,7 +692,9 @@ async function loadRecords() {
   }
 }
 
-onMounted(() => loadRecords())
+onMounted(() => {
+  loadRecords()
+})
 
 // ─── Edit ─────────────────────────────────────────────────────────────────────
 function toggleEdit(record: RecordItem) {
@@ -1007,4 +1011,5 @@ function confirmIconSelection() {
   .page-content { padding: 24px 20px 60px; }
   .header-title-row { flex-direction: column; align-items: flex-start; }
 }
+
 </style>

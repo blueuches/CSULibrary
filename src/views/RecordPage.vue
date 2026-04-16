@@ -173,11 +173,24 @@
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
+
+    <button
+      v-show="showScrollTop"
+      @click="scrollToTop"
+      class="scroll-top-btn"
+      aria-label="Scroll to top"
+      type="button"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+      </svg>
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onBeforeUnmount, onMounted } from 'vue'
 import { createClient } from '@supabase/supabase-js'
 import {
   Upload, Disc3, BookOpen, Database, FileText, Globe, Link, Star,
@@ -251,6 +264,15 @@ const loading = ref(false)
 const loadError = ref<string | null>(null)
 const isModalOpen = ref(false)
 const isOrientationModalOpen = ref(false)
+const showScrollTop = ref(false)
+
+const handleScroll = () => {
+  showScrollTop.value = window.scrollY > 300
+}
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 async function loadRecords() {
@@ -272,7 +294,14 @@ async function loadRecords() {
   }
 }
 
-onMounted(() => loadRecords())
+onMounted(() => {
+  loadRecords()
+  window.addEventListener('scroll', handleScroll)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>
@@ -310,5 +339,36 @@ onMounted(() => loadRecords())
   font-weight: 900;
   font-size: clamp(1.6rem, 5vw, 3.3rem);
   line-height: 1.02;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 70;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: #06260f;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.scroll-top-btn:hover {
+  transform: translateY(-2px);
+}
+
+.scroll-top-btn:active {
+  transform: translateY(0);
+}
+
+.scroll-top-btn svg {
+  width: 18px;
+  height: 18px;
 }
 </style>
