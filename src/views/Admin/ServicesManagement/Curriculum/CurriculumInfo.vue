@@ -3,57 +3,99 @@
     <Sidebar :activeTab="'SERVICES'"></Sidebar>
 
     <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
-      <header class="mb-6">
-        <div class="mb-2 flex items-center gap-2 text-xs font-bold tracking-wide text-slate-500">
-          <span>ADMIN</span>
-          <span>/</span>
-          <span>CURRICULUM</span>
+      <header class="report-header intro-header">
+        <div class="header-left">
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/services/curriculum')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+
+            <span>Curriculum</span>
+          </div>
+          <h1 class="header-title intro-title">
+            <span class="text-[#0d2b0f]">Curriculum </span>
+            <span class="text-yellow-500">Information</span>
+          </h1>
+          <p class="header-sub">
+            Create a new curriculum information to share with the academic community.
+          </p>
         </div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-[#164d23]">
-          Curriculum <span class="text-[#f9a825]">Info</span>
-        </h1>
       </header>
 
-      <section class="mx-auto flex w-full max-w-4xl flex-col gap-6 rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+      <section
+        class="mx-auto flex w-full max-w-4xl flex-col gap-6 rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
+      >
         <h2 class="text-xl font-bold uppercase tracking-wide text-[#164d23]">Curriculum Info</h2>
 
         <div class="rounded-xl border border-[#164d23]/20 bg-[#f7faf8] px-6 py-6">
           <div class="flex flex-col gap-2 border-b border-[#164d23]/10 pb-4">
-            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Current Program</p>
+            <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Current Program
+            </p>
             <h3 class="text-2xl font-bold uppercase tracking-wide text-[#164d23]">
-              {{ curriculumInfo?.program_name || curriculumInfo?.program_sp_name || 'Program Curriculum' }}
+              {{
+                curriculumInfo?.program_name ||
+                curriculumInfo?.program_sp_name ||
+                'Program Curriculum'
+              }}
             </h3>
             <p class="text-sm text-slate-600">
-              Program ID: <span class="font-semibold text-slate-900">{{ activeProgramId || 'N/A' }}</span>
+              Program ID:
+              <span class="font-semibold text-slate-900">{{ activeProgramId || 'N/A' }}</span>
             </p>
           </div>
 
-          <div v-if="isLoading" class="py-6 text-sm text-slate-600">Loading curriculum data from database...</div>
+          <div v-if="isLoading" class="py-6 text-sm text-slate-600">
+            Loading curriculum data from database...
+          </div>
           <div v-else-if="errorMessage" class="py-6 text-sm text-red-600">{{ errorMessage }}</div>
           <div v-else class="grid gap-4 pt-5 md:grid-cols-2">
             <article class="rounded-lg border border-white bg-white p-4 shadow-sm">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Revision Year</p>
-              <p class="mt-1 text-lg font-bold text-[#164d23]">{{ curriculumInfo?.revision_year ?? 'N/A' }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Revision Year
+              </p>
+              <p class="mt-1 text-lg font-bold text-[#164d23]">
+                {{ curriculumInfo?.revision_year ?? 'N/A' }}
+              </p>
             </article>
 
             <article class="rounded-lg border border-white bg-white p-4 shadow-sm">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Revision No.</p>
-              <p class="mt-1 text-lg font-bold text-[#164d23]">{{ curriculumInfo?.revision_no ?? 'N/A' }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Revision No.
+              </p>
+              <p class="mt-1 text-lg font-bold text-[#164d23]">
+                {{ curriculumInfo?.revision_no ?? 'N/A' }}
+              </p>
             </article>
 
             <article class="rounded-lg border border-white bg-white p-4 shadow-sm">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Effectivity Term</p>
-              <p class="mt-1 text-lg font-bold text-[#164d23]">{{ curriculumInfo?.effectivity_term ?? 'N/A' }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Effectivity Term
+              </p>
+              <p class="mt-1 text-lg font-bold text-[#164d23]">
+                {{ curriculumInfo?.effectivity_term ?? 'N/A' }}
+              </p>
             </article>
 
             <article class="rounded-lg border border-white bg-white p-4 shadow-sm">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Legal Basis</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Legal Basis
+              </p>
               <p class="mt-1 text-sm text-slate-700">{{ curriculumInfo?.legal_basis ?? 'N/A' }}</p>
             </article>
 
             <article class="md:col-span-2 rounded-lg border border-white bg-white p-4 shadow-sm">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Description</p>
-              <p class="mt-1 text-sm text-slate-700">{{ curriculumInfo?.description ?? 'No description available.' }}</p>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Description
+              </p>
+              <p class="mt-1 text-sm text-slate-700">
+                {{ curriculumInfo?.description ?? 'No description available.' }}
+              </p>
             </article>
           </div>
         </div>
@@ -76,7 +118,9 @@
             >
               <div class="flex flex-col gap-1 border-b border-slate-100 pb-3">
                 <h4 class="text-lg font-bold text-[#164d23]">{{ requirement.name }}</h4>
-                <p v-if="requirement.description" class="text-sm text-slate-600">{{ requirement.description }}</p>
+                <p v-if="requirement.description" class="text-sm text-slate-600">
+                  {{ requirement.description }}
+                </p>
               </div>
 
               <ul class="mt-3 space-y-2">
@@ -101,7 +145,7 @@
 
         <button
           type="button"
-          class="w-fit rounded-lg bg-[#1F8CFF] px-8 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-[#1578e0] disabled:cursor-not-allowed disabled:opacity-60"
+          class="w-fit rounded-lg bg-[#0d2b0f] px-8 py-3 text-sm font-bold uppercase tracking-wide text-white transition hover:bg-[#1b5e20] disabled:cursor-not-allowed disabled:opacity-60"
           :disabled="isLoading || !activeProgramId"
           @click="goToProgramStudy"
         >
@@ -155,7 +199,6 @@ watch(
     void fetchCurriculumData(route)
   },
 )
-
 </script>
 
 <style scoped>

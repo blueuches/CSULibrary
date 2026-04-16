@@ -46,7 +46,9 @@
       <!-- LOADING -->
       <div v-if="store.loading" class="flex items-center justify-center py-32">
         <div class="flex flex-col items-center gap-4">
-          <div class="w-10 h-10 border-4 border-[#1b5e20] border-t-transparent rounded-full animate-spin"></div>
+          <div
+            class="w-10 h-10 border-4 border-[#1b5e20] border-t-transparent rounded-full animate-spin"
+          ></div>
           <p class="text-sm text-gray-500">Loading services...</p>
         </div>
       </div>
@@ -106,8 +108,10 @@
         </div>
 
         <!-- EMPTY -->
-        <div v-if="!store.loading && store.services.length === 0"
-          class="col-span-full text-center py-20">
+        <div
+          v-if="!store.loading && store.services.length === 0"
+          class="col-span-full text-center py-20"
+        >
           <p class="text-gray-400 text-lg">No services available at the moment.</p>
         </div>
       </div>
@@ -116,19 +120,15 @@
 
   <Transition name="fade">
     <button
-      v-if="showScrollTop"
+      v-show="showScrollTop"
       @click="scrollToTop"
-      class="fixed bottom-8 right-8 z-50 rounded-2xl p-4 shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-green-900 active:scale-95"
-      style="background: #0d2b0f"
+      class="fixed bottom-5 right-5 z-50 w-11 h-11 rounded-xl bg-[#06260f] text-white grid place-items-center shadow-2xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
       aria-label="Scroll to top"
+      type="button"
     >
-      <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="3"
-          d="M5 11l7-7 7 7M5 17l7-7 7 7"
-        />
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
       </svg>
     </button>
   </Transition>
@@ -164,7 +164,7 @@ function setupObserver() {
         }
       })
     },
-    { threshold: 0.1 }
+    { threshold: 0.1 },
   )
 
   document.querySelectorAll('.reveal-card').forEach((card) => observer?.observe(card))
@@ -176,7 +176,7 @@ watch(
   async () => {
     await nextTick()
     setupObserver()
-  }
+  },
 )
 
 onMounted(async () => {
@@ -209,18 +209,34 @@ onUnmounted(() => {
 }
 
 @keyframes blob {
-  0% { transform: translate(0px, 0px) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0px, 0px) scale(1); }
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
 }
-.animate-blob { animation: blob 10s infinite; }
-.animation-delay-2000 { animation-delay: 2s; }
-.animation-delay-4000 { animation-delay: 4s; }
+.animate-blob {
+  animation: blob 10s infinite;
+}
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
