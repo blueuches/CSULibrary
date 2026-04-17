@@ -44,10 +44,6 @@
                 'Program Curriculum'
               }}
             </h3>
-            <p class="text-sm text-slate-600">
-              Program ID:
-              <span class="font-semibold text-slate-900">{{ activeProgramId || 'N/A' }}</span>
-            </p>
           </div>
 
           <div v-if="isLoading" class="py-6 text-sm text-slate-600">
@@ -132,7 +128,7 @@
                   <p class="font-semibold text-slate-900">
                     {{ course.course.course_code || 'N/A' }} - {{ course.course.course_title }}
                   </p>
-                  <p class="text-xs text-slate-500">Display order: {{ course.display_order }}</p>
+                  
                 </li>
               </ul>
             </article>

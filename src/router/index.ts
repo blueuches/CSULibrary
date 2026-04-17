@@ -34,6 +34,7 @@ import ReportBooks from '@/views/Admin/Reports&Analytics/ReportBooks.vue'
 import AttendanceOverview from '@/views/Admin/AttendanceManagement/AttendanceOverview.vue'
 import AttendanceLogs from '@/views/Admin/AttendanceManagement/AttendanceLogs.vue'
 import ImportRecord from '@/views/Admin/AttendanceManagement/ImportRecord.vue'
+import ManualInsert from '@/views/Admin/AttendanceManagement/ManualInsert.vue'
 import AttendanceGeneral from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceGeneral.vue'
 import AttendanceRanking from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceRanking.vue'
 import AttendanceReport from '@/views/Admin/AttendanceManagement/AttendanceTabs/AttendanceReport.vue'
@@ -94,6 +95,7 @@ const router = createRouter({
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/import/add', name: 'attendance-add', component: ManualInsert, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/settings', name: 'attendance-settings', component: AttendanceGeneral, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/report', name: 'attendance-report', component: AttendanceReport, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/search', name: 'attendance-search', component: AttendanceSearch, meta: { requiresAuth: true }  },

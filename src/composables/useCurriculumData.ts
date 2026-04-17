@@ -189,7 +189,7 @@ export const useCurriculumData = () => {
       }
 
       const { data, error } = await supabase
-        .from('program_study_plans')
+        .from('program_study_plan')
         .select('*')
         .order('year_level', { ascending: true })
         .order('semester', { ascending: true })
