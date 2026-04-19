@@ -165,39 +165,6 @@
               <p class="ctrl-sub">All export data</p>
             </div>
 
-            <button class="sync-btn sync-btn--1" @click="$router.push('/admin/attendance/logs')">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <polyline points="23 4 23 10 17 10" />
-                <polyline points="1 20 1 14 7 14" />
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-              </svg>
-              <span>Attendance Logs</span>
-            </button>
-
-            <button class="sync-btn sync-btn--2" @click="$router.push('/admin/attendance/import')">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <polyline points="23 4 23 10 17 10" />
-                <polyline points="1 20 1 14 7 14" />
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-              </svg>
-              <span>Add Import Records</span>
-            </button>
           </div>
 
           <div class="export-card">
@@ -319,13 +286,14 @@ const barsVisible = ref(false)
 const exportLogs = ref<ExportLogView[]>([])
 
 const actionTabs = [
-  { label: "Settings", route: "/admin/attendance/settings" },
-  { label: "Report", route: "/admin/attendance/report" },
-  { label: "Import Records", route: "/admin/attendance/import" },
-  { label: "Search", route: "/admin/attendance/logs" },
-  { label: "Students", route: "/admin/attendance/students" },
-  { label: "Ranking", route: "/admin/attendance/ranking" },
-  { label: "Visitors", route: "/admin/attendance/visitors" },
+  { label: "Attendance Page's Settings", route: "/admin/attendance/settings" },
+  { label: "Generate Report", route: "/admin/attendance/report" },
+  { label: "Import Student Records", route: "/admin/attendance/import" },
+  { label: "Search in Attendance", route: "/admin/attendance/logs" },
+  { label: "Search in Student Records", route: "/admin/attendance/students" },
+  { label: "View Ranking", route: "/admin/attendance/ranking" },
+  { label: "Manage Visitors' Attendance", route: "/admin/attendance/visitors" },
+  { label: "Add/Edit Event", route: "/admin/announcement/event" },
 ]
 
 onMounted(async () => {

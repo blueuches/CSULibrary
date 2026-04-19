@@ -55,6 +55,11 @@ import WebsiteGeneral from '@/views/Admin/WebsiteManagement/WebsiteGeneral.vue'
 import ManageAbout from '@/views/Admin/WebsiteManagement/ManageAbout.vue'
 import ManageServices from '@/views/Admin/WebsiteManagement/ManageServices.vue'
 import UsersManagement from '@/views/Admin/AdminManagement/UsersManagement.vue'
+import ActivateDeactivate from '@/views/Admin/AdminManagement/ActivateDeactivate.vue'
+import ManageAssignation from '@/views/Admin/AdminManagement/ManageAssignation.vue'
+import ManagePermission from '@/views/Admin/AdminManagement/ManagePermission.vue'
+import ManageRoles from '@/views/Admin/AdminManagement/ManageRoles.vue'
+import ViewUsers from '@/views/Admin/AdminManagement/ViewUsers.vue'
 import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
@@ -117,6 +122,12 @@ const router = createRouter({
     { path: '/admin/website/about', name: 'website-about', component: ManageAbout, meta: { requiresAuth: true }  }, 
     { path: '/admin/website/services', name: 'website-services', component: ManageServices, meta: { requiresAuth: true }  }, 
     { path: '/admin/management', name: 'admin-management', component: UsersManagement, meta: { requiresAuth: true }  },
+    { path: '/admin/management/view-users', name: 'admin-management-view', component: ViewUsers, meta: { requiresAuth: true }  },    
+    { path: '/admin/management/activation', name: 'admin-management-activation', component: ActivateDeactivate, meta: { requiresAuth: true }  }, 
+    { path: '/admin/management/roles', name: 'admin-management-roles', component: ManageRoles, meta: { requiresAuth: true }  }, 
+    { path: '/admin/management/assignation', name: 'admin-management-assignation', component: ManageAssignation, meta: { requiresAuth: true }  }, 
+    { path: '/admin/management/permission', name: 'admin-management-permission', component: ManagePermission, meta: { requiresAuth: true }  }, 
+
   ],
    scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
