@@ -160,13 +160,13 @@ const roleButtons = [
     desc: 'Create and edit system roles',
     icon: iconShield,
   },
-  {
-    color: 'indigo',
-    route: '/admin/management/assignation',
-    title: 'Assign Roles to Users',
-    desc: 'Link personnel to specific roles',
-    icon: iconAssign,
-  },
+  // {
+  //   color: 'indigo',
+  //   route: '/admin/management/assignation',
+  //   title: 'Assign Roles to Users',
+  //   desc: 'Link personnel to specific roles',
+  //   icon: iconAssign,
+  // },
   {
     color: 'gold',
     route: '/admin/management/permission',
