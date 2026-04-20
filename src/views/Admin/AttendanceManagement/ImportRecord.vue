@@ -26,7 +26,22 @@
         </div>
       </header>
 
-      <h1 @click="$router.push('/admin/attendance/import/add')">Import A Student Manually</h1>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  
+  <!-- Left: Button -->
+  <button 
+    @click="$router.push('/admin/attendance/import/add')"
+    style="padding: 10px 16px; cursor: pointer;"
+  >
+    Import A Student Manually
+  </button>
+
+  <!-- Right: Timestamp -->
+  <h1 style="margin: 0;">
+    Last Import Time: DATE
+  </h1>
+
+</div>
 
       <!-- STEPPER -->
       <section class="panel">

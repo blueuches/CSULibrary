@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/composables/useAuth';
+import { useRBACModal } from '@/composables/useRBACModal';
 
 import HomePage from '../views/HomePage.vue'
 import AboutPage from '../views/AboutPage.vue'
@@ -55,6 +57,11 @@ import WebsiteGeneral from '@/views/Admin/WebsiteManagement/WebsiteGeneral.vue'
 import ManageAbout from '@/views/Admin/WebsiteManagement/ManageAbout.vue'
 import ManageServices from '@/views/Admin/WebsiteManagement/ManageServices.vue'
 import UsersManagement from '@/views/Admin/AdminManagement/UsersManagement.vue'
+import ActivateDeactivate from '@/views/Admin/AdminManagement/ActivateDeactivate.vue'
+import ManageAssignation from '@/views/Admin/AdminManagement/ManageAssignation.vue'
+import ManagePermission from '@/views/Admin/AdminManagement/ManagePermission.vue'
+import ManageRoles from '@/views/Admin/AdminManagement/ManageRoles.vue'
+import ViewUsers from '@/views/Admin/AdminManagement/ViewUsers.vue'
 import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
@@ -87,21 +94,21 @@ const router = createRouter({
     { path: '/admin/announcement/general', name: 'announcement-general', component: GeneralInput, meta: { requiresAuth: true }  },
     { path: '/admin/announcement/event', name: 'announcement-event', component: EventInput, meta: { requiresAuth: true }  },
     { path: '/admin/announcement/news', name: 'announcement-news', component: NewsInput, meta: { requiresAuth: true }  },
-    { path: '/admin/personnel', name: 'admin-personnel', component: PersonnelOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/personnel', name: 'admin-personnel', component: PersonnelOverview, meta: { requiresAdmin: true, requiresAuth: true  }  },
     { path: '/admin/analytics', name: 'analytics', component: RAOverview, meta: { requiresAuth: true }  },
     { path: '/admin/analytics/display', name: 'analytics-display', component: ReportDisplay, meta: { requiresAuth: true }  },
     { path: '/admin/analytics/add', name: 'analytics-add', component: ReportAddInput, meta: { requiresAuth: true }  },
     { path: '/admin/analytics/books', name: 'announcement-books', component: ReportBooks, meta: { requiresAuth: true }  },
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs, meta: { requiresAuth: true }  },
-    { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAdmin: true, requiresAuth: true  }  },
     { path: '/admin/attendance/import/add', name: 'attendance-add', component: ManualInsert, meta: { requiresAuth: true }  },
-    { path: '/admin/attendance/settings', name: 'attendance-settings', component: AttendanceGeneral, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/settings', name: 'attendance-settings', component: AttendanceGeneral, meta: { requiresAdmin: true,requiresAuth: true  }  },
     { path: '/admin/attendance/report', name: 'attendance-report', component: AttendanceReport, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/search', name: 'attendance-search', component: AttendanceSearch, meta: { requiresAuth: true }  },
-    { path: '/admin/attendance/students', name: 'attendance-students', component: SearchRecord, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/students', name: 'attendance-students', component: SearchRecord, meta: { requiresAdmin: true,requiresAuth: true  }  },
     { path: '/admin/attendance/ranking', name: 'attendance-ranking', component: AttendanceRanking, meta: { requiresAuth: true }  },
-    { path: '/admin/attendance/visitors', name: 'admin-attendance-visitors', component: VisitorAttendance, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/visitors', name: 'admin-attendance-visitors', component: VisitorAttendance, meta: { requiresAdmin: true, requiresAuth: true  }  },
     { path: '/admin/services', name: 'admin-services', component: ServicesOverview, meta: { requiresAuth: true }  },
     { path: '/admin/services/reservations', name: 'services-reservations', component: RoomReservation, meta: { requiresAuth: true }  },
     { path: '/admin/services/records', name: 'services-records', component: ManageRecords, meta: { requiresAuth: true }  },
@@ -111,12 +118,18 @@ const router = createRouter({
   { path: '/admin/curriculum/info/:programId/:specializationId?', name: 'curriculum-info-dynamic', component: CurriculumInfo, meta: { requiresAuth: true }  },
 { path: '/admin/services/curriculum/program-study/:programId/:specializationId?', name: 'program-study', component: ProgramStudy, meta: { requiresAuth: true }  },
     { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing, meta: { requiresAuth: true }  },
-    { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAuth: true }  },
+    { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAdmin: true, requiresAuth: true  }  },
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages, meta: { requiresAuth: true }  },
     { path: '/admin/website/general', name: 'website-general', component: WebsiteGeneral, meta: { requiresAuth: true }  }, 
     { path: '/admin/website/about', name: 'website-about', component: ManageAbout, meta: { requiresAuth: true }  }, 
     { path: '/admin/website/services', name: 'website-services', component: ManageServices, meta: { requiresAuth: true }  }, 
-    { path: '/admin/management', name: 'admin-management', component: UsersManagement, meta: { requiresAuth: true }  },
+    { path: '/admin/management', name: 'admin-management', component: UsersManagement, meta: { requiresAdmin: true, requiresAuth: true  }  },
+    { path: '/admin/management/view-users', name: 'admin-management-view', component: ViewUsers, meta: { requiresAuth: true }  },    
+    { path: '/admin/management/activation', name: 'admin-management-activation', component: ActivateDeactivate, meta: { requiresAuth: true }  }, 
+    { path: '/admin/management/roles', name: 'admin-management-roles', component: ManageRoles, meta: { requiresAuth: true }  }, 
+    { path: '/admin/management/assignation', name: 'admin-management-assignation', component: ManageAssignation, meta: { requiresAuth: true }  }, 
+    { path: '/admin/management/permission', name: 'admin-management-permission', component: ManagePermission, meta: { requiresAuth: true }  }, 
+
   ],
    scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -126,23 +139,41 @@ const router = createRouter({
   },
 })
 
-router.beforeEach(async (to, from, next) => {
-  const { data } = await supabase.auth.getSession()
-  const session = data.session
+router.beforeEach(async (to) => {
+  const auth = useAuth()
+
+  await auth.loadSession()
+
+  const session = auth.session.value
+  const profile = auth.profile.value
 
   const requiresAuth = to.meta.requiresAuth
+  const requiresAdmin = to.meta.requiresAdmin
 
-  // Block if not logged in
+  // ✅ Not logged in
   if (requiresAuth && !session) {
-    return next('/admin/login')
+    return '/admin/login'
   }
 
-  // Prevent logged-in users from going back to login
+  // ✅ Prevent going back to login
   if ((to.path === '/admin/login' || to.path === '/admin/signin') && session) {
-    return next('/admin')
+    return '/admin'
   }
 
-  next()
+  // ✅ RBAC (no infinite loop)
+  if (requiresAdmin) {
+    const isAdmin = profile?.role === 'admin'
+
+    if (!isAdmin && !to.query.denied) {
+      return {
+        path: to.path,
+        query: { ...to.query, denied: 'true' }
+      }
+    }
+  }
+
+  // ✅ allow navigation
+  return true
 })
 
 export default router
