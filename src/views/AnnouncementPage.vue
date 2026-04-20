@@ -145,12 +145,6 @@
         </p>
       </div>
 
-      <!-- VIEW TOP BORROWERS -->
-      <!-- <div class="flex justify-center mt-20">
-        <router-link to="/top-borrowers" class="inline-block bg-[#0d2b0f] text-white px-8 py-4 rounded-full font-bold shadow-xl hover:bg-[#1b5e20] hover:scale-105 transition transform duration-300 cta-btn">
-          View Top Borrowers
-        </router-link>
-      </div> -->
     </div>
 
     <!-- SCROLL TO TOP -->
