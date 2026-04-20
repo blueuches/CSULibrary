@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-screen w-full overflow-hidden bg-[#f0f4f1]">
-    
+
     <!-- SIDEBAR (fixed, never scrolls) -->
     <Sidebar />
 
@@ -12,6 +12,7 @@
         <div class="header-breadcrumb text-gray-400">
           <button
             class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
+            @click="goBack"
           >
             <span class="uppercase tracking-widest">Back</span>
           </button>
@@ -281,7 +282,7 @@
             <!-- Action Buttons -->
             <div class="space-y-3">
 
-              <!-- ✅ NEW: Generate Chart Button -->
+              <!-- Generate Chart Button -->
               <button
                 @click="generateCharts"
                 :disabled="isGeneratingCharts"
@@ -338,9 +339,9 @@
               <div class="flex items-center gap-2">
                 <span
                   class="w-2 h-2 rounded-full flex-shrink-0"
-                  :class="statusColor === 'green' ? 'bg-[#0d2b0f]' : statusColor === 'yellow' ? 'bg-[#b45309]' : 'bg-[#0d2b0f]'"
+                  :class="statusColor === 'green' ? 'bg-[#16a34a]' : statusColor === 'yellow' ? 'bg-[#b45309]' : 'bg-[#0d2b0f]'"
                 />
-                <span class="text-xs" :class="statusColor === 'green' ? 'text-[#0d2b0f]' : statusColor === 'yellow' ? 'text-[#b45309]' : 'text-[#0d2b0f]'">
+                <span class="text-xs" :class="statusColor === 'green' ? 'text-[#16a34a]' : statusColor === 'yellow' ? 'text-[#b45309]' : 'text-[#0d2b0f]'">
                   {{ statusMsg }}
                 </span>
               </div>
@@ -391,16 +392,19 @@ const departments: Record<string, string[]> = {
     'BS Electronics Engineering',
     'BS Geodetic Engineering',
     'BS Geology',
-    'BS Mining Engineering'
+    'BS Mining Engineering',
+    'All'
   ],
   'College of Computing and Information Technology': [
     'BS Information Technology',
     'BS Information System',
-    'BS Computer Science'
+    'BS Computer Science',
+    'All'
   ],
   'College of Education': [
     'Bachelor of Secondary Education',
-    'Bachelor of Elementary Education'
+    'Bachelor of Elementary Education',
+    'All'
   ],
   'College of Mathematics and Natural Sciences': [
     'BS Applied Mathematics',
@@ -408,20 +412,24 @@ const departments: Record<string, string[]> = {
     'BS Chemistry',
     'BS Marine Biology',
     'BS Mathematics',
-    'BS Physics'
+    'BS Physics',
+    'All'
   ],
   'College of Agriculture and Agri-Industries': [
-    'BS Agriculture'
+    'BS Agriculture',
+    'All'
   ],
   'College of Forestry and Environmental Sciences': [
     'BS Agroforestry',
     'BS Environmental Science',
-    'BS Forestry'
+    'BS Forestry',
+    'All'
   ],
   'College of Humanities and Social Sciences': [
     'AB Sociology',
     'BS Psychology',
-    'BS Social Work'
+    'BS Social Work',
+    'All'
   ],
   'Graduate Studies': [
     'Doctor of Education',
@@ -433,7 +441,8 @@ const departments: Record<string, string[]> = {
     'Master of Science in Mathematics Education',
     'PHD in Mathematics',
     'PHD in Mathematics Education',
-    'PHD in Science Education'
+    'PHD in Science Education',
+    'All'
   ],
 }
 
@@ -498,10 +507,10 @@ function onDeptChange() {
   selectedCourse.value = ''
 }
 
-// ✅ NEW: Generate Charts function
+// Generate Charts
 async function generateCharts() {
   isGeneratingCharts.value = true
-  chartStatusMsg.value = ''
+  chartStatusMsg.value     = ''
 
   // Wait for DOM to be ready (in case charts were hidden)
   await nextTick()
@@ -536,6 +545,7 @@ async function generateCharts() {
         },
         options: {
           responsive: true,
+          animation: { duration: 0 }, // Disable animation so canvas is ready immediately for PDF
           plugins: {
             legend: { display: false }
           },
@@ -562,6 +572,7 @@ async function generateCharts() {
         },
         options: {
           responsive: true,
+          animation: { duration: 0 }, // Disable animation so canvas is ready immediately for PDF
           plugins: {
             legend: {
               position: 'bottom',
@@ -591,6 +602,7 @@ async function generateCharts() {
         },
         options: {
           responsive: true,
+          animation: { duration: 0 }, // Disable animation so canvas is ready immediately for PDF
           plugins: { legend: { display: false } },
           scales: {
             x: { grid: { display: false } },
@@ -600,9 +612,9 @@ async function generateCharts() {
       })
     }
 
-    chartsGenerated.value   = true
-    chartStatusMsg.value    = 'Charts generated successfully.'
-    chartStatusColor.value  = 'green'
+    chartsGenerated.value  = true
+    chartStatusMsg.value   = 'Charts generated successfully.'
+    chartStatusColor.value = 'green'
   } catch (err) {
     console.error(err)
     chartStatusMsg.value   = 'Failed to generate charts.'
@@ -612,6 +624,7 @@ async function generateCharts() {
   }
 }
 
+// Download button just triggers full report generation
 async function downloadChart() {
   await generateReport()
 }
@@ -632,14 +645,25 @@ async function generateReport() {
   }
 
   isGenerating.value = true
-  statusMsg.value    = 'Generating PDF report...'
+  statusMsg.value    = 'Preparing charts...'
   statusColor.value  = 'blue'
-  progress.value     = 10
+  progress.value     = 5
+
+  // ── AUTO-GENERATE CHARTS IF NOT YET DONE ─────────────────────────────────
+  // This ensures charts always exist in the PDF even if user skipped the button
+  if (!chartsGenerated.value) {
+    await generateCharts()
+    // Small delay to make sure canvas is fully rendered before toDataURL()
+    await new Promise(resolve => setTimeout(resolve, 300))
+  }
+
+  statusMsg.value = 'Generating PDF report...'
+  progress.value  = 15
 
   try {
     const doc        = new jsPDF('l', 'mm', 'a4')
-    const pageWidth  = doc.internal.pageSize.getWidth()
-    const pageHeight = doc.internal.pageSize.getHeight()
+    const pageWidth  = doc.internal.pageSize.getWidth()   // 297mm
+    const pageHeight = doc.internal.pageSize.getHeight()  // 210mm
 
     const extractedDate = new Date().toLocaleDateString('en-US', {
       weekday: 'long',
@@ -654,90 +678,161 @@ async function generateReport() {
       second: '2-digit'
     })
 
+    // ── WHITE BACKGROUND ────────────────────────────────────────────────────
     doc.setFillColor(255, 255, 255)
     doc.rect(0, 0, pageWidth, pageHeight, 'F')
     doc.setTextColor(40, 40, 40)
     doc.setDrawColor(120, 120, 120)
     doc.setLineWidth(0.4)
 
-    // Logo placeholder
-    const logoX = 12, logoY = 10, logoW = 20, logoH = 20
+    // ── LOGO PLACEHOLDER ────────────────────────────────────────────────────
+    const logoX = 12, logoY = 8, logoW = 20, logoH = 20
     doc.rect(logoX, logoY, logoW, logoH)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(120, 120, 120)
     doc.text('LOGO', logoX + (logoW / 2), logoY + 11, { align: 'center' })
 
-    // Header
+    // ── HEADER TEXT ─────────────────────────────────────────────────────────
     doc.setTextColor(40, 40, 40)
     doc.setFont('times', 'bold')
-    doc.setFontSize(20)
-    doc.text('Caraga State University', 38, 18)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(12)
-    doc.text('Ampayon, Butuan City', 38, 27)
-    doc.setFont('times', 'bold')
-    doc.setFontSize(13)
-    doc.text(`Extracted: ${extractedDate}`, 210, 18)
+    doc.setFontSize(18)
+    doc.text('Caraga State University', 38, 16)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(11)
-    doc.text(extractedTime, 233, 27)
-    doc.setFont('times', 'normal')
-    doc.setFontSize(10)
+    doc.text('Ampayon, Butuan City', 38, 23)
 
+    // Extracted date/time (right side)
+    doc.setFont('times', 'bold')
+    doc.setFontSize(11)
+    doc.text(`Extracted: ${extractedDate}`, pageWidth - 10, 14, { align: 'right' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
+    doc.text(extractedTime, pageWidth - 10, 21, { align: 'right' })
+
+    // Sub-header info line
+    doc.setFont('times', 'normal')
+    doc.setFontSize(8.5)
     const headerLine =
-      `College: ${selectedDept.value} | Program: ${selectedCourse.value} | Month: ${selectedMonth.value} | Year: ${selectedYear.value} | School Year: 2025 to 2026`
-    doc.text(headerLine, 38, 35)
+      `College: ${selectedDept.value}  |  Program: ${selectedCourse.value}  |  Month: ${selectedMonth.value}  |  Year: ${selectedYear.value}  |  School Year: 2025–2026`
+    doc.text(headerLine, 38, 30)
+
+    // Divider line
+    doc.setDrawColor(180, 180, 180)
+    doc.setLineWidth(0.3)
+    doc.line(12, 33, pageWidth - 12, 33)
 
     progress.value = 30
 
-    // Left content area
-    const leftX = 18, leftY = 42, leftW = 165, leftH = 122
-    doc.setDrawColor(120, 120, 120)
-    doc.rect(leftX, leftY, leftW, leftH)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.setTextColor(80, 80, 80)
-    doc.text('CHART / TABLE AREA', leftX + leftW / 2, leftY + 8, { align: 'center' })
+    // ── CHART IMAGES ────────────────────────────────────────────────────────
+    // Layout: 3 charts side-by-side in landscape A4
+    // Usable width: 297 - 24 margins = 273mm split into 3
+    const chartStartY = 37
+    const chartH      = 90    // height of each chart in mm
+    const chartW      = 87    // width of each chart in mm
+    const chartGap    = 4     // gap between charts in mm
+    const chartStartX = 12    // left margin
+
+    const chartConfigs = [
+      { canvas: barCanvas.value,  label: 'Bar Chart' },
+      { canvas: pieCanvas.value,  label: 'Pie Chart' },
+      { canvas: lineCanvas.value, label: 'Line Chart' },
+    ]
+
+    chartConfigs.forEach(({ canvas, label }, i) => {
+      const x = chartStartX + i * (chartW + chartGap)
+
+      // Chart label above
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      doc.setTextColor(40, 40, 40)
+      doc.text(label, x + chartW / 2, chartStartY - 1, { align: 'center' })
+
+      if (canvas) {
+        // Export canvas to PNG and embed in PDF
+        const imgData = canvas.toDataURL('image/png', 1.0)
+        doc.addImage(imgData, 'PNG', x, chartStartY, chartW, chartH)
+      } else {
+        // Fallback placeholder if canvas not available
+        doc.setDrawColor(200, 200, 200)
+        doc.setLineWidth(0.3)
+        doc.rect(x, chartStartY, chartW, chartH)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(8)
+        doc.setTextColor(160, 160, 160)
+        doc.text('Chart not available', x + chartW / 2, chartStartY + chartH / 2, { align: 'center' })
+      }
+
+      // Thin border around chart image
+      doc.setDrawColor(210, 210, 210)
+      doc.setLineWidth(0.2)
+      doc.rect(x, chartStartY, chartW, chartH)
+    })
+
+    progress.value = 65
+
+    // ── DESCRIPTION / LEGEND PANEL (below charts) ───────────────────────────
+    const descY   = chartStartY + chartH + 6
+    const descH   = pageHeight - descY - 10
+    const descX   = 12
+    const descW   = pageWidth - 24
+
     doc.setDrawColor(180, 180, 180)
-    for (let i = 1; i <= 8; i++) {
-      const lineY = leftY + 10 + i * 13
-      doc.line(leftX + 1, lineY, leftX + leftW - 1, lineY)
-    }
-    for (let i = 1; i <= 6; i++) {
-      const lineX = leftX + i * 24
-      doc.line(lineX, leftY + 10, lineX, leftY + leftH - 1)
-    }
+    doc.setLineWidth(0.3)
+    doc.rect(descX, descY, descW, descH)
 
-    progress.value = 55
+    // Section label
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(8)
+    doc.setTextColor(80, 80, 80)
+    doc.text('Report Description', descX + 3, descY + 5)
 
-    // Right legend area
-    const sideX = 192, sideY = 48, sideW = 85, sideH = 108
-    doc.setDrawColor(120, 120, 120)
-    doc.rect(sideX, sideY, sideW, sideH)
-    doc.line(sideX, sideY + 25, sideX + sideW, sideY + 25)
-    doc.setFont('times', 'normal')
-    doc.setFontSize(10.5)
-    doc.setTextColor(40, 40, 40)
-    doc.text('Legend:', sideX + 2, sideY + 6)
-    doc.text('Horizontal Bar', sideX + 2, sideY + 12)
-    doc.text('X-axis', sideX + 2, sideY + 18)
-    doc.text('Y-axis', sideX + 2, sideY + 24)
-    doc.text('Description:', sideX + 2, sideY + 31)
+    // Divider inside description box
+    doc.setDrawColor(200, 200, 200)
+    doc.line(descX + 1, descY + 7, descX + descW - 1, descY + 7)
 
+    // Description text
     const description =
-      `The chart presents the selected library report data for ${selectedCourse.value} under ${selectedDept.value}. This report uses a landscape layout with the main visualization on the left and the legend and description panel on the right.`
-    const wrappedDesc = doc.splitTextToSize(description, sideW - 4)
-    doc.text(wrappedDesc, sideX + 2, sideY + 38)
+      `This report presents the library visit data for ${selectedCourse.value} under the ${selectedDept.value}. ` +
+      `The data covers ${durationType.value === 'day' ? todayLabel.value : durationType.value === 'month' ? `${selectedMonth.value} ${selectedYear.value}` : selectedSemester.value} ` +
+      `for Academic Year 2025–2026. The bar chart shows visits by year level, the pie chart shows proportional distribution, ` +
+      `and the line chart illustrates the trend across year levels.`
 
-    progress.value = 80
+    doc.setFont('times', 'normal')
+    doc.setFontSize(8.5)
+    doc.setTextColor(40, 40, 40)
+    const wrappedDesc = doc.splitTextToSize(description, descW - 6)
+    doc.text(wrappedDesc, descX + 3, descY + 12)
 
+    // Legend swatches (color palette used)
+    const colors = palettes[selectedPalette.value] ?? []
+    const swatchY     = descY + 11
+    const swatchStart = descX + descW - 110
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(80, 80, 80)
+    doc.text('Palette:', swatchStart, swatchY)
+
+    colors.slice(0, 5).forEach((hex, ci) => {
+      const r = parseInt(hex.slice(1, 3), 16)
+      const g = parseInt(hex.slice(3, 5), 16)
+      const b = parseInt(hex.slice(5, 7), 16)
+      doc.setFillColor(r, g, b)
+      doc.setDrawColor(200, 200, 200)
+      doc.setLineWidth(0.2)
+      doc.roundedRect(swatchStart + 14 + ci * 8, swatchY - 4, 6, 6, 1, 1, 'FD')
+    })
+
+    progress.value = 90
+
+    // ── FOOTER ──────────────────────────────────────────────────────────────
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(90, 90, 90)
-    doc.text('Generated by ACCESS', pageWidth / 2, pageHeight - 4, { align: 'center' })
+    doc.setFontSize(7)
+    doc.setTextColor(150, 150, 150)
+    doc.text('Generated by ACCESS — Library Management System', pageWidth / 2, pageHeight - 4, { align: 'center' })
 
     progress.value = 100
+
     doc.save('Library_Report.pdf')
 
     isGenerating.value = false
