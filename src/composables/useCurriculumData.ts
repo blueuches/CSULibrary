@@ -39,6 +39,65 @@ const slugify = (value: string): string =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
+type ProgramLookupRow = {
+  id: string
+  program_name: string
+  program_code?: string | null
+}
+
+const findProgramByIdentifier = async (identifier: string): Promise<ProgramLookupRow | null> => {
+  const normalizedIdentifier = decodeURIComponent(identifier).trim()
+
+  if (!normalizedIdentifier) {
+    return null
+  }
+
+  if (isUuid(normalizedIdentifier)) {
+    const { data, error } = await supabase
+      .from('programs')
+      .select('id, program_name, program_code')
+      .eq('id', normalizedIdentifier)
+      .maybeSingle()
+
+    if (error) {
+      throw error
+    }
+
+    return (data as ProgramLookupRow | null) ?? null
+  }
+
+  const { data: byCode, error: byCodeError } = await supabase
+    .from('programs')
+    .select('id, program_name, program_code')
+    .eq('program_code', normalizedIdentifier)
+    .maybeSingle()
+
+  if (byCodeError) {
+    throw byCodeError
+  }
+
+  if (byCode) {
+    return byCode as ProgramLookupRow
+  }
+
+  const { data: programs, error: programsError } = await supabase
+    .from('programs')
+    .select('id, program_name, program_code')
+
+  if (programsError) {
+    throw programsError
+  }
+
+  const normalizedSlug = slugify(normalizedIdentifier)
+  const matched = ((programs as ProgramLookupRow[] | null) ?? []).find((program) => {
+    const slugFromName = slugify(program.program_name || '')
+    const slugFromCode = slugify(program.program_code || '')
+    return slugFromName === normalizedSlug || slugFromCode === normalizedSlug
+  })
+
+  return matched ?? null
+}
+
 export const useCurriculumData = () => {
   const activeProgramId = ref('')
   const activeSpecializationId = ref('')
@@ -73,27 +132,14 @@ export const useCurriculumData = () => {
         let resolvedProgramId = ''
         let resolvedSpecializationId = ''
 
-        if (!isUuid(activeProgramId.value)) {
-          throw new Error(
-            `Program ID must be a valid UUID, but received: "${activeProgramId.value}". Please navigate from the program list.`,
-          )
-        }
-
-        resolvedProgramId = activeProgramId.value
-
-        const { data: programData, error: programError } = await supabase
-          .from('programs')
-          .select('id, program_name')
-          .eq('id', resolvedProgramId)
-          .maybeSingle()
-
-        if (programError) {
-          throw programError
-        }
+        const programData = await findProgramByIdentifier(activeProgramId.value)
 
         if (!programData) {
-          throw new Error(`Program with ID ${resolvedProgramId} not found in the database.`)
+          throw new Error(`Program with identifier "${activeProgramId.value}" was not found in the database.`)
         }
+
+        resolvedProgramId = programData.id
+        activeProgramId.value = programData.id
 
         curriculumInfo.value = {
           id: programData.id,
@@ -103,36 +149,25 @@ export const useCurriculumData = () => {
         }
 
         if (activeSpecializationId.value) {
-          if (!isUuid(activeSpecializationId.value)) {
-            throw new Error(
-              `Specialization ID must be a valid UUID, but received: "${activeSpecializationId.value}". Please navigate from the program list.`,
-            )
-          }
+          if (isUuid(activeSpecializationId.value)) {
+            const { data: specializationData, error: specializationError } = await supabase
+              .from('program_specializations')
+              .select('id, program_id, program_sp_name, program_sp_code')
+              .eq('id', activeSpecializationId.value)
+              .maybeSingle()
 
-          const { data: specializationData, error: specializationError } = await supabase
-            .from('program_specializations')
-            .select(
-              'id, program_id, program_sp_name, program_sp_code, description, revision_year, revision_no, legal_basis, effectivity_term',
-            )
-            .eq('id', activeSpecializationId.value)
-            .maybeSingle()
+            if (specializationError) {
+              throw specializationError
+            }
 
-          if (specializationError) {
-            throw specializationError
-          }
-
-          if (specializationData) {
-            resolvedSpecializationId = specializationData.id
-            curriculumInfo.value = {
-              id: specializationData.id,
-              program_id: specializationData.program_id,
-              program_sp_name: specializationData.program_sp_name,
-              revision_year: specializationData.revision_year,
-              revision_no: specializationData.revision_no,
-              legal_basis: specializationData.legal_basis,
-              effectivity_term: specializationData.effectivity_term,
-              description: specializationData.description,
-              source: 'program_specializations',
+            if (specializationData) {
+              resolvedSpecializationId = specializationData.id
+              curriculumInfo.value = {
+                id: specializationData.id,
+                program_id: specializationData.program_id,
+                program_sp_name: specializationData.program_sp_name,
+                source: 'program_specializations',
+              }
             }
           }
         }
@@ -179,7 +214,7 @@ export const useCurriculumData = () => {
 
         studyPlans.value = await getProgramStudyPlans(
           resolvedProgramId,
-          activeSpecializationId.value || null,
+          resolvedSpecializationId || null,
         )
         return
       }
