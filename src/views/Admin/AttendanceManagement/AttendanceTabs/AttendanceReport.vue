@@ -8,28 +8,31 @@
     <main class="report-root flex-1 overflow-y-auto">
 
       <!-- HEADER -->
-      <header class="report-header relative z-[60] overflow-visible">
-        <div class="header-left">
-          <div class="flex items-center justify-between gap-4 flex-wrap">
-            <div class="header-breadcrumb">
-              <button
-                type="button"
-                @click="goBack"
-                class="breadcrumb-back"
-              >
-                Back
-              </button>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span>Library Reporting</span>
-            </div>
-          </div>
-          <h1 class="header-title intro-title">
-            Library <span class="text-yellow-500">Reporting</span>
-          </h1>
-          <p class="header-sub">Generate and review reports by department, course, and duration.</p>
+      <header class="attn-header px-3 pt-3 pb-2">
+        <div class="header-breadcrumb text-gray-400">
+          <button
+            class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
+            @click="goBack"
+          >
+            <span class="uppercase tracking-widest">Back</span>
+          </button>
+
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+
+          <span class="text-gray-400 transition font-bold">
+            Manage Services
+          </span>
         </div>
+
+        <h1 class="hero-title">
+          <span class="hero-word-dark hero-underlined">Library</span>
+          <span class="hero-word-gold"> Report</span>
+        </h1>
+        <p class="hero-subtitle">
+          Generate and review reports by department, course, and duration.
+        </p>
       </header>
 
       <!-- CONTENT -->
@@ -37,7 +40,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
           <!-- LEFT PANEL: Filters -->
-          <div class="bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden">
+          <div class="panel-animate bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden" style="animation-delay: 0.1s">
 
             <!-- Card Header -->
             <div class="px-6 py-4 border-b border-[#d4e4da]">
@@ -47,7 +50,7 @@
             <div class="px-6 py-5 space-y-5">
 
               <!-- Department -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.18s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Department</label>
                 <div class="relative">
                   <select
@@ -65,7 +68,7 @@
               </div>
 
               <!-- Course -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.24s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Course</label>
                 <div class="relative">
                   <select
@@ -85,7 +88,7 @@
               <div class="h-px bg-[#d4e4da]" />
 
               <!-- Duration -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.30s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Duration</label>
                 <div class="space-y-3">
 
@@ -99,7 +102,7 @@
                       <span v-if="durationType === 'day'" class="w-1.5 h-1.5 rounded-full bg-white" />
                     </span>
                     <span class="text-sm text-[#3d6455]">Specific day</span>
-                    <span v-if="durationType === 'day'" class="ml-auto text-xs font-medium text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-3 py-1">
+                    <span v-if="durationType === 'day'" class="ml-auto text-xs font-medium text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-3 py-1 badge-pop">
                       {{ todayLabel }}
                     </span>
                   </label>
@@ -114,7 +117,7 @@
                       <span v-if="durationType === 'month'" class="w-1.5 h-1.5 rounded-full bg-white" />
                     </span>
                     <span class="text-sm text-[#3d6455]">Specific month</span>
-                    <div v-if="durationType === 'month'" class="ml-auto flex gap-2">
+                    <div v-if="durationType === 'month'" class="ml-auto flex gap-2 badge-pop">
                       <select v-model="selectedMonth" class="bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-2 py-1 text-xs text-[#0d2b0f] outline-none focus:border-[#0d2b0f]">
                         <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
                       </select>
@@ -134,7 +137,7 @@
                       <span v-if="durationType === 'semester'" class="w-1.5 h-1.5 rounded-full bg-white" />
                     </span>
                     <span class="text-sm text-[#3d6455]">Semester</span>
-                    <div v-if="durationType === 'semester'" class="ml-auto">
+                    <div v-if="durationType === 'semester'" class="ml-auto badge-pop">
                       <select v-model="selectedSemester" class="bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-2 py-1 text-xs text-[#0d2b0f] outline-none focus:border-[#0d2b0f]">
                         <option>1st Semester</option>
                         <option>2nd Semester</option>
@@ -149,7 +152,7 @@
               <div class="h-px bg-[#d4e4da]" />
 
               <!-- Period Range -->
-              <div class="space-y-1.5">
+              <div class="field-animate space-y-1.5" style="animation-delay: 0.36s">
                 <label class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Period</label>
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-medium text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-3 py-1.5 flex-1 text-center">{{ todayLabel }}</span>
@@ -159,11 +162,39 @@
               </div>
 
               <!-- School Year -->
-              <div class="flex items-center gap-3">
+              <div class="field-animate flex items-center gap-3" style="animation-delay: 0.42s">
                 <span class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">School year</span>
                 <span class="ml-auto text-xs font-semibold text-[#0d2b0f] bg-[#e6f2ec] border border-[#a8ccb8] rounded-lg px-4 py-1.5">2025 — 2026</span>
               </div>
 
+            </div>
+
+            <!-- Color Palette -->
+            <div class="field-animate bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden" style="animation-delay: 0.48s">
+              <div class="px-6 py-4 border-b border-[#d4e4da]">
+                <p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Color Palette</p>
+              </div>
+              <div class="px-6 py-5 space-y-4">
+                <div class="relative">
+                  <select
+                    v-model="selectedPalette"
+                    class="w-full bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-3 py-2 text-sm text-[#0d2b0f] appearance-none outline-none focus:border-[#0d2b0f] transition-colors"
+                  >
+                    <option v-for="(_, name) in palettes" :key="name" :value="name">{{ name }}</option>
+                  </select>
+                  <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#4a7060]">
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  </span>
+                </div>
+                <div class="flex gap-2 p-3 bg-[#f0f4f1] rounded-xl border border-[#d4e4da]">
+                  <div
+                    v-for="(color, i) in palettes[selectedPalette]"
+                    :key="color"
+                    class="palette-swatch w-8 h-8 rounded-md border border-white/10 flex-1"
+                    :style="{ background: color, animationDelay: `${i * 50}ms` }"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -171,7 +202,7 @@
           <div class="space-y-6">
 
             <!-- Chart Display Options -->
-            <div class="bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden">
+            <div class="panel-animate bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden" style="animation-delay: 0.2s">
               <div class="px-6 py-4 border-b border-[#d4e4da]">
                 <p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Chart Display</p>
               </div>
@@ -199,46 +230,106 @@
               </div>
             </div>
 
-            <!-- Color Palette -->
-            <div class="bg-white rounded-2xl border border-[#c2d4cb] overflow-hidden">
-              <div class="px-6 py-4 border-b border-[#d4e4da]">
-                <p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Color Palette</p>
+            <!-- Sample Chart Panel -->
+            <div class="panel-animate bg-white rounded-2xl border border-[#c2d4cb] p-6" style="animation-delay: 0.3s">
+              <div class="flex justify-between mb-3">
+                <p class="text-sm font-semibold text-[#0d2b0f]">Sample Chart</p>
+                <button
+                  @click="downloadChart"
+                  class="text-xs px-3 py-1 bg-[#0d2b0f] text-white rounded-lg transition-transform active:scale-95 hover:bg-[#183d1b]"
+                >
+                  Download
+                </button>
               </div>
-              <div class="px-6 py-5 space-y-4">
-                <div class="relative">
-                  <select
-                    v-model="selectedPalette"
-                    class="w-full bg-[#f0f4f1] border border-[#c2d4cb] rounded-lg px-3 py-2 text-sm text-[#0d2b0f] appearance-none outline-none focus:border-[#0d2b0f] transition-colors"
-                  >
-                    <option v-for="(_, name) in palettes" :key="name" :value="name">{{ name }}</option>
-                  </select>
-                  <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#4a7060]">
-                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                  </span>
+
+              <!-- Empty state when no charts generated yet -->
+              <div v-if="!chartsGenerated" class="flex flex-col items-center justify-center py-12 text-center">
+                <div class="w-14 h-14 rounded-2xl bg-[#e6f2ec] border border-[#a8ccb8] flex items-center justify-center mb-3">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4a7060" stroke-width="1.5">
+                    <rect x="3" y="10" width="4" height="11" rx="1"/>
+                    <rect x="10" y="6" width="4" height="15" rx="1"/>
+                    <rect x="17" y="3" width="4" height="18" rx="1"/>
+                  </svg>
                 </div>
-                <div class="flex gap-2 p-3 bg-[#f0f4f1] rounded-xl border border-[#d4e4da]">
-                  <div
-                    v-for="color in palettes[selectedPalette]"
-                    :key="color"
-                    class="w-8 h-8 rounded-md border border-white/10 flex-1"
-                    :style="{ background: color }"
-                  />
+                <p class="text-xs font-semibold text-[#4a7060] uppercase tracking-widest mb-1">No Charts Yet</p>
+                <p class="text-xs text-[#7a9e90]">Click "Generate Chart" to render the charts with your selected palette.</p>
+              </div>
+
+              <!-- Charts (shown after generation) -->
+              <div v-show="chartsGenerated" class="space-y-6">
+
+                <!-- BAR -->
+                <div class="chart-block">
+                  <p class="text-xs mb-2 font-semibold text-[#0d2b0f]">Bar Chart</p>
+                  <canvas ref="barCanvas"></canvas>
                 </div>
+
+                <!-- PIE -->
+                <div class="chart-block">
+                  <p class="text-xs mb-2 font-semibold text-[#0d2b0f]">Pie Chart</p>
+                  <canvas ref="pieCanvas"></canvas>
+                </div>
+
+                <!-- LINE -->
+                <div class="chart-block">
+                  <p class="text-xs mb-2 font-semibold text-[#0d2b0f]">Line Chart</p>
+                  <canvas ref="lineCanvas"></canvas>
+                </div>
+
               </div>
             </div>
 
-            <!-- Generate Button -->
-            <button
-              @click="generateReport"
-              :disabled="isGenerating"
-              class="w-full py-3 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
-              :class="isGenerating ? 'bg-[#8ab5a0] text-[#3d6455]' : 'bg-[#0d2b0f] text-white hover:bg-[#183d1b] active:scale-[0.98]'"
-            >
-              {{ isGenerating ? 'Generating...' : 'Generate Report' }}
-            </button>
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+
+              <!-- Generate Chart Button -->
+              <button
+                @click="generateCharts"
+                :disabled="isGeneratingCharts"
+                class="generate-btn w-full py-3 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150 border border-[#a8ccb8] disabled:opacity-60 disabled:cursor-not-allowed"
+                :class="isGeneratingCharts ? 'bg-[#d0e8d8] text-[#4a7060]' : 'bg-[#e6f2ec] text-[#0d2b0f] hover:bg-[#d0e8d8] active:scale-[0.98]'"
+                style="animation-delay: 0.40s"
+              >
+                <span class="flex items-center justify-center gap-2">
+                  <svg v-if="!isGeneratingCharts" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="10" width="4" height="11" rx="1"/>
+                    <rect x="10" y="6" width="4" height="15" rx="1"/>
+                    <rect x="17" y="3" width="4" height="18" rx="1"/>
+                  </svg>
+                  <svg v-else class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                  </svg>
+                  {{ isGeneratingCharts ? 'Generating Charts...' : 'Generate Chart' }}
+                </span>
+              </button>
+
+              <!-- Generate Report Button -->
+              <button
+                @click="generateReport"
+                :disabled="isGenerating"
+                class="generate-btn w-full py-3 rounded-xl text-sm font-semibold tracking-wide transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+                :class="isGenerating ? 'bg-[#8ab5a0] text-[#3d6455]' : 'bg-[#0d2b0f] text-white hover:bg-[#183d1b] active:scale-[0.98]'"
+                style="animation-delay: 0.45s"
+              >
+                <span class="flex items-center justify-center gap-2">
+                  <svg v-if="!isGenerating" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                  <svg v-else class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                  </svg>
+                  {{ isGenerating ? 'Generating...' : 'Generate Report' }}
+                </span>
+              </button>
+
+            </div>
 
             <!-- Progress + Status -->
-            <div v-if="isGenerating || statusMsg" class="space-y-2">
+            <div v-if="isGenerating || statusMsg" class="space-y-2 status-animate">
               <div class="h-1 w-full bg-[#d4e4da] rounded-full overflow-hidden">
                 <div
                   class="h-full bg-[#0d2b0f] rounded-full transition-all duration-300 ease-out"
@@ -248,10 +339,23 @@
               <div class="flex items-center gap-2">
                 <span
                   class="w-2 h-2 rounded-full flex-shrink-0"
-                  :class="statusColor === 'green' ? 'bg-[#0d2b0f]' : statusColor === 'yellow' ? 'bg-[#b45309]' : 'bg-[#0d2b0f]'"
+                  :class="statusColor === 'green' ? 'bg-[#16a34a]' : statusColor === 'yellow' ? 'bg-[#b45309]' : 'bg-[#0d2b0f]'"
                 />
-                <span class="text-xs" :class="statusColor === 'green' ? 'text-[#0d2b0f]' : statusColor === 'yellow' ? 'text-[#b45309]' : 'text-[#0d2b0f]'">
+                <span class="text-xs" :class="statusColor === 'green' ? 'text-[#16a34a]' : statusColor === 'yellow' ? 'text-[#b45309]' : 'text-[#0d2b0f]'">
                   {{ statusMsg }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Chart Status -->
+            <div v-if="chartStatusMsg" class="space-y-2 status-animate">
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-2 h-2 rounded-full flex-shrink-0"
+                  :class="chartStatusColor === 'green' ? 'bg-[#16a34a]' : 'bg-[#b45309]'"
+                />
+                <span class="text-xs" :class="chartStatusColor === 'green' ? 'text-[#16a34a]' : 'text-[#b45309]'">
+                  {{ chartStatusMsg }}
                 </span>
               </div>
             </div>
@@ -265,13 +369,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, nextTick } from 'vue'
 import { jsPDF } from 'jspdf'
 import Sidebar from '@/components/Sidebar.vue'
+import Chart from 'chart.js/auto'
+import { useRouter } from 'vue-router'
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+// ── Chart Refs ────────────────────────────────────────────────────────────────
+const barCanvas  = ref<HTMLCanvasElement | null>(null)
+const pieCanvas  = ref<HTMLCanvasElement | null>(null)
+const lineCanvas = ref<HTMLCanvasElement | null>(null)
 
+let barChart:  Chart | null = null
+let pieChart:  Chart | null = null
+let lineChart: Chart | null = null
+
+// ── Data ─────────────────────────────────────────────────────────────────────
 const departments: Record<string, string[]> = {
   'College of Engineering and Geo Science': [
     'BS Agricultural and Biosystem Engineering',
@@ -279,16 +392,19 @@ const departments: Record<string, string[]> = {
     'BS Electronics Engineering',
     'BS Geodetic Engineering',
     'BS Geology',
-    'BS Mining Engineering'
+    'BS Mining Engineering',
+    'All'
   ],
   'College of Computing and Information Technology': [
     'BS Information Technology',
     'BS Information System',
-    'BS Computer Science'
+    'BS Computer Science',
+    'All'
   ],
   'College of Education': [
     'Bachelor of Secondary Education',
-    'Bachelor of Elementary Education'
+    'Bachelor of Elementary Education',
+    'All'
   ],
   'College of Mathematics and Natural Sciences': [
     'BS Applied Mathematics',
@@ -296,32 +412,37 @@ const departments: Record<string, string[]> = {
     'BS Chemistry',
     'BS Marine Biology',
     'BS Mathematics',
-    'BS Physics'
+    'BS Physics',
+    'All'
   ],
   'College of Agriculture and Agri-Industries': [
-    'BS Agriculture'
+    'BS Agriculture',
+    'All'
   ],
   'College of Forestry and Environmental Sciences': [
     'BS Agroforestry',
     'BS Environmental Science',
-    'BS Forestry'
+    'BS Forestry',
+    'All'
   ],
   'College of Humanities and Social Sciences': [
-    'BA Sociology',
+    'AB Sociology',
     'BS Psychology',
-    'BS Social Work'
+    'BS Social Work',
+    'All'
   ],
   'Graduate Studies': [
     'Doctor of Education',
     'Master of Arts in Education',
-    'Master od Arts in Public Administration',
+    'Master of Arts in Public Administration',
     'Master of Science Education',
     'Master of Science in Biology',
     'Master of Science in Mathematics',
-    'Master of Sceince in Mathematics Education',
+    'Master of Science in Mathematics Education',
     'PHD in Mathematics',
     'PHD in Mathematics Education',
-    'PHD in Science Education'
+    'PHD in Science Education',
+    'All'
   ],
 }
 
@@ -334,10 +455,9 @@ const palettes: Record<string, string[]> = {
 }
 
 const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
-const years  = ['2024', '2025', '2026']
+const years  = ['2024', '2025', '2026', '2027']
 
-// ── State ─────────────────────────────────────────────────────────────────────
-
+// ── State ────────────────────────────────────────────────────────────────────
 const router = useRouter()
 
 const selectedDept     = ref('')
@@ -349,20 +469,28 @@ const selectedSemester = ref('1st Semester')
 const chartView        = ref<'separate' | 'single'>('separate')
 const selectedPalette  = ref('Pastel')
 
-const isGenerating = ref(false)
-const progress     = ref(0)
-const statusMsg    = ref('')
-const statusColor  = ref<'blue' | 'yellow' | 'green'>('blue')
+const isGenerating       = ref(false)
+const isGeneratingCharts = ref(false)
+const chartsGenerated    = ref(false)
+const progress           = ref(0)
+const statusMsg          = ref('')
+const statusColor        = ref<'blue' | 'yellow' | 'green'>('blue')
+const chartStatusMsg     = ref('')
+const chartStatusColor   = ref<'green' | 'yellow'>('green')
 
-// ── Computed ──────────────────────────────────────────────────────────────────
-
+// ── Computed ─────────────────────────────────────────────────────────────────
 const availableCourses = computed(() =>
   selectedDept.value ? departments[selectedDept.value] : []
 )
 
 const todayLabel = computed(() => {
   const d = new Date()
-  return d.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  })
 })
 
 // ── Methods ───────────────────────────────────────────────────────────────────
@@ -379,30 +507,163 @@ function onDeptChange() {
   selectedCourse.value = ''
 }
 
+// Generate Charts
+async function generateCharts() {
+  isGeneratingCharts.value = true
+  chartStatusMsg.value     = ''
+
+  // Wait for DOM to be ready (in case charts were hidden)
+  await nextTick()
+
+  try {
+    const colors = palettes[selectedPalette.value] as string[]
+
+    // Destroy existing chart instances to avoid "canvas already in use" error
+    barChart?.destroy()
+    pieChart?.destroy()
+    lineChart?.destroy()
+    barChart  = null
+    pieChart  = null
+    lineChart = null
+
+    const labels = ['1st Year', '2nd Year', '3rd Year', '4th Year', '5th Year']
+    const data   = [42, 67, 55, 80, 38]
+
+    // ── BAR CHART ─────────────────────────────────────────────────────────
+    if (barCanvas.value) {
+      barChart = new Chart(barCanvas.value, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Library Visits',
+            data,
+            backgroundColor: colors.slice(0, 5),
+            borderRadius: 6,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          animation: { duration: 0 }, // Disable animation so canvas is ready immediately for PDF
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true, grid: { color: '#e5e7eb' } }
+          }
+        }
+      })
+    }
+
+    // ── PIE CHART ─────────────────────────────────────────────────────────
+    if (pieCanvas.value) {
+      pieChart = new Chart(pieCanvas.value, {
+        type: 'pie',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: colors.slice(0, 5),
+            borderWidth: 2,
+            borderColor: '#fff',
+          }]
+        },
+        options: {
+          responsive: true,
+          animation: { duration: 0 }, // Disable animation so canvas is ready immediately for PDF
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 12, font: { size: 10 } }
+            }
+          }
+        }
+      })
+    }
+
+    // ── LINE CHART ────────────────────────────────────────────────────────
+    if (lineCanvas.value) {
+      lineChart = new Chart(lineCanvas.value, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Library Visits',
+            data,
+            borderColor: colors[0],
+            backgroundColor: colors[0] + '33',
+            pointBackgroundColor: colors.slice(0, 5),
+            pointRadius: 5,
+            tension: 0.4,
+            fill: true,
+          }]
+        },
+        options: {
+          responsive: true,
+          animation: { duration: 0 }, // Disable animation so canvas is ready immediately for PDF
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false } },
+            y: { beginAtZero: true, grid: { color: '#e5e7eb' } }
+          }
+        }
+      })
+    }
+
+    chartsGenerated.value  = true
+    chartStatusMsg.value   = 'Charts generated successfully.'
+    chartStatusColor.value = 'green'
+  } catch (err) {
+    console.error(err)
+    chartStatusMsg.value   = 'Failed to generate charts.'
+    chartStatusColor.value = 'yellow'
+  } finally {
+    isGeneratingCharts.value = false
+  }
+}
+
+// Download button just triggers full report generation
+async function downloadChart() {
+  await generateReport()
+}
+
 async function generateReport() {
   if (!selectedDept.value) {
-    statusMsg.value = 'Please select a department first.'
+    statusMsg.value   = 'Please select a department first.'
     statusColor.value = 'yellow'
-    progress.value = 0
+    progress.value    = 0
     return
   }
 
   if (!selectedCourse.value) {
-    statusMsg.value = 'Please select a course first.'
+    statusMsg.value   = 'Please select a course first.'
     statusColor.value = 'yellow'
-    progress.value = 0
+    progress.value    = 0
     return
   }
 
   isGenerating.value = true
+  statusMsg.value    = 'Preparing charts...'
+  statusColor.value  = 'blue'
+  progress.value     = 5
+
+  // ── AUTO-GENERATE CHARTS IF NOT YET DONE ─────────────────────────────────
+  // This ensures charts always exist in the PDF even if user skipped the button
+  if (!chartsGenerated.value) {
+    await generateCharts()
+    // Small delay to make sure canvas is fully rendered before toDataURL()
+    await new Promise(resolve => setTimeout(resolve, 300))
+  }
+
   statusMsg.value = 'Generating PDF report...'
-  statusColor.value = 'blue'
-  progress.value = 10
+  progress.value  = 15
 
   try {
-    const doc = new jsPDF('l', 'mm', 'a4')
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const pageHeight = doc.internal.pageSize.getHeight()
+    const doc        = new jsPDF('l', 'mm', 'a4')
+    const pageWidth  = doc.internal.pageSize.getWidth()   // 297mm
+    const pageHeight = doc.internal.pageSize.getHeight()  // 210mm
 
     const extractedDate = new Date().toLocaleDateString('en-US', {
       weekday: 'long',
@@ -417,207 +678,314 @@ async function generateReport() {
       second: '2-digit'
     })
 
-    // White background
+    // ── WHITE BACKGROUND ────────────────────────────────────────────────────
     doc.setFillColor(255, 255, 255)
     doc.rect(0, 0, pageWidth, pageHeight, 'F')
-
-    // Default colors
     doc.setTextColor(40, 40, 40)
     doc.setDrawColor(120, 120, 120)
     doc.setLineWidth(0.4)
 
-    // ===== LOGO PLACEHOLDER =====
-    const logoX = 12
-    const logoY = 10
-    const logoW = 20
-    const logoH = 20
-
+    // ── LOGO PLACEHOLDER ────────────────────────────────────────────────────
+    const logoX = 12, logoY = 8, logoW = 20, logoH = 20
     doc.rect(logoX, logoY, logoW, logoH)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8)
     doc.setTextColor(120, 120, 120)
     doc.text('LOGO', logoX + (logoW / 2), logoY + 11, { align: 'center' })
 
-    // ===== HEADER =====
+    // ── HEADER TEXT ─────────────────────────────────────────────────────────
     doc.setTextColor(40, 40, 40)
-
     doc.setFont('times', 'bold')
-    doc.setFontSize(20)
-    doc.text('Caraga State University', 38, 18)
-
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(12)
-    doc.text('Ampayon, Butuan City', 38, 27)
-
-    doc.setFont('times', 'bold')
-    doc.setFontSize(13)
-    doc.text(`Extracted: ${extractedDate}`, 210, 18)
-
+    doc.setFontSize(18)
+    doc.text('Caraga State University', 38, 16)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(11)
-    doc.text(extractedTime, 233, 27)
+    doc.text('Ampayon, Butuan City', 38, 23)
 
-    doc.setFont('times', 'normal')
+    // Extracted date/time (right side)
+    doc.setFont('times', 'bold')
+    doc.setFontSize(11)
+    doc.text(`Extracted: ${extractedDate}`, pageWidth - 10, 14, { align: 'right' })
+    doc.setFont('helvetica', 'normal')
     doc.setFontSize(10)
+    doc.text(extractedTime, pageWidth - 10, 21, { align: 'right' })
 
+    // Sub-header info line
+    doc.setFont('times', 'normal')
+    doc.setFontSize(8.5)
     const headerLine =
-      `College: ${selectedDept.value} | Program: ${selectedCourse.value} | Month: ${selectedMonth.value} | Year: ${selectedYear.value} | School Year: 2025 to 2026`
+      `College: ${selectedDept.value}  |  Program: ${selectedCourse.value}  |  Month: ${selectedMonth.value}  |  Year: ${selectedYear.value}  |  School Year: 2025–2026`
+    doc.text(headerLine, 38, 30)
 
-    doc.text(headerLine, 38, 35)
+    // Divider line
+    doc.setDrawColor(180, 180, 180)
+    doc.setLineWidth(0.3)
+    doc.line(12, 33, pageWidth - 12, 33)
 
     progress.value = 30
 
-    // ===== LEFT MAIN CONTENT =====
-    const leftX = 18
-    const leftY = 42
-    const leftW = 165
-    const leftH = 122
+    // ── CHART IMAGES ────────────────────────────────────────────────────────
+    // Layout: 3 charts side-by-side in landscape A4
+    // Usable width: 297 - 24 margins = 273mm split into 3
+    const chartStartY = 37
+    const chartH      = 90    // height of each chart in mm
+    const chartW      = 87    // width of each chart in mm
+    const chartGap    = 4     // gap between charts in mm
+    const chartStartX = 12    // left margin
 
-    doc.setDrawColor(120, 120, 120)
-    doc.rect(leftX, leftY, leftW, leftH)
+    const chartConfigs = [
+      { canvas: barCanvas.value,  label: 'Bar Chart' },
+      { canvas: pieCanvas.value,  label: 'Pie Chart' },
+      { canvas: lineCanvas.value, label: 'Line Chart' },
+    ]
 
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.setTextColor(80, 80, 80)
-    doc.text('CHART / TABLE AREA', leftX + leftW / 2, leftY + 8, { align: 'center' })
+    chartConfigs.forEach(({ canvas, label }, i) => {
+      const x = chartStartX + i * (chartW + chartGap)
+
+      // Chart label above
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      doc.setTextColor(40, 40, 40)
+      doc.text(label, x + chartW / 2, chartStartY - 1, { align: 'center' })
+
+      if (canvas) {
+        // Export canvas to PNG and embed in PDF
+        const imgData = canvas.toDataURL('image/png', 1.0)
+        doc.addImage(imgData, 'PNG', x, chartStartY, chartW, chartH)
+      } else {
+        // Fallback placeholder if canvas not available
+        doc.setDrawColor(200, 200, 200)
+        doc.setLineWidth(0.3)
+        doc.rect(x, chartStartY, chartW, chartH)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(8)
+        doc.setTextColor(160, 160, 160)
+        doc.text('Chart not available', x + chartW / 2, chartStartY + chartH / 2, { align: 'center' })
+      }
+
+      // Thin border around chart image
+      doc.setDrawColor(210, 210, 210)
+      doc.setLineWidth(0.2)
+      doc.rect(x, chartStartY, chartW, chartH)
+    })
+
+    progress.value = 65
+
+    // ── DESCRIPTION / LEGEND PANEL (below charts) ───────────────────────────
+    const descY   = chartStartY + chartH + 6
+    const descH   = pageHeight - descY - 10
+    const descX   = 12
+    const descW   = pageWidth - 24
 
     doc.setDrawColor(180, 180, 180)
+    doc.setLineWidth(0.3)
+    doc.rect(descX, descY, descW, descH)
 
-    for (let i = 1; i <= 8; i++) {
-      const lineY = leftY + 10 + i * 13
-      doc.line(leftX + 1, lineY, leftX + leftW - 1, lineY)
-    }
+    // Section label
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(8)
+    doc.setTextColor(80, 80, 80)
+    doc.text('Report Description', descX + 3, descY + 5)
 
-    for (let i = 1; i <= 6; i++) {
-      const lineX = leftX + i * 24
-      doc.line(lineX, leftY + 10, lineX, leftY + leftH - 1)
-    }
+    // Divider inside description box
+    doc.setDrawColor(200, 200, 200)
+    doc.line(descX + 1, descY + 7, descX + descW - 1, descY + 7)
 
-    progress.value = 55
-
-    // ===== RIGHT LEGEND + DESCRIPTION =====
-    const sideX = 192
-    const sideY = 48
-    const sideW = 85
-    const sideH = 108
-
-    doc.setDrawColor(120, 120, 120)
-    doc.rect(sideX, sideY, sideW, sideH)
-    doc.line(sideX, sideY + 25, sideX + sideW, sideY + 25)
+    // Description text
+    const description =
+      `This report presents the library visit data for ${selectedCourse.value} under the ${selectedDept.value}. ` +
+      `The data covers ${durationType.value === 'day' ? todayLabel.value : durationType.value === 'month' ? `${selectedMonth.value} ${selectedYear.value}` : selectedSemester.value} ` +
+      `for Academic Year 2025–2026. The bar chart shows visits by year level, the pie chart shows proportional distribution, ` +
+      `and the line chart illustrates the trend across year levels.`
 
     doc.setFont('times', 'normal')
-    doc.setFontSize(10.5)
+    doc.setFontSize(8.5)
     doc.setTextColor(40, 40, 40)
-    doc.text('Legend:', sideX + 2, sideY + 6)
-    doc.text('Horizontal Bar', sideX + 2, sideY + 12)
-    doc.text('X-axis', sideX + 2, sideY + 18)
-    doc.text('Y-axis', sideX + 2, sideY + 24)
+    const wrappedDesc = doc.splitTextToSize(description, descW - 6)
+    doc.text(wrappedDesc, descX + 3, descY + 12)
 
-    doc.text('Description:', sideX + 2, sideY + 31)
+    // Legend swatches (color palette used)
+    const colors = palettes[selectedPalette.value] ?? []
+    const swatchY     = descY + 11
+    const swatchStart = descX + descW - 110
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(7)
+    doc.setTextColor(80, 80, 80)
+    doc.text('Palette:', swatchStart, swatchY)
 
-    const description =
-      `The chart presents the selected library report data for ${selectedCourse.value} under ${selectedDept.value}. This report uses a landscape layout with the main visualization on the left and the legend and description panel on the right.`
+    colors.slice(0, 5).forEach((hex, ci) => {
+      const r = parseInt(hex.slice(1, 3), 16)
+      const g = parseInt(hex.slice(3, 5), 16)
+      const b = parseInt(hex.slice(5, 7), 16)
+      doc.setFillColor(r, g, b)
+      doc.setDrawColor(200, 200, 200)
+      doc.setLineWidth(0.2)
+      doc.roundedRect(swatchStart + 14 + ci * 8, swatchY - 4, 6, 6, 1, 1, 'FD')
+    })
 
-    const wrappedDesc = doc.splitTextToSize(description, sideW - 4)
-    doc.text(wrappedDesc, sideX + 2, sideY + 38)
+    progress.value = 90
 
-    progress.value = 80
-
+    // ── FOOTER ──────────────────────────────────────────────────────────────
     doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(90, 90, 90)
-    doc.text('Generated by ACCESS', pageWidth / 2, pageHeight - 4, { align: 'center' })
+    doc.setFontSize(7)
+    doc.setTextColor(150, 150, 150)
+    doc.text('Generated by ACCESS — Library Management System', pageWidth / 2, pageHeight - 4, { align: 'center' })
 
     progress.value = 100
+
     doc.save('Library_Report.pdf')
 
     isGenerating.value = false
-    statusMsg.value = 'PDF report generated successfully.'
-    statusColor.value = 'green'
+    statusMsg.value    = 'PDF report generated successfully.'
+    statusColor.value  = 'green'
   } catch (error) {
     console.error(error)
     isGenerating.value = false
-    statusMsg.value = 'Failed to generate PDF report.'
-    statusColor.value = 'yellow'
-    progress.value = 0
+    statusMsg.value    = 'Failed to generate PDF report.'
+    statusColor.value  = 'yellow'
+    progress.value     = 0
   }
 }
 </script>
 
 <style scoped>
 .report-root {
-  font-family: 'DM Sans', sans-serif;
-}
-
-.report-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-  border-bottom: 1px solid #dfe6dd;
-  background: #f0f4f1;
-  margin-top: 0;
-}
-
-.header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.header-breadcrumb {
-  display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(13, 43, 15, 0.4);
-}
-
-.header-breadcrumb svg {
-  width: 0.9rem;
-  height: 0.9rem;
-  color: rgba(13, 43, 15, 0.4);
-}
-
-.breadcrumb-back {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  color: inherit;
-  text-transform: inherit;
-  letter-spacing: inherit;
-  font-weight: inherit;
-  cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.breadcrumb-back:hover {
-  opacity: 0.75;
-  color: #000000;
-}
-
-.breadcrumb-back:active {
-  transform: translateY(1px);
-}
-
-.header-title {
   font-family: 'Poppins', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: #0d2b0f;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
 }
 
-.header-sub {
-  font-size: 0.82rem;
-  color: #5b725d;
+/* ─── BREADCRUMB ─── */
+.header-breadcrumb {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* ─── HERO TITLE ─── */
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  display: inline-block;
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+.hero-word-dark  { color: #0d2b0f; }
+.hero-word-gold  { color: #e6a800; }
+.hero-underlined {
+  position: relative;
+  display: inline-block;
+}
+.hero-underlined::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #0d2b0f, #e6a800);
+  border-radius: 3px;
+  transform-origin: left;
+  animation: underlineGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+.hero-subtitle {
+  font-size: 0.88rem;
   font-weight: 400;
-  margin-top: 0.15rem;
+  color: #6b7280;
+  margin-top: 20px;
+  animation: fadeIn 0.6s ease 0.55s both;
+}
+
+/* ─── PANEL ENTRANCE ─── */
+.panel-animate {
+  opacity: 0;
+  animation: panelIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ─── FIELD ENTRANCE ─── */
+.field-animate {
+  opacity: 0;
+  animation: fieldIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes fieldIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ─── PALETTE SWATCH POP ─── */
+.palette-swatch {
+  animation: swatchPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes swatchPop {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── RADIO BADGE POP ─── */
+.badge-pop {
+  animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes badgePop {
+  from { opacity: 0; transform: scale(0.8) translateX(6px); }
+  to   { opacity: 1; transform: scale(1) translateX(0); }
+}
+
+/* ─── CHART BLOCK REVEAL ─── */
+.chart-block {
+  opacity: 0;
+  animation: chartReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+@keyframes chartReveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── GENERATE BUTTON ─── */
+.generate-btn {
+  opacity: 0;
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+/* ─── STATUS ANIMATE ─── */
+.status-animate {
+  animation: fadeIn 0.3s ease both;
+}
+
+/* ─── SPINNER ─── */
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── KEYFRAMES ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes underlineGrow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 </style>

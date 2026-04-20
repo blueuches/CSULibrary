@@ -131,21 +131,21 @@ const iconBackup = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 const userButtons = [
   {
     color: 'primary',
-    route: '/admin/personnel/users',
+    route: '/admin/management/view-users',
     title: 'View All Users',
     desc: 'Browse and manage registered accounts',
     icon: iconUsers,
   },
-  {
-    color: 'success',
-    route: '/admin/personnel/users/add',
-    title: 'Add New User',
-    desc: 'Register a new personnel account',
-    icon: iconAddUser,
-  },
+  // {
+  //   color: 'success',
+  //   route: '/admin/personnel/users/add',
+  //   title: 'Add New User',
+  //   desc: 'Register a new personnel account',
+  //   icon: iconAddUser,
+  // },
   {
     color: 'warning',
-    route: '/admin/personnel/users/status',
+    route: '/admin/management/activation',
     title: 'Activate / Deactivate',
     desc: 'Toggle user account status',
     icon: iconStatus,
@@ -155,21 +155,21 @@ const userButtons = [
 const roleButtons = [
   {
     color: 'purple',
-    route: '/admin/personnel/roles',
+    route: '/admin/management/roles',
     title: 'Manage Roles',
     desc: 'Create and edit system roles',
     icon: iconShield,
   },
   {
     color: 'indigo',
-    route: '/admin/personnel/roles/assign',
+    route: '/admin/management/assignation',
     title: 'Assign Roles to Users',
     desc: 'Link personnel to specific roles',
     icon: iconAssign,
   },
   {
     color: 'gold',
-    route: '/admin/personnel/permissions',
+    route: '/admin/management/permission',
     title: 'Set Permissions',
     desc: 'Define granular access rights',
     icon: iconLock,
@@ -177,23 +177,23 @@ const roleButtons = [
 ]
 
 const settingsTiles = [
-  {
-    route: '/admin/settings/system',
-    label: 'System Settings',
-    desc: 'Configure core preferences',
-    iconStyle: 'dark',
-    icon: iconGear,
-  },
-  {
-    route: '/admin/settings/audit',
-    label: 'Audit Logs',
-    desc: 'Review system activity',
-    iconStyle: 'mid',
-    icon: iconFile,
-  },
+  // {
+  //   route: '/admin/settings/system',
+  //   label: 'System Settings',
+  //   desc: 'Configure core preferences',
+  //   iconStyle: 'dark',
+  //   icon: iconGear,
+  // },
+  // {
+  //   route: '/admin/settings/audit',
+  //   label: 'Audit Logs',
+  //   desc: 'Review system activity',
+  //   iconStyle: 'mid',
+  //   icon: iconFile,
+  // },
   {
     route: '/admin/settings/backup',
-    label: 'Backup & Restore',
+    label: 'Backup',
     desc: 'Safeguard system data',
     iconStyle: 'dark',
     icon: iconBackup,

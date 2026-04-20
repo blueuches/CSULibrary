@@ -23,7 +23,7 @@
           </div>
         </div>
       </header>
-      <!-- ── ACTION NAV ── -->
+
       <div class="attn-actions">
         <button
           v-for="tab in actionTabs"
@@ -165,39 +165,6 @@
               <p class="ctrl-sub">All export data</p>
             </div>
 
-            <button class="sync-btn sync-btn--1" @click="$router.push('/admin/attendance/logs')">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <polyline points="23 4 23 10 17 10" />
-                <polyline points="1 20 1 14 7 14" />
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-              </svg>
-              <span>Attendance Logs</span>
-            </button>
-
-            <button class="sync-btn sync-btn--2" @click="$router.push('/admin/attendance/import')">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-              >
-                <polyline points="23 4 23 10 17 10" />
-                <polyline points="1 20 1 14 7 14" />
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-              </svg>
-              <span>Add Import Records</span>
-            </button>
           </div>
 
           <div class="export-card">
@@ -221,8 +188,17 @@
                 </thead>
                 <tbody>
                   <tr
+                    v-if="exportLogs.length === 0"
+                    class="erow"
+                  >
+                    <td colspan="4" class="empty-state-cell">
+                      No export history found.
+                    </td>
+                  </tr>
+
+                  <tr
                     v-for="(log, i) in exportLogs"
-                    :key="i"
+                    :key="log.id"
                     class="erow"
                     :style="{ animationDelay: 0.6 + i * 0.07 + 's' }"
                   >
@@ -231,7 +207,7 @@
                       <span class="erow-date__time">{{ log.time }}</span>
                     </td>
                     <td>
-                      <span :class="['etype-badge', 'etype-badge--' + log.type.toLowerCase()]">
+                      <span :class="['etype-badge', 'etype-badge--' + log.typeClass]">
                         {{ log.type }}
                       </span>
                     </td>
@@ -240,7 +216,7 @@
                       <span>{{ log.user }}</span>
                     </td>
                     <td>
-                      <span :class="['estatus', 'estatus--' + log.status]">
+                      <span :class="['estatus', 'estatus--' + log.statusClass]">
                         <span class="estatus-dot"></span>{{ log.status }}
                       </span>
                     </td>
@@ -256,9 +232,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import Sidebar from '@/components/Sidebar.vue'
-import { supabase } from '@/lib/supabase'
+import { ref, onMounted, computed } from "vue"
+import Sidebar from "@/components/Sidebar.vue"
+import { supabase } from "@/lib/supabase"
 
 type StudentInfo = {
   id_number: string
@@ -281,33 +257,43 @@ type AttendanceLog = {
   students?: StudentInfo | StudentInfo[] | null
 }
 
+type ExportBatchRow = {
+  id: string
+  file_name: string | null
+  file_type: string | null
+  uploaded_at: string | null
+  row_count: number | null
+  status: string | null
+  exported_by_name: string | null
+}
+
+type ExportLogView = {
+  id: string
+  date: string
+  time: string
+  type: string
+  typeClass: string
+  user: string
+  status: string
+  statusClass: string
+  rowCount: number
+  fileName: string
+}
+
 const logs = ref<AttendanceLog[]>([])
 const loading = ref(false)
 const barsVisible = ref(false)
-
-const exportLogs = ref([
-  { date: 'Mar 11, 2026', time: '09:42 AM', type: 'PDF', user: 'Maria Santos', status: 'success' },
-  {
-    date: 'Mar 10, 2026',
-    time: '03:15 PM',
-    type: 'CSV',
-    user: 'Juan dela Cruz',
-    status: 'success',
-  },
-  { date: 'Mar 09, 2026', time: '11:08 AM', type: 'XLSX', user: 'Ana Reyes', status: 'success' },
-  { date: 'Mar 08, 2026', time: '02:30 PM', type: 'PDF', user: 'Jose Bautista', status: 'failed' },
-  { date: 'Mar 07, 2026', time: '08:55 AM', type: 'CSV', user: 'Maria Santos', status: 'success' },
-  { date: 'Mar 06, 2026', time: '04:20 PM', type: 'XLSX', user: 'Liza Garcia', status: 'pending' },
-])
+const exportLogs = ref<ExportLogView[]>([])
 
 const actionTabs = [
-  { label: 'Settings', route: '/admin/attendance/settings' },
-  { label: 'Report', route: '/admin/attendance/report' },
-  { label: 'Import Records', route: '/admin/attendance/import' },
-  { label: 'Search', route: '/admin/attendance/logs' },
-  { label: 'Students', route: '/admin/attendance/students' },
-  { label: 'Ranking', route: '/admin/attendance/ranking' },
-  { label: 'Visitors', route: '/admin/attendance/visitors' },
+  { label: "Attendance Page's Settings", route: "/admin/attendance/settings" },
+  { label: "Generate Report", route: "/admin/attendance/report" },
+  { label: "Import Student Records", route: "/admin/attendance/import" },
+  { label: "Search in Attendance", route: "/admin/attendance/logs" },
+  { label: "Search in Student Records", route: "/admin/attendance/students" },
+  { label: "View Ranking", route: "/admin/attendance/ranking" },
+  { label: "Manage Visitors' Attendance", route: "/admin/attendance/visitors" },
+  { label: "Add/Edit Event", route: "/admin/announcement/event" },
 ]
 
 onMounted(async () => {
@@ -315,7 +301,7 @@ onMounted(async () => {
     barsVisible.value = true
   }, 1600)
 
-  await fetchAttendance()
+  await Promise.all([fetchAttendance(), fetchExportLogs()])
 })
 
 const fetchAttendance = async () => {
@@ -323,7 +309,7 @@ const fetchAttendance = async () => {
 
   try {
     const { data, error } = await supabase
-      .from('attendance_logs')
+      .from("attendance_logs")
       .select(
         `
         id,
@@ -342,13 +328,13 @@ const fetchAttendance = async () => {
           college,
           year_level
         )
-      `,
+      `
       )
-      .eq('attendance_type', 'library')
-      .order('time_in', { ascending: false })
+      .eq("attendance_type", "library")
+      .order("time_in", { ascending: false })
 
     if (error) {
-      console.error('Supabase fetch error:', error)
+      console.error("Supabase fetch error:", error)
       logs.value = []
       return
     }
@@ -357,13 +343,106 @@ const fetchAttendance = async () => {
       ...item,
       students: Array.isArray(item.students) ? (item.students[0] ?? null) : item.students,
     }))
-
-    console.log('Joined logs:', logs.value)
   } catch (err) {
-    console.error('Fetch error:', err)
+    console.error("Fetch error:", err)
     logs.value = []
   } finally {
     loading.value = false
+  }
+}
+
+const formatExportDate = (value: string | null) => {
+  if (!value) return { date: "--", time: "--" }
+
+  const d = new Date(value)
+
+  return {
+    date: d.toLocaleDateString("en-PH", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+    }),
+    time: d.toLocaleTimeString("en-PH", {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+  }
+}
+
+const normalizeFileType = (value: string | null) => {
+  const type = String(value || "").trim().toUpperCase()
+
+  if (type === "XLS" || type === "XLSX" || type === "EXCEL") return "XLSX"
+  if (type === "CSV") return "CSV"
+  if (type === "PDF") return "PDF"
+  return type || "FILE"
+}
+
+const getFileTypeClass = (type: string) => {
+  const normalized = normalizeFileType(type).toLowerCase()
+  if (normalized === "xlsx") return "xlsx"
+  if (normalized === "csv") return "csv"
+  if (normalized === "pdf") return "pdf"
+  return "file"
+}
+
+const getStatusClass = (value: string | null) => {
+  const normalized = String(value || "success").trim().toLowerCase()
+  if (normalized === "failed") return "failed"
+  if (normalized === "pending") return "pending"
+  return "success"
+}
+
+const formatStatusLabel = (value: string | null) => {
+  const normalized = getStatusClass(value)
+  if (normalized === "failed") return "Failed"
+  if (normalized === "pending") return "Pending"
+  return "Success"
+}
+
+const fetchExportLogs = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("export_batches")
+      .select(`
+        id,
+        file_name,
+        file_type,
+        uploaded_at,
+        row_count,
+        status,
+        exported_by_name
+      `)
+      .order("uploaded_at", { ascending: false })
+      .limit(5)
+
+    if (error) {
+      console.error("Failed to fetch export history:", error)
+      exportLogs.value = []
+      return
+    }
+
+    exportLogs.value = (data || []).map((row: ExportBatchRow) => {
+      const formatted = formatExportDate(row.uploaded_at)
+      const type = normalizeFileType(row.file_type)
+      const statusClass = getStatusClass(row.status)
+
+      return {
+        id: row.id,
+        date: formatted.date,
+        time: formatted.time,
+        type,
+        typeClass: getFileTypeClass(type),
+        user: row.exported_by_name || "Unknown User",
+        status: formatStatusLabel(row.status),
+        statusClass,
+        rowCount: row.row_count || 0,
+        fileName: row.file_name || "--",
+      }
+    })
+  } catch (error) {
+    console.error("Unexpected fetchExportLogs error:", error)
+    exportLogs.value = []
   }
 }
 
@@ -376,7 +455,7 @@ const getDateObject = (value: string | null) => {
 const getDateOnly = (value: string | null) => {
   const dt = getDateObject(value)
   if (!dt) return null
-  return dt.toISOString().split('T')[0]
+  return dt.toISOString().split("T")[0]
 }
 
 const getHour = (value: string | null) => {
@@ -387,18 +466,18 @@ const getHour = (value: string | null) => {
 
 const getDayName = (value: string | null) => {
   const dt = getDateObject(value)
-  if (!dt) return 'Unknown'
-  return dt.toLocaleDateString('en-US', { weekday: 'long' })
+  if (!dt) return "Unknown"
+  return dt.toLocaleDateString("en-US", { weekday: "long" })
 }
 
 const formatHourLabel = (hour: number) => {
-  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const suffix = hour >= 12 ? "PM" : "AM"
   const displayHour = hour % 12 || 12
   return `${displayHour}:00 ${suffix}`
 }
 
 const getDurationMinutes = (log: AttendanceLog) => {
-  if (typeof log.duration_minutes === 'number' && log.duration_minutes > 0) {
+  if (typeof log.duration_minutes === "number" && log.duration_minutes > 0) {
     return log.duration_minutes
   }
 
@@ -413,12 +492,12 @@ const getDurationMinutes = (log: AttendanceLog) => {
   return Math.round(diff / 60000)
 }
 
-const buildGroupedVisits = (items: AttendanceLog[], key: 'college' | 'program' | 'year_level') => {
+const buildGroupedVisits = (items: AttendanceLog[], key: "college" | "program" | "year_level") => {
   const grouped: Record<string, number> = {}
 
   items.forEach((log) => {
     const student = Array.isArray(log.students) ? log.students[0] : log.students
-    const value = student?.[key] ?? 'Unknown'
+    const value = student?.[key] ?? "Unknown"
     const name = String(value)
     grouped[name] = (grouped[name] || 0) + 1
   })
@@ -429,21 +508,19 @@ const buildGroupedVisits = (items: AttendanceLog[], key: 'college' | 'program' |
 }
 
 const visitorsToday = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
+  const today = new Date().toISOString().split("T")[0]
   return logs.value.filter((log) => getDateOnly(log.time_in) === today).length
 })
 
 const currentlyInside = computed(() => visitorsToday.value)
-
 const outgoing = computed(() => 0)
-
-const gaugeCount = computed(() => visitorsToday.value)
+const gaugeCount = computed(() => currentlyInside.value)
 
 const gaugeStatus = computed(() => {
-  if (gaugeCount.value === 0) return 'No Attendance'
-  if (gaugeCount.value <= 10) return 'Low Attendance'
-  if (gaugeCount.value <= 30) return 'Moderate'
-  return 'High Attendance'
+  if (gaugeCount.value === 0) return "No Attendance"
+  if (gaugeCount.value <= 10) return "Low Attendance"
+  if (gaugeCount.value <= 30) return "Moderate"
+  return "High Attendance"
 })
 
 const gaugeFillPercent = computed(() => {
@@ -468,7 +545,7 @@ const averageStayDuration = computed(() => {
     .map((log) => getDurationMinutes(log))
     .filter((minutes) => minutes > 0)
 
-  if (!durations.length) return '—'
+  if (!durations.length) return "—"
 
   const avg = Math.round(durations.reduce((sum, minutes) => sum + minutes, 0) / durations.length)
 
@@ -509,9 +586,9 @@ const peakDays = computed(() => {
     .sort((a, b) => b.visits - a.visits)
 })
 
-const visitsByCollege = computed(() => buildGroupedVisits(logs.value, 'college'))
-const visitsByProgram = computed(() => buildGroupedVisits(logs.value, 'program'))
-const visitsByYearLevel = computed(() => buildGroupedVisits(logs.value, 'year_level'))
+const visitsByCollege = computed(() => buildGroupedVisits(logs.value, "college"))
+const visitsByProgram = computed(() => buildGroupedVisits(logs.value, "program"))
+const visitsByYearLevel = computed(() => buildGroupedVisits(logs.value, "year_level"))
 
 const topPeakHour = computed(() => peakHours.value[0] || null)
 const topPeakDay = computed(() => peakDays.value[0] || null)
@@ -522,64 +599,63 @@ const topYearLevel = computed(() => visitsByYearLevel.value[0] || null)
 const quickStats = computed(() => [
   {
     val: logs.value.length,
-    label: 'Total Library Visits',
-    delta: 'All',
+    label: "Total Library Visits",
+    delta: "All",
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
   },
   {
-    val: topPeakHour.value ? topPeakHour.value.label : 'N/A',
-    label: 'Peak Hours',
-    delta: topPeakHour.value ? `${topPeakHour.value.visits} visits` : '—',
+    val: topPeakHour.value ? topPeakHour.value.label : "N/A",
+    label: "Peak Hours",
+    delta: topPeakHour.value ? `${topPeakHour.value.visits} visits` : "—",
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   },
   {
-    val: topPeakDay.value ? topPeakDay.value.day : 'N/A',
-    label: 'Peak Days',
-    delta: topPeakDay.value ? `${topPeakDay.value.visits} visits` : '—',
+    val: topPeakDay.value ? topPeakDay.value.day : "N/A",
+    label: "Peak Days",
+    delta: topPeakDay.value ? `${topPeakDay.value.visits} visits` : "—",
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
   },
   {
     val: averageStayDuration.value,
-    label: 'Average Stay',
-    delta: 'Session',
+    label: "Average Stay",
+    delta: "Session",
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   },
   {
-    val: topCollege.value ? topCollege.value.name : 'N/A',
-    label: 'Visits by College',
-    delta: topCollege.value ? `${topCollege.value.visits} visits` : '—',
+    val: topCollege.value ? topCollege.value.name : "N/A",
+    label: "Visits by College",
+    delta: topCollege.value ? `${topCollege.value.visits} visits` : "—",
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
   },
   {
-    val: topProgram.value ? topProgram.value.name : 'N/A',
-    label: 'Visits by Program',
-    delta: topProgram.value ? `${topProgram.value.visits} visits` : '—',
+    val: topProgram.value ? topProgram.value.name : "N/A",
+    label: "Visits by Program",
+    delta: topProgram.value ? `${topProgram.value.visits} visits` : "—",
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
   },
   {
-    val: topYearLevel.value ? `Year ${topYearLevel.value.name}` : 'N/A',
-    label: 'Visits by Year Level',
-    delta: topYearLevel.value ? `${topYearLevel.value.visits} visits` : '—',
+    val: topYearLevel.value ? `Year ${topYearLevel.value.name}` : "N/A",
+    label: "Visits by Year Level",
+    delta: topYearLevel.value ? `${topYearLevel.value.visits} visits` : "—",
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
   },
 ])
 
 const handleTabChange = (name: string) => {
-  console.log('tab:', name)
+  console.log("tab:", name)
 }
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;0,900;1,700;1,900&family=DM+Sans:wght@400;500;600;700&display=swap');
 
-/* ─── KEYFRAMES ─── */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -666,7 +742,6 @@ const handleTabChange = (name: string) => {
   }
 }
 
-/* ─── SHELL ─── */
 .page-shell {
   display: flex;
   height: 100vh;
@@ -690,7 +765,6 @@ const handleTabChange = (name: string) => {
   border-radius: 5px;
 }
 
-/* ─── HEADER ─── */
 .attn-header {
   display: flex;
   align-items: flex-end;
@@ -700,18 +774,15 @@ const handleTabChange = (name: string) => {
   flex-wrap: wrap;
 }
 
-/* ─── BREADCRUMB ─── */
 .header-breadcrumb {
+  font-family: 'Poppins', sans-serif;
   font-size: 0.65rem;
-  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.35);
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 8px;
-  /* Animation */
   animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 .header-breadcrumb svg {
@@ -720,7 +791,6 @@ const handleTabChange = (name: string) => {
   opacity: 0.4;
 }
 
-/* ─── HERO TITLE ─── */
 .hero-title {
   font-family: 'Poppins', sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
@@ -729,7 +799,6 @@ const handleTabChange = (name: string) => {
   letter-spacing: -0.02em;
   margin: 0 0 8px;
   display: inline-block;
-  /* Animation */
   animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
 }
 .hero-word-dark {
@@ -752,7 +821,6 @@ const handleTabChange = (name: string) => {
   background: linear-gradient(to right, #0d2b0f, #e6a800);
   border-radius: 3px;
   transform-origin: left;
-  /* Animation */
   animation: underlineGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 .hero-subtitle {
@@ -760,11 +828,32 @@ const handleTabChange = (name: string) => {
   font-weight: 400;
   color: #6b7280;
   margin-top: 20px;
-  /* Animation */
   animation: fadeIn 0.6s ease 0.55s both;
 }
 
-/* ─── QUICK STAT STRIP ─── */
+.attn-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.attn-actions button {
+  border: none;
+  background: #ffffff;
+  color: #0d2b0f;
+  padding: 10px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(13, 43, 15, 0.05);
+}
+
+.attn-actions button.action-active {
+  background: #0d2b0f;
+  color: #ffffff;
+}
+
 .stat-strip {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -780,7 +869,6 @@ const handleTabChange = (name: string) => {
   align-items: center;
   gap: 12px;
   box-shadow: 0 2px 12px rgba(13, 43, 15, 0.04);
-  /* Animation — delay set inline via :style */
   animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
   transition:
     transform 0.2s,
@@ -834,7 +922,6 @@ const handleTabChange = (name: string) => {
   color: #c62828;
 }
 
-/* ─── MAIN GRID ─── */
 .main-grid {
   display: grid;
   grid-template-columns: 380px minmax(0, 1fr);
@@ -843,14 +930,12 @@ const handleTabChange = (name: string) => {
   width: 100%;
 }
 
-/* ─── DIAL CARD ─── */
 .dial-card {
   background: rgb(206, 225, 207);
   border: 1px solid rgba(177, 207, 43, 0.07);
   border-radius: 28px;
   padding: 28px 24px 24px;
   box-shadow: 0 4px 24px rgba(13, 43, 15, 0.06);
-  /* Animation */
   animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 .dial-card__header {
@@ -878,7 +963,6 @@ const handleTabChange = (name: string) => {
   font-weight: 800;
   color: #2e7d32;
   letter-spacing: 0.18em;
-  /* Animation */
   animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
 }
 .live-dot {
@@ -889,7 +973,6 @@ const handleTabChange = (name: string) => {
   animation: ping 2s infinite;
 }
 
-/* ─── GAUGE ─── */
 .gauge-wrap {
   position: relative;
   width: 100%;
@@ -905,7 +988,6 @@ const handleTabChange = (name: string) => {
   height: 100%;
 }
 .gauge-arc {
-  /* Animates the arc drawing from 0 → 94% fill */
   animation: arcDraw 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
 }
 .gauge-center {
@@ -929,17 +1011,7 @@ const handleTabChange = (name: string) => {
   color: #0d2b0f;
   letter-spacing: -0.06em;
   line-height: 1;
-  /* Animation */
   animation: countUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
-}
-.gauge-unit {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: rgba(13, 43, 15, 0.25);
-  margin-top: 8px;
-  font-family: 'Poppins', sans-serif;
-  /* Animation */
-  animation: fadeIn 0.4s ease 1.3s both;
 }
 .gauge-sublabel {
   font-size: 0.5rem;
@@ -947,24 +1019,30 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.32em;
   color: rgba(13, 43, 15, 0.3);
   text-transform: uppercase;
-  /* Animation */
   animation: fadeIn 0.4s ease 1.4s both;
 }
-.gauge-max {
-  background: #f9a825;
-  color: #5a3400;
-  font-size: 0.5rem;
+.gauge-status {
+  margin-top: 6px;
+  font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-top: 4px;
-  box-shadow: 0 3px 12px rgba(249, 168, 37, 0.3);
-  /* Animation — bounce in after arc completes */
-  animation: scaleInBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s both;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.gauge-status.low {
+  background: rgba(249, 168, 37, 0.14);
+  color: #9a6500;
+}
+.gauge-status.mid {
+  background: rgba(13, 43, 15, 0.10);
+  color: #0d2b0f;
+}
+.gauge-status.high {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
 }
 
-/* ─── FLOW ROW ─── */
 .flow-row {
   display: flex;
   align-items: stretch;
@@ -972,7 +1050,6 @@ const handleTabChange = (name: string) => {
   border-radius: 16px;
   padding: 14px 20px;
   margin-top: 12px;
-  /* Animation */
   animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both;
 }
 .flow-col {
@@ -997,10 +1074,6 @@ const handleTabChange = (name: string) => {
   width: 0;
   transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-/* Once barsVisible = true, transition to the actual width */
-.flow-bar--animated {
-  width: var(--bar-width);
-}
 .flow-bar--in {
   background: #f9a825;
 }
@@ -1019,9 +1092,6 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.16em;
   color: rgba(13, 43, 15, 0.35);
 }
-.flow-label--in {
-  color: rgba(13, 43, 15, 0.5);
-}
 .flow-num {
   font-family: 'Poppins', sans-serif;
   font-size: 1.4rem;
@@ -1036,7 +1106,6 @@ const handleTabChange = (name: string) => {
   color: rgba(13, 43, 15, 0.3);
 }
 
-/* ─── CONTROLS COL ─── */
 .controls-col {
   display: flex;
   flex-direction: column;
@@ -1047,7 +1116,6 @@ const handleTabChange = (name: string) => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  /* Animation */
   animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
 .ctrl-eyebrow {
@@ -1078,7 +1146,6 @@ const handleTabChange = (name: string) => {
   margin: 0;
 }
 
-/* ─── SYNC BTN ─── */
 .sync-btn {
   display: flex;
   align-items: center;
@@ -1101,14 +1168,12 @@ const handleTabChange = (name: string) => {
   overflow: hidden;
   transition: all 0.2s;
 }
-/* Staggered button entrance */
 .sync-btn--1 {
   animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
 .sync-btn--2 {
   animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.62s both;
 }
-
 .sync-btn::after {
   content: '';
   position: absolute;
@@ -1126,7 +1191,6 @@ const handleTabChange = (name: string) => {
   transform: translateX(100%);
 }
 
-/* ─── EXPORT CARD ─── */
 .export-card {
   background: white;
   border: 1px solid rgba(13, 43, 15, 0.07);
@@ -1172,241 +1236,158 @@ const handleTabChange = (name: string) => {
   border-radius: 20px;
 }
 
-/* ─── EXPORT LOGS TABLE ─── */
-.export-table-card {
-  background: white;
-  border: 1px solid rgba(13, 43, 15, 0.07);
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(13, 43, 15, 0.04);
-  /* Animation */
-  animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
-}
-.etable-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 22px 14px;
-  border-bottom: 1px solid rgba(13, 43, 15, 0.06);
-}
-.etable-eyebrow {
-  font-size: 0.55rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: #c8930a;
-  margin: 0 0 3px;
-}
-.etable-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  font-weight: 800;
-  color: #0d2b0f;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-.etable-count {
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: rgba(13, 43, 15, 0.35);
-  letter-spacing: 0.08em;
-  background: rgba(13, 43, 15, 0.05);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
 .etable-wrap {
-  width: 100%;
   overflow-x: auto;
 }
+
 .etable {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'DM Sans', sans-serif;
-}
-.etable thead tr {
-  background: rgba(13, 43, 15, 0.02);
-  border-bottom: 1px solid rgba(13, 43, 15, 0.06);
-}
-.etable th {
-  padding: 10px 16px;
-  font-size: 0.58rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: rgba(13, 43, 15, 0.38);
-  text-align: left;
-  white-space: nowrap;
-}
-.etable th svg {
-  display: inline;
-  vertical-align: middle;
-  margin-right: 5px;
-  opacity: 0.6;
 }
 
-/* Table rows — staggered fadeUp, delay set inline via :style */
+.etable th {
+  text-align: left;
+  padding: 14px 18px;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(13, 43, 15, 0.45);
+  border-bottom: 1px solid rgba(13, 43, 15, 0.06);
+}
+
+.etable td {
+  padding: 14px 18px;
+  font-size: 0.82rem;
+  color: #0d2b0f;
+  border-bottom: 1px solid rgba(13, 43, 15, 0.05);
+}
+
 .erow {
-  border-bottom: 1px solid rgba(13, 43, 15, 0.04);
-  transition: background 0.15s;
-  opacity: 0;
   animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.erow:last-child {
-  border-bottom: none;
-}
-.erow:hover {
-  background: rgba(13, 43, 15, 0.02);
-}
-.erow td {
-  padding: 12px 16px;
-  vertical-align: middle;
-}
+
 .erow-date {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 .erow-date__main {
-  font-size: 0.72rem;
   font-weight: 700;
-  color: #0d2b0f;
 }
 .erow-date__time {
-  font-size: 0.6rem;
-  font-weight: 500;
-  color: rgba(13, 43, 15, 0.35);
+  font-size: 0.72rem;
+  color: rgba(13, 43, 15, 0.45);
 }
-.etype-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  padding: 3px 10px;
-  border-radius: 6px;
-}
-.etype-badge--pdf {
-  background: rgba(198, 40, 40, 0.08);
-  color: #c62828;
-}
-.etype-badge--csv {
-  background: rgba(27, 94, 32, 0.08);
-  color: #1b5e20;
-}
-.etype-badge--xlsx {
-  background: rgba(13, 99, 176, 0.08);
-  color: #0d63b0;
-}
+
 .erow-user {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #0d2b0f;
+  gap: 10px;
 }
 .erow-avatar {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
   background: rgba(13, 43, 15, 0.08);
   color: #0d2b0f;
-  font-size: 0.62rem;
-  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  font-weight: 800;
   text-transform: uppercase;
 }
+
+.etype-badge,
 .estatus {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: capitalize;
-  padding: 3px 10px;
-  border-radius: 20px;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
 }
-.estatus-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  flex-shrink: 0;
+
+.etype-badge--csv {
+  background: rgba(46, 125, 50, 0.10);
+  color: #2e7d32;
 }
-.estatus--success {
-  background: rgba(27, 94, 32, 0.08);
-  color: #1b5e20;
+.etype-badge--xlsx {
+  background: rgba(13, 43, 15, 0.10);
+  color: #0d2b0f;
 }
-.estatus--success .estatus-dot {
-  background: #4caf50;
-}
-.estatus--failed {
-  background: rgba(198, 40, 40, 0.08);
+.etype-badge--pdf {
+  background: rgba(198, 40, 40, 0.10);
   color: #c62828;
 }
-.estatus--failed .estatus-dot {
-  background: #ef5350;
+.etype-badge--file {
+  background: rgba(13, 43, 15, 0.08);
+  color: #0d2b0f;
 }
+
+.estatus-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.estatus--success {
+  background: rgba(46, 125, 50, 0.10);
+  color: #2e7d32;
+}
+.estatus--success .estatus-dot {
+  background: #2e7d32;
+}
+
 .estatus--pending {
-  background: rgba(249, 168, 37, 0.1);
-  color: #c8930a;
+  background: rgba(249, 168, 37, 0.14);
+  color: #9a6500;
 }
 .estatus--pending .estatus-dot {
   background: #f9a825;
-  animation: ping 2s infinite;
 }
 
-/* ─── RESPONSIVE ─── */
+.estatus--failed {
+  background: rgba(198, 40, 40, 0.10);
+  color: #c62828;
+}
+.estatus--failed .estatus-dot {
+  background: #c62828;
+}
+
+.empty-state-cell {
+  text-align: center;
+  padding: 24px;
+  color: rgba(13, 43, 15, 0.45);
+  font-weight: 700;
+}
+
 @media (max-width: 1200px) {
-  .main-grid {
-    grid-template-columns: 1fr;
-  }
   .stat-strip {
     grid-template-columns: repeat(2, 1fr);
   }
-}
-@media (max-width: 680px) {
-  .page-scroll {
-    padding: 20px 16px 60px;
-  }
-  .attn-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .stat-strip {
+
+  .main-grid {
     grid-template-columns: 1fr;
   }
 }
 
-/* ─── ATTENDANCE ACTIONS ─── */
-.attn-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 24px;
-}
+@media (max-width: 768px) {
+  .page-scroll {
+    padding: 24px 18px 60px 18px;
+  }
 
-.attn-actions button {
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(13, 43, 15, 0.1);
-  background: white;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #0d2b0f;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+  .stat-strip {
+    grid-template-columns: 1fr;
+  }
 
-.attn-actions button:hover {
-  background: #0d2b0f;
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(13, 43, 15, 0.15);
+  .ctrl-header {
+    flex-direction: column;
+  }
+
+  .attn-actions {
+    flex-direction: column;
+  }
 }
 </style>

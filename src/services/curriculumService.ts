@@ -615,20 +615,21 @@ export const getProgramStudyPlans = async (
     curriculumQuery = curriculumQuery.eq('program_specialization_id', programSpecializationId)
   }
 
-  const { data: curriculumData, error: curriculumError } = await curriculumQuery
-    .order('revision_year', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+const { data: curriculumList, error: curriculumError } = await curriculumQuery
+  .order('revision_year', { ascending: false })
+  .limit(1)
 
-  if (curriculumError) {
-    console.error('Error fetching curriculum for study plans:', curriculumError)
-    return []
-  }
+if (curriculumError) {
+  console.error('Error fetching curriculum for study plans:', curriculumError)
+  return []
+}
 
-  if (!curriculumData) {
-    console.warn(`No curriculum found for programId: ${programId}`)
-    return []
-  }
+const curriculumData = curriculumList?.[0]
+
+if (!curriculumData) {
+  console.warn(`No curriculum found for programId: ${programId}`)
+  return []
+}
 
   // Now fetch the study plan with course details
   const { data: studyPlanData, error: studyPlanError } = await supabase
@@ -640,7 +641,7 @@ export const getProgramStudyPlans = async (
       semester,
       display_order,
       type,
-      courses(id, course_code, course_title)
+      course:courses(id, course_code, course_title)
     `)
     .eq('curriculum_id', curriculumData.id)
     .order('year_level', { ascending: true })
@@ -652,20 +653,19 @@ export const getProgramStudyPlans = async (
     return []
   }
 
-  // Transform the data to flatten course info
-  const transformedData: ProgramStudyPlanRow[] = (studyPlanData as StudyPlanRow[] | null ?? []).map((row) => {
-    const courseData = Array.isArray(row.courses) ? row.courses[0] : row.courses
+  console.log('CURRICULUM:', curriculumData)
+console.log('STUDY PLAN:', studyPlanData)
 
-    return {
-      id: row.id,
-      program_id: programId,
-      year_level: row.year_level,
-      semester: row.semester,
-      display_order: row.display_order,
-      course_code: courseData?.course_code ?? null,
-      course_title: courseData?.course_title ?? null,
-    }
-  })
+  // Transform the data to flatten course info
+const transformedData: ProgramStudyPlanRow[] = (studyPlanData ?? []).map((row: any) => ({
+  id: row.id,
+  program_id: programId,
+  year_level: row.year_level,
+  semester: row.semester,
+  display_order: row.display_order,
+  course_code: row.course?.course_code ?? null,
+  course_title: row.course?.course_title ?? null,
+}))
 
   return transformedData
 }
