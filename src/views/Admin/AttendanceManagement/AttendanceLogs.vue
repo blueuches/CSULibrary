@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from "vue"
 import Sidebar from "@/components/Sidebar.vue"
 import { getAttendanceLogs } from "@/services/attendanceService"
+import { supabase } from "@/lib/supabase"
 
 type Student = {
   id_number?: string
@@ -231,7 +232,38 @@ const clearFilters = () => {
   currentPage.value = 1
 }
 
-const exportToCSV = () => {
+const saveExportHistory = async (fileName: string, fileType: string, rowCount: number) => {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const exportedByName =
+      user?.user_metadata?.full_name ||
+      user?.user_metadata?.name ||
+      user?.email ||
+      "Unknown User"
+
+    const { error } = await supabase.from("export_batches").insert({
+      file_name: fileName,
+      file_type: fileType,
+      row_count: rowCount,
+      uploaded_at: new Date().toISOString(),
+      exported_by_name: exportedByName,
+      status: "success",
+    })
+
+    if (error) {
+      console.error("Failed to save export history:", error)
+      alert(`Failed to save export history: ${error.message}`)
+    }
+  } catch (error) {
+    console.error("Unexpected export history error:", error)
+    alert("Unexpected export history error. Check console.")
+  }
+}
+
+const exportToCSV = async () => {
   const headers = [
     "ID Number",
     "Student Name",
@@ -268,17 +300,21 @@ const exportToCSV = () => {
     )
     .join("\n")
 
+  const fileName = `attendance-logs-${new Date().toISOString().slice(0, 10)}.csv`
+
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
   const url = URL.createObjectURL(blob)
 
   const link = document.createElement("a")
   link.href = url
-  link.setAttribute("download", `attendance-logs-${new Date().toISOString().slice(0, 10)}.csv`)
+  link.setAttribute("download", fileName)
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
 
   URL.revokeObjectURL(url)
+
+  await saveExportHistory(fileName, "CSV", filteredLogs.value.length)
 }
 </script>
 
@@ -528,14 +564,10 @@ const exportToCSV = () => {
 .page {
   --primary: #0d2b0f;
   --primary-2: #165b1b;
-
   --background-color: var(--color-slate-50);
-  /* --bg-strip: #efe7d9; */
   --card: rgba(255, 255, 255, 0.92);
-
   --border: rgba(13, 43, 15, 0.09);
   --shadow: rgba(13, 43, 15, 0.07);
-
   --danger: #d32f2f;
   --info: #0288d1;
 
@@ -556,20 +588,6 @@ const exportToCSV = () => {
   padding: 20px clamp(14px, 2vw, 24px) 16px;
   border-bottom: 1px solid var(--border);
   background: linear-gradient(180deg, #ffffff 0%, var(--bg-strip) 100%);
-}
-
-.crumbs {
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(13, 43, 15, 0.42);
-  margin-bottom: 16px;
-}
-
-.crumbs span {
-  margin: 0 10px;
-  color: rgba(13, 43, 15, 0.28);
 }
 
 .titleHero {
@@ -604,28 +622,6 @@ const exportToCSV = () => {
   height: 4px;
   border-radius: 2px;
   background: linear-gradient(90deg, #214b1f 0%, #c49317 100%);
-}
-
-.titleWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.pageTitle {
-  margin: 0;
-  font-size: clamp(22px, 2.3vw, 32px);
-  line-height: 1.05;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  color: rgba(13, 43, 15, 0.94);
-}
-
-.pageSub {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 700;
-  color: rgba(13, 43, 15, 0.58);
 }
 
 .toolbar {
@@ -675,17 +671,12 @@ const exportToCSV = () => {
 }
 
 .exportBtn:hover {
-  background: #0d4715;
+  background: linear-gradient(180deg, #165b1b 0%, #1d6a22 100%);
   transform: translateY(-1px);
 }
 
 .exportBtn:active {
   transform: translateY(0);
-}
-
-.exportBtn:hover {
-  transform: translateY(-1px);
-  background: linear-gradient(180deg, #165b1b 0%, #1d6a22 100%);
 }
 
 .stackCol {
@@ -712,9 +703,8 @@ const exportToCSV = () => {
   font-weight: 700;
 }
 
-.searchControl {
-  width: 100%;
-  min-width: 0;
+.selectControl {
+  min-width: 176px;
   padding: 0 16px;
   outline: none;
 }
@@ -904,29 +894,6 @@ const exportToCSV = () => {
   color: rgba(13, 43, 15, 0.92);
 }
 
-.pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.02em;
-}
-
-.pill-info {
-  background: rgba(2, 136, 209, 0.1);
-  border-color: rgba(2, 136, 209, 0.22);
-  color: #026caa;
-}
-
-.pill-danger {
-  background: rgba(211, 47, 47, 0.1);
-  border-color: rgba(211, 47, 47, 0.22);
-  color: #b71c1c;
-}
-
 .empty {
   text-align: center;
   padding: 28px 16px;
@@ -953,6 +920,16 @@ const exportToCSV = () => {
   font-size: 12px;
   color: rgba(13, 43, 15, 0.55);
   padding-left: 6px;
+}
+
+.pagerBtn {
+  border: none;
+  background: #0d2b0f;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
 }
 
 @media (max-width: 1100px) {

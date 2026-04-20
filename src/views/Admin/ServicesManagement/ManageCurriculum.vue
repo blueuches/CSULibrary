@@ -3,21 +3,33 @@
     <Sidebar :activeTab="'SERVICES'" />
 
     <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
-      <header class="mb-6">
-        <div class="mb-2 flex items-center gap-2 text-xs font-bold tracking-wide text-slate-500">
-          <span>ADMIN</span>
-          <span>/</span>
-          <span>MANAGE CURRICULUM</span>
+      <header class="attn-header">
+        <div class="space-y-4">
+          <div class="relative group">
+            <div class="header-breadcrumb !mb-2">
+              <span>Admin</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+              <span>ATTENDANCE</span>
+            </div>
+            <h1 class="header-title intro-title">
+              <span class="text-[#0d2b0f]">College</span>
+              <span class="text-yellow-500"> Curriculum</span>
+            </h1>
+            <p class="header-sub">
+              Create a new curriculum information to share with the academic community.
+            </p>
+            <br />
+          </div>
         </div>
-        <h1 class="text-3xl font-extrabold tracking-tight text-[#164d23]">
-          College <span class="text-[#f9a825]">Curriculum</span>
-        </h1>
-        <p class="mt-2 text-sm text-slate-600">Select a college to open its programs and view curriculum details.</p>
       </header>
 
       <section class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Visible Colleges</p>
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Visible Colleges
+          </p>
           <p class="mt-1 text-2xl font-bold text-[#164d23]">{{ visibleCollegeCount }}</p>
         </article>
 
@@ -42,7 +54,9 @@
         >
           <p class="text-lg font-bold text-[#164d23]">{{ college.code }}</p>
           <p class="mt-1 text-sm font-medium text-slate-700">{{ college.name }}</p>
-          <p class="mt-3 text-xs font-semibold text-slate-500">{{ college.programs.length }} programs</p>
+          <p class="mt-3 text-xs font-semibold text-slate-500">
+            {{ college.programs.length }} programs
+          </p>
         </button>
       </section>
 
@@ -56,11 +70,17 @@
           @click.self="closeProgramModal"
         >
           <article class="w-full max-w-3xl rounded-xl bg-white shadow-2xl">
-            <header class="flex items-start justify-between gap-4 rounded-t-xl bg-[#164d23] px-6 py-4 text-white">
+            <header
+              class="flex items-start justify-between gap-4 rounded-t-xl bg-[#164d23] px-6 py-4 text-white"
+            >
               <div>
-                <p class="text-xs font-semibold uppercase tracking-wide text-[#f9e6a6]">{{ selectedCollege.code }}</p>
+                <p class="text-xs font-semibold uppercase tracking-wide text-[#f9e6a6]">
+                  {{ selectedCollege.code }}
+                </p>
                 <h2 class="text-xl font-bold">{{ selectedCollege.name }}</h2>
-                <p class="mt-1 text-sm text-emerald-100">Select a program to view its curriculum details.</p>
+                <p class="mt-1 text-sm text-emerald-100">
+                  Select a program to view its curriculum details.
+                </p>
               </div>
               <button
                 type="button"
@@ -121,8 +141,14 @@ const collegeProgramMap = reactive<CollegeItem[]>([
     code: 'COFES',
     name: 'College of Forestry and Environmental Science',
     programs: [
-      { id: 'cofes-bs-forestry-general-forestry', name: 'Bachelor of Science in Forestry (General Forestry)' },
-      { id: 'cofes-bs-environmental-science-bses', name: 'Bachelor of Science in Environmental Science (BSES)' },
+      {
+        id: 'cofes-bs-forestry-general-forestry',
+        name: 'Bachelor of Science in Forestry (General Forestry)',
+      },
+      {
+        id: 'cofes-bs-environmental-science-bses',
+        name: 'Bachelor of Science in Environmental Science (BSES)',
+      },
       { id: 'cofes-bs-agroforestry-bsaf', name: 'Bachelor of Science in Agroforestry (BSAF)' },
     ],
   },
@@ -134,10 +160,19 @@ const collegeProgramMap = reactive<CollegeItem[]>([
       { id: 'cmns-bs-mathematics', name: 'Bachelor of Science in Mathematics' },
       { id: 'cmns-bs-marine-biology', name: 'Bachelor of Science in Marine Biology' },
       { id: 'cmns-bs-chemistry', name: 'Bachelor of Science in Chemistry' },
-      { id: 'cmns-bs-biology-microbiology', name: 'Bachelor of Science in Biology (Major in Microbiology)' },
-      { id: 'cmns-bs-biology-medical-biology', name: 'Bachelor of Science in Biology (Major in Medical Biology)' },
+      {
+        id: 'cmns-bs-biology-microbiology',
+        name: 'Bachelor of Science in Biology (Major in Microbiology)',
+      },
+      {
+        id: 'cmns-bs-biology-medical-biology',
+        name: 'Bachelor of Science in Biology (Major in Medical Biology)',
+      },
       { id: 'cmns-bs-applied-mathematics', name: 'Bachelor of Science in Applied Mathematics' },
-      { id: 'cmns-bs-biodiversity-conservation', name: 'Bachelor of Science in Biodiversity Conservation' },
+      {
+        id: 'cmns-bs-biodiversity-conservation',
+        name: 'Bachelor of Science in Biodiversity Conservation',
+      },
     ],
   },
   {
@@ -156,9 +191,15 @@ const collegeProgramMap = reactive<CollegeItem[]>([
       { id: 'cegs-bs-mining-engineering', name: 'Bachelor of Science in Mining Engineering' },
       { id: 'cegs-bs-geology', name: 'Bachelor of Science in Geology' },
       { id: 'cegs-bs-geodetic-engineering', name: 'Bachelor of Science in Geodetic Engineering' },
-      { id: 'cegs-bs-electronics-engineering', name: 'Bachelor of Science in Electronics Engineering' },
+      {
+        id: 'cegs-bs-electronics-engineering',
+        name: 'Bachelor of Science in Electronics Engineering',
+      },
       { id: 'cegs-bs-civil-engineering', name: 'Bachelor of Science in Civil Engineering' },
-      { id: 'cegs-bs-agricultural-and-biosystems-engineering', name: 'Bachelor of Science in Agricultural and Biosystems Engineering' },
+      {
+        id: 'cegs-bs-agricultural-and-biosystems-engineering',
+        name: 'Bachelor of Science in Agricultural and Biosystems Engineering',
+      },
     ],
   },
   {
@@ -176,7 +217,10 @@ const collegeProgramMap = reactive<CollegeItem[]>([
     code: 'CCIS',
     name: 'College of Computing and Information Sciences',
     programs: [
-      { id: 'ccis-bs-information-technology', name: 'Bachelor of Science in Information Technology' },
+      {
+        id: 'ccis-bs-information-technology',
+        name: 'Bachelor of Science in Information Technology',
+      },
       { id: 'ccis-bs-information-system', name: 'Bachelor of Science in Information System' },
       { id: 'ccis-bs-computer-science', name: 'Bachelor of Science in Computer Science' },
     ],
@@ -185,20 +229,33 @@ const collegeProgramMap = reactive<CollegeItem[]>([
     code: 'CAA',
     name: 'College of Agriculture and Agribusiness',
     programs: [
-      { id: 'caa-bs-agriculture-soil-science', name: 'Bachelor of Science in Agriculture (Soil Science)' },
-      { id: 'caa-bs-agriculture-horticulture', name: 'Bachelor of Science in Agriculture (Horticulture)' },
-      { id: 'caa-bs-agriculture-crop-protection', name: 'Bachelor of Science in Agriculture (Crop Protection)' },
-      { id: 'caa-bs-agriculture-animal-science', name: 'Bachelor of Science in Agriculture (Animal Science)' },
+      {
+        id: 'caa-bs-agriculture-soil-science',
+        name: 'Bachelor of Science in Agriculture (Soil Science)',
+      },
+      {
+        id: 'caa-bs-agriculture-horticulture',
+        name: 'Bachelor of Science in Agriculture (Horticulture)',
+      },
+      {
+        id: 'caa-bs-agriculture-crop-protection',
+        name: 'Bachelor of Science in Agriculture (Crop Protection)',
+      },
+      {
+        id: 'caa-bs-agriculture-animal-science',
+        name: 'Bachelor of Science in Agriculture (Animal Science)',
+      },
       { id: 'caa-bs-agriculture-agronomy', name: 'Bachelor of Science in Agriculture (Agronomy)' },
-      { id: 'caa-bs-agriculture-agricultural-economics', name: 'Bachelor of Science in Agriculture (Agriculture Economics)' },
+      {
+        id: 'caa-bs-agriculture-agricultural-economics',
+        name: 'Bachelor of Science in Agriculture (Agriculture Economics)',
+      },
     ],
   },
   {
     code: 'GS',
     name: 'Graduate Studies',
-    programs: [
-      { id: 'gs-placeholder-1', name: 'Graduate Program' },
-    ],
+    programs: [{ id: 'gs-placeholder-1', name: 'Graduate Program' }],
   },
 ])
 
@@ -282,5 +339,44 @@ onBeforeUnmount(() => {
 .fade-pop-enter-from,
 .fade-pop-leave-to {
   opacity: 0;
+}
+
+.header-breadcrumb {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+.header-breadcrumb svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0.4;
+}
+/* ─── HERO TITLE ─── */
+.hero-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  display: inline-block;
+  /* Animation */
+  animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+.hero-word-dark {
+  color: #0d2b0f;
+}
+.hero-word-gold {
+  color: #e6a800;
+}
+.hero-underlined {
+  position: relative;
+  display: inline-block;
 }
 </style>

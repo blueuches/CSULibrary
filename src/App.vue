@@ -1,15 +1,33 @@
 <script setup lang="ts">
-import { RouterView, useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { RouterView, useRoute, useRouter } from 'vue-router'
+import { computed, watch } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 // import { db } from "@/firebase"
+import ModalRBAC from '@/components/ModalRBAC.vue'
+import { useRBACModal } from '@/composables/useRBACModal'
 
 // console.log("Firestore instance:", db)
 
 const route = useRoute()
+const router = useRouter()
+const { isOpen, openModal, closeModal } = useRBACModal()
+
 
 const isAdminRoute = computed(() => route.path.startsWith('/admin'))
+
+watch(
+  () => route.query.denied,
+  (val) => {
+    if (val) openModal()
+  },
+  { immediate: true }
+)
+
+const handleConfirm = () => {
+  closeModal()
+  router.push('/admin') // or dashboard
+}
 </script>
 
 <!-- max-w-7xl -->
@@ -21,6 +39,12 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'))
       <RouterView />
     </main>
     <Footer v-if="!isAdminRoute" />
+
+    <ModalRBAC
+      :isOpen="isOpen"
+      @close="closeModal"
+      @confirm="handleConfirm"
+    />
   </div>
 </template>
 
