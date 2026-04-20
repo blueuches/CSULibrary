@@ -25,21 +25,6 @@
         </header>
 
         <section class="rounded-xl bg-white p-6 shadow-sm">
-          <nav class="flex flex-wrap gap-3" aria-label="Attendance navigation tabs">
-            <button
-              v-for="tab in tabs"
-              :key="tab"
-              type="button"
-              class="rounded-lg px-4 py-2 text-sm font-semibold transition"
-              :class="tab === activeTab ? 'bg-[#164d23] text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
-              @click="activeTab = tab"
-            >
-              {{ tab }}
-            </button>
-          </nav>
-        </section>
-
-        <section class="rounded-xl bg-white p-6 shadow-sm">
           <div class="mb-5 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
               <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
@@ -183,13 +168,17 @@
                 <thead class="bg-slate-100 text-xs font-bold uppercase tracking-wide text-slate-600">
                   <tr>
                     <th class="px-4 py-3">Name</th>
+                    <th class="px-4 py-3">Cellphone</th>
+                    <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">School/Institution</th>
                     <th class="px-4 py-3">Date</th>
-                    <th class="px-4 py-3">Time</th>
+                    <th class="px-4 py-3">Time In</th>
+                    <th class="px-4 py-3">Time Out</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white text-slate-700">
                   <tr v-if="visitorLogs.length === 0">
-                    <td colspan="6" class="px-4 py-10 text-center text-sm text-slate-500">
+                    <td colspan="7" class="px-4 py-10 text-center text-sm text-slate-500">
                       No visitor records to display.
                     </td>
                   </tr>
@@ -198,10 +187,22 @@
                       {{ getVisitorName(log) }}
                     </td>
                     <td class="px-4 py-3">
+                      {{ log.contact_details || log.contact || log.cellphone || '--' }}
+                    </td>
+                    <td class="px-4 py-3 text-xs">
+                      {{ log.email || '--' }}
+                    </td>
+                    <td class="px-4 py-3 text-xs">
+                      {{ log.institution || log.company_institution || '--' }}
+                    </td>
+                    <td class="px-4 py-3">
                       {{ formatDisplayDate(log.time_in) }}
                     </td>
                     <td class="px-4 py-3">
                       {{ formatDisplayTime(log.time_in) }}
+                    </td>
+                    <td class="px-4 py-3">
+                      {{ log.time_out ? formatDisplayTime(log.time_out) : '(Optional)' }}
                     </td>
                   </tr>
                 </tbody>
@@ -231,18 +232,6 @@
 import { computed, onMounted, ref } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
-
-const tabs = [
-  'General',
-  'Database',
-  'Reporting',
-  'Search',
-  'Student Profile',
-  'Student Ranking',
-  'Visitor',
-]
-
-const activeTab = ref('Visitor')
 
 const filterModes = [
   { label: 'Specific Date', value: 'specific-date' },
@@ -280,6 +269,7 @@ const years = computed(() => {
 type VisitorLog = {
   id: string
   time_in: string | null
+  time_out?: string | null
   attendance_type?: string | null
   visitor_name?: string | null
   name?: string | null
@@ -289,8 +279,9 @@ type VisitorLog = {
   company_institution?: string | null
   contact_details?: string | null
   contact?: string | null
-  purpose?: string | null
   reason?: string | null
+  email?: string | null
+  cellphone?: string | null
   [key: string]: unknown
 }
 
@@ -383,6 +374,8 @@ const loadVisitorLogs = async () => {
     loading.value = false
   }
 }
+
+
 
 onMounted(() => {
   loadVisitorLogs()
