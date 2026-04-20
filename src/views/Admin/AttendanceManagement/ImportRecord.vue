@@ -541,7 +541,7 @@
         <!-- ── CONTROLS ── -->
         <div class="step-controls" v-if="syncStatus !== 'loading' && syncStatus !== 'success'">
           <button
-            v-if="currentStep > 0 && syncStatus !== 'loading'"
+            v-if="currentStep > 0"
             class="nav-btn"
             @click="goBack"
           >
@@ -753,7 +753,16 @@ async function parseExcel(file: File): Promise<Record<string, any>[]> {
       try {
         const data = new Uint8Array(e.target!.result as ArrayBuffer)
         const workbook = XLSX.read(data, { type: 'array' })
-        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const firstSheetName = workbook.SheetNames[0]
+        if (!firstSheetName) {
+          throw new Error('No worksheet found in uploaded file.')
+        }
+
+        const sheet = workbook.Sheets[firstSheetName]
+        if (!sheet) {
+          throw new Error(`Worksheet "${firstSheetName}" could not be read.`)
+        }
+
         const rows: Record<string, any>[] = XLSX.utils.sheet_to_json(sheet, { defval: null })
         resolve(rows)
       } catch (err) {
@@ -797,7 +806,12 @@ async function goToValidate() {
     const rows = await parseExcel(uploadedFile.value)
     if (rows.length === 0) throw new Error('The file appears to be empty.')
 
-    detectedColumns.value = Object.keys(rows[0])
+    const firstRow = rows[0]
+    if (!firstRow) {
+      throw new Error('Unable to read row data from the uploaded file.')
+    }
+
+    detectedColumns.value = Object.keys(firstRow)
 
     // Check for required ID column
     const hasIdCol = REQUIRED_COLUMNS.some((c) => detectedColumns.value.includes(c))
@@ -857,6 +871,9 @@ async function importStudents() {
     for (let i = 0; i < batches.length; i++) {
       currentBatch.value = i + 1
       const batch = batches[i]
+      if (!batch) {
+        continue
+      }
 
       const { error } = await supabase.from('students').upsert(batch, { onConflict: 'id_number' })
 

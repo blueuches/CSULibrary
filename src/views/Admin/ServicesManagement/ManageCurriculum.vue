@@ -60,6 +60,11 @@
         </button>
       </section>
 
+      <p v-if="isLoading" class="mt-4 text-sm text-slate-600">Loading colleges and programs...</p>
+      <p v-else-if="!colleges.length" class="mt-4 text-sm text-slate-600">
+        No college/program records found.
+      </p>
+
       <Transition name="fade-pop">
         <div
           v-if="selectedCollege"
@@ -97,16 +102,41 @@
                 <div
                   v-for="program in selectedCollege.programs"
                   :key="program.id"
-                  class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+                  class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
                 >
-                  <p class="text-sm font-medium text-slate-800">{{ program.name }}</p>
-                  <button
-                    type="button"
-                    class="rounded-lg bg-[#164d23] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white hover:bg-[#123d1c]"
-                    @click="viewCurriculum(program.id, program.name)"
-                  >
-                    View Curriculum
-                  </button>
+                  <div class="flex items-center justify-between gap-3">
+                    <div>
+                      <p class="text-sm font-semibold text-slate-800">{{ program.name }}</p>
+                      <p v-if="program.specializations.length" class="mt-1 text-xs text-slate-500">
+                        {{ program.specializations.length }} specialization(s)
+                      </p>
+                    </div>
+                    <button
+                      v-if="!program.specializations.length"
+                      type="button"
+                      class="rounded-lg bg-[#164d23] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white hover:bg-[#123d1c]"
+                      @click="viewCurriculum(program.id)"
+                    >
+                      View Curriculum
+                    </button>
+                  </div>
+
+                  <div v-if="program.specializations.length" class="mt-3 space-y-2">
+                    <div
+                      v-for="specialization in program.specializations"
+                      :key="specialization.id"
+                      class="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 py-2"
+                    >
+                      <p class="text-sm text-slate-700">{{ specialization.name }}</p>
+                      <button
+                        type="button"
+                        class="rounded-lg bg-[#164d23] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white hover:bg-[#123d1c]"
+                        @click="viewCurriculum(program.id, specialization.id)"
+                      >
+                        View Curriculum
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -118,12 +148,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
 type ProgramItem = {
+  id: string
+  name: string
+  specializations: SpecializationItem[]
+}
+
+type SpecializationItem = {
   id: string
   name: string
 }
@@ -134,134 +170,29 @@ type CollegeItem = {
   programs: ProgramItem[]
 }
 
+type CollegeProgramsRow = {
+  code: string
+  name: string
+  programs:
+    | Array<{
+        id: string
+        program_name: string
+        program_specializations:
+          | Array<{
+              id: string
+              program_sp_name: string | null
+            }>
+          | null
+      }>
+    | null
+}
+
 const router = useRouter()
 
-const collegeProgramMap = reactive<CollegeItem[]>([
-  {
-    code: 'COFES',
-    name: 'College of Forestry and Environmental Science',
-    programs: [
-      {
-        id: 'cofes-bs-forestry-general-forestry',
-        name: 'Bachelor of Science in Forestry (General Forestry)',
-      },
-      {
-        id: 'cofes-bs-environmental-science-bses',
-        name: 'Bachelor of Science in Environmental Science (BSES)',
-      },
-      { id: 'cofes-bs-agroforestry-bsaf', name: 'Bachelor of Science in Agroforestry (BSAF)' },
-    ],
-  },
-  {
-    code: 'CMNS',
-    name: 'College of Mathematics and Natural Sciences',
-    programs: [
-      { id: 'cmns-bs-physics', name: 'Bachelor of Science in Physics' },
-      { id: 'cmns-bs-mathematics', name: 'Bachelor of Science in Mathematics' },
-      { id: 'cmns-bs-marine-biology', name: 'Bachelor of Science in Marine Biology' },
-      { id: 'cmns-bs-chemistry', name: 'Bachelor of Science in Chemistry' },
-      {
-        id: 'cmns-bs-biology-microbiology',
-        name: 'Bachelor of Science in Biology (Major in Microbiology)',
-      },
-      {
-        id: 'cmns-bs-biology-medical-biology',
-        name: 'Bachelor of Science in Biology (Major in Medical Biology)',
-      },
-      { id: 'cmns-bs-applied-mathematics', name: 'Bachelor of Science in Applied Mathematics' },
-      {
-        id: 'cmns-bs-biodiversity-conservation',
-        name: 'Bachelor of Science in Biodiversity Conservation',
-      },
-    ],
-  },
-  {
-    code: 'CHASS',
-    name: 'College of Humanities, Arts, and Social Sciences',
-    programs: [
-      { id: 'chass-bs-social-work', name: 'Bachelor of Science in Social Work' },
-      { id: 'chass-bs-psychology', name: 'Bachelor of Science in Psychology' },
-      { id: 'chass-bs-sociology', name: 'Bachelor of Science in Sociology' },
-    ],
-  },
-  {
-    code: 'CEGS',
-    name: 'College of Engineering and Geosciences',
-    programs: [
-      { id: 'cegs-bs-mining-engineering', name: 'Bachelor of Science in Mining Engineering' },
-      { id: 'cegs-bs-geology', name: 'Bachelor of Science in Geology' },
-      { id: 'cegs-bs-geodetic-engineering', name: 'Bachelor of Science in Geodetic Engineering' },
-      {
-        id: 'cegs-bs-electronics-engineering',
-        name: 'Bachelor of Science in Electronics Engineering',
-      },
-      { id: 'cegs-bs-civil-engineering', name: 'Bachelor of Science in Civil Engineering' },
-      {
-        id: 'cegs-bs-agricultural-and-biosystems-engineering',
-        name: 'Bachelor of Science in Agricultural and Biosystems Engineering',
-      },
-    ],
-  },
-  {
-    code: 'CED',
-    name: 'College of Education',
-    programs: [
-      { id: 'ced-bse-science', name: 'Bachelor of Secondary Education (Science)' },
-      { id: 'ced-bse-mathematics', name: 'Bachelor of Secondary Education (Mathematics)' },
-      { id: 'ced-bse-filipino', name: 'Bachelor of Secondary Education (Filipino)' },
-      { id: 'ced-bse-english', name: 'Bachelor of Secondary Education (English)' },
-      { id: 'ced-beed', name: 'Bachelor of Elementary Education' },
-    ],
-  },
-  {
-    code: 'CCIS',
-    name: 'College of Computing and Information Sciences',
-    programs: [
-      {
-        id: 'ccis-bs-information-technology',
-        name: 'Bachelor of Science in Information Technology',
-      },
-      { id: 'ccis-bs-information-system', name: 'Bachelor of Science in Information System' },
-      { id: 'ccis-bs-computer-science', name: 'Bachelor of Science in Computer Science' },
-    ],
-  },
-  {
-    code: 'CAA',
-    name: 'College of Agriculture and Agribusiness',
-    programs: [
-      {
-        id: 'caa-bs-agriculture-soil-science',
-        name: 'Bachelor of Science in Agriculture (Soil Science)',
-      },
-      {
-        id: 'caa-bs-agriculture-horticulture',
-        name: 'Bachelor of Science in Agriculture (Horticulture)',
-      },
-      {
-        id: 'caa-bs-agriculture-crop-protection',
-        name: 'Bachelor of Science in Agriculture (Crop Protection)',
-      },
-      {
-        id: 'caa-bs-agriculture-animal-science',
-        name: 'Bachelor of Science in Agriculture (Animal Science)',
-      },
-      { id: 'caa-bs-agriculture-agronomy', name: 'Bachelor of Science in Agriculture (Agronomy)' },
-      {
-        id: 'caa-bs-agriculture-agricultural-economics',
-        name: 'Bachelor of Science in Agriculture (Agriculture Economics)',
-      },
-    ],
-  },
-  {
-    code: 'GS',
-    name: 'Graduate Studies',
-    programs: [{ id: 'gs-placeholder-1', name: 'Graduate Program' }],
-  },
-])
+const colleges = ref<CollegeItem[]>([])
+const isLoading = ref(false)
 
 const selectedCollegeCode = ref<string | null>(null)
-
-const colleges = computed(() => collegeProgramMap)
 
 const selectedCollege = computed(() => {
   if (!selectedCollegeCode.value) return null
@@ -284,29 +215,58 @@ const closeProgramModal = (): void => {
   selectedCollegeCode.value = null
 }
 
-const viewCurriculum = async (programId: string, programName: string): Promise<void> => {
+const fetchCollegesAndPrograms = async (): Promise<void> => {
+  isLoading.value = true
+
   try {
-    const { data: program, error } = await supabase
-      .from('programs')
-      .select('id')
-      .eq('program_name', programName)
-      .maybeSingle()
+    const { data, error } = await supabase
+      .from('colleges')
+      .select('code, name, programs(id, program_name, program_specializations(id, program_sp_name))')
+      .order('code', { ascending: true })
 
     if (error) {
-      console.error('Error fetching program:', error)
-      alert('Error loading program. Please try again.')
-      return
+      throw error
     }
 
-    if (!program) {
-      console.error('Program not found:', programName)
+    const rows = (data as CollegeProgramsRow[] | null) ?? []
+    colleges.value = rows.map((college) => ({
+      code: college.code,
+      name: college.name,
+      programs: (college.programs ?? [])
+        .map((program) => ({
+          id: program.id,
+          name: program.program_name,
+          specializations: (program.program_specializations ?? [])
+            .filter((specialization) => Boolean(specialization?.id))
+            .map((specialization) => ({
+              id: specialization.id,
+              name: specialization.program_sp_name || 'Unnamed Specialization',
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name)),
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    }))
+  } catch (error) {
+    console.error('Failed to fetch colleges/programs:', error)
+    colleges.value = []
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const viewCurriculum = async (programId: string, specializationId?: string): Promise<void> => {
+  try {
+    if (!programId) {
       alert('Program not found in database.')
       return
     }
 
     await router.push({
       name: 'curriculum-info-dynamic',
-      params: { programId: program.id },
+      params: {
+        programId,
+        ...(specializationId ? { specializationId } : {}),
+      },
     })
     closeProgramModal()
   } catch (err) {
@@ -322,6 +282,7 @@ const onEscape = (event: KeyboardEvent): void => {
 }
 
 onMounted(() => {
+  void fetchCollegesAndPrograms()
   window.addEventListener('keydown', onEscape)
 })
 
