@@ -8,7 +8,7 @@
           <div class="header-breadcrumb !mb-2">
             <span
               class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/services/curriculum/curriculum-info')"
+              @click="goBackToCurriculumInfo"
               >BACK</span
             >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -169,12 +169,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
 import { useCurriculumData } from '@/composables/useCurriculumData'
 import type { ProgramStudyPlanRow } from '@/types/Curriculum'
 
 const route = useRoute()
+const router = useRouter()
 
 const {
   activeProgramId,
@@ -259,6 +260,21 @@ const getSemesterBlockData = (year: number, semester: number): SemesterBlock => 
       rows: [],
     }
   )
+}
+
+const goBackToCurriculumInfo = async (): Promise<void> => {
+  if (!activeProgramId.value) {
+    await router.push({ name: 'services-curriculum' })
+    return
+  }
+
+  await router.push({
+    name: 'curriculum-info-dynamic',
+    params: {
+      programId: activeProgramId.value,
+      ...(activeSpecializationId.value ? { specializationId: activeSpecializationId.value } : {}),
+    },
+  })
 }
 
 onMounted(() => {
