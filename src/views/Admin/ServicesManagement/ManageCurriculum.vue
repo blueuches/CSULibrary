@@ -173,18 +173,14 @@ type CollegeItem = {
 type CollegeProgramsRow = {
   code: string
   name: string
-  programs:
-    | Array<{
-        id: string
-        program_name: string
-        program_specializations:
-          | Array<{
-              id: string
-              program_sp_name: string | null
-            }>
-          | null
-      }>
-    | null
+  programs: Array<{
+    id: string
+    program_name: string
+    program_specializations: Array<{
+      id: string
+      program_sp_name: string | null
+    }> | null
+  }> | null
 }
 
 const router = useRouter()
@@ -221,7 +217,9 @@ const fetchCollegesAndPrograms = async (): Promise<void> => {
   try {
     const { data, error } = await supabase
       .from('colleges')
-      .select('code, name, programs(id, program_name, program_specializations(id, program_sp_name))')
+      .select(
+        'code, name, programs(id, program_name, program_specializations(id, program_sp_name))',
+      )
       .order('code', { ascending: true })
 
     if (error) {

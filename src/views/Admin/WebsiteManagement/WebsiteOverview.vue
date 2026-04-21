@@ -1,6 +1,5 @@
 <template>
   <div class="flex min-h-screen bg-gray-50">
-
     <!-- SIDEBAR -->
     <div class="sticky top-0 h-screen">
       <Sidebar />
@@ -8,7 +7,6 @@
 
     <!-- MAIN CONTENT -->
     <div class="flex-1 py-10 px-6 md:pl-8 md:pr-16" style="font-family: 'Poppins', sans-serif">
-
       <!-- HEADER -->
       <header class="mb-10 flex items-center gap-4">
         <div>
@@ -29,39 +27,43 @@
             Web <span class="text-yellow-500">Overview</span>
           </h1>
 
-          <p class="header-sub text-gray-600">
-            Manage website visuals and assets
-          </p>
+          <p class="header-sub text-gray-600">Manage website visuals and assets</p>
         </div>
       </header>
 
       <!-- NAVIGATION -->
       <div class="flex gap-4 mb-10 flex-wrap">
         <button
-          @click="activeSection='carousel'"
-          :class="activeSection==='carousel'
-            ? 'bg-[#0B2010] text-white'
-            : 'bg-white text-gray-600 hover:bg-gray-100'"
+          @click="activeSection = 'carousel'"
+          :class="
+            activeSection === 'carousel'
+              ? 'bg-[#0B2010] text-white'
+              : 'bg-white text-gray-600 hover:bg-gray-100'
+          "
           class="px-6 py-3 rounded-xl font-bold shadow-sm transition"
         >
           Hero Carousel
         </button>
 
         <button
-          @click="activeSection='cards'"
-          :class="activeSection==='cards'
-            ? 'bg-[#0B2010] text-white'
-            : 'bg-white text-gray-600 hover:bg-gray-100'"
+          @click="activeSection = 'cards'"
+          :class="
+            activeSection === 'cards'
+              ? 'bg-[#0B2010] text-white'
+              : 'bg-white text-gray-600 hover:bg-gray-100'
+          "
           class="px-6 py-3 rounded-xl font-bold shadow-sm transition"
         >
           Feature Cards
         </button>
 
         <button
-          @click="activeSection='library'"
-          :class="activeSection==='library'
-            ? 'bg-[#0B2010] text-white'
-            : 'bg-white text-gray-600 hover:bg-gray-100'"
+          @click="activeSection = 'library'"
+          :class="
+            activeSection === 'library'
+              ? 'bg-[#0B2010] text-white'
+              : 'bg-white text-gray-600 hover:bg-gray-100'
+          "
           class="px-6 py-3 rounded-xl font-bold shadow-sm transition"
         >
           Library Banner
@@ -69,14 +71,13 @@
       </div>
 
       <!-- HERO CAROUSEL -->
-      <section v-if="activeSection==='carousel'" class="animate-fade-in">
+      <section v-if="activeSection === 'carousel'" class="animate-fade-in">
         <div class="bg-white rounded-3xl shadow-lg p-10">
-
           <div class="flex justify-between items-center mb-8">
             <h4 class="font-black text-xl">Hero Carousel Slides</h4>
 
             <button
-              @click="goToEditor('New Slide','')"
+              @click="goToEditor('New Slide', '')"
               class="px-6 py-3 bg-[#0d2b0f] text-white rounded-xl font-bold hover:bg-[#1b5e20] transition"
             >
               Add Slide
@@ -97,7 +98,7 @@
                 <h5 class="font-bold text-gray-800">{{ slide.title }}</h5>
               </div>
               <button
-                @click="goToEditor(slide.title,slide.image_url)"
+                @click="goToEditor(slide.title, slide.image_url)"
                 class="px-5 py-2 bg-[#0d2b0f] text-white rounded-lg text-sm hover:bg-[#1b5e20] transition"
               >
                 Edit
@@ -108,7 +109,7 @@
       </section>
 
       <!-- FEATURE CARDS -->
-      <section v-if="activeSection==='cards'" class="animate-fade-in">
+      <section v-if="activeSection === 'cards'" class="animate-fade-in">
         <div class="bg-white rounded-3xl shadow-lg p-10">
           <h4 class="font-black text-xl mb-8">Feature Cards</h4>
 
@@ -118,10 +119,7 @@
               :key="card.id"
               class="aspect-[4/5] bg-gray-50 border-2 border-dashed rounded-3xl overflow-hidden relative"
             >
-              <img
-                :src="card.image_url || card.thumbnail_url"
-                class="w-full h-full object-cover"
-              />
+              <img :src="card.image_url || card.thumbnail_url" class="w-full h-full object-cover" />
 
               <!-- EDIT BUTTON -->
               <div class="absolute top-2 right-2">
@@ -138,7 +136,7 @@
       </section>
 
       <!-- LIBRARY BANNER -->
-      <section v-if="activeSection==='library'" class="animate-fade-in">
+      <section v-if="activeSection === 'library'" class="animate-fade-in">
         <div class="bg-white rounded-3xl shadow-lg p-10">
           <h4 class="font-black text-xl mb-8">CSU Library Banner</h4>
 
@@ -153,7 +151,7 @@
               class="absolute inset-0 bg-white/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition"
             >
               <button
-                @click="goToEditor(libraryBanner?.title,libraryBanner?.image_url)"
+                @click="goToEditor(libraryBanner?.title, libraryBanner?.image_url)"
                 class="px-8 py-4 bg-[#0d2b0f] text-white font-bold rounded-xl hover:bg-[#1b5e20] transition"
               >
                 Replace Banner
@@ -162,7 +160,6 @@
           </div>
         </div>
       </section>
-
     </div>
   </div>
 </template>
@@ -189,34 +186,30 @@ onMounted(() => loadMedia())
 
 /* HERO CAROUSEL */
 const carouselImages = computed(() =>
-  mediaItems.value.filter(
-    item => item.page === 'homepage' && item.section === 'carousel'
-  )
+  mediaItems.value.filter((item) => item.page === 'homepage' && item.section === 'carousel'),
 )
 
 /* FEATURE CARDS */
 const featureCards = computed(() =>
   mediaItems.value.filter(
-    item => item.page === 'homepage' && item.section === 'read-learn-discover'
-  )
+    (item) => item.page === 'homepage' && item.section === 'read-learn-discover',
+  ),
 )
 
 /* CSU LIBRARY BANNER */
 const libraryBanner = computed(() =>
-  mediaItems.value.find(
-    item => item.title === 'CSU Library Main Image'
-  )
+  mediaItems.value.find((item) => item.title === 'CSU Library Main Image'),
 )
 
 // Navigate to editor
 const goToEditor = (target: string, currentFile: string) => {
   router.push({
     name: 'website-images',
-    query: { target, file: currentFile }
+    query: { target, file: currentFile },
   })
 }
 
-// ✅ Auto-refresh images after returning from editor
+// Auto-refresh images after returning from editor
 router.afterEach((to, from) => {
   // Only reload if we came back from editor page
   if (from.name === 'website-images') {
@@ -229,17 +222,17 @@ router.afterEach((to, from) => {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
 .animate-fade-in {
-  animation:fadeIn .5s ease forwards;
+  animation: fadeIn 0.5s ease forwards;
 }
 
 @keyframes fadeIn {
   from {
-    opacity:0;
-    transform:translateY(20px);
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
-    opacity:1;
-    transform:translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 </style>
