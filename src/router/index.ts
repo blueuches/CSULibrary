@@ -65,6 +65,9 @@ import ViewUsers from '@/views/Admin/AdminManagement/ViewUsers.vue'
 import BackupSettings from '@/views/Admin/AdminManagement/BackupSettings.vue'
 import Developers from '@/views/Developers.vue'
 
+//report
+import ReportPage from '@/views/Admin/Attendance/Reports/ReportPage.vue';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.pBASE_URL),
   routes: [
