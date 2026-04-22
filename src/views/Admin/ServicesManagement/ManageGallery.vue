@@ -5,8 +5,11 @@
       <!-- HERO -->
       <div class="gallery-hero">
         <div class="header-breadcrumb mb-2!">
-          <span class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-            @click="$router.push('/admin/website/general')">BACK</span>
+          <span
+            class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+            @click="$router.push('/admin/website/general')"
+            >BACK</span
+          >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M9 5l7 7-7 7" />
           </svg>
@@ -86,20 +89,23 @@
         </div>
       </div>
 
-      <div v-if="searchQuery && filteredFloors.length === 0"
-        class="flex flex-col items-center justify-center py-24 w-full animate-fade-in">
-
+      <div
+        v-if="searchQuery && filteredFloors.length === 0"
+        class="flex flex-col items-center justify-center py-24 w-full animate-fade-in"
+      >
         <div class="del-icon bg-gray-100! text-gray-300! mb-4!">
           <i class="fas fa-search-minus fa-2x"></i>
         </div>
-
         <h3 class="modal-title text-gray-400!">No Results Found</h3>
         <p class="hero-subtitle mt-1! text-center!">
-          We couldn't find any matches for "<strong>{{ searchQuery }}</strong>".<br>
+          We couldn't find any matches for "<strong>{{ searchQuery }}</strong
+          >".<br />
           <span class="text-[0.6rem] opacity-70 text-gray-400">Try checking the spelling.</span>
         </p>
-
-        <button @click="searchQuery = ''" class="btn-ghost mt-6 py-2! px-5! text-[0.65rem]! rounded-full!">
+        <button
+          @click="searchQuery = ''"
+          class="btn-ghost mt-6 py-2! px-5! text-[0.65rem]! rounded-full!"
+        >
           <i class="fas fa-times mr-2"></i> Clear Search
         </button>
       </div>
@@ -115,9 +121,15 @@
             <div v-for="wing in floor.wings" :key="wing.name" class="mb-20">
               <div class="wing-header mb-10">
                 <div class="flex items-center gap-6 flex-1">
-                  <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{ floor.name }}</span>
-                  <h3 class="text-4xl font-black text-[#0d2b0f] uppercase tracking-tighter">{{ wing.name }}</h3>
-                  <div class="h-0.5 grow max-w-37.5 bg-linear-to-r from-[#0d2b0f] to-yellow-500"></div>
+                  <span class="text-yellow-600 font-bold tracking-tighter text-sm">{{
+                    floor.name
+                  }}</span>
+                  <h3 class="text-4xl font-black text-[#0d2b0f] uppercase tracking-tighter">
+                    {{ wing.name }}
+                  </h3>
+                  <div
+                    class="h-0.5 grow max-w-37.5 bg-linear-to-r from-[#0d2b0f] to-yellow-500"
+                  ></div>
                 </div>
                 <button class="btn-wing-add" @click="openAdd(floor.id, wing.name)">
                   <svg
@@ -139,21 +151,29 @@
                   v-for="(section, idx) in wing.sections"
                   :key="section.id || idx"
                   class="group relative h-96 rounded-2xl overflow-hidden shadow-xl transition-all duration-500 bg-gray-100 border-2 cursor-pointer border-transparent hover:-translate-y-3"
-                  :style="section.images.length > 0 ? {
-                    backgroundImage: `url('${section.images[0]}')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    transitionDelay: `${(idx % 4) * 0.08}s`,
-                  } : { transitionDelay: `${(idx % 4) * 0.08}s` }" @click="openViewer(section)"
-                  @mouseenter="startCarousel(section)" @mouseleave="stopCarousel(section)">
+                  :style="
+                    section.images.length > 0
+                      ? {
+                          backgroundImage: `url('${section.images[0]}')`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          transitionDelay: `${(idx % 4) * 0.08}s`,
+                        }
+                      : { transitionDelay: `${(idx % 4) * 0.08}s` }
+                  "
+                  @click="openViewer(section)"
+                  @mouseenter="startCarousel(section)"
+                  @mouseleave="stopCarousel(section)"
+                >
                   <div
-                    class="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500">
-                  </div>
+                    class="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent group-hover:from-[#1b5e20]/95 transition-all duration-500"
+                  ></div>
 
                   <!-- Admin buttons -->
                   <div class="admin-ctrl" @click.stop>
                     <button
                       class="ac-btn ac-btn--edit"
+                      style="border: 1.5px solid #eab308"
                       @click="openEdit(section, floor.id, wing.name)"
                     >
                       <svg
@@ -174,6 +194,7 @@
                     </button>
                     <button
                       class="ac-btn ac-btn--del"
+                      style="border: 1.5px solid #ef4444"
                       @click.stop="askDelete(section, floor.id, wing.name)"
                     >
                       <svg
@@ -282,7 +303,7 @@
       </div>
 
       <!-- =========================
-            ADD / EDIT SECTION MODAL
+           ADD / EDIT SECTION MODAL
       ============================= -->
       <Transition name="modal">
         <div v-if="formOpen" class="modal-bg" @click.self="closeForm">
@@ -290,7 +311,26 @@
             <!-- HEADER -->
             <div class="modal-head">
               <div>
-                <p class="modal-mode">{{ isAdding ? '✦ New Section' : '✦ Edit Section' }}</p>
+                <p class="modal-mode">
+                  <!-- ✦ as SVG icon -->
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    style="
+                      display: inline-block;
+                      vertical-align: middle;
+                      margin-right: 5px;
+                      flex-shrink: 0;
+                    "
+                  >
+                    <path
+                      d="M12 0 L13.5 10.5 L24 12 L13.5 13.5 L12 24 L10.5 13.5 L0 12 L10.5 10.5 Z"
+                    />
+                  </svg>
+                  {{ isAdding ? 'New Section' : 'Edit Section' }}
+                </p>
                 <h3 class="modal-title">
                   {{ isAdding ? 'Add to Gallery' : form.title || 'Edit Section' }}
                 </h3>
@@ -358,20 +398,28 @@
                   :key="i"
                   class="ptile"
                   :class="{ 'ptile--cover': i === 0 }"
+                  @click="previewImg = img"
                 >
                   <img :src="img" :alt="`Photo ${i + 1}`" />
                   <div class="ptile-over">
                     <span v-if="i === 0" class="cover-badge">Cover</span>
                     <div class="ptile-btns">
+                      <!-- ★ as SVG icon -->
                       <button
                         v-if="i > 0"
                         class="pb pb--star"
-                        @click="setCover(i)"
+                        @click.stop="setCover(i)"
                         title="Set as cover"
                       >
-                        ★
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                          <path
+                            d="M12 2l2.9 8.26H23l-7 5.09 2.7 8.26L12 18.77l-6.7 4.84L8 15.35 1 10.26h8.1z"
+                          />
+                        </svg>
                       </button>
-                      <button class="pb pb--del" @click="removePhoto(i)" title="Remove">✕</button>
+                      <button class="pb pb--del" @click.stop="removePhoto(i)" title="Remove">
+                        ✕
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -390,7 +438,9 @@
                   <span>Upload</span>
                 </label>
               </div>
-              <p class="photo-hint">First photo = cover. Click ★ to change.</p>
+              <p class="photo-hint">
+                First photo = cover. Click star to set cover. Click photo to preview.
+              </p>
             </div>
 
             <!-- FOOTER -->
@@ -422,7 +472,28 @@
       </Transition>
 
       <!-- =========================
-      DELETE CONFIRMATION MODAL
+           LIGHTBOX PREVIEW
+      ============================= -->
+      <Transition name="fade">
+        <div v-if="previewImg" class="lightbox-bg" @click="previewImg = null">
+          <img :src="previewImg" class="lightbox-img" @click.stop />
+          <button class="lightbox-close" @click="previewImg = null">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </Transition>
+
+      <!-- =========================
+           DELETE CONFIRMATION MODAL
       ============================= -->
       <Transition name="modal">
         <div v-if="delTarget" class="modal-bg" @click.self="delTarget = null">
@@ -430,8 +501,13 @@
             <h3>Delete "{{ delTarget.sec.title }}"?</h3>
             <p>This action cannot be undone.</p>
             <div class="del-actions">
-              <button class="btn-ghost" style="background-color:green; color: white;"
-                @click="delTarget = null">Cancel</button>
+              <button
+                class="btn-ghost"
+                style="background-color: green; color: white"
+                @click="delTarget = null"
+              >
+                Cancel
+              </button>
               <button class="btn-danger" @click="doDelete">Yes, Delete</button>
             </div>
           </div>
@@ -468,14 +544,12 @@ import {
   STATE MANAGEMENT
 ===================================================== */
 
-const hoverIndex = ref(null)
 const hoverIntervals = new Map()
+const previewImg = ref(null)
 
 const startCarousel = (section) => {
   if (!section.images || section.images.length < 2) return
-
   let index = 0
-
   hoverIntervals.set(
     section.id,
     setInterval(() => {
@@ -543,22 +617,21 @@ const form = ref({
   description: '',
   note: '',
   images: [],
-  newFiles: []
-});
+  newFiles: [],
+})
 
 /* =====================================================
   DATA FETCHING (SUPABASE)
 ===================================================== */
 const fetchGalleryData = async () => {
   try {
-    const rawSections = await getGallerySections();
-    console.log("Raw Sections from DB:", rawSections);
-    // Reset all sections
-    floors.value.forEach(f => f.wings.forEach(w => w.sections = []));
+    const rawSections = await getGallerySections()
+    console.log('Raw Sections from DB:', rawSections)
+    floors.value.forEach((f) => f.wings.forEach((w) => (w.sections = [])))
 
     for (const sec of rawSections) {
-      const imgs = await getImagesBySection(sec.id);
-      console.log(`Images for Section ${sec.section_name}:`, imgs);
+      const imgs = await getImagesBySection(sec.id)
+      console.log(`Images for Section ${sec.section_name}:`, imgs)
       const formatted = {
         id: sec.id,
         title: sec.section_name,
@@ -584,16 +657,13 @@ onMounted(fetchGalleryData)
 ===================================================== */
 const uploadImages = async (sectionId) => {
   const uploadedUrls = []
-
   for (const file of form.value.newFiles) {
     const filePath = `sections/${sectionId}/${Date.now()}_${file.name}`
     const { error } = await supabase.storage.from('gallery_images').upload(filePath, file)
     if (error) throw error
-
     const { data: urlData } = supabase.storage.from('gallery_images').getPublicUrl(filePath)
     uploadedUrls.push(urlData.publicUrl)
   }
-
   return uploadedUrls
 }
 
@@ -625,7 +695,6 @@ const save = async () => {
       await updateGallerySection(sectionId, sectionPayload)
     }
 
-    // Merge existing URLs + new uploads
     let finalImageUrls = form.value.images.filter((img) => img.startsWith('http'))
 
     if (form.value.newFiles.length > 0) {
@@ -633,7 +702,6 @@ const save = async () => {
       finalImageUrls = [...finalImageUrls, ...newUrls]
     }
 
-    // Sync DB: delete old and insert current images
     const oldRecords = await getImagesBySection(sectionId)
     for (const rec of oldRecords) await deleteGalleryImage(rec.id)
     for (let i = 0; i < finalImageUrls.length; i++) {
@@ -660,45 +728,37 @@ const save = async () => {
 ===================================================== */
 const doDelete = async () => {
   try {
-    const sectionId = delTarget.value.sec.id;
-    
-    //  Get image records BEFORE deleting from DB
-    const imageRecords = await getImagesBySection(sectionId);
-    
-    if (imageRecords.length > 0) {
-      //  Extract relative paths (e.g., 'sections/id/file.jpg')
-      const pathsToDelete = imageRecords.map(img => 
-        img.image_url.split('/public/gallery_images/')[1]
-      );
+    const sectionId = delTarget.value.sec.id
 
-      //  Remove files from Supabase Storage
+    const imageRecords = await getImagesBySection(sectionId)
+
+    if (imageRecords.length > 0) {
+      const pathsToDelete = imageRecords.map(
+        (img) => img.image_url.split('/public/gallery_images/')[1],
+      )
       const { error: storageErr } = await supabase.storage
         .from('gallery_images')
-        .remove(pathsToDelete);
-
-      if (storageErr) console.warn("Storage cleanup failed:", storageErr.message);
+        .remove(pathsToDelete)
+      if (storageErr) console.warn('Storage cleanup failed:', storageErr.message)
     }
 
-    //  Delete DB records
-    for (const img of imageRecords) await deleteGalleryImage(img.id);
-    await deleteGallerySection(sectionId);
+    for (const img of imageRecords) await deleteGalleryImage(img.id)
+    await deleteGallerySection(sectionId)
 
-    showToast("Section and files deleted", "success");
-    await fetchGalleryData();
-    delTarget.value = null;
-    viewerOpen.value = false;
+    showToast('Section and files deleted', 'success')
+    await fetchGalleryData()
+    delTarget.value = null
+    viewerOpen.value = false
   } catch (err) {
-    showToast("Delete failed", "error");
-    console.error(err);
+    showToast('Delete failed', 'error')
+    console.error(err)
   }
 }
 
-// Show delete modal from grid
 const askDelete = (sec, floorId, wingName) => {
   delTarget.value = { sec, floorId, wingName }
 }
 
-// Show delete modal from viewer
 const askDeleteFromViewer = () => {
   if (!viewerSection.value) return
   delTarget.value = { sec: viewerSection.value }
@@ -732,14 +792,11 @@ const openViewer = async (section) => {
   try {
     viewerOpen.value = true
     viewerImgIndex.value = 0
-
-    // Fetch all images for this section
     const imgs = await getImagesBySection(section.id)
-
     viewerSection.value = {
       ...section,
-      images: imgs.map(i => i.image_url)
-    };
+      images: imgs.map((i) => i.image_url),
+    }
   } catch (err) {
     console.error('Failed to fetch images:', err)
     showToast('Failed to load images for viewer', 'error')
@@ -770,10 +827,7 @@ import imageCompression from 'browser-image-compression'
 
 const onPhotoUpload = async (e) => {
   const files = Array.from(e.target.files)
-  const options = {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1920
-  };
+  const options = { maxSizeMB: 1, maxWidthOrHeight: 1920 }
 
   for (const file of files) {
     try {
@@ -789,6 +843,10 @@ const onPhotoUpload = async (e) => {
 const removePhoto = (idx) => {
   form.value.images.splice(idx, 1)
   if (form.value.newFiles[idx]) form.value.newFiles.splice(idx, 1)
+  // close lightbox if the previewed image was removed
+  if (previewImg.value && !form.value.images.includes(previewImg.value)) {
+    previewImg.value = null
+  }
 }
 
 const setCover = (idx) => {
@@ -833,9 +891,74 @@ const totalPhotos = computed(() =>
 /* =====================================================
  UTILS
 ===================================================== */
-const closeForm = () => (formOpen.value = false)
+const closeForm = () => {
+  previewImg.value = null
+  formOpen.value = false
+}
+
 const showToast = (msg, type = 'success') => {
   toast.value = { msg, type }
   setTimeout(() => (toast.value = null), 3000)
 }
 </script>
+
+<style>
+/* ── LIGHTBOX ── */
+.lightbox-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 12px;
+  cursor: default;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s;
+}
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ── LIGHTBOX TRANSITION ── */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* ── MODAL MODE LABEL ── */
+.modal-mode {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+</style>
