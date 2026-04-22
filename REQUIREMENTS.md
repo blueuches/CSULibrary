@@ -7,7 +7,7 @@ git
 
 AFTER MA CLONE:
 npm install
-npm lucide-vue-next
+npm install lucide-vue-next
 npm install firebase
 npm install xlsl
 
