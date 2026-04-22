@@ -9,7 +9,7 @@
 
       <!-- HEADER -->
       <header class="px-6 pt-5 pb-3">
-        <div class="header-breadcrumb">
+        <div class="header-breadcrumb !mb-2">
           <button
             class="flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
             @click="$router.back()"

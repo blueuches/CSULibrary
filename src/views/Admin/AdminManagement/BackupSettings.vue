@@ -3,25 +3,11 @@
     <Sidebar :activeTab="'PERSONNEL'" @updateActiveTab="handleTabChange" />
 
     <main class="page-root">
-      <header class="hero">
-        <div class="header-breadcrumb">
-          <span>Admin</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="crumb-arrow">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span>Settings</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="crumb-arrow">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span>Backup</span>
-        </div>
-
-        <h1 class="hero-title">
-          <span class="hero-word-dark">System</span>
-          <span class="hero-word-gold"> Backup</span>
-        </h1>
-        <p class="hero-subtitle">Read-only export of database tables and storage files into one ZIP archive.</p>
-      </header>
+      <AdminPageHeader :breadcrumbs="['Admin', 'Settings', 'Backup']" title="Backup">
+        <template #subtitle>
+          Read-only export of database tables and storage files into one ZIP archive.
+        </template>
+      </AdminPageHeader>
 
       <section class="backup-grid">
         <article class="backup-card backup-card-main">

@@ -13,7 +13,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3">
             <path d="M9 5l7 7-7 7" />
           </svg>
-          <span class="text-gray-400 transition font-bold">Manage Services</span>
+          <span class="text-gray-400 transition font-bold">Manage Assignation</span>
         </div>
 
         <h1 class="hero-title">
@@ -528,7 +528,7 @@ const currentChartTitle = computed<string>(() =>
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function goBack() {
   if (window.history.length > 1) router.back()
-  else router.push('/admin/attendance')
+  else router.push('/admin/management')
 }
 
 function onDeptChange() {

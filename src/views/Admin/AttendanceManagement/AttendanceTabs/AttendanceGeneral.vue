@@ -3,28 +3,9 @@
     <Sidebar />
 
     <div class="page-scroll">
-      <!-- HEADER -->
-      <header class="attn-header">
-        <div>
-          <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/attendance')"
-              >BACK</span
-            >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>EVENT ANNOUNCEMENT</span>
-          </div>
-
-          <h1 class="hero-title">
-            <span class="hero-word-dark hero-underlined">Library</span>
-            <span class="hero-word-gold"> Settings</span>
-          </h1>
-          <p class="hero-subtitle">Configure school info, security, and system preferences</p>
-        </div>
-      </header>
+      <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Attendance Settings">
+        <template #subtitle>Configure school info, security, and system preferences</template>
+      </AdminPageHeader>
 
       <!-- ERROR BANNER -->
       <div v-if="errorMsg" class="error-banner">

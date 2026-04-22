@@ -12,7 +12,7 @@
         <div>
 
           <!-- BREADCRUMB -->
-        <div class="header-breadcrumb text-gray-400">
+        <div class="header-breadcrumb !mb-2 text-gray-400">
           <button
             @click="$router.back()"
             class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
@@ -24,7 +24,7 @@
             <path d="M9 5l7 7-7 7" />
           </svg>
 
-          <span class="text-gray-4000 transition font-bold">
+          <span class="text-gray-400 transition font-bold">
             Manage Services
           </span>
         </div>

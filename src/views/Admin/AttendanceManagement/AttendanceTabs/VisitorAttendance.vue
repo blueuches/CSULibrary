@@ -4,25 +4,11 @@
 
     <main class="flex-1 overflow-y-auto px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
       <div class="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <div class="header-breadcrumb !mb-2">
-          <span
-            class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-            @click="$router.push('/admin/attendance')"
-          >
-            BACK
-          </span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span>VISITOR</span>
-        </div>
-
-        <header class="rounded-xl bg-white p-6 shadow-sm">
-          <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">Visitor Attendance</h1>
-          <p class="mt-2 text-sm text-slate-600">
+        <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Visitor Attendance">
+          <template #subtitle>
             Review and filter visitor entries from the library attendance section.
-          </p>
-        </header>
+          </template>
+        </AdminPageHeader>
 
         <section class="rounded-xl bg-white p-6 shadow-sm">
           <div class="mb-5 flex items-center justify-between gap-4">

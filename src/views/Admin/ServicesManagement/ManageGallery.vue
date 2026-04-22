@@ -4,10 +4,10 @@
     <div class="w-full relative overflow-y-auto flex flex-col items-center bg-white">
       <!-- HERO -->
       <div class="gallery-hero">
-        <div class="header-breadcrumb mb-2!">
+        <div class="header-breadcrumb !mb-2">
           <span
             class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-            @click="$router.push('/admin/website/general')"
+            @click="$router.push('/admin/services')"
             >BACK</span
           >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

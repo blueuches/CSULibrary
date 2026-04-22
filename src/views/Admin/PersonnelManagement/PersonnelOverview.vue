@@ -8,7 +8,7 @@
         <div class="header-left">
           <div class="header-breadcrumb anim-fade-in" style="animation-delay: 0s">
           <span class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-            @click="$router.push('/admin/website/general')">BACK</span>
+            @click="$router.push('/admin/management')">BACK</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M9 5l7 7-7 7" />
           </svg>
@@ -868,7 +868,7 @@ onUnmounted(() => {
   gap: 6px;
   font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(13, 43, 15, 0.4);
 }

@@ -8,7 +8,7 @@
       <header class="page-header">
         <!-- Breadcrumb -->
         <div class="breadcrumb">
-          <button @click="$router.push('/admin/website/general')" class="breadcrumb-back">Back</button>
+          <button @click="$router.push('/admin/services')" class="breadcrumb-back">Back</button>
           <svg class="breadcrumb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
@@ -856,14 +856,14 @@ function confirmIconSelection() {
 }
 .breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
 .breadcrumb-back {
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
   text-transform: uppercase; color: rgba(13, 43, 15, 0.4);
   background: none; border: none; cursor: pointer; padding: 0; transition: color 0.15s;
 }
 .breadcrumb-back:hover { color: rgba(13, 43, 15, 0.9); }
 .breadcrumb-chevron { width: 12px; height: 12px; color: rgba(13, 43, 15, 0.3); }
 .breadcrumb-current {
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em;
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
   text-transform: uppercase; color: rgba(13, 43, 15, 0.4);
 }
 .header-title-row {

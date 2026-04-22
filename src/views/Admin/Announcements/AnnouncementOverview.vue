@@ -38,49 +38,30 @@
     </transition>
 
     <main ref="reportRootRef" class="report-root flex-1 overflow-y-auto">
-      <!-- HEADER -->
-      <header class="report-header intro-header relative z-[60] overflow-visible">
-        <div class="header-left">
-          <div class="flex items-center justify-between gap-4 flex-wrap">
-            <div class="header-breadcrumb !mb-0">
-              <span>Admin</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span>Announcement Management</span>
-            </div>
+      <AdminPageHeader :breadcrumbs="['Admin', 'Announcement Management']" title="Announcements">
+        <template #subtitle>Manage and review all event, general, and news posts.</template>
+        <template #actions>
+          <div class="relative z-50 dropdown-wrapper" ref="dropdownRef">
+            <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
+              <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New
+              Announcement
+            </button>
+            <transition name="dropdown">
+              <div v-if="dropdownOpen" class="dropdown-menu">
+                <RouterLink to="/admin/announcement/general" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                  New General Announcement
+                </RouterLink>
+                <RouterLink to="/admin/announcement/event" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                  New Event Announcement
+                </RouterLink>
+                <RouterLink to="/admin/announcement/news" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                  News
+                </RouterLink>
+              </div>
+            </transition>
           </div>
-          <h1 class="header-title intro-title">
-            Library <span class="text-yellow-500">Announcements</span>
-          </h1>
-          <p class="header-sub">Manage and review all event, general, and news posts.</p>
-        </div>
-
-        <!-- DROPDOWN NEW ANNOUNCEMENT -->
-        <div class="header-right relative z-50">
-          <div class="flex flex-col items-end gap-3">
-            <div class="relative z-50 dropdown-wrapper" ref="dropdownRef">
-              <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
-                <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New
-                Announcement
-              </button>
-              <transition name="dropdown">
-                <div v-if="dropdownOpen" class="dropdown-menu">
-                  <RouterLink to="/admin/announcement/general" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
-                    New General Announcement
-                  </RouterLink>
-                  <RouterLink to="/admin/announcement/event" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
-                    New Event Announcement
-                  </RouterLink>
-                  <RouterLink to="/admin/announcement/news" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
-                    News
-                  </RouterLink>
-                </div>
-              </transition>
-            </div>
-          </div>
-        </div>
-      </header>
+        </template>
+      </AdminPageHeader>
 
       <!-- LOADING SPINNER -->
       <div v-if="isLoading" class="flex justify-center p-20">
