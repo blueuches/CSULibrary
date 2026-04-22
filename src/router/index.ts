@@ -134,7 +134,7 @@ const router = createRouter({
     { path: '/admin/management/assignation', name: 'admin-management-assignation', component: ManageAssignation, meta: { requiresAuth: true }  }, 
     { path: '/admin/management/permission', name: 'admin-management-permission', component: ManagePermission, meta: { requiresAuth: true }  }, 
     { path: '/admin/settings/backup', name: 'admin-settings-backup', component: BackupSettings, meta: { requiresAdmin: true, requiresAuth: true } }, 
-
+    { path: '/admin/attendance/report-test', name: 'attendance-report-test', component: ReportPage, meta: { requiresAuth: true } }, 
   ],
    scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
