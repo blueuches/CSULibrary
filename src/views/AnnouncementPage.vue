@@ -340,6 +340,14 @@ onUnmounted(() => {
 .no-events-icon { animation: floatBounce 1.2s ease-in-out infinite alternate; }
 @keyframes floatBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
 
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+} 
+
+/* errorrr */
 </style>
