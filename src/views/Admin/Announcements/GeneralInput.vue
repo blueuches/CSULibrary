@@ -15,26 +15,11 @@
     </transition>
 
     <main class="report-root flex-1 overflow-y-auto">
-      <header class="report-header intro-header">
-        <div class="header-left">
-          <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/announcement')"
-              >BACK</span
-            >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-
-            <span>GENERAL ANNOUNCEMENTS</span>
-          </div>
-          <h1 class="header-title intro-title">
-            General <span class="text-yellow-500">Announcement</span>
-          </h1>
-          <p class="header-sub">Create a new general announcement to share with the community.</p>
-        </div>
-      </header>
+      <div class="-mt-2">
+        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/announcement' }, 'Announcement Management']" title="General Announcement">
+          <template #subtitle>Create a new general announcement to share with the community.</template>
+        </AdminPageHeader>
+      </div>
 
       <!-- Form Section -->
       <div class="max-w-4xl mx-auto px-4 pb-16">
@@ -299,6 +284,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 import '@/assets/styles/report-analytics.css'

@@ -19,41 +19,23 @@
       style="font-family: 'Poppins', sans-serif; color: #1a1a1a"
     >
       <!-- HEADER -->
-      <div
-        class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6"
-      >
-        <div class="flex items-center gap-6">
-          <div class="header-left">
-            <div class="header-breadcrumb !mb-2">
-              <span
-                class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-                @click="$router.push('/admin/announcement')"
-                >BACK</span
-              >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
+      <div class="-mt-2 mb-10">
+        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/announcement' }, 'Announcement Management']" title="Event Announcement">
+          <template #subtitle>Compose and publish updates for the library community.</template>
+          <template #actions>
+            <div class="flex gap-4 justify-end mb-4">
+              <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <p class="text-xs text-green-700 uppercase font-bold tracking-widest">Status</p>
+                <p class="text-gray-900 font-bold">Drafting</p>
+              </div>
 
-              <span>EVENT ANNOUNCEMENT</span>
+              <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <p class="text-xs text-orange-600 uppercase font-bold tracking-widest">Visibility</p>
+                <p class="text-gray-900 font-bold">Public</p>
+              </div>
             </div>
-
-            <h1 class="header-title">Event <span class="text-yellow-500">Announcement</span></h1>
-
-            <p class="header-sub">Compose and publish updates for the library community.</p>
-          </div>
-        </div>
-        <!-- STATUS + VISIBILITY TOP -->
-        <div class="flex gap-4 justify-end mb-4">
-          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-            <p class="text-xs text-green-700 uppercase font-bold tracking-widest">Status</p>
-            <p class="text-gray-900 font-bold">Drafting</p>
-          </div>
-
-          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-            <p class="text-xs text-orange-600 uppercase font-bold tracking-widest">Visibility</p>
-            <p class="text-gray-900 font-bold">Public</p>
-          </div>
-        </div>
+          </template>
+        </AdminPageHeader>
       </div>
 
       <!-- CONTENT -->
@@ -194,6 +176,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { createEvent, updateEvent } from '@/services/eventService'
 import { supabase } from '@/lib/supabase'

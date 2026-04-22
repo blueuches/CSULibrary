@@ -38,30 +38,32 @@
     </transition>
 
     <main ref="reportRootRef" class="report-root flex-1 overflow-y-auto">
-      <AdminPageHeader :breadcrumbs="['Admin', 'Announcement Management']" title="Announcements">
-        <template #subtitle>Manage and review all event, general, and news posts.</template>
-        <template #actions>
-          <div class="relative z-50 dropdown-wrapper" ref="dropdownRef">
-            <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
-              <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New
-              Announcement
-            </button>
-            <transition name="dropdown">
-              <div v-if="dropdownOpen" class="dropdown-menu">
-                <RouterLink to="/admin/announcement/general" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
-                  New General Announcement
-                </RouterLink>
-                <RouterLink to="/admin/announcement/event" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
-                  New Event Announcement
-                </RouterLink>
-                <RouterLink to="/admin/announcement/news" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
-                  News
-                </RouterLink>
-              </div>
-            </transition>
-          </div>
-        </template>
-      </AdminPageHeader>
+      <div class="-mt-2">
+        <AdminPageHeader :breadcrumbs="['Admin', 'Announcement Management']" title="Announcements">
+          <template #subtitle>Manage and review all event, general, and news posts.</template>
+          <template #actions>
+            <div class="relative z-50 dropdown-wrapper" ref="dropdownRef">
+              <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
+                <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New
+                Announcement
+              </button>
+              <transition name="dropdown">
+                <div v-if="dropdownOpen" class="dropdown-menu">
+                  <RouterLink to="/admin/announcement/general" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                    New General Announcement
+                  </RouterLink>
+                  <RouterLink to="/admin/announcement/event" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                    New Event Announcement
+                  </RouterLink>
+                  <RouterLink to="/admin/announcement/news" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                    News
+                  </RouterLink>
+                </div>
+              </transition>
+            </div>
+          </template>
+        </AdminPageHeader>
+      </div>
 
       <!-- LOADING SPINNER -->
       <div v-if="isLoading" class="flex justify-center p-20">

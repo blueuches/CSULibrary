@@ -3,7 +3,7 @@
     <Sidebar />
 
     <main class="flex-1 overflow-y-auto px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
-      <div class="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <div class="flex w-full flex-col gap-6">
         <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Visitor Attendance">
           <template #subtitle>
             Review and filter visitor entries from the library attendance section.
@@ -24,6 +24,22 @@
             </div>
 
             <div class="space-y-4">
+              <label
+                class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-slate-300"
+                :class="selectedFilterMode === 'all-records' ? 'border-[#164d23] bg-white shadow-sm' : ''"
+              >
+                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700">
+                  <input
+                    v-model="selectedFilterMode"
+                    type="radio"
+                    name="visitor-filter-mode"
+                    value="all-records"
+                    class="h-4 w-4 accent-[#164d23]"
+                  />
+                  <span>All Records</span>
+                </div>
+              </label>
+
               <label
                 class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-slate-300"
                 :class="selectedFilterMode === 'specific-date' ? 'border-[#164d23] bg-white shadow-sm' : ''"
@@ -203,6 +219,8 @@
 
             <button
               type="button"
+              @click="exportToCSV"
+              :disabled="loading || visitorLogs.length === 0"
               class="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
             >
               Export
@@ -220,13 +238,14 @@ import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
 const filterModes = [
+  { label: 'All Records', value: 'all-records' },
   { label: 'Specific Date', value: 'specific-date' },
   { label: 'Specific Month', value: 'specific-month' },
   { label: 'Period', value: 'period' },
 ] as const
 
-const selectedFilterMode = ref<(typeof filterModes)[number]['value']>('specific-date')
-const specificDate = ref('2026-04-13')
+const selectedFilterMode = ref<(typeof filterModes)[number]['value']>('all-records')
+const specificDate = ref('')
 const specificMonth = ref(String(new Date().getMonth() + 1).padStart(2, '0'))
 const specificYear = ref(String(new Date().getFullYear()))
 const periodStartDate = ref('')
@@ -300,6 +319,70 @@ const formatDisplayTime = (value: string | null) => {
 }
 
 const getVisitorName = (log: VisitorLog) => log.visitor_name || log.full_name || log.name || '--'
+
+const saveExportHistory = async (fileName: string, fileType: string, rowCount: number) => {
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    const exportedByName =
+      user?.user_metadata?.full_name ||
+      user?.user_metadata?.name ||
+      user?.email ||
+      'Unknown User'
+
+    const { error } = await supabase.from('export_batches').insert({
+      file_name: fileName,
+      file_type: fileType,
+      row_count: rowCount,
+      uploaded_at: new Date().toISOString(),
+      exported_by_name: exportedByName,
+      status: 'success',
+    })
+
+    if (error) {
+      console.error('Failed to save export history:', error)
+    }
+  } catch (error) {
+    console.error('Unexpected export history error:', error)
+  }
+}
+
+const exportToCSV = async () => {
+  if (!visitorLogs.value.length) return
+
+  const headers = ['Name', 'Cellphone', 'Email', 'School/Institution', 'Date', 'Time In', 'Time Out']
+
+  const rows = visitorLogs.value.map((log) => [
+    getVisitorName(log),
+    log.contact_details || log.contact || log.cellphone || '',
+    log.email || '',
+    log.institution || log.company_institution || '',
+    formatDisplayDate(log.time_in),
+    formatDisplayTime(log.time_in),
+    log.time_out ? formatDisplayTime(log.time_out) : '(Optional)',
+  ])
+
+  const csvContent = [headers, ...rows]
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n')
+
+  const fileName = `visitor-attendance-${new Date().toISOString().slice(0, 10)}.csv`
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', fileName)
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
+  URL.revokeObjectURL(url)
+
+  await saveExportHistory(fileName, 'CSV', visitorLogs.value.length)
+}
 
 const buildDateRange = () => {
   if (selectedFilterMode.value === 'specific-date' && specificDate.value) {

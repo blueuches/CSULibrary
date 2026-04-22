@@ -3,11 +3,13 @@
     <Sidebar :activeTab="'ATTENDANCE'" @updateActiveTab="handleTabChange" />
 
     <div class="page-scroll">
-      <AdminPageHeader :breadcrumbs="['Admin', 'ATTENDANCE']" title="Attendance">
-        <template #subtitle>
-          Comprehensive overview of institutional engagement and borrowing patterns
-        </template>
-      </AdminPageHeader>
+      <div class="-mt-2">
+        <AdminPageHeader :breadcrumbs="['Admin', 'ATTENDANCE']" title="Attendance">
+          <template #subtitle>
+            Comprehensive overview of institutional engagement and borrowing patterns
+          </template>
+        </AdminPageHeader>
+      </div>
 
       <div class="attn-actions">
         <button
@@ -212,6 +214,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 

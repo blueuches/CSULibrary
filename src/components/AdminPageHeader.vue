@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 type BreadcrumbItem = string | { label: string; to?: string }
 
-defineProps<{
+const props = defineProps<{
   breadcrumbs: BreadcrumbItem[]
   title: string
 }>()
@@ -9,13 +11,25 @@ defineProps<{
 const getLabel = (item: BreadcrumbItem) => (typeof item === 'string' ? item : item.label)
 const getTo = (item: BreadcrumbItem) => (typeof item === 'string' ? undefined : item.to)
 const hasLink = (item: BreadcrumbItem) => typeof item !== 'string' && Boolean(item.to)
+
+const titleParts = computed(() => {
+  const words = props.title.trim().split(/\s+/)
+  if (words.length <= 1) {
+    return { first: props.title, rest: '' }
+  }
+
+  return {
+    first: words[0],
+    rest: words.slice(1).join(' '),
+  }
+})
 </script>
 
 <template>
-  <header class="admin-page-header">
-    <div class="admin-page-header__row">
-      <div class="admin-page-header__content">
-        <nav class="admin-page-breadcrumb" aria-label="Breadcrumb">
+  <header class="attn-header admin-page-header">
+    <div class="space-y-4">
+      <div class="relative group">
+        <nav class="header-breadcrumb admin-page-breadcrumb !mb-2" aria-label="Breadcrumb">
           <template v-for="(crumb, index) in breadcrumbs" :key="`${getLabel(crumb)}-${index}`">
             <RouterLink v-if="hasLink(crumb)" :to="getTo(crumb)!" class="admin-page-breadcrumb__item">
               {{ getLabel(crumb) }}
@@ -33,18 +47,18 @@ const hasLink = (item: BreadcrumbItem) => typeof item !== 'string' && Boolean(it
           </template>
         </nav>
 
-        <h1 class="admin-page-title">
-          <span class="admin-page-title__dark">Library</span>
-          <span class="admin-page-title__accent"> {{ title }}</span>
+        <h1 class="header-title intro-title admin-page-title">
+          <span class="admin-page-title__dark">{{ titleParts.first }}</span>
+          <span v-if="titleParts.rest" class="admin-page-title__accent"> {{ titleParts.rest }}</span>
         </h1>
 
-        <div v-if="$slots.subtitle" class="admin-page-subtitle">
+        <div v-if="$slots.subtitle" class="header-sub admin-page-subtitle">
           <slot name="subtitle" />
         </div>
-      </div>
 
-      <div v-if="$slots.actions" class="admin-page-actions">
-        <slot name="actions" />
+        <div v-if="$slots.actions" class="admin-page-actions">
+          <slot name="actions" />
+        </div>
       </div>
     </div>
   </header>
