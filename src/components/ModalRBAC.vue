@@ -1,54 +1,259 @@
 <script setup>
-defineProps({
-  isOpen: {
-    type: Boolean,
-    required: true
-  }
-});
-
-const emit = defineEmits(['close', 'confirm']);
+defineProps({ isOpen: Boolean })
+const emit = defineEmits(['close', 'confirm'])
 </script>
 
 <template>
-  <Transition
-    enter-active-class="duration-300 ease-out"
-    enter-from-class="opacity-0"
-    enter-to-class="opacity-100"
-    leave-active-class="duration-200 ease-in"
-    leave-from-class="opacity-100"
-    leave-to-class="opacity-0"
-  >
-    <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
-      <div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm" @click="emit('close')"></div>
+  <Transition name="modal">
+    <div v-if="isOpen" class="modal-root">
+      <div class="backdrop" @click="emit('close')" />
 
-      <div class="flex min-h-full items-center justify-center p-4">
-        <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
-          <div>
-            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-              <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.286z" />
+      <div class="dialog-wrapper">
+        <div class="dialog">
+          <div class="glow" />
+          <div class="top-line" />
+
+          <div class="icon-area">
+            <div class="icon-ring">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+                />
               </svg>
             </div>
-            <div class="mt-3 text-center sm:mt-5">
-              <h3 class="text-lg font-semibold leading-6 text-gray-900">Access Denied</h3>
-              <div class="mt-2">
-                <p class="text-sm text-gray-500">
-                  You are not allowed to make changes on this page. Refer to the admin for approval.
-                </p>
-              </div>
-            </div>
+            <div class="pulse-ring" />
           </div>
-          <div class="mt-5 sm:mt-6">
-            <button
-              type="button"
-              class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              @click="emit('confirm')"
-            >
-              Understood
-            </button>
+
+          <div class="content">
+            <p class="eyebrow">Error 403</p>
+            <h2 class="title">Access Denied</h2>
+            <p class="description">
+              You don't have permission to make changes on this page. Contact your administrator to
+              request access.
+            </p>
+          </div>
+
+          <div class="divider" />
+
+          <div class="actions">
+            <button class="btn-secondary" @click="emit('close')">Go Back</button>
+            <button class="btn-primary" @click="emit('confirm')">Understood</button>
           </div>
         </div>
       </div>
     </div>
   </Transition>
 </template>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* layout */
+.modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  font-family: 'DM Sans', sans-serif;
+}
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 8, 0.82);
+  backdrop-filter: blur(12px);
+}
+.dialog-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* dialog */
+.dialog {
+  position: relative;
+  padding: 2.25rem 2rem 2rem;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #16151c, #0f0e14);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 32px 64px rgba(0, 0, 0, 0.6),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* accents */
+.glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 160px;
+  background: radial-gradient(ellipse, rgba(22, 163, 74, 0.2), transparent 70%);
+  filter: blur(10px);
+}
+.top-line {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.55), transparent);
+}
+
+/* icon */
+.icon-area {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  position: relative;
+  width: fit-content;
+}
+.icon-ring,
+.pulse-ring {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-ring {
+  width: 56px;
+  height: 56px;
+  z-index: 1;
+  background: rgba(22, 163, 74, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  color: #4ade80;
+}
+.icon-ring svg {
+  width: 24px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.25;
+}
+.pulse-ring {
+  position: absolute;
+  inset: -8px;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+/* text */
+.content {
+  text-align: center;
+}
+.eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(74, 222, 128, 0.65);
+  margin-bottom: 0.5rem;
+}
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.625rem;
+  color: #f4f3f8;
+  margin-bottom: 0.75rem;
+}
+.description {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: rgba(200, 198, 212, 0.65);
+}
+
+/* divider */
+.divider {
+  margin: 1.75rem 0 1.5rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+}
+
+/* buttons */
+.actions {
+  display: flex;
+  gap: 0.625rem;
+}
+.btn-secondary,
+.btn-primary {
+  padding: 0.6875rem 1rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: 0.18s;
+}
+.btn-secondary {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(200, 198, 212, 0.7);
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(220, 218, 232, 0.9);
+}
+
+.btn-primary {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  background: linear-gradient(135deg, rgba(15, 118, 54, 0.85), rgba(22, 163, 74, 0.85));
+  border: 1px solid rgba(1, 44, 17, 0.35);
+  color: #dcfce7;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+}
+.btn-arrow {
+  width: 14px;
+}
+
+/* animation */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.25s;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+.modal-enter-active .dialog {
+  animation: in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.modal-leave-active .dialog {
+  animation: out 0.2s forwards;
+}
+@keyframes in {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+</style>

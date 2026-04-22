@@ -15,14 +15,14 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>EVENT ANNOUNCEMENT</span>
+            <span>LIBRARY SETTINGS</span>
           </div>
 
           <h1 class="hero-title">
             <span class="hero-word-dark hero-underlined">Library</span>
             <span class="hero-word-gold"> Settings</span>
           </h1>
-          <p class="hero-subtitle">Configure school info, security, and system preferences</p>
+          <p class="hero-subtitle">Configure app background, video, and system preferences</p>
         </div>
       </header>
 
@@ -46,216 +46,74 @@
         <button @click="successMsg = null" class="banner-close">✕</button>
       </div>
 
-      <!-- FORM -->
+      <!-- CARDS -->
       <div class="settings-wrapper" v-if="!loading">
+        <!-- ① APP BACKGROUND -->
         <div class="settings-card" :class="{ 'settings-card--editing': editing }">
-          <!-- Card Header -->
           <div class="card-eyebrow-row">
-            <div class="card-eyebrow">School / Library Information</div>
-            <div class="card-actions">
-              <button
-                v-if="!editing"
-                class="action-btn action-btn--edit"
-                @click="editSection"
-                title="Edit"
+            <div class="card-eyebrow">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                style="width: 13px; height: 13px"
               >
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <path d="M3 15l5-5 4 4 3-3 6 6" />
+              </svg>
+              App Background
+            </div>
+            <div class="card-actions">
+              <button v-if="!editing" class="action-btn action-btn--edit" @click="editSection">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
                 Edit
               </button>
+              <button v-if="editing" class="action-btn action-btn--cancel" @click="cancelEdit">
+                Cancel
+              </button>
               <button
-                class="action-btn action-btn--delete"
-                @click="deleteTarget = true"
-                title="Delete"
+                v-if="editing"
+                class="action-btn action-btn--save"
+                @click="saveSection"
+                :disabled="saving"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                  <path d="M10 11v6" />
-                  <path d="M14 11v6" />
-                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                </svg>
-                Delete
+                <span v-if="saving" class="btn-spinner btn-spinner--white"></span>
+                {{ saving ? 'Saving…' : 'Save' }}
               </button>
             </div>
           </div>
 
-          <!-- Fields -->
           <div class="field-stack">
-            <!-- Row 1: School Name + Building Title -->
-            <div class="field-row field-row--2">
-              <div class="field-col">
-                <label class="field-label">School Name <span class="field-required">*</span></label>
-                <div class="field-input-wrap">
-                  <svg
-                    class="field-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                  >
-                    <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5" />
-                  </svg>
-                  <input
-                    class="field-input w-full"
-                    type="text"
-                    v-model="settings.school_name"
-                    :disabled="!editing"
-                    placeholder="e.g. Caraga State University"
-                  />
-                </div>
-              </div>
-              <div class="field-col">
-                <label class="field-label"
-                  >Building Title <span class="field-required">*</span></label
-                >
-                <div class="field-input-wrap">
-                  <svg
-                    class="field-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                  >
-                    <rect x="2" y="7" width="20" height="14" rx="2" />
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                  </svg>
-                  <input
-                    class="field-input w-full"
-                    type="text"
-                    v-model="settings.building_title"
-                    :disabled="!editing"
-                    placeholder="e.g. University Library"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Row 2: System Name + Max Capacity -->
-            <div class="field-row field-row--2">
-              <div class="field-col">
-                <label class="field-label">System Name <span class="field-required">*</span></label>
-                <div class="field-input-wrap">
-                  <svg
-                    class="field-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                  >
-                    <rect x="2" y="3" width="20" height="14" rx="2" />
-                    <path d="M8 21h8M12 17v4" />
-                  </svg>
-                  <input
-                    class="field-input w-full"
-                    type="text"
-                    v-model="settings.system_name"
-                    :disabled="!editing"
-                    placeholder="e.g. Library Attendance System"
-                  />
-                </div>
-              </div>
-              <div class="field-col">
-                <label class="field-label">Max Capacity</label>
-                <div class="field-input-wrap">
-                  <svg
-                    class="field-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                  >
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                  <input
-                    class="field-input field-input--sm"
-                    type="number"
-                    v-model="settings.max_capacity"
-                    :disabled="!editing"
-                    placeholder="0"
-                    min="0"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- Row 3: Opening + Closing Time -->
-            <div class="field-row field-row--2">
-              <div class="field-col">
-                <label class="field-label">Opening Time</label>
-                <div class="field-input-wrap">
-                  <svg
-                    class="field-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <input
-                    class="field-input w-full"
-                    type="time"
-                    v-model="settings.opening_time"
-                    :disabled="!editing"
-                  />
-                </div>
-              </div>
-              <div class="field-col">
-                <label class="field-label">Closing Time</label>
-                <div class="field-input-wrap">
-                  <svg
-                    class="field-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <input
-                    class="field-input w-full"
-                    type="time"
-                    v-model="settings.closing_time"
-                    :disabled="!editing"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <!-- App Background -->
             <div class="field-col">
-              <label class="field-label">App Background</label>
-              <div class="bg-upload-area" :class="{ 'bg-upload-area--active': editing }">
-                <div v-if="settings.bg_path" class="bg-preview">
-                  <img :src="settings.bg_path" alt="Background preview" class="bg-thumb" />
-                  <div class="bg-preview-info">
-                    <span class="bg-filename">Background set</span>
-                    <span class="bg-url">{{ settings.bg_path }}</span>
+              <label class="field-label">Background Image</label>
+              <div class="upload-area" :class="{ 'upload-area--active': editing }">
+                <div v-if="settings.bg_path" class="media-preview">
+                  <img :src="settings.bg_path" alt="Background preview" class="media-thumb" />
+                  <div class="media-info">
+                    <span class="media-name">Background set</span>
+                    <span class="media-url">{{ settings.bg_path }}</span>
                   </div>
                   <button
                     v-if="editing"
-                    class="bg-change-btn"
-                    :disabled="uploading"
+                    class="media-change-btn"
+                    :disabled="uploadingBg"
                     @click="bgFileInput?.click()"
                   >
-                    <span v-if="uploading" class="btn-spinner"></span>
-                    {{ uploading ? 'Uploading...' : 'Change' }}
+                    <span v-if="uploadingBg" class="btn-spinner"></span>
+                    {{ uploadingBg ? 'Uploading…' : 'Change' }}
                   </button>
                 </div>
                 <button
                   v-else
-                  class="bg-empty-btn"
-                  :disabled="!editing || uploading"
+                  class="upload-empty-btn"
+                  :disabled="!editing || uploadingBg"
                   @click="bgFileInput?.click()"
                 >
-                  <span v-if="uploading" class="btn-spinner btn-spinner--gold"></span>
+                  <span v-if="uploadingBg" class="btn-spinner btn-spinner--gold"></span>
                   <svg
                     v-else
                     viewBox="0 0 24 24"
@@ -269,10 +127,10 @@
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                   {{
-                    uploading
-                      ? 'Uploading...'
+                    uploadingBg
+                      ? 'Uploading…'
                       : editing
-                        ? 'Click to upload background'
+                        ? 'Click to upload image'
                         : 'No background selected'
                   }}
                 </button>
@@ -286,8 +144,8 @@
               </div>
             </div>
 
-            <!-- Meta: last saved + edited by -->
-            <div class="meta-row">
+            <!-- Meta -->
+            <div class="meta-row" v-if="lastUpdated || editedByEmail">
               <div v-if="lastUpdated" class="meta-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <circle cx="12" cy="12" r="10" />
@@ -304,315 +162,254 @@
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Inline save/cancel -->
-          <div v-if="editing" class="inline-actions">
-            <div class="inline-hint"></div>
-            <div class="inline-btns">
-              <button class="inline-cancel" @click="cancelEdit">Cancel</button>
-              <button class="inline-save" @click="saveSection" :disabled="saving">
-                <span v-if="saving" class="btn-spinner btn-spinner--white"></span>
-                <svg
-                  v-else
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  style="width: 11px; height: 11px"
-                >
-                  <polyline points="20 6 9 17 4 12" />
+        <!-- ② VIDEO -->
+        <div class="settings-card" :class="{ 'settings-card--editing': editingVideo }">
+          <div class="card-eyebrow-row">
+            <div class="card-eyebrow">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                style="width: 13px; height: 13px"
+              >
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" />
+              </svg>
+              App Video
+            </div>
+            <div class="card-actions">
+              <button
+                v-if="!editingVideo"
+                class="action-btn action-btn--edit"
+                @click="editingVideo = true"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                 </svg>
-                {{ saving ? 'Saving...' : 'Save Changes' }}
+                Edit
               </button>
+              <button
+                v-if="editingVideo"
+                class="action-btn action-btn--cancel"
+                @click="editingVideo = false"
+              >
+                Cancel
+              </button>
+              <button
+                v-if="editingVideo"
+                class="action-btn action-btn--save"
+                @click="saveVideo"
+                :disabled="savingVideo"
+              >
+                <span v-if="savingVideo" class="btn-spinner btn-spinner--white"></span>
+                {{ savingVideo ? 'Saving…' : 'Save' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="field-stack">
+            <div class="field-col">
+              <label class="field-label">Video File</label>
+              <div class="upload-area" :class="{ 'upload-area--active': editingVideo }">
+                <div v-if="settings.video_path" class="media-preview">
+                  <div class="video-thumb-wrap">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      class="video-play-icon"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polygon points="10 8 16 12 10 16 10 8" />
+                    </svg>
+                  </div>
+                  <div class="media-info">
+                    <span class="media-name">Video set</span>
+                    <span class="media-url">{{ settings.video_path }}</span>
+                  </div>
+                  <button
+                    v-if="editingVideo"
+                    class="media-change-btn"
+                    :disabled="uploadingVideo"
+                    @click="videoFileInput?.click()"
+                  >
+                    <span v-if="uploadingVideo" class="btn-spinner"></span>
+                    {{ uploadingVideo ? 'Uploading…' : 'Change' }}
+                  </button>
+                </div>
+                <button
+                  v-else
+                  class="upload-empty-btn"
+                  :disabled="!editingVideo || uploadingVideo"
+                  @click="videoFileInput?.click()"
+                >
+                  <span v-if="uploadingVideo" class="btn-spinner btn-spinner--gold"></span>
+                  <svg
+                    v-else
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    style="width: 18px; height: 18px"
+                  >
+                    <polygon points="23 7 16 12 23 17 23 7" />
+                    <rect x="1" y="5" width="15" height="14" rx="2" />
+                  </svg>
+                  {{
+                    uploadingVideo
+                      ? 'Uploading…'
+                      : editingVideo
+                        ? 'Click to upload video'
+                        : 'No video selected'
+                  }}
+                </button>
+                <div v-if="uploadingVideo && videoProgress > 0" class="progress-wrap">
+                  <div class="progress-bar" :style="{ width: videoProgress + '%' }"></div>
+                  <span class="progress-label">{{ videoProgress }}%</span>
+                </div>
+                <input
+                  ref="videoFileInput"
+                  type="file"
+                  accept="video/*"
+                  style="display: none"
+                  @change="onVideoFileChange"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ TIME OUT TOGGLE -->
+        <div class="settings-card">
+          <div class="card-eyebrow-row">
+            <div class="card-eyebrow">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                style="width: 13px; height: 13px"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 7v5l3 3" />
+              </svg>
+              Time Out Feature
+            </div>
+          </div>
+
+          <div class="field-stack">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Enable Time Out</span>
+                <span class="toggle-desc">
+                  When enabled, students can log their time out from the system. Disabling this will
+                  hide the time out option.
+                </span>
+              </div>
+              <button
+                class="toggle-switch"
+                :class="{ 'toggle-switch--on': settings.time_out_enabled }"
+                @click="onToggleTimeOut"
+                :disabled="savingToggle"
+                :aria-label="settings.time_out_enabled ? 'Disable time out' : 'Enable time out'"
+              >
+                <span class="toggle-knob">
+                  <span v-if="savingToggle" class="btn-spinner btn-spinner--sm"></span>
+                  <svg
+                    v-else-if="settings.time_out_enabled"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    style="width: 10px; height: 10px"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+            <div class="status-badge-row">
+              <div
+                class="status-badge"
+                :class="settings.time_out_enabled ? 'status-badge--on' : 'status-badge--off'"
+              >
+                <span class="status-dot"></span>
+                {{ settings.time_out_enabled ? 'Time Out is ENABLED' : 'Time Out is DISABLED' }}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- DELETE CONFIRMATION MODAL -->
-    <Teleport to="body">
-      <div v-if="deleteTarget" class="modal-overlay" @click.self="deleteTarget = false">
-        <div class="modal-box">
-          <div class="modal-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-              <path d="M10 11v6" />
-              <path d="M14 11v6" />
-              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-            </svg>
-          </div>
-          <h3 class="modal-title">Delete Settings?</h3>
-          <p class="modal-desc">
-            This will permanently delete the
-            <strong>School / Library Information</strong> settings from the database. This action
-            cannot be undone.
-          </p>
-          <div class="modal-actions">
-            <button class="modal-cancel" @click="deleteTarget = false">Cancel</button>
-            <button class="modal-confirm" @click="deleteSection" :disabled="deleting">
-              <span v-if="deleting" class="btn-spinner btn-spinner--white"></span>
-              {{ deleting ? 'Deleting...' : 'Yes, Delete' }}
-            </button>
-          </div>
-        </div>
+      <!-- Loading -->
+      <div v-if="loading" class="loading-state">
+        <div class="loading-spinner"></div>
+        Loading settings…
       </div>
-    </Teleport>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
-import { createClient } from '@supabase/supabase-js'
+import { ref, reactive } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 
-// ── Supabase client ───────────────────────────────────────────────
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-)
-
-// ── Types ─────────────────────────────────────────────────────────
-interface Settings {
-  school_name: string
-  building_title: string
-  system_name: string
-  bg_path: string
-  max_capacity: number
-  opening_time: string
-  closing_time: string
-}
-
-// ── State ─────────────────────────────────────────────────────────
-const loading = ref(false)
-const saving = ref(false)
-const deleting = ref(false)
-const uploading = ref(false)
-const editing = ref(false)
-const deleteTarget = ref(false)
+// ── Banners ───────────────────────────────────────────────────────
 const errorMsg = ref<string | null>(null)
 const successMsg = ref<string | null>(null)
-const bgFileInput = ref<HTMLInputElement | null>(null)
 
-const rowId = ref<string | null>(null)
-const editedAt = ref<string | null>(null)
+// ── Loading / editing state ───────────────────────────────────────
+const loading = ref(false)
+const saving = ref(false)
+const savingVideo = ref(false)
+const savingToggle = ref(false)
+const uploadingBg = ref(false)
+const uploadingVideo = ref(false)
+const videoProgress = ref(0)
+const editing = ref(false)
+const editingVideo = ref(false)
+
+// ── Meta ──────────────────────────────────────────────────────────
+const lastUpdated = ref<string | null>(null)
 const editedByEmail = ref<string | null>(null)
 
-const defaultSettings: Settings = {
-  school_name: '',
-  building_title: '',
-  system_name: '',
+// ── File input refs ───────────────────────────────────────────────
+const bgFileInput = ref<HTMLInputElement | null>(null)
+const videoFileInput = ref<HTMLInputElement | null>(null)
+
+// ── Settings ──────────────────────────────────────────────────────
+const settings = reactive({
   bg_path: '',
-  max_capacity: 0,
-  opening_time: '',
-  closing_time: '',
-}
-
-const settings = reactive<Settings>({ ...defaultSettings })
-const snapshot = reactive<Settings>({ ...defaultSettings })
-
-// ── Computed ──────────────────────────────────────────────────────
-const lastUpdated = computed(() => {
-  if (!editedAt.value) return null
-  return new Date(editedAt.value).toLocaleString('en-PH', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  video_path: '',
+  time_out_enabled: true,
 })
 
-// ── Load ──────────────────────────────────────────────────────────
-onMounted(loadSettings)
-
-async function loadSettings() {
-  loading.value = true
-  errorMsg.value = null
-
-  try {
-    const { data, error } = await supabase
-      .from('attendance_page')
-      .select('id, element_form, edited_at, edited_by')
-      .eq('element_name', 'school_info')
-      .maybeSingle()
-
-    if (error) throw error
-
-    if (data) {
-      rowId.value = data.id
-      editedAt.value = data.edited_at
-
-      // Fetch editor email from auth.users via profiles table
-      if (data.edited_by) {
-        const { data: userData } = await supabase
-          .from('profiles') // ← change to your actual users/profiles table name
-          .select('email')
-          .eq('id', data.edited_by)
-          .maybeSingle()
-        editedByEmail.value = userData?.email ?? null
-      }
-
-      const parsed: Partial<Settings> = JSON.parse(data.element_form || '{}')
-      Object.assign(settings, { ...defaultSettings, ...parsed })
-    }
-  } catch (err: any) {
-    errorMsg.value = `Failed to load settings: ${err.message}`
-  } finally {
-    loading.value = false
-  }
-}
-
-// ── Edit / Cancel ─────────────────────────────────────────────────
+// ── Stubs (replace with your real implementations) ────────────────
 function editSection() {
-  Object.assign(snapshot, { ...settings })
   editing.value = true
-  errorMsg.value = null
 }
-
 function cancelEdit() {
-  Object.assign(settings, { ...snapshot })
   editing.value = false
-  errorMsg.value = null
 }
-
-// ── Validation ────────────────────────────────────────────────────
-function validateSettings(): string | null {
-  if (!settings.school_name.trim()) return 'School Name is required.'
-  if (!settings.building_title.trim()) return 'Building Title is required.'
-  if (!settings.system_name.trim()) return 'System Name is required.'
-  if (settings.max_capacity < 0) return 'Max Capacity cannot be negative.'
-  return null
+function saveSection() {
+  /* your save logic */
 }
-
-// ── Save ──────────────────────────────────────────────────────────
-async function saveSection() {
-  const validationError = validateSettings()
-  if (validationError) {
-    errorMsg.value = validationError
-    return
-  }
-
-  saving.value = true
-  errorMsg.value = null
-
-  try {
-    // Get current logged-in user → stored in edited_by
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    const now = new Date().toISOString()
-    const formJson = JSON.stringify({ ...settings })
-
-    if (rowId.value) {
-      // UPDATE existing row
-      const { error } = await supabase
-        .from('attendance_page')
-        .update({
-          element_form: formJson,
-          edited_at: now,
-          edited_by: user?.id ?? null,
-        })
-        .eq('id', rowId.value)
-
-      if (error) throw error
-    } else {
-      // INSERT new row
-      const { data, error } = await supabase
-        .from('attendance_page')
-        .insert({
-          element_name: 'school_info',
-          element_form: formJson,
-          edited_at: now,
-          edited_by: user?.id ?? null,
-        })
-        .select('id')
-        .single()
-
-      if (error) throw error
-      rowId.value = data.id
-    }
-
-    editedAt.value = now
-    editedByEmail.value = user?.email ?? null
-    editing.value = false
-    showSuccess('Settings saved successfully!')
-  } catch (err: any) {
-    errorMsg.value = `Failed to save: ${err.message}`
-  } finally {
-    saving.value = false
-  }
+function saveVideo() {
+  /* your save logic */
 }
-
-// ── Delete ────────────────────────────────────────────────────────
-async function deleteSection() {
-  deleting.value = true
-  errorMsg.value = null
-
-  try {
-    if (rowId.value) {
-      const { error } = await supabase.from('attendance_page').delete().eq('id', rowId.value)
-
-      if (error) throw error
-
-      rowId.value = null
-      editedAt.value = null
-      editedByEmail.value = null
-    }
-
-    Object.assign(settings, { ...defaultSettings })
-    deleteTarget.value = false
-    editing.value = false
-    showSuccess('Settings deleted successfully.')
-  } catch (err: any) {
-    errorMsg.value = `Failed to delete: ${err.message}`
-  } finally {
-    deleting.value = false
-  }
+function onToggleTimeOut() {
+  settings.time_out_enabled = !settings.time_out_enabled
 }
-
-// ── Background image upload ───────────────────────────────────────
-async function onBgFileChange(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-
-  if (file.size > 5 * 1024 * 1024) {
-    errorMsg.value = 'Image must be smaller than 5MB.'
-    return
-  }
-
-  uploading.value = true
-  errorMsg.value = null
-
-  try {
-    const ext = file.name.split('.').pop()
-    const filePath = `backgrounds/bg_${Date.now()}.${ext}`
-
-    const { error: uploadError } = await supabase.storage
-      .from('app-assets')
-      .upload(filePath, file, { upsert: true })
-
-    if (uploadError) throw uploadError
-
-    const { data: urlData } = supabase.storage.from('app-assets').getPublicUrl(filePath)
-
-    settings.bg_path = urlData.publicUrl
-    showSuccess('Background uploaded!')
-  } catch (err: any) {
-    errorMsg.value = `Upload failed: ${err.message}`
-  } finally {
-    uploading.value = false
-    if (bgFileInput.value) bgFileInput.value.value = ''
-  }
+function onBgFileChange(e: Event) {
+  /* your upload logic */
 }
-
-// ── Toast ─────────────────────────────────────────────────────────
-function showSuccess(msg: string) {
-  successMsg.value = msg
-  setTimeout(() => {
-    successMsg.value = null
-  }, 3500)
+function onVideoFileChange(e: Event) {
+  /* your upload logic */
 }
 </script>
 
@@ -672,7 +469,7 @@ function showSuccess(msg: string) {
   }
 }
 
-/* ── Shell ──────────────────────────────────────── */
+/* ── Shell ── */
 .page-shell {
   display: flex;
   height: 100vh;
@@ -695,7 +492,7 @@ function showSuccess(msg: string) {
   border-radius: 5px;
 }
 
-/* ── Header ─────────────────────────────────────── */
+/* ── Header ── */
 .attn-header {
   margin-bottom: 28px;
   animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -753,7 +550,7 @@ function showSuccess(msg: string) {
   margin-top: 16px;
 }
 
-/* ── Banners ─────────────────────────────────────── */
+/* ── Banners ── */
 .error-banner,
 .success-banner {
   display: flex;
@@ -795,7 +592,7 @@ function showSuccess(msg: string) {
   opacity: 1;
 }
 
-/* ── Loading ─────────────────────────────────────── */
+/* ── Loading ── */
 .loading-state {
   display: flex;
   align-items: center;
@@ -813,14 +610,17 @@ function showSuccess(msg: string) {
   animation: spin 0.7s linear infinite;
 }
 
-/* ── Settings wrapper ────────────────────────────── */
+/* ── Settings wrapper ── */
 .settings-wrapper {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
+.settings-card:last-child {
+  grid-column: 1 / -1;
+}
 
-/* ── Card ────────────────────────────────────────── */
+/* ── Card ── */
 .settings-card {
   background: #fff;
   border: 1px solid rgba(6, 32, 9, 0.07);
@@ -861,13 +661,6 @@ function showSuccess(msg: string) {
   text-transform: uppercase;
   color: #c8930a;
 }
-.eyebrow-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #c8930a;
-  animation: pulse 2s ease infinite;
-}
 .card-actions {
   display: flex;
   gap: 8px;
@@ -899,29 +692,35 @@ function showSuccess(msg: string) {
   border-color: #c5ccbe;
   transform: translateY(-1px);
 }
-.action-btn--delete {
-  border: 1.5px solid #ffc9c9;
-  background: #fff5f5;
-  color: #c0392b;
+.action-btn--cancel {
+  border: 1.5px solid #e2e6e0;
+  background: transparent;
+  color: rgba(6, 32, 9, 0.45);
 }
-.action-btn--delete:hover {
-  background: #ffe4e4;
+.action-btn--cancel:hover {
+  background: #f0f2ec;
+}
+.action-btn--save {
+  border: none;
+  background: #062009;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(6, 32, 9, 0.2);
+}
+.action-btn--save:hover:not(:disabled) {
+  background: #1b5e20;
   transform: translateY(-1px);
 }
+.action-btn--save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-/* Fields */
+/* ── Fields ── */
 .field-stack {
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 20px;
-}
-.field-row {
-  display: grid;
-  gap: 12px;
-}
-.field-row--2 {
-  grid-template-columns: 1fr 1fr;
 }
 .field-col {
   display: flex;
@@ -934,60 +733,144 @@ function showSuccess(msg: string) {
   color: rgba(6, 32, 9, 0.4);
   letter-spacing: 0.02em;
 }
-.field-required {
-  color: #c0392b;
-  margin-left: 2px;
-}
-.field-input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.field-icon {
-  position: absolute;
-  left: 10px;
-  width: 14px;
-  height: 14px;
-  color: #b8c0b4;
-  pointer-events: none;
-}
-.field-input {
-  padding: 0.42rem 0.65rem 0.42rem 2rem;
-  border-radius: 9px;
-  border: 1.5px solid #e2e6e0;
+
+/* ── Upload area ── */
+.upload-area {
+  border: 1.5px dashed #d4d8d0;
+  border-radius: 10px;
   background: #f7f8f5;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.78rem;
-  color: #062009;
-  outline: none;
-  min-width: 0;
+  overflow: hidden;
   transition:
     border-color 0.18s,
-    box-shadow 0.18s,
     background 0.18s;
 }
-.field-input::placeholder {
-  color: #b8c4b4;
-}
-.field-input:focus {
+.upload-area--active {
   border-color: #c8930a;
-  box-shadow: 0 0 0 3px rgba(200, 147, 10, 0.12);
-  background: #fff;
-}
-.field-input:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-.field-input.w-full {
-  width: 100%;
-  box-sizing: border-box;
-}
-.field-input--sm {
-  width: 100%;
-  box-sizing: border-box;
+  background: #fffdf7;
 }
 
-/* Meta row */
+.upload-empty-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ba390;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  transition: color 0.15s;
+}
+.upload-empty-btn:not(:disabled):hover {
+  color: #c8930a;
+}
+.upload-empty-btn:disabled {
+  cursor: not-allowed;
+}
+
+.media-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.media-thumb {
+  width: 54px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 7px;
+  border: 1px solid #e2e6e0;
+  flex-shrink: 0;
+}
+
+.video-thumb-wrap {
+  width: 54px;
+  height: 40px;
+  background: #f0f2ec;
+  border-radius: 7px;
+  border: 1px solid #e2e6e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.video-play-icon {
+  width: 20px;
+  height: 20px;
+  color: #1b5e20;
+}
+
+.media-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.media-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #062009;
+}
+.media-url {
+  font-size: 0.63rem;
+  color: #9ba390;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.media-change-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.25rem 0.7rem;
+  border-radius: 7px;
+  border: 1.5px solid #e2e6e0;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #062009;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.media-change-btn:hover:not(:disabled) {
+  background: #eaede4;
+}
+.media-change-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Progress bar ── */
+.progress-wrap {
+  margin: 0 14px 12px;
+  background: #e2e6e0;
+  border-radius: 99px;
+  height: 6px;
+  position: relative;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #1b5e20, #f9a825);
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+.progress-label {
+  position: absolute;
+  right: 0;
+  top: -18px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #9ba390;
+}
+
+/* ── Meta row ── */
 .meta-row {
   display: flex;
   flex-wrap: wrap;
@@ -1009,162 +892,102 @@ function showSuccess(msg: string) {
   flex-shrink: 0;
 }
 
-/* BG Upload */
-.bg-upload-area {
-  border: 1.5px dashed #d4d8d0;
-  border-radius: 10px;
-  background: #f7f8f5;
-  overflow: hidden;
-  transition:
-    border-color 0.18s,
-    background 0.18s;
-}
-.bg-upload-area--active {
-  border-color: #c8930a;
-  background: #fffdf7;
-}
-.bg-empty-btn {
-  width: 100%;
+/* ── Toggle row ── */
+.toggle-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #9ba390;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.75rem;
-  transition: color 0.15s;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
 }
-.bg-empty-btn:not(:disabled):hover {
-  color: #c8930a;
-}
-.bg-empty-btn:disabled {
-  cursor: not-allowed;
-}
-.bg-preview {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-}
-.bg-thumb {
-  width: 54px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 7px;
-  border: 1px solid #e2e6e0;
-  flex-shrink: 0;
-}
-.bg-preview-info {
-  flex: 1;
+.toggle-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  gap: 4px;
 }
-.bg-filename {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #062009;
-}
-.bg-url {
-  font-size: 0.63rem;
-  color: #9ba390;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.bg-change-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0.25rem 0.7rem;
-  border-radius: 7px;
-  border: 1.5px solid #e2e6e0;
-  background: #fff;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.68rem;
+.toggle-title {
+  font-size: 0.85rem;
   font-weight: 700;
   color: #062009;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.15s;
 }
-.bg-change-btn:hover:not(:disabled) {
-  background: #eaede4;
-}
-.bg-change-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.toggle-desc {
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.5;
+  max-width: 420px;
 }
 
-/* Inline actions */
-.inline-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px;
-  border-top: 1px solid #f0f2ec;
-  background: #fdfcf9;
-  animation: fadeUp 0.2s ease both;
-}
-.inline-hint {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.67rem;
-  color: #b8c4b4;
-}
-.inline-btns {
-  display: flex;
-  gap: 8px;
-}
-.inline-cancel {
-  padding: 0.35rem 0.9rem;
-  border-radius: 8px;
-  border: 1.5px solid #e2e6e0;
-  background: transparent;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: rgba(6, 32, 9, 0.4);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.inline-cancel:hover {
-  background: #f0f2ec;
-  color: #062009;
-}
-.inline-save {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0.35rem 1rem;
-  border-radius: 8px;
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  border-radius: 99px;
   border: none;
-  background: #062009;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #fff;
+  background: #d1d5db;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(6, 32, 9, 0.2);
-  transition:
-    background 0.15s,
-    transform 0.12s;
+  flex-shrink: 0;
+  transition: background 0.25s ease;
+  padding: 0;
 }
-.inline-save:hover:not(:disabled) {
+.toggle-switch--on {
   background: #1b5e20;
-  transform: translateY(-1px);
 }
-.inline-save:disabled {
+.toggle-switch:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Spinners */
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-switch--on .toggle-knob {
+  transform: translateX(24px);
+}
+
+/* ── Status badge ── */
+.status-badge-row {
+  margin-top: 4px;
+}
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.status-badge--on {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1.5px solid #bbf7d0;
+}
+.status-badge--off {
+  background: #f9fafb;
+  color: #6b7280;
+  border: 1.5px solid #e5e7eb;
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+  animation: pulse 2s ease infinite;
+}
+
+/* ── Spinners ── */
 .btn-spinner {
   width: 12px;
   height: 12px;
@@ -1183,126 +1006,25 @@ function showSuccess(msg: string) {
   border-color: rgba(200, 147, 10, 0.2);
   border-top-color: #c8930a;
 }
-
-/* ── Modal ───────────────────────────────────────── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(6, 32, 9, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  backdrop-filter: blur(3px);
-  animation: fadeUp 0.2s ease both;
-}
-.modal-box {
-  background: #fff;
-  border-radius: 20px;
-  padding: 32px 28px;
-  max-width: 380px;
-  width: 90%;
-  box-shadow: 0 20px 60px rgba(6, 32, 9, 0.18);
-  animation: cardIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.modal-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: #fff5f5;
-  border: 1.5px solid #ffc9c9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #c0392b;
-  margin-bottom: 16px;
-}
-.modal-icon svg {
-  width: 22px;
-  height: 22px;
-}
-.modal-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #062009;
-  margin: 0 0 8px;
-}
-.modal-desc {
-  font-size: 0.8rem;
-  color: #6b7280;
-  line-height: 1.55;
-  margin: 0 0 20px;
-}
-.modal-desc strong {
-  color: #062009;
-}
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-.modal-cancel {
-  padding: 0.55rem 1.1rem;
-  border-radius: 10px;
-  border: 1.5px solid #e2e6e0;
-  background: transparent;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: rgba(6, 32, 9, 0.45);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.modal-cancel:hover {
-  background: #f0f2ec;
-}
-.modal-confirm {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.55rem 1.2rem;
-  border-radius: 10px;
-  border: none;
-  background: #c0392b;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(192, 57, 43, 0.25);
-  transition:
-    background 0.15s,
-    transform 0.12s;
-}
-.modal-confirm:hover:not(:disabled) {
-  background: #a93226;
-  transform: translateY(-1px);
-}
-.modal-confirm:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.btn-spinner--sm {
+  width: 9px;
+  height: 9px;
+  border-width: 1.5px;
 }
 
-/* ── Responsive ──────────────────────────────────── */
+/* ── Responsive ── */
 @media (max-width: 680px) {
   .page-scroll {
     padding: 20px 16px 60px;
   }
-  .field-row--2 {
+  .settings-wrapper {
     grid-template-columns: 1fr;
   }
-  .inline-actions {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
+  .settings-card:last-child {
+    grid-column: auto;
   }
-  .inline-hint {
-    display: none;
-  }
-  .meta-row {
+  .toggle-row {
     flex-direction: column;
-    gap: 8px;
   }
 }
 </style>
