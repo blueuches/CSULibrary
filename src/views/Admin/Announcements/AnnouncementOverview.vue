@@ -441,7 +441,7 @@ const confirmDelete = async () => {
   await action()
 }
 
-// --- FETCH ANNOUNCEMENTS ---
+// --- FETCH ANNOUNCEMENTS() ---
 const fetchAnnouncements = async () => {
   try {
     isLoading.value = true
