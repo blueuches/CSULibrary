@@ -5,20 +5,9 @@
     </div>
 
     <div class="page-scroll">
-      <header class="attn-header">
-        <div class="header-breadcrumb">
-          <span>Admin</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span class="breadcrumb-current">User Management</span>
-        </div>
-        <h1 class="hero-title">
-          <span class="hero-word-dark hero-underlined">User</span>
-          <span class="hero-word-gold"> Management</span>
-        </h1>
-        <p class="hero-subtitle">Manage and review all registered users and their roles.</p>
-      </header>
+      <AdminPageHeader :breadcrumbs="['Admin', 'User Management']" title="User Management">
+        <template #subtitle>Manage and review all registered users and their roles.</template>
+      </AdminPageHeader>
 
       <div v-if="isAuthorized" class="content-grid">
         <!-- USER MANAGEMENT -->

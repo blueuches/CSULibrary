@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import Sidebar from '@/components/Sidebar.vue'
-import { getAttendanceLogs } from '@/services/attendanceService'
-import { supabase } from '@/lib/supabase'
+import { ref, computed, onMounted, watch } from "vue"
+import AdminPageHeader from "@/components/AdminPageHeader.vue"
+import Sidebar from "@/components/Sidebar.vue"
+import { getAttendanceLogs } from "@/services/attendanceService"
+import { supabase } from "@/lib/supabase"
 
 type Student = {
   id_number?: string
@@ -312,31 +313,9 @@ const goToPrevPage = () => {
     <main class="mainArea">
       <div class="page">
         <div class="wrap">
-          <div class="headBlock">
-            <div class="header-breadcrumb !mb-2">
-              <span
-                class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-                @click="$router.push('/admin/attendance')"
-              >
-                BACK
-              </span>
-
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-
-              <span>Attendance</span>
-            </div>
-
-            <div class="titleHero">
-              <h1 class="heroTitle">
-                <span class="heroTitlePrimary">Attendance</span>
-                <span class="heroTitleAccent">Logs</span>
-              </h1>
-
-              <div class="heroUnderline"></div>
-            </div>
-          </div>
+          <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/attendance' }, 'Attendance']" title="Attendance Logs">
+            <template #subtitle>Review and export attendance records.</template>
+          </AdminPageHeader>
 
           <div class="toolbar">
             <div class="toolbarLeft">

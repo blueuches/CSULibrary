@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, type DirectiveBinding } from 'vue'
 import { useRoute } from 'vue-router'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/Sidebar.vue'
 import '@/assets/styles/manage-gallery.css'
@@ -94,14 +95,6 @@ const defaultAboutContent: AboutContent = {
     'Walk quietly into the library.',
     'Never run around the hallway outside the library premises.',
   ],
-}
-
-const SECTION_ORDER: Record<keyof AboutContent, number> = {
-  vision: 1,
-  mission: 2,
-  goal: 3,
-  objectives: 4,
-  rules: 5,
 }
 
 const mediaItems = ref<MediaItem[]>([])
@@ -382,28 +375,12 @@ onBeforeUnmount(() => {
 
     <section class="about-page">
       <div class="manage-about-shell">
-        <div class="manage-header">
-          <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.back()"
-            >
-              BACK
-            </span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>Manage About Us</span>
-          </div>
-
-          <h1 class="hero-title">
-            <span class="hero-title--underlined">Manage</span>
-            <span class="hero-title--gold"> About Us</span>
-          </h1>
-
-          <p class="manage-subtitle">
-            Update library about content, objectives, rules, and visibility for the About page.
-          </p>
+        <div class="-mt-2">
+          <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/website' }, 'Website Management']" title="Manage About Us">
+            <template #subtitle>
+              Update library about content, objectives, rules, and visibility for the About page.
+            </template>
+          </AdminPageHeader>
         </div>
       </div>
 

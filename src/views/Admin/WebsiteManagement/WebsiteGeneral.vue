@@ -8,28 +8,9 @@
     <!-- MAIN CONTENT -->
     <div class="flex-1 py-10 px-6 md:pl-8 md:pr-16" style="font-family: 'Poppins', sans-serif">
       <!-- HEADER -->
-      <header class="mb-10">
-        <div class="header-breadcrumb">
-          <span>Admin</span>
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            class="inline-block w-4 h-4 mx-2"
-          >
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span>Website Management</span>
-        </div>
-
-        <h1 class="header-title intro-title">
-          <span class="text-[#0d2b0f]">Website</span>
-          <span class="text-yellow-500"> Overview</span>
-        </h1>
-
-        <p class="text-gray-600">Manage website content and system modules</p>
-      </header>
+      <AdminPageHeader :breadcrumbs="['Admin', 'Website Management']" title="Website Overview">
+        <template #subtitle>Manage website content and system modules</template>
+      </AdminPageHeader>
 
       <!-- GRID BUTTONS -->
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -81,6 +62,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 
 const router = useRouter()

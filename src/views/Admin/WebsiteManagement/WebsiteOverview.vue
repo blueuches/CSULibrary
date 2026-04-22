@@ -7,29 +7,9 @@
 
     <!-- MAIN CONTENT -->
     <div class="flex-1 py-10 px-6 md:pl-8 md:pr-16" style="font-family: 'Poppins', sans-serif">
-      <!-- HEADER -->
-      <header class="mb-10 flex items-center gap-4">
-        <div>
-          <div class="header-breadcrumb">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/website/general')"
-            >
-              BACK
-            </span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>WEBSITE MANAGEMENT</span>
-          </div>
-
-          <h1 class="header-title text-3xl font-black">
-            Web <span class="text-yellow-500">Overview</span>
-          </h1>
-
-          <p class="header-sub text-gray-600">Manage website visuals and assets</p>
-        </div>
-      </header>
+      <AdminPageHeader :breadcrumbs="['Admin', 'WEBSITE MANAGEMENT']" title="Web Overview">
+        <template #subtitle>Manage website visuals and assets</template>
+      </AdminPageHeader>
 
       <!-- NAVIGATION -->
       <div class="flex gap-4 mb-10 flex-wrap">

@@ -3,6 +3,11 @@
     <Sidebar />
 
     <div class="page-scroll">
+<<<<<<< HEAD
+      <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Attendance Settings">
+        <template #subtitle>Configure school info, security, and system preferences</template>
+      </AdminPageHeader>
+=======
       <!-- HEADER -->
       <header class="attn-header">
         <div>
@@ -25,6 +30,7 @@
           <p class="hero-subtitle">Configure app background, video, and system preferences</p>
         </div>
       </header>
+>>>>>>> development
 
       <!-- ERROR BANNER -->
       <div v-if="errorMsg" class="error-banner">

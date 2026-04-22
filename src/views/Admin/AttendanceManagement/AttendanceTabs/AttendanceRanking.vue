@@ -2,37 +2,20 @@
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
     <Sidebar />
     <main class="flex-1 p-8 overflow-y-auto">
-      <header class="report-header intro-header mb-6">
-        <div class="header-left">
-          <div class="header-breadcrumb mb-2!">
-            <span class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/attendance')">BACK</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4 inline mx-1">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>ATTENDANCE RANKING</span>
-          </div>
-
-          <h1 class="header-title intro-title">
-            Attendance <span class="text-yellow-500">Ranking</span>
-          </h1>
-
-          <p class="header-sub">
-            Monitor engagement trends, track visitor headcounts, and review attendance by category.
-          </p>
-        </div>
-
-        <div class="header-right me-4">
-          <div
-            class="date-badge flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+      <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Attendance Ranking">
+        <template #subtitle>
+          Monitor engagement trends, track visitor headcounts, and review attendance by category.
+        </template>
+        <template #actions>
+          <div class="date-badge flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
             <svg class="w-4 h-4 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span class="text-sm font-semibold text-green-900">{{ currentDate }}</span>
           </div>
-        </div>
-      </header>
+        </template>
+      </AdminPageHeader>
 
       <div class="kpi-strip mb-8 flex gap-4">
         <div v-for="(stat, i) in attendanceStats" :key="i"
