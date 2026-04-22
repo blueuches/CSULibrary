@@ -14,6 +14,8 @@ export interface EventData {
   is_active?: boolean
   created_by?: string
   images?: string | null
+  time_start?: string | null
+  time_end?: string | null
 }
 
 
