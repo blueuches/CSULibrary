@@ -69,11 +69,22 @@
                   <span>{{ event.location }}</span>
                   <span class="w-1 h-1 bg-white/20 rounded-full"></span>
                   <!-- Show duration if event type has time_start & time_end, else show date time -->
-                  <span v-if="event.type === 'event' && event.time_start" class="text-white/60 flex items-center gap-1">
-                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                  <span
+                    v-if="event.type === 'event' && event.time_start"
+                    class="text-white/60 flex items-center gap-1"
+                  >
+                    <svg
+                      class="w-3 h-3"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 6v6l4 2" />
                     </svg>
-                    {{ formatTime(event.time_start ?? null) }} — {{ formatTime(event.time_end ?? null) }}
+                    {{ formatTime(event.time_start ?? null) }} —
+                    {{ formatTime(event.time_end ?? null) }}
                   </span>
                   <span v-else class="text-white/60">{{ event.time }}</span>
                 </div>
@@ -105,6 +116,7 @@
               />
 
               <!-- Pinned Badge -->
+              <!-- Pinned Badge -->
               <div class="absolute top-4 left-4" v-if="event.isPinnedGrid">
                 <div
                   class="bg-yellow-400 text-green-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg border border-yellow-500"
@@ -113,6 +125,7 @@
                 </div>
               </div>
 
+              <!-- Type Badge -->
               <!-- Type Badge -->
               <div class="absolute top-4 right-4">
                 <div
@@ -127,7 +140,9 @@
             <div
               class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1"
             >
-              <div class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest flex-wrap">
+              <div
+                class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest flex-wrap"
+              >
                 <span>{{ event.location }}</span>
                 <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
 
@@ -136,15 +151,24 @@
                   v-if="event.type === 'event' && event.time_start"
                   class="text-gray-500 font-bold flex items-center gap-1"
                 >
-                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                  <svg
+                    class="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
                   </svg>
-                  {{ formatTime(event.time_start ?? null) }} — {{ formatTime(event.time_end ?? null) }}
+                  {{ formatTime(event.time_start ?? null) }} —
+                  {{ formatTime(event.time_end ?? null) }}
                 </span>
 
                 <!-- NEWS / ANNOUNCEMENT: show null (nothing) or just the date time -->
                 <span v-else class="text-gray-400 font-bold">{{ event.time }}</span>
               </div>
+
 
               <h3
                 class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800"
@@ -209,10 +233,10 @@ const pinnedMode = ref<'start_date' | 'created_at'>('start_date')
 const formatTime = (timeStr: string | null | undefined): string => {
   if (!timeStr) return ''
   const [hourStr, minuteStr] = timeStr.split(':')
-  const hour   = parseInt(hourStr ?? '0', 10)
+  const hour = parseInt(hourStr ?? '0', 10)
   const minute = minuteStr || '00'
   const period = hour >= 12 ? 'PM' : 'AM'
-  const h      = hour % 12 || 12
+  const h = hour % 12 || 12
   return `${h}:${minute} ${period}`
 }
 
@@ -229,12 +253,12 @@ const fetchEvents = async () => {
       const date = new Date(event.start_date)
       return {
         ...event,
-        image:       event.images,
-        month:       date.toLocaleString('en-US', { month: 'long' }),
-        year:        date.getFullYear().toString(),
+        image: event.images,
+        month: date.toLocaleString('en-US', { month: 'long' }),
+        year: date.getFullYear().toString(),
         // fallback time display for non-event types
-        time:        date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        pinned:      index < 3,
+        time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        pinned: index < 3,
         isPinnedGrid: false,
         isLatest:    index === 0,
       }
@@ -289,8 +313,12 @@ const stopCarousel = () => {
   if (carouselTimer) clearInterval(carouselTimer)
 }
 
-const handleScroll = () => { showScrollTop.value = window.scrollY > 300 }
-const scrollToTop  = () => { window.scrollTo({ top: 0, behavior: 'smooth' }) }
+const handleScroll = () => {
+  showScrollTop.value = window.scrollY > 300
+}
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 onMounted(() => {
   fetchEvents()
@@ -304,16 +332,57 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.section { font-family: 'Poppins', sans-serif; }
-.section-title { width: min(100%, 1500px); margin: 8px auto 14px; text-align: center; }
-.section-kicker { display: inline-flex; align-items: center; gap: 14px; }
-.kicker-text { font-weight: 800; letter-spacing: 6px; font-size: 0.7rem; color: #0d2b0f; text-transform: uppercase; }
-.section-headline { margin: 10px 0 1%; font-weight: 900; font-size: clamp(1.6rem, 5vw, 3.3rem); color: #0d2b0f; text-transform: uppercase; }
+.section {
+  font-family: 'Poppins', sans-serif;
+}
+.section-title {
+  width: min(100%, 1500px);
+  margin: 8px auto 14px;
+  text-align: center;
+}
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+.kicker-text {
+  font-weight: 800;
+  letter-spacing: 6px;
+  font-size: 0.7rem;
+  color: #0d2b0f;
+  text-transform: uppercase;
+}
+.section-headline {
+  margin: 10px 0 1%;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 5vw, 3.3rem);
+  color: #0d2b0f;
+  text-transform: uppercase;
+}
 
-@keyframes fadeSlideUp { to { opacity: 1; transform: translateY(0); } }
-.title-container { opacity: 0; transform: translateY(30px); animation: fadeSlideUp 0.9s ease forwards; }
-.title-headline  { opacity: 0; transform: translateY(25px); animation: fadeSlideUp 1s ease forwards; animation-delay: 0.4s; }
-.event-carousel  { opacity: 0; transform: translateY(25px); animation: fadeSlideUp 1s ease forwards; animation-delay: 0.4s; }
+@keyframes fadeSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.title-container {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeSlideUp 0.9s ease forwards;
+}
+.title-headline {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: fadeSlideUp 1s ease forwards;
+  animation-delay: 0.4s;
+}
+.event-carousel {
+  opacity: 0;
+  transform: translateY(25px);
+  animation: fadeSlideUp 1s ease forwards;
+  animation-delay: 0.4s;
+}
 
 .kicker-line {
   display: inline-block; height: 3px; width: 60px;
@@ -326,13 +395,31 @@ onUnmounted(() => {
 .pill-entrance { opacity: 0; transform: translateY(10px); animation: pillPop 0.5s ease-out calc(var(--p-i) * 0.05s + 0.4s) forwards; }
 @keyframes pillPop { to { opacity: 1; transform: translateY(0); } }
 
-.event-card { opacity: 0; transform: translateY(30px); animation: cardIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.1s + 0.5s) forwards; }
-@keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+.event-card {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) calc(var(--i) * 0.1s + 0.5s) forwards;
+}
+@keyframes cardIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-.shuffle-move { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-.shuffle-enter-active { transition: opacity 0.4s ease; }
-.shuffle-enter-from { opacity: 0; }
-.shuffle-leave-active { display: none; position: absolute; }
+.shuffle-move {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.shuffle-enter-active {
+  transition: opacity 0.4s ease;
+}
+.shuffle-enter-from {
+  opacity: 0;
+}
+.shuffle-leave-active {
+  display: none;
+  position: absolute;
+}
 
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
@@ -347,7 +434,5 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-} 
-
-/* errorrr */
+}
 </style>

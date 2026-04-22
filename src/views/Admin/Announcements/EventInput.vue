@@ -59,12 +59,35 @@
         <!-- FORM -->
         <div class="lg:col-span-7 space-y-6">
           <form @submit.prevent="submitForm" class="space-y-6">
-
             <!-- MAIN CARD -->
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-200">
               <div class="space-y-6">
-
                 <!-- TYPE SELECTOR -->
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
+                    Type
+                  </label>
+                  <div class="flex gap-3">
+                    <button
+                      v-for="option in typeOptions"
+                      :key="option.value"
+                      type="button"
+                      @click="formData.type = option.value"
+                      :class="[
+                        'flex-1 py-3 rounded-xl font-bold text-sm border-2 transition-all',
+                        formData.type === option.value
+                          ? 'bg-[#0d2b0f] text-white border-[#0d2b0f]'
+                          : 'bg-gray-50 text-gray-500 border-gray-300 hover:border-[#2D7231] hover:text-[#2D7231]',
+                      ]"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- HEADLINE -->
                 <div>
                   <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
                     Type
@@ -100,6 +123,7 @@
                   />
                 </div>
 
+                <!-- DETAILS -->
                 <!-- DETAILS -->
                 <div>
                   <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
@@ -150,11 +174,15 @@
                 <label class="text-sm font-bold text-gray-700 uppercase mb-1 block tracking-wider">
                   Event Duration
                 </label>
-                <p class="text-xs text-gray-400 mb-4 ml-1">Set the start and end time of the event.</p>
+                <p class="text-xs text-gray-400 mb-4 ml-1">
+                  Set the start and end time of the event.
+                </p>
 
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1">
+                    <label
+                      class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1"
+                    >
                       Time In
                     </label>
                     <input
@@ -164,7 +192,9 @@
                     />
                   </div>
                   <div>
-                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1">
+                    <label
+                      class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1"
+                    >
                       Time Out
                     </label>
                     <input
@@ -215,6 +245,7 @@
                   class="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold uppercase mb-4 tracking-wider"
                 >
                   {{ formData.type || 'Announcement' }}
+                  {{ formData.type || 'Announcement' }}
                 </span>
 
                 <h3 class="text-2xl font-bold text-gray-900 leading-tight mb-4">
@@ -230,7 +261,13 @@
                   v-if="formData.type === 'event' && (formData.timeIn || formData.timeOut)"
                   class="mt-4 flex items-center gap-2 text-xs font-semibold text-green-700 bg-green-50 px-3 py-2 rounded-xl w-fit"
                 >
-                  <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <svg
+                    class="w-3 h-3 shrink-0"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6v6l4 2" />
                   </svg>
@@ -270,8 +307,8 @@ const imagePreview = ref<string | null>(null)
 
 const typeOptions: { value: 'announcement' | 'event' | 'news'; label: string }[] = [
   { value: 'announcement', label: 'Announcement' },
-  { value: 'event',        label: 'Event' },
-  { value: 'news',         label: 'News' },
+  { value: 'event', label: 'Event' },
+  { value: 'news', label: 'News' },
 ]
 
 const formData = ref({
@@ -279,9 +316,9 @@ const formData = ref({
   description:   '',
   attachment:    null as File | null,
   datePublished: today,
-  type:          'announcement' as 'announcement' | 'event' | 'news',
-  timeIn:        '',
-  timeOut:       '',
+  type: 'announcement' as 'announcement' | 'event' | 'news',
+  timeIn: '',
+  timeOut: '',
 })
 
 const toast = reactive({
@@ -294,15 +331,15 @@ let toastTimer: ReturnType<typeof setTimeout> | null = null
 
 const showToast = (message: string, type: 'success' | 'error' = 'success') => {
   toast.message = message
-  toast.type    = type
-  toast.show    = true
+  toast.type = type
+  toast.show = true
   if (toastTimer) clearTimeout(toastTimer)
   toastTimer = setTimeout(() => { toast.show = false }, 2500)
 }
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const file   = target.files?.[0]
+  const file = target.files?.[0]
   if (file) {
     formData.value.attachment = file
     imagePreview.value        = URL.createObjectURL(file)
@@ -318,31 +355,30 @@ const toDateInputValue = (dateString?: string | null) => {
 
 const loadForEdit = async (id: string) => {
   try {
-    const { data, error } = await supabase
-      .from('events')
-      .select('*')
-      .eq('id', id)
-      .single()
+    const { data, error } = await supabase.from('events').select('*').eq('id', id).single()
 
     if (error) throw error
+    if (!data) throw new Error('Record not found.')
     if (!data) throw new Error('Record not found.')
 
     formData.value.title         = data.title       || ''
     formData.value.description   = data.description || ''
     formData.value.datePublished = toDateInputValue(data.start_date)
-    formData.value.type          = data.type        || 'announcement'
+    formData.value.type = data.type || 'announcement'
 
     // Load existing time_start / time_end — stored as "HH:MM:SS", slice to "HH:MM"
-    formData.value.timeIn  = data.time_start ? String(data.time_start).slice(0, 5) : ''
-    formData.value.timeOut = data.time_end   ? String(data.time_end).slice(0, 5)   : ''
+    formData.value.timeIn = data.time_start ? String(data.time_start).slice(0, 5) : ''
+    formData.value.timeOut = data.time_end ? String(data.time_end).slice(0, 5) : ''
 
     existingImageUrl.value = data.images || null
-    imagePreview.value     = data.images || null
-    editingId.value        = String(data.id)
-    isEditing.value        = true
+    imagePreview.value = data.images || null
+    editingId.value = String(data.id)
+    isEditing.value = true
   } catch (error) {
     console.error('Error loading record for edit:', error)
+    console.error('Error loading record for edit:', error)
     showToast('Failed to load announcement', 'error')
+    setTimeout(() => router.push('/admin/announcement'), 600)
     setTimeout(() => router.push('/admin/announcement'), 600)
   }
 }
@@ -388,23 +424,23 @@ const submitForm = async () => {
     }
 
     const dateValue = formData.value.datePublished || new Date().toISOString()
-    const year      = new Date(dateValue).getFullYear()
-    const isEvent   = formData.value.type === 'event'
+    const year = new Date(dateValue).getFullYear()
+    const isEvent = formData.value.type === 'event'
 
     const payload = {
-      type:        formData.value.type,
-      title:       formData.value.title,
+      type: formData.value.type,
+      title: formData.value.title,
       description: formData.value.description,
       images:      imageUrl,
       year,
-      start_date:  dateValue,
-      end_date:    dateValue,
-      location:    'Library',
-      is_active:   true,
-      created_by:  '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
+      start_date: dateValue,
+      end_date: dateValue,
+      location: 'Library',
+      is_active: true,
+      created_by: '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
       // time_start and time_end: only set for events, null for news/announcement
-      time_start:  isEvent ? (formData.value.timeIn  || null) : null,
-      time_end:    isEvent ? (formData.value.timeOut || null) : null,
+      time_start: isEvent ? formData.value.timeIn || null : null,
+      time_end: isEvent ? formData.value.timeOut || null : null,
     }
 
     if (isEditing.value && editingId.value) {
@@ -416,7 +452,7 @@ const submitForm = async () => {
     showToast(
       isEditing.value
         ? 'Announcement updated successfully!'
-        : 'Announcement published successfully!'
+        : 'Announcement published successfully!',
     )
     setTimeout(() => router.push('/admin/announcement'), 400)
   } catch (error) {
@@ -426,9 +462,11 @@ const submitForm = async () => {
 }
 
 const goBack = () => router.push('/admin/announcement')
+const goBack = () => router.push('/admin/announcement')
 
 onMounted(() => {
   const id = route.query.id
+  if (typeof id === 'string' && id.trim()) loadForEdit(id)
   if (typeof id === 'string' && id.trim()) loadForEdit(id)
 })
 </script>
@@ -437,12 +475,24 @@ onMounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 .toast-enter-active,
-.toast-leave-active { transition: all 0.2s ease; }
+.toast-leave-active {
+  transition: all 0.2s ease;
+}
 .toast-enter-from,
-.toast-leave-to { opacity: 0; transform: translateY(-8px); }
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 
-.slide-fade-enter-active { transition: all 0.25s ease; }
-.slide-fade-leave-active { transition: all 0.2s ease; }
+.slide-fade-enter-active {
+  transition: all 0.25s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.2s ease;
+}
 .slide-fade-enter-from,
-.slide-fade-leave-to { opacity: 0; transform: translateY(-8px); }
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>
