@@ -19,23 +19,39 @@
       style="font-family: 'Poppins', sans-serif; color: #1a1a1a"
     >
       <!-- HEADER -->
-      <div class="-mt-2 mb-10">
-        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/announcement' }, 'Announcement Management']" title="Event Announcement">
-          <template #subtitle>Compose and publish updates for the library community.</template>
-          <template #actions>
-            <div class="flex gap-4 justify-end mb-4">
-              <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-                <p class="text-xs text-green-700 uppercase font-bold tracking-widest">Status</p>
-                <p class="text-gray-900 font-bold">Drafting</p>
-              </div>
-
-              <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-                <p class="text-xs text-orange-600 uppercase font-bold tracking-widest">Visibility</p>
-                <p class="text-gray-900 font-bold">Public</p>
-              </div>
+      <div
+        class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6"
+      >
+        <div class="flex items-center gap-6">
+          <div class="header-left">
+            <div class="header-breadcrumb !mb-2">
+              <span
+                class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+                @click="$router.push('/admin/announcement')"
+                >BACK</span
+              >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+              <span>EVENT ANNOUNCEMENT</span>
             </div>
-          </template>
-        </AdminPageHeader>
+
+            <h1 class="header-title">Event <span class="text-yellow-500">Announcement</span></h1>
+            <p class="header-sub">Compose and publish updates for the library community.</p>
+          </div>
+        </div>
+
+        <!-- STATUS + VISIBILITY -->
+        <div class="flex gap-4 justify-end mb-4">
+          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
+            <p class="text-xs text-green-700 uppercase font-bold tracking-widest">Status</p>
+            <p class="text-gray-900 font-bold">Drafting</p>
+          </div>
+          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
+            <p class="text-xs text-orange-600 uppercase font-bold tracking-widest">Visibility</p>
+            <p class="text-gray-900 font-bold">Public</p>
+          </div>
+        </div>
       </div>
 
       <!-- CONTENT -->
@@ -43,15 +59,39 @@
         <!-- FORM -->
         <div class="lg:col-span-7 space-y-6">
           <form @submit.prevent="submitForm" class="space-y-6">
+
+            <!-- MAIN CARD -->
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-200">
               <div class="space-y-6">
+
+                <!-- TYPE SELECTOR -->
                 <div>
-                  <label
-                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
-                  >
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                    Type
+                  </label>
+                  <div class="flex gap-3">
+                    <button
+                      v-for="option in typeOptions"
+                      :key="option.value"
+                      type="button"
+                      @click="formData.type = option.value"
+                      :class="[
+                        'flex-1 py-3 rounded-xl font-bold text-sm border-2 transition-all',
+                        formData.type === option.value
+                          ? 'bg-[#0d2b0f] text-white border-[#0d2b0f]'
+                          : 'bg-gray-50 text-gray-500 border-gray-300 hover:border-[#2D7231] hover:text-[#2D7231]',
+                      ]"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- HEADLINE -->
+                <div>
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
                     Headline
                   </label>
-
                   <input
                     v-model="formData.title"
                     type="text"
@@ -60,13 +100,11 @@
                   />
                 </div>
 
+                <!-- DETAILS -->
                 <div>
-                  <label
-                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
-                  >
+                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
                     Details
                   </label>
-
                   <textarea
                     v-model="formData.description"
                     rows="6"
@@ -83,7 +121,6 @@
                 <label class="text-sm font-bold text-gray-700 uppercase mb-4 block">
                   Publish Date
                 </label>
-
                 <input
                   v-model="formData.datePublished"
                   type="date"
@@ -95,7 +132,6 @@
                 <label class="text-sm font-bold text-gray-700 uppercase mb-4 block">
                   Attachment
                 </label>
-
                 <input
                   type="file"
                   accept="image/*"
@@ -104,6 +140,42 @@
                 />
               </div>
             </div>
+
+            <!-- EVENT DURATION — only for type: event -->
+            <transition name="slide-fade">
+              <div
+                v-if="formData.type === 'event'"
+                class="bg-white rounded-3xl p-6 shadow-sm border border-gray-200"
+              >
+                <label class="text-sm font-bold text-gray-700 uppercase mb-1 block tracking-wider">
+                  Event Duration
+                </label>
+                <p class="text-xs text-gray-400 mb-4 ml-1">Set the start and end time of the event.</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1">
+                      Time In
+                    </label>
+                    <input
+                      v-model="formData.timeIn"
+                      type="time"
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#2D7231] text-gray-900 font-semibold transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1">
+                      Time Out
+                    </label>
+                    <input
+                      v-model="formData.timeOut"
+                      type="time"
+                      class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-[#2D7231] text-gray-900 font-semibold transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+            </transition>
 
             <!-- BUTTONS -->
             <div class="flex items-center gap-4 pt-4">
@@ -114,7 +186,6 @@
               >
                 Discard
               </button>
-
               <button
                 type="submit"
                 class="flex-[2] py-4 rounded-2xl font-bold bg-[#0d2b0f] hover:bg-[#1b5e20] text-white shadow-lg hover:brightness-110 active:scale-95 transition-all"
@@ -131,14 +202,11 @@
             Live Preview
           </p>
 
-          <div
-            class="bg-gray-900 rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200"
-          >
+          <div class="bg-gray-900 rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200">
             <div class="bg-white rounded-[1.8rem] overflow-hidden min-h-[450px]">
               <!-- IMAGE PREVIEW -->
               <div class="h-44 w-full overflow-hidden">
                 <img v-if="imagePreview" :src="imagePreview" class="w-full h-full object-cover" />
-
                 <div v-else class="h-full bg-gradient-to-br from-[#2D7231] to-[#0B2010]"></div>
               </div>
 
@@ -146,7 +214,7 @@
                 <span
                   class="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold uppercase mb-4 tracking-wider"
                 >
-                  Announcement
+                  {{ formData.type || 'Announcement' }}
                 </span>
 
                 <h3 class="text-2xl font-bold text-gray-900 leading-tight mb-4">
@@ -157,9 +225,20 @@
                   {{ formData.description || 'Start typing to see preview...' }}
                 </p>
 
+                <!-- TIME PREVIEW — only for event -->
+                <div
+                  v-if="formData.type === 'event' && (formData.timeIn || formData.timeOut)"
+                  class="mt-4 flex items-center gap-2 text-xs font-semibold text-green-700 bg-green-50 px-3 py-2 rounded-xl w-fit"
+                >
+                  <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                  {{ formData.timeIn || '--:--' }} — {{ formData.timeOut || '--:--' }}
+                </div>
+
                 <div class="mt-8 pt-6 border-t border-gray-100 flex justify-between">
                   <span class="text-xs font-bold text-gray-500">CSU Admin</span>
-
                   <span class="text-[10px] font-bold text-gray-400 uppercase">
                     {{ formData.datePublished }}
                   </span>
@@ -188,42 +267,46 @@ const editingId = ref<string | null>(null)
 const existingImageUrl = ref<string | null>(null)
 
 const today = new Date().toISOString().split('T')[0]
-
 const imagePreview = ref<string | null>(null)
 
+const typeOptions: { value: 'announcement' | 'event' | 'news'; label: string }[] = [
+  { value: 'announcement', label: 'Announcement' },
+  { value: 'event',        label: 'Event' },
+  { value: 'news',         label: 'News' },
+]
+
 const formData = ref({
-  title: '',
-  description: '',
-  attachment: null as File | null,
+  title:         '',
+  description:   '',
+  attachment:    null as File | null,
   datePublished: today,
+  type:          'announcement' as 'announcement' | 'event' | 'news',
+  timeIn:        '',
+  timeOut:       '',
 })
 
 const toast = reactive({
-  show: false,
+  show:    false,
   message: '',
-  type: 'success' as 'success' | 'error',
+  type:    'success' as 'success' | 'error',
 })
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 
 const showToast = (message: string, type: 'success' | 'error' = 'success') => {
   toast.message = message
-  toast.type = type
-  toast.show = true
-
+  toast.type    = type
+  toast.show    = true
   if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => {
-    toast.show = false
-  }, 2500)
+  toastTimer = setTimeout(() => { toast.show = false }, 2500)
 }
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-
+  const file   = target.files?.[0]
   if (file) {
     formData.value.attachment = file
-    imagePreview.value = URL.createObjectURL(file)
+    imagePreview.value        = URL.createObjectURL(file)
   }
 }
 
@@ -243,25 +326,25 @@ const loadForEdit = async (id: string) => {
       .single()
 
     if (error) throw error
-    if (!data || data.type !== 'announcement') {
-      throw new Error('Event announcement not found.')
-    }
+    if (!data) throw new Error('Record not found.')
 
-    formData.value.title = data.title || ''
-    formData.value.description = data.description || ''
+    formData.value.title         = data.title       || ''
+    formData.value.description   = data.description || ''
     formData.value.datePublished = toDateInputValue(data.start_date)
+    formData.value.type          = data.type        || 'announcement'
+
+    // Load existing time_start / time_end — stored as "HH:MM:SS", slice to "HH:MM"
+    formData.value.timeIn  = data.time_start ? String(data.time_start).slice(0, 5) : ''
+    formData.value.timeOut = data.time_end   ? String(data.time_end).slice(0, 5)   : ''
 
     existingImageUrl.value = data.images || null
-    imagePreview.value = data.images || null
-
-    editingId.value = String(data.id)
-    isEditing.value = true
+    imagePreview.value     = data.images || null
+    editingId.value        = String(data.id)
+    isEditing.value        = true
   } catch (error) {
-    console.error('Error loading event announcement for edit:', error)
+    console.error('Error loading record for edit:', error)
     showToast('Failed to load announcement', 'error')
-    setTimeout(() => {
-      router.push('/admin/announcement')
-    }, 600)
+    setTimeout(() => router.push('/admin/announcement'), 600)
   }
 }
 
@@ -270,44 +353,59 @@ const submitForm = async () => {
     showToast('Please enter a title', 'error')
     return
   }
-
   if (!formData.value.description.trim()) {
     showToast('Please enter description', 'error')
     return
+  }
+  if (formData.value.type === 'event') {
+    if (!formData.value.timeIn) {
+      showToast('Please set the event start time (Time In)', 'error')
+      return
+    }
+    if (!formData.value.timeOut) {
+      showToast('Please set the event end time (Time Out)', 'error')
+      return
+    }
   }
 
   try {
     let imageUrl = existingImageUrl.value
 
     if (formData.value.attachment) {
-      const file = formData.value.attachment
+      const file     = formData.value.attachment
       const fileName = `${Date.now()}_${file.name}`
 
-      const { error } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('events_images')
         .upload(`events/${fileName}`, file)
 
-      if (error) throw error
+      if (uploadError) throw uploadError
 
-      const { data } = supabase.storage.from('events_images').getPublicUrl(`events/${fileName}`)
+      const { data: urlData } = supabase.storage
+        .from('events_images')
+        .getPublicUrl(`events/${fileName}`)
 
-      imageUrl = data.publicUrl
+      imageUrl = urlData.publicUrl
     }
 
     const dateValue = formData.value.datePublished || new Date().toISOString()
-    const year = new Date(dateValue).getFullYear()
+    const year      = new Date(dateValue).getFullYear()
+    const isEvent   = formData.value.type === 'event'
 
     const payload = {
-      type: 'announcement',
-      title: formData.value.title,
+      type:        formData.value.type,
+      title:       formData.value.title,
       description: formData.value.description,
-      images: imageUrl,
+      images:      imageUrl,
       year,
-      start_date: dateValue,
-      end_date: dateValue,
-      location: 'Library',
-      is_active: true,
-      created_by: '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
+      start_date:  dateValue,
+      end_date:    dateValue,
+      location:    'Library',
+      is_active:   true,
+      created_by:  '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
+      // time_start and time_end: only set for events, null for news/announcement
+      time_start:  isEvent ? (formData.value.timeIn  || null) : null,
+      time_end:    isEvent ? (formData.value.timeOut || null) : null,
     }
 
     if (isEditing.value && editingId.value) {
@@ -316,25 +414,23 @@ const submitForm = async () => {
       await createEvent(payload)
     }
 
-    showToast(isEditing.value ? 'Announcement updated successfully!' : 'Announcement published successfully!')
-    setTimeout(() => {
-      router.push('/admin/announcement')
-    }, 400)
+    showToast(
+      isEditing.value
+        ? 'Announcement updated successfully!'
+        : 'Announcement published successfully!'
+    )
+    setTimeout(() => router.push('/admin/announcement'), 400)
   } catch (error) {
     console.error(error)
     showToast('Failed to publish announcement', 'error')
   }
 }
 
-const goBack = () => {
-  router.push('/admin/announcement')
-}
+const goBack = () => router.push('/admin/announcement')
 
 onMounted(() => {
   const id = route.query.id
-  if (typeof id === 'string' && id.trim()) {
-    loadForEdit(id)
-  }
+  if (typeof id === 'string' && id.trim()) loadForEdit(id)
 })
 </script>
 
@@ -342,13 +438,12 @@ onMounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 .toast-enter-active,
-.toast-leave-active {
-  transition: all 0.2s ease;
-}
-
+.toast-leave-active { transition: all 0.2s ease; }
 .toast-enter-from,
-.toast-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-}
+.toast-leave-to { opacity: 0; transform: translateY(-8px); }
+
+.slide-fade-enter-active { transition: all 0.25s ease; }
+.slide-fade-leave-active { transition: all 0.2s ease; }
+.slide-fade-enter-from,
+.slide-fade-leave-to { opacity: 0; transform: translateY(-8px); }
 </style>
