@@ -15,7 +15,7 @@
  */
 
 import jsPDF from 'jspdf'
-import 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 import { addHeader, addFooter, CONTENT_TOP, CONTENT_BOTTOM } from './pdfTemplates'
 import type { PdfMeta } from './pdfTemplates'
 
@@ -114,7 +114,7 @@ export class PdfSession {
       }
     }
 
-    ;(this.doc as any).autoTable({
+    autoTable(this.doc, {
       startY:     cfg.startY ?? CONTENT_TOP + 16,
       head:       cfg.head,
       body:       cfg.body,
@@ -129,11 +129,13 @@ export class PdfSession {
       // Repeat header on overflow pages
       showHead: 'everyPage',
       // Hook: stamp header/footer on any auto-generated overflow pages
-      didAddPage: () => {
-        // autoTable adds the page itself; we stamp header+footer retroactively
-        this._pageNum++
-        addHeader(this.doc, this.meta, this._pageNum, this.totalPages)
-        addFooter(this.doc, this.meta)
+      didDrawPage: (data: { pageNumber: number }) => {
+        // pageNumber is table-local: page 1 is the starting page we already stamped.
+        if (data.pageNumber > 1) {
+          this._pageNum++
+          addHeader(this.doc, this.meta, this._pageNum, this.totalPages)
+          addFooter(this.doc, this.meta)
+        }
       },
     })
   }

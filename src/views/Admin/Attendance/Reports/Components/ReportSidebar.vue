@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ReportType } from '../../Composables/useReportData'
+import type { ReportType } from '../Composables/useReportData'
 
 defineProps<{
 	modelValue: ReportType

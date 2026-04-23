@@ -13,8 +13,6 @@
  *   const { buildDailyBar, buildHourlyLine, buildGenderPie } = useChartData()
  */
 
-import { computed } from 'vue'
-
 // ── Palette ────────────────────────────────────────────────────────────────────
 
 export const CHART_COLORS = {
@@ -125,7 +123,7 @@ export function useChartData() {
       labels,
       datasets: [{
         label:           'Visits',
-        data:            labels.map(d => byDate[d].length),
+        data:            labels.map(d => byDate[d]?.length ?? 0),
         backgroundColor: CHART_COLORS.green[0],
         borderRadius:    4,
       }],
@@ -147,8 +145,8 @@ export function useChartData() {
       labels,
       datasets: [{
         label:           'Visits',
-        data:            labels.map(p => byProgram[p].length),
-        backgroundColor: labels.map((_, i) => CHART_COLORS.green[i % CHART_COLORS.green.length]),
+        data:            labels.map(p => byProgram[p]?.length ?? 0),
+        backgroundColor: labels.map((_, i) => CHART_COLORS.green[i % CHART_COLORS.green.length] ?? CHART_COLORS.green[0]),
         borderRadius:    4,
       }],
     }
@@ -183,11 +181,11 @@ export function useChartData() {
     return {
       labels: ACTIVE_HOURS.map(hourLabel),
       datasets: top6.map((prog, i) => {
-        const color = CHART_COLORS.green[i % CHART_COLORS.green.length]
+        const color = CHART_COLORS.green[i % CHART_COLORS.green.length] ?? CHART_COLORS.green[0]
         return {
           label:           prog,
           data:            ACTIVE_HOURS.map(h =>
-            byProgram[prog].filter(r => new Date(r.time_in).getHours() === h).length
+            (byProgram[prog] ?? []).filter(r => new Date(r.time_in).getHours() === h).length
           ),
           borderColor:     color,
           backgroundColor: color + '28',
@@ -210,7 +208,7 @@ export function useChartData() {
     return {
       labels: ACTIVE_HOURS.map(hourLabel),
       datasets: labels.map((yl, i) => {
-        const color = CHART_COLORS.green[i % CHART_COLORS.green.length]
+        const color = CHART_COLORS.green[i % CHART_COLORS.green.length] ?? CHART_COLORS.green[0]
         return {
           label:           yl,
           data:            ACTIVE_HOURS.map(h =>
@@ -318,7 +316,8 @@ export function useChartData() {
       datasets: [{
         label:           'Avg Duration (min)',
         data:            labels.map(d => {
-          const vals = byDate[d]
+          const vals = byDate[d] ?? []
+          if (vals.length === 0) return 0
           return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length)
         }),
         backgroundColor: CHART_COLORS.green[3],
@@ -333,14 +332,14 @@ export function useChartData() {
    */
   function buildDurationDistributionBar(rows: RawAttendanceRow[]): BarChartData {
     const BUCKETS  = ['< 15 min','15–30 min','30–60 min','60–120 min','> 120 min']
-    const counts   = [0, 0, 0, 0, 0]
+    const counts: number[] = [0, 0, 0, 0, 0]
     for (const row of rows) {
       const d = row.duration_minutes ?? 0
-      if      (d < 15)  counts[0]++
-      else if (d < 30)  counts[1]++
-      else if (d < 60)  counts[2]++
-      else if (d < 120) counts[3]++
-      else              counts[4]++
+      if      (d < 15)  counts[0] = (counts[0] ?? 0) + 1
+      else if (d < 30)  counts[1] = (counts[1] ?? 0) + 1
+      else if (d < 60)  counts[2] = (counts[2] ?? 0) + 1
+      else if (d < 120) counts[3] = (counts[3] ?? 0) + 1
+      else              counts[4] = (counts[4] ?? 0) + 1
     }
     return {
       labels: BUCKETS,
@@ -390,13 +389,14 @@ export function useChartData() {
       : null
     const unique   = new Set(rows.map(r => r.student_id)).size
     const hours    = ACTIVE_HOURS.map(h => rows.filter(r => new Date(r.time_in).getHours() === h).length)
-    const peakHour = ACTIVE_HOURS[hours.indexOf(Math.max(...hours))]
+    const peakIndex = hours.indexOf(Math.max(...hours))
+    const peakHour = peakIndex >= 0 ? ACTIVE_HOURS[peakIndex] : ACTIVE_HOURS[0]
 
     return {
       totalVisits:    total,
       uniqueStudents: unique,
       avgDuration:    avgDur,
-      peakHour:       total > 0 ? hourLabel(peakHour) : null,
+      peakHour:       total > 0 && peakHour != null ? hourLabel(peakHour) : null,
     }
   }
 

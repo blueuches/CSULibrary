@@ -2,6 +2,8 @@
 	<div class="flex h-screen w-full overflow-hidden bg-[#f0f4f1]">
 		<Sidebar />
 
+		<h1>HELLO</h1>
+
 		<main class="flex-1 overflow-y-auto p-5 md:p-6">
 			<header class="mb-6">
 				<p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Admin Attendance</p>

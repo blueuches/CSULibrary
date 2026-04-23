@@ -26,6 +26,21 @@ export interface SpecificScope {
   program?: string
 }
 
+interface StudentRow {
+  first_name: string | null
+  last_name: string | null
+  program: string | null
+  college: string | null
+}
+
+interface EventRow {
+  title: string | null
+  type: string | null
+  start_date: string | null
+  end_date: string | null
+  location: string | null
+}
+
 // ── Internal helpers ───────────────────────────────────────────────────────────
 
 function applyTimeFilter(query: any, filter: DateFilter): any {
@@ -42,9 +57,12 @@ function applyTimeFilter(query: any, filter: DateFilter): any {
   if (filter.type === 'month' && filter.months?.length) {
     const y      = filter.year ?? new Date().getFullYear()
     const sorted = [...filter.months].sort((a, b) => a - b)
+    const firstMonth = sorted[0]
+    const lastMonth = sorted[sorted.length - 1]
+    if (firstMonth == null || lastMonth == null) return query
     return query
-      .gte('time_in', new Date(y, sorted[0] - 1, 1).toISOString())
-      .lte('time_in', new Date(y, sorted[sorted.length - 1], 0, 23, 59, 59).toISOString())
+      .gte('time_in', new Date(y, firstMonth - 1, 1).toISOString())
+      .lte('time_in', new Date(y, lastMonth, 0, 23, 59, 59).toISOString())
   }
   return query
 }
@@ -108,6 +126,11 @@ export async function generateSpecificPdf(
 
     const { data, error } = await q
     if (error) throw new Error(`Supabase (top_students): ${error.message}`)
+    const typedData = (data ?? []) as Array<{
+      student_id: string
+      duration_minutes: number | null
+      students: StudentRow[] | null
+    }>
 
     // Aggregate per student
     const map: Record<string, {
@@ -117,10 +140,10 @@ export async function generateSpecificPdf(
       totalDuration: number
     }> = {}
 
-    for (const row of data ?? []) {
+    for (const row of typedData) {
       const id = row.student_id
       if (!map[id]) {
-        const s = row.students
+        const s = Array.isArray(row.students) ? row.students[0] : null
         map[id] = {
           name:          `${s?.first_name ?? ''} ${s?.last_name ?? ''}`.trim() || id,
           program:       s?.program ?? '',
@@ -161,7 +184,7 @@ export async function generateSpecificPdf(
       startY:   startY2,
       head:     [['Student ID', 'Name', 'Program', 'Visits', 'Total Duration (min)']],
       body:     sorted.map(([id, v]) => [id, v.name, v.program, v.visits, v.totalDuration]),
-      foot:     [['', '', 'TOTAL STUDENTS', sorted.length, '']],
+      foot:     [['', '', 'TOTAL STUDENTS', sorted.length.toString(), '']],
       colWidths: { 1: 40, 2: 55 },
     })
   }
@@ -175,28 +198,35 @@ export async function generateSpecificPdf(
     q = applyTimeFilter(q, filter)
     const { data, error } = await q
     if (error) throw new Error(`Supabase (peak_hours): ${error.message}`)
+    const typedData = (data ?? []) as Array<{ time_in: string }>
 
     // Count visits per hour (0–23)
     const hourCounts = Array<number>(24).fill(0)
-    for (const row of data ?? []) {
-      hourCounts[new Date(row.time_in).getHours()]++
+    for (const row of typedData) {
+      const hour = new Date(row.time_in).getHours()
+      if (hour >= 0 && hour < 24) hourCounts[hour] = (hourCounts[hour] ?? 0) + 1
     }
 
     // Use hours 6–21 only
     const activeHours = Array.from({ length: 16 }, (_, i) => i + 6)
-    const counts      = activeHours.map(h => hourCounts[h])
+    const counts      = activeHours.map(h => hourCounts[h] ?? 0)
     const labels      = activeHours.map(hourLabel)
 
-    const maxCount = Math.max(...counts)
-    const minCount = Math.min(...counts.filter(c => c > 0))
-    const peakHour = activeHours[counts.indexOf(maxCount)]
-    const lowHour  = activeHours[counts.indexOf(minCount)]
+    const maxCount = counts.length ? Math.max(...counts) : 0
+    const positiveCounts = counts.filter((c) => c > 0)
+    const minCount = positiveCounts.length ? Math.min(...positiveCounts) : 0
+    const peakIndex = counts.indexOf(maxCount)
+    const lowIndex = counts.indexOf(minCount)
+    const peakHour = peakIndex >= 0 ? activeHours[peakIndex] : activeHours[0]
+    const lowHour  = lowIndex >= 0 ? activeHours[lowIndex] : activeHours[0]
+    const peakHourLabel = peakHour != null ? hourLabel(peakHour) : 'N/A'
+    const lowHourLabel = minCount > 0 && lowHour != null ? hourLabel(lowHour) : 'N/A'
 
     // ── Page 1: Line Chart ────────────────────────────────────────────────────
     session.newPage()
     const startY1 = session.sectionTitle(
       'Attendance Per Hour',
-      `Peak: ${hourLabel(peakHour)} (${maxCount} visits)   ·   Lowest: ${hourLabel(lowHour)} (${minCount} visits)`,
+      `Peak: ${peakHourLabel} (${maxCount} visits)   ·   Lowest: ${lowHourLabel} (${minCount} visits)`,
     )
     const chart1 = await renderLineChart({
       labels,
@@ -214,18 +244,19 @@ export async function generateSpecificPdf(
 
     const sortedHours = activeHours
       .map((h, i) => ({ hour: h, count: counts[i] }))
-      .sort((a, b) => b.count - a.count)
+      .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
 
     session.drawTable({
       startY:    startY2,
       head:      [['Hour', 'Visit Count', 'Share of Day', 'Classification']],
       body:      sortedHours.map(({ hour, count }) => {
         const total  = counts.reduce((a, b) => a + b, 0)
-        const share  = total > 0 ? ((count / total) * 100).toFixed(1) + '%' : '0%'
+        const safeCount = count ?? 0
+        const share  = total > 0 ? ((safeCount / total) * 100).toFixed(1) + '%' : '0%'
         const clsn   =
-          count >= maxCount * 0.8 ? '🔺 Peak' :
-          count <= minCount * 1.5 ? '🔻 Low'  : '— Normal'
-        return [hourLabel(hour), count.toString(), share, clsn]
+          safeCount >= maxCount * 0.8 ? 'Peak' :
+          safeCount <= minCount * 1.5 ? 'Low'  : 'Normal'
+        return [hourLabel(hour), safeCount.toString(), share, clsn]
       }),
       colWidths: { 0: 28, 1: 28, 2: 28 },
     })
@@ -254,19 +285,20 @@ export async function generateSpecificPdf(
     }
     const dateLabels = Object.keys(byDate)
     const avgByDate  = dateLabels.map(d => {
-      const vals = byDate[d]
+      const vals = byDate[d] ?? []
+      if (vals.length === 0) return 0
       return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length)
     })
 
     // Duration distribution buckets
     const BUCKETS = ['< 15 min', '15–30 min', '30–60 min', '60–120 min', '> 120 min']
-    const bucketCounts = [0, 0, 0, 0, 0]
+    const bucketCounts: number[] = [0, 0, 0, 0, 0]
     for (const { duration_minutes: d } of rows) {
-      if      (d < 15)  bucketCounts[0]++
-      else if (d < 30)  bucketCounts[1]++
-      else if (d < 60)  bucketCounts[2]++
-      else if (d < 120) bucketCounts[3]++
-      else              bucketCounts[4]++
+      if      (d < 15)  bucketCounts[0] = (bucketCounts[0] ?? 0) + 1
+      else if (d < 30)  bucketCounts[1] = (bucketCounts[1] ?? 0) + 1
+      else if (d < 60)  bucketCounts[2] = (bucketCounts[2] ?? 0) + 1
+      else if (d < 120) bucketCounts[3] = (bucketCounts[3] ?? 0) + 1
+      else              bucketCounts[4] = (bucketCounts[4] ?? 0) + 1
     }
 
     const durations = rows.map(r => r.duration_minutes)
@@ -277,7 +309,12 @@ export async function generateSpecificPdf(
       if (!durations.length) return 0
       const s = [...durations].sort((a, b) => a - b)
       const m = Math.floor(s.length / 2)
-      return s.length % 2 === 0 ? Math.round((s[m - 1] + s[m]) / 2) : s[m]
+      if (s.length % 2 === 0) {
+        const left = s[m - 1] ?? 0
+        const right = s[m] ?? 0
+        return Math.round((left + right) / 2)
+      }
+      return s[m] ?? 0
     })()
 
     // ── Page 1: Average Duration Over Time ────────────────────────────────────
@@ -339,6 +376,10 @@ export async function generateSpecificPdf(
     q = applyTimeFilter(q, filter)
     const { data, error } = await q
     if (error) throw new Error(`Supabase (events): ${error.message}`)
+    const typedData = (data ?? []) as Array<{
+      event_id: string
+      events: EventRow[] | null
+    }>
 
     // Aggregate per event
     const map: Record<string, {
@@ -349,10 +390,10 @@ export async function generateSpecificPdf(
       count:    number
     }> = {}
 
-    for (const row of data ?? []) {
+    for (const row of typedData) {
       const id = row.event_id
       if (!map[id]) {
-        const e = row.events
+        const e = Array.isArray(row.events) ? row.events[0] : null
         map[id] = {
           title:    e?.title    ?? 'Unknown',
           type:     e?.type     ?? '',

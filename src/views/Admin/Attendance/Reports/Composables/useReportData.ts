@@ -79,7 +79,6 @@ export function useReportData(supabase: SupabaseClient) {
       const { data, error } = await supabase
         .from('students')
         .select('college, program')
-        .eq('is_active', true)
         .order('college')
 
       if (error) throw error

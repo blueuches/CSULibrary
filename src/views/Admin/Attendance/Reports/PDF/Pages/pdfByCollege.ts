@@ -41,6 +41,16 @@ interface AttendanceRow {
   } | null
 }
 
+interface AttendanceRowRaw {
+  time_in: string
+  students: {
+    program: string | null
+    college: string | null
+    year_level: number | null
+    gender: string | null
+  }[] | null
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 /** Converts a filter to a { gte, lte } object for Supabase queries. */
@@ -54,9 +64,12 @@ function toTimeRange(filter: DateFilter): { gte: string; lte: string } | null {
   if (filter.type === 'month' && filter.months?.length) {
     const y      = filter.year ?? new Date().getFullYear()
     const sorted = [...filter.months].sort((a, b) => a - b)
+    const firstMonth = sorted[0]
+    const lastMonth = sorted[sorted.length - 1]
+    if (firstMonth == null || lastMonth == null) return null
     return {
-      gte: new Date(y, sorted[0] - 1, 1).toISOString(),
-      lte: new Date(y, sorted[sorted.length - 1], 0, 23, 59, 59).toISOString(),
+      gte: new Date(y, firstMonth - 1, 1).toISOString(),
+      lte: new Date(y, lastMonth, 0, 23, 59, 59).toISOString(),
     }
   }
   return null
@@ -107,7 +120,11 @@ async function fetchRows(
 
   const { data, error } = await q
   if (error) throw new Error(`Supabase error (college fetch): ${error.message}`)
-  return (data ?? []) as AttendanceRow[]
+  const rows = (data ?? []) as AttendanceRowRaw[]
+  return rows.map((row) => ({
+    time_in: row.time_in,
+    students: Array.isArray(row.students) ? (row.students[0] ?? null) : null,
+  }))
 }
 
 // ── Main export ────────────────────────────────────────────────────────────────
@@ -164,7 +181,7 @@ export async function generateCollegePdf(
     )
     const chart = await renderBarChart({
       labels:   programLabels,
-      datasets: [{ label: 'Visits', data: programLabels.map(p => byProgram[p].length) }],
+      datasets: [{ label: 'Visits', data: programLabels.map(p => byProgram[p]?.length ?? 0) }],
       yLabel:   'Number of Visits',
     })
     session.embedChart(chart, startY)
@@ -201,7 +218,7 @@ export async function generateCollegePdf(
       ? [{ label: scope.program!, data: countByHour(rows) }]
       : programLabels.slice(0, 6).map(p => ({
           label: p,
-          data:  countByHour(byProgram[p]),
+          data:  countByHour(byProgram[p] ?? []),
         }))
 
     const chart = await renderLineChart({ labels: HOURS_6_TO_21, datasets, yLabel: 'Visits' })
