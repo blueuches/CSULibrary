@@ -4,28 +4,27 @@
 
     <main class="flex-1 overflow-y-auto">
       <!-- ===== HEADER ===== -->
-      <div class="-mt-2 px-6 sm:px-10 lg:px-16 pt-6">
-        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/management' }, 'Personnel Management']" title="Library Personnel">
-          <template #subtitle>
+      <header class="page-header">
+        <div class="header-left">
+          <div class="header-breadcrumb anim-fade-in" style="animation-delay: 0s">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/website/general')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>Library Personnel</span>
+          </div>
+          <h1 class="header-title anim-slide-up" style="animation-delay: 0.08s">
+            Library <span class="text-yellow-500">Personnel</span>
+          </h1>
+          <p class="header-sub anim-fade-in" style="animation-delay: 0.18s">
             Manage and view library staff information and assignments
-          </template>
-          <template #actions>
-            <div class="header-right anim-fade-in" style="animation-delay: 0.25s" v-if="isAdmin">
-              <span class="admin-hero-pill">
-                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2.5"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-                Edit Mode Active
-              </span>
-            </div>
-          </template>
-        </AdminPageHeader>
-      </div>
+          </p>
+        </div>
+      </header>
 
       <!-- ===== MAIN CONTENT ===== -->
       <div class="px-6 sm:px-10 lg:px-16 py-10 pb-20 max-w-6xl mx-auto">
@@ -878,10 +877,11 @@ onUnmounted(() => {
   letter-spacing: -0.01em;
 }
 .header-sub {
-  font-size: 0.82rem;
-  color: rgba(13, 43, 15, 0.5);
+  font-size: 0.88rem;
   font-weight: 400;
-  margin-top: 2px;
+  color: #6b7280;
+  margin-top: 8px;
+  animation: fadeIn 0.6s ease 0.55s both;
 }
 .admin-hero-pill {
   display: inline-flex;

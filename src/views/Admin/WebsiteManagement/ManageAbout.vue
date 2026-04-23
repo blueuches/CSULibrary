@@ -75,8 +75,7 @@ const defaultAboutContent: AboutContent = {
     "The CSU-HERO Learning Commons envisions itself as a prenier repository of knowledge, champoining the university's commitment to becoming a socially engaged, digitally innovative, and entrepreneurial institution-excelling in science, engineering, and the arts by 2028.",
   mission:
     "The CSU-HERO Learning Commons provides resources and delivers essentials services that align with the University's mission as a transformative institution. It remains committed to the fostering a sustainable future for the regiion, the nation, and beyond.",
-  goal:
-    'To ensure a well-organized library system with a vast collection of information and education materials that support the academic programs of the University and respond to the evolving needs of society within the region.',
+  goal: 'To ensure a well-organized library system with a vast collection of information and education materials that support the academic programs of the University and respond to the evolving needs of society within the region.',
   objectives: [
     'Ensure the provision and maintainance of efficient facilities and equipment to support high-quality library services and operations.;',
     'Employ committed and competent library personnel to deliver excellent library services.;',
@@ -218,9 +217,7 @@ async function upsertSection(section: keyof AboutContent, value: string) {
     order_num: SECTION_ORDER[section],
   }
 
-  const { error } = await supabase
-    .from('about')
-    .upsert(payload, { onConflict: 'title' })
+  const { error } = await supabase.from('about').upsert(payload, { onConflict: 'title' })
 
   savingAbout.value = false
 
@@ -240,9 +237,7 @@ function openEditModal(section: keyof AboutContent, title: string) {
   editTitle.value = title
 
   const currentValue = aboutContent.value[section]
-  editValue.value = Array.isArray(currentValue)
-    ? currentValue.join('\n')
-    : currentValue
+  editValue.value = Array.isArray(currentValue) ? currentValue.join('\n') : currentValue
 
   isEditModalOpen.value = true
 }
@@ -286,7 +281,9 @@ const heroMedia = computed(() =>
 
 const iconMedia = computed(() => {
   const icons = mediaItems.value
-    .filter((item) => item.page === 'aboutpage' && item.section === 'icons' && item.type === 'image')
+    .filter(
+      (item) => item.page === 'aboutpage' && item.section === 'icons' && item.type === 'image',
+    )
     .sort((a, b) => a.order - b.order)
 
   return icons.length ? icons : defaultIconMedia
@@ -384,36 +381,8 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <div class="hero-bleed" v-reveal="80">
-        <div class="hero-wrap hero-overlay">
-          <img
-            :src="heroImageSrc"
-            alt="CSU Library"
-            class="hero-img"
-            loading="lazy"
-          />
-        </div>
-      </div>
-
       <div class="manage-about-shell">
         <div class="about-content page-inner">
-          <div class="intro-text" v-reveal>
-            <p class="mt-5">
-              Libraries play a very crucial role in supporting the academic programs of any university
-              as it identifies, evaluates, procures, processes, and then makes these learning resources
-              available to the faculty and student for their teaching, learning and research
-              assignments.
-            </p>
-
-            <p class="mt-4">
-              The Caraga State University (CSU) Library in support to the attainment of the mandate of
-              the University specifically the educational objectives endeavors to provide relevant
-              materials and services. It has a program of selection, acquisition, collection maintenance
-              and stocking, circulation of relevant materials, and provision of physical facilities and
-              professional manpower.
-            </p>
-          </div>
-
           <div class="page-inner" v-reveal>
             <div class="icon-wrap icon-mt">
               <div class="icon-pill" v-for="icon in iconMedia" :key="icon.id">
@@ -438,7 +407,10 @@ onBeforeUnmount(() => {
                   </div>
 
                   <div v-if="canEdit" class="card-actions">
-                    <button class="edit-btn edit-btn-bottom" @click="openEditModal('vision', 'Vision')">
+                    <button
+                      class="edit-btn edit-btn-bottom"
+                      @click="openEditModal('vision', 'Vision')"
+                    >
                       Edit
                     </button>
                   </div>
@@ -460,7 +432,10 @@ onBeforeUnmount(() => {
                   </div>
 
                   <div v-if="canEdit" class="card-actions">
-                    <button class="edit-btn edit-btn-bottom" @click="openEditModal('mission', 'Mission')">
+                    <button
+                      class="edit-btn edit-btn-bottom"
+                      @click="openEditModal('mission', 'Mission')"
+                    >
                       Edit
                     </button>
                   </div>
@@ -555,9 +530,7 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
-          <div v-if="loadingAbout" class="loading-text">
-            Loading about content...
-          </div>
+          <div v-if="loadingAbout" class="loading-text">Loading about content...</div>
         </div>
       </div>
 
@@ -569,7 +542,10 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="modal-body">
-            <p class="helper-text" v-if="activeSection === 'objectives' || activeSection === 'rules'">
+            <p
+              class="helper-text"
+              v-if="activeSection === 'objectives' || activeSection === 'rules'"
+            >
               Enter one item per line. Keep the numbering if you want it shown exactly the same.
             </p>
 
@@ -588,7 +564,6 @@ onBeforeUnmount(() => {
           </div>
         </div>
       </div>
-
     </section>
   </div>
 </template>
@@ -672,7 +647,7 @@ onBeforeUnmount(() => {
 .manage-subtitle {
   margin: 14px 0 0;
   max-width: 520px;
-  margin-top: 4px;
+  margin-top: 1rem;
   font-size: 0.82rem;
   line-height: 1.45;
   color: #7d8f84;
@@ -917,7 +892,7 @@ onBeforeUnmount(() => {
 }
 
 .custom-list-item::before {
-  content: counter(item) ".";
+  content: counter(item) '.';
   position: absolute;
   left: 0;
   top: 0;
@@ -953,7 +928,6 @@ onBeforeUnmount(() => {
   color: #475569;
   font-weight: 500;
 }
-
 
 .modal-backdrop {
   position: fixed;

@@ -5,9 +5,22 @@
     </div>
 
     <div class="page-scroll">
-      <AdminPageHeader :breadcrumbs="['Admin', 'User Management']" title="User Management">
-        <template #subtitle>Manage and review all registered users and their roles.</template>
-      </AdminPageHeader>
+      <header class="attn-header">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div class="header-breadcrumb !mb-3">
+            <span>Admin</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>User Management</span>
+          </div>
+        </div>
+        <h1 class="hero-title">
+          <span class="hero-word-dark hero-underlined">User</span>
+          <span class="hero-word-gold"> Management</span>
+        </h1>
+        <p class="hero-subtitle">Manage and review all registered users and their roles.</p>
+      </header>
 
       <div v-if="isAuthorized" class="content-grid">
         <!-- USER MANAGEMENT -->

@@ -12,6 +12,17 @@
             </template>
           </AdminPageHeader>
         </div>
+        <h1 class="hero-title">
+          <span class="hero-title--underlined">Library</span>
+          <span class="hero-title--gold"> Sections</span>
+        </h1>
+        <p class="hero-subtitle">
+          Manage the CSU Library Gallery —
+          <strong
+            >{{ totalSections }} sections · {{ totalPhotos }} photos ·
+            {{ floors.length }} floors</strong
+          >
+        </p>
       </div>
 
       <!-- FLOOR NAV & SEARCH -->

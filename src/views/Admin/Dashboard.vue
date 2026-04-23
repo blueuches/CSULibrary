@@ -112,7 +112,6 @@ const displayTimedOut = ref<number | null>(null)
 const CARD_COUNT = 4
 const cardRefs = reactive<any[]>(new Array(CARD_COUNT).fill(null))
 
-// inline style strings applied to each card
 const cardStyles = reactive<string[]>(
   new Array(CARD_COUNT).fill('transform: perspective(800px) rotateX(0deg) rotateY(0deg) scale(1);'),
 )
@@ -128,14 +127,11 @@ function onMouseMove(e: MouseEvent, index: number) {
   const cx = rect.width / 2
   const cy = rect.height / 2
 
-  // Max ±18deg tilt — more dramatic so it's clearly visible
   const rotY = ((x - cx) / cx) * 18
   const rotX = -((y - cy) / cy) * 18
 
-  // Perspective on wrapper CSS, so just rotateX/Y + scale here
   cardStyles[index] = `transform: rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.05);`
 
-  // Radial highlight follows cursor
   const px = (x / rect.width) * 100
   const py = (y / rect.height) * 100
   shimmerStyles[index] =
@@ -180,85 +176,136 @@ const animateValue = (target: any, final: number, duration = 800) => {
 }
 
 /* ======================
+   CACHE
+====================== */
+const CACHE_KEY = 'dashboard_stats'
+const TTL_MS = 1 * 60 * 1000 // 1 minute — driven by today's counts which change often
+
+interface DashboardCache {
+  firstName: string
+  monthlyAttendance: number
+  activeVisitors: number
+  timedOutVisitors: number
+  topDepartment: string
+  fetchedAt: number
+}
+
+function readCache(): DashboardCache | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as DashboardCache
+  } catch {
+    return null
+  }
+}
+
+function writeCache(data: Omit<DashboardCache, 'fetchedAt'>) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ...data, fetchedAt: Date.now() }))
+  } catch {
+    /* storage full or private mode — fail silently */
+  }
+}
+
+function isCacheValid(cache: DashboardCache): boolean {
+  return Date.now() - cache.fetchedAt < TTL_MS
+}
+
+/* ======================
    LOAD DATA
 ====================== */
 onMounted(async () => {
+  // --- Try cache first ---
+  const cached = readCache()
+  if (cached && isCacheValid(cached)) {
+    firstName.value = cached.firstName
+    monthlyAttendance.value = cached.monthlyAttendance
+    activeVisitors.value = cached.activeVisitors
+    timedOutVisitors.value = cached.timedOutVisitors
+    topDepartment.value = cached.topDepartment
+    animateValue(displayMonthly, cached.monthlyAttendance)
+    animateValue(displayVisitors, cached.activeVisitors)
+    animateValue(displayTimedOut, cached.timedOutVisitors)
+    return
+  }
+
+  // --- Cache miss: fetch from Supabase ---
+  const now = new Date()
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
+  const todayEnd = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+  ).toISOString()
+
+  // Auth (sequential — needed before we can use email)
   const { data: auth } = await supabase.auth.getUser()
+  let fetchedName = ''
   if (auth?.user) {
     const { data } = await supabase
       .from('users')
       .select('first_name')
       .eq('email', auth.user.email)
       .single()
-    if (data) firstName.value = data.first_name
+    if (data) fetchedName = data.first_name
+    firstName.value = fetchedName
   }
 
-  const now = new Date()
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString()
+  // All three stat queries in parallel
+  const [{ count: monthCount }, { data: todayRows }, { data: collegeCounts }] = await Promise.all([
+    // Query 1: monthly total
+    supabase
+      .from('attendance_logs')
+      .select('*', { count: 'exact', head: true })
+      .gte('time_in', startOfMonth)
+      .lte('time_in', endOfMonth),
 
-  const { count: monthCount } = await supabase
-    .from('attendance_logs')
-    .select('*', { count: 'exact', head: true })
-    .gte('time_in', startOfMonth)
-    .lte('time_in', endOfMonth)
+    // Query 2: today's rows — only fetch time_out to derive active vs timed-out
+    supabase
+      .from('attendance_logs')
+      .select('time_out')
+      .gte('time_in', todayStart)
+      .lte('time_in', todayEnd),
+
+    // Query 3: join to students, pull college only — group in JS
+    supabase.from('attendance_logs').select('students!inner(college)'),
+  ])
+
+  const active = todayRows?.filter((r) => r.time_out === null).length ?? 0
+  const timedOut = todayRows?.filter((r) => r.time_out !== null).length ?? 0
+
   monthlyAttendance.value = monthCount ?? 0
+  activeVisitors.value = active
+  timedOutVisitors.value = timedOut
+
   animateValue(displayMonthly, monthlyAttendance.value)
-
-  const today = new Date()
-  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
-  const endOfDay = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-    23,
-    59,
-    59,
-  ).toISOString()
-
-  const { count: activeCount } = await supabase
-    .from('attendance_logs')
-    .select('*', { count: 'exact', head: true })
-    .gte('time_in', startOfDay)
-    .lte('time_in', endOfDay)
-    .is('time_out', null)
-  activeVisitors.value = activeCount ?? 0
-
-  const { count: timedOutCount } = await supabase
-    .from('attendance_logs')
-    .select('*', { count: 'exact', head: true })
-    .gte('time_in', startOfDay)
-    .lte('time_in', endOfDay)
-    .not('time_out', 'is', null)
-  timedOutVisitors.value = timedOutCount ?? 0
-
   animateValue(displayVisitors, activeVisitors.value)
   animateValue(displayTimedOut, timedOutVisitors.value)
 
-  const { data: attendanceData } = await supabase.from('attendance_logs').select('student_id')
-  if (attendanceData && attendanceData.length > 0) {
-    const studentIds = [...new Set(attendanceData.map((a) => a.student_id))]
-    const { data: studentsData } = await supabase
-      .from('students')
-      .select('id_number, college')
-      .in('id_number', studentIds)
-
-    if (studentsData) {
-      const collegeMap: Record<string, string> = {}
-      studentsData.forEach((s) => {
-        collegeMap[s.id_number] = s.college
-      })
-
-      const collegeCounts: Record<string, number> = {}
-      attendanceData.forEach((a) => {
-        const college = collegeMap[a.student_id]
-        if (college) collegeCounts[college] = (collegeCounts[college] ?? 0) + 1
-      })
-
-      const top = Object.entries(collegeCounts).sort((a, b) => b[1] - a[1])[0]
-      if (top) topDepartment.value = top[0]
+  if (collegeCounts?.length) {
+    const tally: Record<string, number> = {}
+    for (const row of collegeCounts) {
+      const college = (row.students as any)?.college
+      if (college) tally[college] = (tally[college] ?? 0) + 1
     }
+    const top = Object.entries(tally).sort((a, b) => b[1] - a[1])[0]
+    if (top) topDepartment.value = top[0]
   }
+
+  // --- Persist to cache ---
+  writeCache({
+    firstName: fetchedName,
+    monthlyAttendance: monthlyAttendance.value,
+    activeVisitors: activeVisitors.value,
+    timedOutVisitors: timedOutVisitors.value,
+    topDepartment: topDepartment.value,
+  })
 })
 
 /* ======================

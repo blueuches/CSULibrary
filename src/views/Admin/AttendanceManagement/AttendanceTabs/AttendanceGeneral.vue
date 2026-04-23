@@ -11,16 +11,24 @@
       <!-- HEADER -->
       <header class="attn-header">
         <div>
-          <div class="header-breadcrumb !mb-2">
+          <div
+            class="flex mb-3 items-center gap-1.5 leading-none text-[0.68rem] font-bold tracking-[0.15em] uppercase text-[rgba(13,43,15,0.4)]"
+          >
             <span
               class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
               @click="$router.push('/admin/attendance')"
               >BACK</span
             >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <svg
+              class="w-3"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+            >
               <path d="M9 5l7 7-7 7" />
             </svg>
-            <span>LIBRARY SETTINGS</span>
+            <span>Library settings</span>
           </div>
 
           <h1 class="hero-title">

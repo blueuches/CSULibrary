@@ -313,9 +313,34 @@ const goToPrevPage = () => {
     <main class="mainArea">
       <div class="page">
         <div class="wrap">
-          <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/attendance' }, 'Attendance']" title="Attendance Logs">
-            <template #subtitle>Review and export attendance records.</template>
-          </AdminPageHeader>
+          <div class="headBlock">
+            <div class="header-breadcrumb !mb-2">
+              <span
+                class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+                @click="$router.push('/admin/attendance')"
+              >
+                BACK
+              </span>
+
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+
+              <span>Attendance</span>
+            </div>
+
+            <div class="titleHero">
+              <h1 class="heroTitle">
+                <span class="heroTitlePrimary">Attendance</span>
+                <span class="heroTitleAccent">Logs</span>
+              </h1>
+
+              <div class="heroUnderline"></div>
+            </div>
+            <p class="hero-subtitle">
+              View and monitor attendance records by department, course, and time period.
+            </p>
+          </div>
 
           <div class="toolbar">
             <div class="toolbarLeft">
@@ -556,7 +581,7 @@ const goToPrevPage = () => {
 }
 
 .heroTitlePrimary {
-  color: #003b0f;
+  color: #0d2b0f;
 }
 
 .heroTitleAccent {
@@ -565,7 +590,7 @@ const goToPrevPage = () => {
 
 .heroUnderline {
   margin-top: 14px;
-  width: 150px;
+  width: 250px;
   height: 4px;
   border-radius: 2px;
   background: linear-gradient(90deg, #214b1f 0%, #c49317 100%);
@@ -861,6 +886,14 @@ const goToPrevPage = () => {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 6px 2px;
+}
+
+.hero-subtitle {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-top: 10px;
+  animation: fadeIn 0.6s ease 0.55s both;
 }
 
 .footText {
