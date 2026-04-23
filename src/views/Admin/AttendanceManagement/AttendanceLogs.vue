@@ -336,6 +336,9 @@ const goToPrevPage = () => {
 
               <div class="heroUnderline"></div>
             </div>
+            <p class="hero-subtitle">
+              View and monitor attendance records by department, course, and time period.
+            </p>
           </div>
 
           <div class="toolbar">
@@ -577,7 +580,7 @@ const goToPrevPage = () => {
 }
 
 .heroTitlePrimary {
-  color: #003b0f;
+  color: #0d2b0f;
 }
 
 .heroTitleAccent {
@@ -586,7 +589,7 @@ const goToPrevPage = () => {
 
 .heroUnderline {
   margin-top: 14px;
-  width: 150px;
+  width: 250px;
   height: 4px;
   border-radius: 2px;
   background: linear-gradient(90deg, #214b1f 0%, #c49317 100%);
@@ -882,6 +885,14 @@ const goToPrevPage = () => {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 6px 2px;
+}
+
+.hero-subtitle {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-top: 10px;
+  animation: fadeIn 0.6s ease 0.55s both;
 }
 
 .footText {

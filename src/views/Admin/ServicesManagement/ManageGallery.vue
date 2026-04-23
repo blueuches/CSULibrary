@@ -20,7 +20,6 @@
           <span class="hero-title--gold"> Sections</span>
         </h1>
         <p class="hero-subtitle">
-          <span class="hero-dot-green"></span>
           Manage the CSU Library Gallery —
           <strong
             >{{ totalSections }} sections · {{ totalPhotos }} photos ·

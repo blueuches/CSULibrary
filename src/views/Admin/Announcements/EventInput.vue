@@ -19,37 +19,39 @@
       style="font-family: 'Poppins', sans-serif; color: #1a1a1a"
     >
       <!-- HEADER -->
-      <div
-        class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6"
-      >
-        <div class="flex items-center gap-6">
-          <div class="header-left">
-            <div class="header-breadcrumb !mb-2">
+      <div class="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-end justify-between">
+        <div class="flex items-center">
+          <div class="flex flex-col">
+            <div
+              class="flex items-center gap-1.5 leading-none text-[0.68rem] font-bold tracking-[0.15em] uppercase text-[rgba(13,43,15,0.4)]"
+            >
               <span
                 class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
                 @click="$router.push('/admin/announcement')"
                 >BACK</span
               >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg
+                class="w-3"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
                 <path d="M9 5l7 7-7 7" />
               </svg>
               <span>EVENT ANNOUNCEMENT</span>
             </div>
-
-            <h1 class="header-title">Event <span class="text-yellow-500">Announcement</span></h1>
-            <p class="header-sub">Compose and publish updates for the library community.</p>
-          </div>
-        </div>
-
-        <!-- STATUS + VISIBILITY -->
-        <div class="flex gap-4 justify-end mb-4">
-          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-            <p class="text-xs text-green-700 uppercase font-bold tracking-widest">Status</p>
-            <p class="text-gray-900 font-bold">Drafting</p>
-          </div>
-          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-            <p class="text-xs text-orange-600 uppercase font-bold tracking-widest">Visibility</p>
-            <p class="text-gray-900 font-bold">Public</p>
+            <h1
+              class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+            >
+              <span
+                class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[120px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+                >Event</span
+              ><span class="text-yellow-500"> Announcements</span>
+            </h1>
+            <p class="text-sm text-[rgba(13,43,15,0.5)]">
+              Compose and publish updates for the library community.
+            </p>
           </div>
         </div>
       </div>
@@ -208,13 +210,9 @@
 
         <!-- LIVE PREVIEW -->
         <div class="lg:col-span-5 hidden lg:block">
-          <p class="text-xs font-bold text-green-700 uppercase tracking-[0.3em] mb-4 ml-2">
-            Live Preview
-          </p>
+        
 
-          <div
-            class="bg-gray-900 rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200"
-          >
+          <div class="rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200">
             <div class="bg-white rounded-[1.8rem] overflow-hidden min-h-[450px]">
               <!-- IMAGE PREVIEW -->
               <div class="h-44 w-full overflow-hidden">
@@ -261,7 +259,10 @@
                     {{ formData.datePublished }}
                   </span>
                 </div>
+
+                
               </div>
+              
             </div>
           </div>
         </div>
@@ -451,7 +452,12 @@ onMounted(() => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
+@keyframes titleFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .toast-enter-active,
 .toast-leave-active {
   transition: all 0.2s ease;
