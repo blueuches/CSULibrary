@@ -1,153 +1,165 @@
 <template>
-	<div class="flex h-screen w-full overflow-hidden bg-[#f0f4f1]">
-		<Sidebar />
+  <div class="flex h-screen w-full overflow-hidden bg-[#f0f4f1]">
+    <Sidebar />
 
-		<h1>HELLO</h1>
+    <main class="flex-1 overflow-y-auto p-5 md:p-6">
+      <div class="header-left">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div class="header-breadcrumb !mb-0">
+            <span>Admin</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span> Attendance</span>
+          </div>
+        </div>
+        <h1 class="header-title intro-title">
+          Report <span class="text-yellow-500">Builder</span>
+        </h1>
+        <p class="header-sub">
+          Generate attendance PDFs for ALL, BY COLLEGE, and SPECIFIC analytics flows.
+        </p>
+      </div>
 
-		<main class="flex-1 overflow-y-auto p-5 md:p-6">
-			<header class="mb-6">
-				<p class="text-xs font-semibold uppercase tracking-widest text-[#4a7060]">Admin Attendance</p>
-				<h1 class="mt-2 text-2xl font-black uppercase tracking-wide text-[#0d2b0f] md:text-3xl">
-					Report Builder
-				</h1>
-				<p class="mt-2 max-w-3xl text-sm text-[#3d6455]">
-					Generate attendance PDFs for ALL, BY COLLEGE, and SPECIFIC analytics flows.
-				</p>
-			</header>
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-[300px_1fr] mt-5">
+        <ReportSidebar v-model="reportType" />
 
-			<div class="grid grid-cols-1 gap-5 xl:grid-cols-[300px_1fr]">
-				<ReportSidebar v-model="reportType" />
+        <section class="space-y-5">
+          <div
+            v-if="metaError"
+            class="rounded-xl border border-[#ef9a9a] bg-[#ffebee] px-4 py-3 text-sm text-[#b71c1c]"
+          >
+            {{ metaError }}
+          </div>
 
-				<section class="space-y-5">
-					<div v-if="metaError" class="rounded-xl border border-[#ef9a9a] bg-[#ffebee] px-4 py-3 text-sm text-[#b71c1c]">
-						{{ metaError }}
-					</div>
+          <div
+            v-if="isLoadingMeta"
+            class="rounded-xl border border-[#d4e4da] bg-white px-4 py-3 text-sm text-[#4a7060]"
+          >
+            Loading colleges and programs...
+          </div>
 
-					<div v-if="isLoadingMeta" class="rounded-xl border border-[#d4e4da] bg-white px-4 py-3 text-sm text-[#4a7060]">
-						Loading colleges and programs...
-					</div>
+          <FilterAll
+            v-if="reportType === 'all'"
+            :date-filter-type="dateFilterType"
+            :selected-day="selectedDay"
+            :period-from="periodFrom"
+            :period-to="periodTo"
+            :selected-months="selectedMonths"
+            :selected-year="selectedYear"
+            @update:date-filter-type="dateFilterType = $event"
+            @update:selected-day="selectedDay = $event"
+            @update:period-from="periodFrom = $event"
+            @update:period-to="periodTo = $event"
+            @update:selected-months="selectedMonths = $event"
+            @update:selected-year="selectedYear = $event"
+          />
 
-					<FilterAll
-						v-if="reportType === 'all'"
-						:date-filter-type="dateFilterType"
-						:selected-day="selectedDay"
-						:period-from="periodFrom"
-						:period-to="periodTo"
-						:selected-months="selectedMonths"
-						:selected-year="selectedYear"
-						@update:date-filter-type="dateFilterType = $event"
-						@update:selected-day="selectedDay = $event"
-						@update:period-from="periodFrom = $event"
-						@update:period-to="periodTo = $event"
-						@update:selected-months="selectedMonths = $event"
-						@update:selected-year="selectedYear = $event"
-					/>
+          <FilterByCollege
+            v-if="reportType === 'college'"
+            :colleges="colleges"
+            :programs="programOptions"
+            :selected-college="selectedCollege"
+            :selected-program="selectedProgram"
+            :date-filter-type="dateFilterType"
+            :selected-day="selectedDay"
+            :period-from="periodFrom"
+            :period-to="periodTo"
+            :selected-months="selectedMonths"
+            :selected-year="selectedYear"
+            @update:selected-college="selectedCollege = $event"
+            @update:selected-program="selectedProgram = $event"
+            @update:date-filter-type="dateFilterType = $event"
+            @update:selected-day="selectedDay = $event"
+            @update:period-from="periodFrom = $event"
+            @update:period-to="periodTo = $event"
+            @update:selected-months="selectedMonths = $event"
+            @update:selected-year="selectedYear = $event"
+          />
 
-					<FilterByCollege
-						v-if="reportType === 'college'"
-						:colleges="colleges"
-						:programs="programOptions"
-						:selected-college="selectedCollege"
-						:selected-program="selectedProgram"
-						:date-filter-type="dateFilterType"
-						:selected-day="selectedDay"
-						:period-from="periodFrom"
-						:period-to="periodTo"
-						:selected-months="selectedMonths"
-						:selected-year="selectedYear"
-						@update:selected-college="selectedCollege = $event"
-						@update:selected-program="selectedProgram = $event"
-						@update:date-filter-type="dateFilterType = $event"
-						@update:selected-day="selectedDay = $event"
-						@update:period-from="periodFrom = $event"
-						@update:period-to="periodTo = $event"
-						@update:selected-months="selectedMonths = $event"
-						@update:selected-year="selectedYear = $event"
-					/>
+          <FilterSpecific
+            v-if="reportType === 'specific'"
+            :colleges="colleges"
+            :programs="programOptions"
+            :selected-college="selectedCollege"
+            :selected-program="selectedProgram"
+            :selected-specific="selectedSpecific"
+            :date-filter-type="dateFilterType"
+            :selected-day="selectedDay"
+            :period-from="periodFrom"
+            :period-to="periodTo"
+            :selected-months="selectedMonths"
+            :selected-year="selectedYear"
+            @update:selected-college="selectedCollege = $event"
+            @update:selected-program="selectedProgram = $event"
+            @update:selected-specific="selectedSpecific = $event"
+            @update:date-filter-type="dateFilterType = $event"
+            @update:selected-day="selectedDay = $event"
+            @update:period-from="periodFrom = $event"
+            @update:period-to="periodTo = $event"
+            @update:selected-months="selectedMonths = $event"
+            @update:selected-year="selectedYear = $event"
+          />
 
-					<FilterSpecific
-						v-if="reportType === 'specific'"
-						:colleges="colleges"
-						:programs="programOptions"
-						:selected-college="selectedCollege"
-						:selected-program="selectedProgram"
-						:selected-specific="selectedSpecific"
-						:date-filter-type="dateFilterType"
-						:selected-day="selectedDay"
-						:period-from="periodFrom"
-						:period-to="periodTo"
-						:selected-months="selectedMonths"
-						:selected-year="selectedYear"
-						@update:selected-college="selectedCollege = $event"
-						@update:selected-program="selectedProgram = $event"
-						@update:selected-specific="selectedSpecific = $event"
-						@update:date-filter-type="dateFilterType = $event"
-						@update:selected-day="selectedDay = $event"
-						@update:period-from="periodFrom = $event"
-						@update:period-to="periodTo = $event"
-						@update:selected-months="selectedMonths = $event"
-						@update:selected-year="selectedYear = $event"
-					/>
+          <PreviewAll
+            v-if="reportType === 'all'"
+            :date-filter-type="dateFilterType"
+            :selected-day="selectedDay"
+            :period-from="periodFrom"
+            :period-to="periodTo"
+            :selected-months="selectedMonths"
+            :selected-year="selectedYear"
+            :is-generating="isGenerating"
+            :has-blob="hasBlob"
+            :summary="reportSummary"
+            :error="generateError"
+            @generate="onGenerate"
+            @download="onDownload"
+            @reset="onReset"
+          />
 
-					<PreviewAll
-						v-if="reportType === 'all'"
-						:date-filter-type="dateFilterType"
-						:selected-day="selectedDay"
-						:period-from="periodFrom"
-						:period-to="periodTo"
-						:selected-months="selectedMonths"
-						:selected-year="selectedYear"
-						:is-generating="isGenerating"
-						:has-blob="hasBlob"
-						:summary="reportSummary"
-						:error="generateError"
-						@generate="onGenerate"
-						@download="onDownload"
-						@reset="onReset"
-					/>
+          <PreviewByCollege
+            v-if="reportType === 'college'"
+            :selected-college="selectedCollege"
+            :selected-program="selectedProgram"
+            :date-filter-type="dateFilterType"
+            :selected-day="selectedDay"
+            :period-from="periodFrom"
+            :period-to="periodTo"
+            :selected-months="selectedMonths"
+            :selected-year="selectedYear"
+            :is-generating="isGenerating"
+            :has-blob="hasBlob"
+            :summary="reportSummary"
+            :error="generateError"
+            @generate="onGenerate"
+            @download="onDownload"
+            @reset="onReset"
+          />
 
-					<PreviewByCollege
-						v-if="reportType === 'college'"
-						:selected-college="selectedCollege"
-						:selected-program="selectedProgram"
-						:date-filter-type="dateFilterType"
-						:selected-day="selectedDay"
-						:period-from="periodFrom"
-						:period-to="periodTo"
-						:selected-months="selectedMonths"
-						:selected-year="selectedYear"
-						:is-generating="isGenerating"
-						:has-blob="hasBlob"
-						:summary="reportSummary"
-						:error="generateError"
-						@generate="onGenerate"
-						@download="onDownload"
-						@reset="onReset"
-					/>
-
-					<PreviewSpecific
-						v-if="reportType === 'specific'"
-						:selected-specific="selectedSpecific"
-						:selected-college="selectedCollege"
-						:selected-program="selectedProgram"
-						:date-filter-type="dateFilterType"
-						:selected-day="selectedDay"
-						:period-from="periodFrom"
-						:period-to="periodTo"
-						:selected-months="selectedMonths"
-						:selected-year="selectedYear"
-						:is-generating="isGenerating"
-						:has-blob="hasBlob"
-						:summary="reportSummary"
-						:error="generateError"
-						@generate="onGenerate"
-						@download="onDownload"
-						@reset="onReset"
-					/>
-				</section>
-			</div>
-		</main>
-	</div>
+          <PreviewSpecific
+            v-if="reportType === 'specific'"
+            :selected-specific="selectedSpecific"
+            :selected-college="selectedCollege"
+            :selected-program="selectedProgram"
+            :date-filter-type="dateFilterType"
+            :selected-day="selectedDay"
+            :period-from="periodFrom"
+            :period-to="periodTo"
+            :selected-months="selectedMonths"
+            :selected-year="selectedYear"
+            :is-generating="isGenerating"
+            :has-blob="hasBlob"
+            :summary="reportSummary"
+            :error="generateError"
+            @generate="onGenerate"
+            @download="onDownload"
+            @reset="onReset"
+          />
+        </section>
+      </div>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -161,7 +173,12 @@ import FilterSpecific from './Components/Filters/FilterSpecific.vue'
 import PreviewAll from './Components/Preview/PreviewAll.vue'
 import PreviewByCollege from './Components/Preview/PreviewByCollege.vue'
 import PreviewSpecific from './Components/Preview/PreviewSpecific.vue'
-import { useReportData, type DateFilterType, type ReportType, type SpecificType } from './Composables/useReportData'
+import {
+  useReportData,
+  type DateFilterType,
+  type ReportType,
+  type SpecificType,
+} from './Composables/useReportData'
 
 const report = useReportData(supabase)
 
@@ -190,37 +207,37 @@ const isLoadingMeta = computed(() => report.isLoadingMeta.value)
 const metaError = computed(() => report.metaError.value)
 
 onMounted(async () => {
-	await report.loadCollegesAndPrograms()
+  await report.loadCollegesAndPrograms()
 })
 
 watch(selectedCollege, () => {
-	if (!selectedCollege.value) selectedProgram.value = ''
+  if (!selectedCollege.value) selectedProgram.value = ''
 })
 
 watch(reportType, () => {
-	report.resetGeneration()
+  report.resetGeneration()
 })
 
 async function onGenerate() {
-	await report.generate({
-		reportType: reportType.value,
-		dateFilterType: dateFilterType.value,
-		selectedDay: selectedDay.value,
-		periodFrom: periodFrom.value,
-		periodTo: periodTo.value,
-		selectedMonths: selectedMonths.value,
-		selectedYear: selectedYear.value,
-		selectedCollege: selectedCollege.value,
-		selectedProgram: selectedProgram.value,
-		selectedSpecific: selectedSpecific.value,
-	})
+  await report.generate({
+    reportType: reportType.value,
+    dateFilterType: dateFilterType.value,
+    selectedDay: selectedDay.value,
+    periodFrom: periodFrom.value,
+    periodTo: periodTo.value,
+    selectedMonths: selectedMonths.value,
+    selectedYear: selectedYear.value,
+    selectedCollege: selectedCollege.value,
+    selectedProgram: selectedProgram.value,
+    selectedSpecific: selectedSpecific.value,
+  })
 }
 
 function onDownload() {
-	report.downloadPdf()
+  report.downloadPdf()
 }
 
 function onReset() {
-	report.resetGeneration()
+  report.resetGeneration()
 }
 </script>

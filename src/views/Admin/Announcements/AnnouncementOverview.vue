@@ -798,7 +798,6 @@ onBeforeUnmount(() => {
   font-size: 0.95rem;
   line-height: 1.45;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
