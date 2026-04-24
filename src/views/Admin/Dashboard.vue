@@ -25,8 +25,7 @@
             <div v-if="activeTab === 'DASHBOARD'" class="space-y-12">
               <h2 class="text-[#0d2b0f] text-6xl md:text-7xl font-black">
                 Welcome,
-                <span class="text-[#f9a825]">{{ firstName || 'User' }}</span
-                >.
+                <span class="anim-shimmer"> {{ firstName || 'User' }} </span>.
               </h2>
 
               <!-- STATS -->
@@ -65,6 +64,24 @@
                   </div>
                 </div>
               </div>
+              <div
+                class="relative py-4 max-w-2xl mx-auto anim-fade-in"
+                style="animation-delay: 0.5s"
+              >
+                <p
+                  class="text-[#1b5e20] text-3xl md:text-xl font-family: 'Cormorant Garamond', serif italic font-bold leading-tight px-6 relative z-10"
+                >
+                  "{{ currentQuote.text }}"
+                </p>
+                <p
+                  class="mt-3 text-[#1b5e20] font-bold tracking-[0.3em] uppercase text-[11px] opacity-80"
+                >
+                  — {{ currentQuote.author }}
+                </p>
+                <div
+                  class="mt-2 mx-auto w-30 h-0.5 bg-gradient-to-r from-[#0d2b0f] to-[#f9a825] rounded-full anim-expand"
+                ></div>
+              </div>
             </div>
 
             <!-- OTHER TABS -->
@@ -78,7 +95,7 @@
 
       <!-- FOOTER -->
       <footer class="p-6 text-center">
-        <p class="text-[10px] uppercase tracking-[0.5em] font-black text-[#1b5e20]">
+        <p class="text-[10px] uppercase tracking-[0.5em] font-black text-[#0d2b0f]">
           Caraga State University Library Management
         </p>
       </footer>
@@ -90,6 +107,12 @@
 import { ref, computed, reactive, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
+
+// QUOTE
+const currentQuote = ref({
+  text: 'A library is not a luxury but one of the necessities of life.',
+  author: 'Henry Ward Beecher',
+})
 
 /* ======================
    STATE
@@ -273,7 +296,7 @@ onMounted(async () => {
       .gte('time_in', todayStart)
       .lte('time_in', todayEnd),
 
-    // Query 3: join to students, pull college only — group in JS
+    // Query 3: join to students, pull college only
     supabase.from('attendance_logs').select('students!inner(college)'),
   ])
 
@@ -298,7 +321,6 @@ onMounted(async () => {
     if (top) topDepartment.value = top[0]
   }
 
-  // --- Persist to cache ---
   writeCache({
     firstName: fetchedName,
     monthlyAttendance: monthlyAttendance.value,
@@ -313,6 +335,16 @@ onMounted(async () => {
 ====================== */
 const quickStats = computed(() => [
   {
+    label: 'Active Students',
+    value: displayVisitors.value,
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  },
+  {
+    label: 'Students Timed Out',
+    value: displayTimedOut.value,
+    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`,
+  },
+  {
     label: 'Top Department',
     value: topDepartment.value,
     icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
@@ -321,16 +353,6 @@ const quickStats = computed(() => [
     label: 'Monthly Attendance',
     value: displayMonthly.value,
     icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14l2.5 2.5L16 11"/></svg>`,
-  },
-  {
-    label: 'Active Visitors',
-    value: displayVisitors.value,
-    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-  },
-  {
-    label: 'Visitors Timed Out',
-    value: displayTimedOut.value,
-    icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`,
   },
 ])
 </script>
@@ -464,5 +486,23 @@ const quickStats = computed(() => [
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.anim-shimmer {
+  background: linear-gradient(90deg, #f9a825 25%, #fde68a 50%, #f9a825 75%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 2.5s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 </style>

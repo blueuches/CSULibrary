@@ -827,7 +827,7 @@ const handleTabChange = (name: string) => {
 }
 
 .attn-actions button {
-  border: none;
+  border: 1.3px solid #0d2b0f;
   background: #ffffff;
   color: #0d2b0f;
   padding: 10px 16px;
@@ -835,11 +835,18 @@ const handleTabChange = (name: string) => {
   cursor: pointer;
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(13, 43, 15, 0.05);
+  transition: all 0.2s ease;
+}
+
+.attn-actions button:hover {
+  background: #0d2b0f;
+  color: #ffffff;
 }
 
 .attn-actions button.action-active {
   background: #0d2b0f;
   color: #ffffff;
+  border: 1.5px solid #0d2b0f; 
 }
 
 .stat-strip {
