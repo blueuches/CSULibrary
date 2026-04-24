@@ -625,20 +625,39 @@ const form = ref({
 ===================================================== */
 const fetchGalleryData = async () => {
   try {
-    const rawSections = await getGallerySections()
-    console.log('Raw Sections from DB:', rawSections)
+    const { data: rawSections, error } = await supabase
+      .from('gallery_sections') 
+      .select(`
+        id,
+        floor,
+        wing,
+        section_name,
+        description,
+        note,
+        gallery_images (
+          id,
+          image_url,
+          display_order
+        )
+      `)
+
+    if (error) throw error
+
+    
     floors.value.forEach((f) => f.wings.forEach((w) => (w.sections = [])))
 
     for (const sec of rawSections) {
-      const imgs = await getImagesBySection(sec.id)
-      console.log(`Images for Section ${sec.section_name}:`, imgs)
       const formatted = {
         id: sec.id,
         title: sec.section_name,
         description: sec.description,
         note: sec.note,
-        images: imgs.map((i) => i.image_url),
+  
+        images: sec.gallery_images
+          .sort((a, b) => a.display_order - b.display_order)
+          .map((i) => i.image_url),
       }
+
       const floorObj = floors.value.find((f) => f.name === sec.floor)
       if (floorObj) {
         const wingObj = floorObj.wings.find((w) => w.name === sec.wing)
@@ -649,8 +668,6 @@ const fetchGalleryData = async () => {
     showToast('Failed to load gallery: ' + err.message, 'error')
   }
 }
-
-onMounted(fetchGalleryData)
 
 /* =====================================================
   IMAGE UPLOAD
@@ -688,6 +705,7 @@ const save = async () => {
 
     let sectionId = form.value.id
 
+    
     if (isAdding.value) {
       const created = await createGallerySection(sectionPayload)
       sectionId = created.id
@@ -695,33 +713,47 @@ const save = async () => {
       await updateGallerySection(sectionId, sectionPayload)
     }
 
+    
     let finalImageUrls = form.value.images.filter((img) => img.startsWith('http'))
-
     if (form.value.newFiles.length > 0) {
       const newUrls = await uploadImages(sectionId)
       finalImageUrls = [...finalImageUrls, ...newUrls]
     }
 
-    const oldRecords = await getImagesBySection(sectionId)
-    for (const rec of oldRecords) await deleteGalleryImage(rec.id)
-    for (let i = 0; i < finalImageUrls.length; i++) {
-      await addGalleryImage({
-        section_id: sectionId,
-        image_url: finalImageUrls[i],
-        display_order: i,
-      })
+   
+    const { error: delError } = await supabase
+      .from('gallery_images')
+      .delete()
+      .eq('section_id', sectionId)
+    
+    if (delError) throw delError
+
+    
+    const imagesToInsert = finalImageUrls.map((url, index) => ({
+      section_id: sectionId,
+      image_url: url,
+      display_order: index
+    }))
+
+    if (imagesToInsert.length > 0) {
+      const { error: insError } = await supabase
+        .from('gallery_images')
+        .insert(imagesToInsert)
+      if (insError) throw insError
     }
 
     showToast('Gallery updated successfully!')
     await fetchGalleryData()
     closeForm()
   } catch (err) {
-    console.error('Storage/DB Error:', err)
-    showToast(err.message || 'An error occurred while saving', 'error')
+    console.error('Save Error:', err)
+    showToast(err.message || 'An error occurred', 'error')
   } finally {
     isSaving.value = false
   }
 }
+
+onMounted(fetchGalleryData)
 
 /* =====================================================
    DELETE SECTION
