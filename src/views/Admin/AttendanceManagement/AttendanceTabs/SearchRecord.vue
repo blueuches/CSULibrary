@@ -6,40 +6,19 @@
     <div class="flex-1 p-4 lg:p-8 font-sans text-slate-700 overflow-y-auto">
 
       <!-- HEADER -->
-      <header class="attn-header mb-5">
-        <div class="mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Student Record">
+        <template #subtitle>Filter and manage student records by college and academic program.</template>
+      </AdminPageHeader>
 
-          <div>
-            <div class="header-breadcrumb mb-3">
-              <span class="breadcrumb-back cursor-pointer" @click="$router.push('/admin/attendance')">
-                Back
-              </span>
-              <i class="fas fa-chevron-right text-slate-400 text-xs mx-2"></i>
-              <span>Attendance</span>
-            </div>
-
-            <h1 class="hero-title">
-              <span class="hero-word-dark hero-underlined">
-                Student <span class="text-yellow-500">Record</span>
-              </span>
-              <p class="text-sm font-medium text-slate-500 mt-1 ms-2">
-                Filter and manage student records by college and academic program.
-              </p>
-            </h1>
-          </div>
-
-          <!-- SEARCH -->
-          <div class="relative w-full lg:w-[40%] group" style="margin-bottom: -50px;">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i class="fas fa-search text-slate-300 group-focus-within:text-[#4A6741] transition-colors"></i>
-            </div>
-
-            <input v-model="searchQuery" type="text" placeholder="Search by ID, Name, or Program..."
-              class="w-full bg-white border-2 border-transparent pl-12 pr-4 py-4 rounded-2xl focus:border-[#4A6741]/20 focus:ring-4 focus:ring-[#4A6741]/5 transition-all outline-none shadow-sm text-sm font-medium" />
-          </div>
-
+      <!-- SEARCH -->
+      <div class="relative w-full lg:w-[40%] group" style="margin-bottom: -50px;">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <i class="fas fa-search text-slate-300 group-focus-within:text-[#4A6741] transition-colors"></i>
         </div>
-      </header>
+
+        <input v-model="searchQuery" type="text" placeholder="Search by ID, Name, or Program..."
+          class="w-full bg-white border-2 border-transparent pl-12 pr-4 py-4 rounded-2xl focus:border-[#4A6741]/20 focus:ring-4 focus:ring-[#4A6741]/5 transition-all outline-none shadow-sm text-sm font-medium" />
+      </div>
 
       <!-- MAIN GRID -->
       <main class="mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">

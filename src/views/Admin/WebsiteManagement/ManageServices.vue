@@ -5,47 +5,17 @@
     <main class="flex-1 overflow-y-auto relative">
 
       <!-- HEADER -->
-    <header class="px-10 py-8">
-      <div class="flex justify-between items-start gap-8 flex-wrap">
-
-        <!-- LEFT SIDE -->
-        <div>
-
-          <!-- BREADCRUMB -->
-        <div class="header-breadcrumb text-gray-400">
+      <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/website' }, 'Website Management']" title="Manage Services">
+        <template #subtitle>Update service content, descriptions, and visibility.</template>
+        <template #actions>
           <button
-            @click="$router.back()"
-            class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
+            @click="openAddModal"
+            class="add-btn bg-[#0d2b0f] hover:bg-[#0d2b0f]/90 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
           >
-            <span class="uppercase tracking-widest">Back</span>
+            + Add Service
           </button>
-
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-
-          <span class="text-gray-4000 transition font-bold">
-            Manage Services
-          </span>
-        </div>
-        <!-- TITLE -->
-        <h1 class="hero-title">
-                <span class="hero-word-dark hero-underlined">Manage</span>
-                <span class="hero-word-gold"> Services</span>
-              </h1>
-            <p class="hero-subtitle">
-                Update service content, descriptions, and visibility.
-            </p>
-      </div>
-
-    <!-- BUTTON -->
-    <button @click="openAddModal"
-      class="add-btn bg-[#0d2b0f] hover:bg-[#0d2b0f]/90 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
-      + Add Service
-    </button>
-
-  </div>
-</header>
+        </template>
+      </AdminPageHeader>
 
       <!-- TOAST -->
       <transition name="toast">
@@ -249,6 +219,7 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import type { FunctionalComponent } from 'vue'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import * as LucideIcons from 'lucide-vue-next'
 import { useServicesStore } from '@/services/manageService'

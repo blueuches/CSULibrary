@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sidebar from '@/components/Sidebar.vue'
 import { computed, ref, onMounted } from 'vue'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import { Files, Image as ImageIcon, Video } from 'lucide-vue-next'
 
 import {
@@ -722,40 +723,17 @@ const totalVideos = computed(() => items.value.filter((item) => item.type === 'v
     <Sidebar :activeTab="'MEDIA'" />
     <div class="wm-page">
       <div class="wm-wrap">
-        <div class="wm-hero">
-          <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/website')"
-            >
-              BACK
-            </span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-            <span>WEBSITE MANAGEMENT</span>
-          </div>
-
-          <div class="wm-hero-main">
-            <div class="wm-hero-copy">
-              <div class="wm-title-row">
-                <span class="wm-title">Website</span>
-                <span class="wm-management">Management</span>
-              </div>
-
-              <div class="wm-title-line"></div>
-
-              <p class="wm-subtitle">
-                Manage homepage and about page images and videos used in the website.
-              </p>
-            </div>
-
-            <div class="wm-hero-action">
+        <div class="-mt-2">
+          <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/website' }, 'Website Management']" title="Website Management">
+            <template #subtitle>
+              Manage homepage and about page images and videos used in the website.
+            </template>
+            <template #actions>
               <button class="wm-btn wm-btn-primary wm-add-btn" @click="openAddModal">
                 + Add New Media
               </button>
-            </div>
-          </div>
+            </template>
+          </AdminPageHeader>
         </div>
 
         <div class="wm-stats">

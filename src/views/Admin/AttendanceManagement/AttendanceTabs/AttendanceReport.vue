@@ -7,33 +7,11 @@
     <!-- MAIN CONTENT (scrolls independently) -->
     <main class="report-root flex-1 overflow-y-auto">
 
-      <!-- HEADER -->
-      <header class="attn-header px-3 pt-3 pb-2">
-        <div class="header-breadcrumb text-gray-400">
-          <button
-            class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
-            @click="goBack"
-          >
-            <span class="uppercase tracking-widest">Back</span>
-          </button>
-
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-
-          <span class="text-gray-400 transition font-bold">
-            Manage Services
-          </span>
-        </div>
-
-        <h1 class="hero-title">
-          <span class="hero-word-dark hero-underlined">Library</span>
-          <span class="hero-word-gold"> Report</span>
-        </h1>
-        <p class="hero-subtitle">
+      <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Report">
+        <template #subtitle>
           Generate and review reports by department, course, and duration.
-        </p>
-      </header>
+        </template>
+      </AdminPageHeader>
 
       <!-- CONTENT -->
       <div class="p-6">

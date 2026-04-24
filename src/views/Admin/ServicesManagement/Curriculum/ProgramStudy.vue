@@ -3,29 +3,13 @@
     <Sidebar :activeTab="'SERVICES'"></Sidebar>
 
     <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
-      <header class="report-header intro-header">
-        <div class="header-left">
-          <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="goBackToCurriculumInfo"
-              >BACK</span
-            >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-
-            <span>Curriculum</span>
-          </div>
-          <h1 class="header-title intro-title">
-            <span class="text-[#0d2b0f]">Program</span>
-            <span class="text-yellow-500"> Study</span>
-          </h1>
-          <p class="header-sub">
+      <div class="-mt-2">
+        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/services/curriculum/info' }, 'Services Management']" title="Program Study">
+          <template #subtitle>
             Create a new curriculum information to share with the academic community.
-          </p>
-        </div>
-      </header>
+          </template>
+        </AdminPageHeader>
+      </div>
 
       <section
         class="mx-auto flex w-full max-w-6xl flex-col gap-6 rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
@@ -170,6 +154,7 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { useCurriculumData } from '@/composables/useCurriculumData'
 import type { ProgramStudyPlanRow } from '@/types/Curriculum'

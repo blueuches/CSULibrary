@@ -38,27 +38,10 @@
     </transition>
 
     <main ref="reportRootRef" class="report-root flex-1 overflow-y-auto">
-      <!-- HEADER -->
-      <header class="report-header intro-header relative z-[60] overflow-visible">
-        <div class="header-left">
-          <div class="flex items-center justify-between gap-4 flex-wrap">
-            <div class="header-breadcrumb !mb-0">
-              <span>Admin</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span>Announcement Management</span>
-            </div>
-          </div>
-          <h1 class="header-title intro-title">
-            Library <span class="text-yellow-500">Announcements</span>
-          </h1>
-          <p class="header-sub">Manage and review all event, general, and news posts.</p>
-        </div>
-
-        <!-- DROPDOWN NEW ANNOUNCEMENT -->
-        <div class="header-right relative z-50">
-          <div class="flex flex-col items-end gap-3">
+      <div class="-mt-2">
+        <AdminPageHeader :breadcrumbs="['Admin', 'Announcement Management']" title="Announcements">
+          <template #subtitle>Manage and review all event, general, and news posts.</template>
+          <template #actions>
             <div class="relative z-50 dropdown-wrapper" ref="dropdownRef">
               <button @click="dropdownOpen = !dropdownOpen" class="action-btn">
                 <span class="plus-icon" :class="{ 'plus-icon--open': dropdownOpen }">+</span> New
@@ -78,9 +61,9 @@
                 </div>
               </transition>
             </div>
-          </div>
-        </div>
-      </header>
+          </template>
+        </AdminPageHeader>
+      </div>
 
       <!-- LOADING SPINNER -->
       <div v-if="isLoading" class="flex justify-center p-20">
@@ -118,10 +101,13 @@
                 <div class="row-body" @click="openEventPreview(event)">
                   <h3 class="row-title">{{ event.title }}</h3>
                   <p class="row-text">{{ event.description }}</p>
-                  <div class="row-meta row-meta-split">
-                    <p><strong>Event Date:</strong> {{ formatDate(event.start_date) }}</p>
-                    <p><strong>Location:</strong> {{ event.location }}</p>
-                  </div>
+                 <div class="row-meta row-meta-split">
+  <p><strong>Event Date:</strong> {{ formatDate(event.start_date) }}</p>
+  <p v-if="event.time_start">
+    <strong>Duration:</strong> {{ formatTime(event.time_start) }} — {{ formatTime(event.time_end) }}
+  </p>
+  <p><strong>Location:</strong> {{ event.location }}</p>
+</div>
                 </div>
                 <div class="row-actions">
                   <RouterLink :to="`/admin/announcement/event?id=${event.id}`" class="icon-action" title="Edit Announcement" @click.stop>
@@ -275,6 +261,8 @@ interface EventAnnouncement {
   location: string
   type: string
   images: string
+  time_start: string | null
+  time_end: string | null
 }
 
 interface GeneralAnnouncement {
@@ -436,15 +424,16 @@ const confirmDelete = async () => {
   await action()
 }
 
-// --- FETCH ANNOUNCEMENTS ---
+// --- FETCH ANNOUNCEMENTS() ---
 const fetchAnnouncements = async () => {
   try {
     isLoading.value = true
     const [eventsResult, generalResult, newsResult] = await Promise.all([
+      // AFTER
       supabase
         .from('events')
         .select('*')
-        .eq('type', 'announcement')
+        .eq('type', 'event')
         .order('created_at', { ascending: false }),
       supabase
         .from('announcements')
@@ -529,6 +518,16 @@ const formatDate = (dateStr: string) => {
     day: 'numeric',
     year: 'numeric'
   })
+}
+
+const formatTime = (timeStr: string | null | undefined): string => {
+  if (!timeStr) return ''
+  const [hourStr, minuteStr] = timeStr.split(':')
+  const hour = parseInt(hourStr ?? '0', 10)
+  const minute = minuteStr || '00'
+  const period = hour >= 12 ? 'PM' : 'AM'
+  const h = hour % 12 || 12
+  return `${h}:${minute} ${period}`
 }
 
 // --- CLOSE DROPDOWN ON CLICK OUTSIDE ---
@@ -798,7 +797,8 @@ onBeforeUnmount(() => {
   font-size: 0.95rem;
   line-height: 1.45;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+ -webkit-line-clamp: 2;
+line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

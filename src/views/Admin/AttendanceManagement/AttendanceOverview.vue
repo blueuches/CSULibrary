@@ -3,26 +3,13 @@
     <Sidebar :activeTab="'ATTENDANCE'" @updateActiveTab="handleTabChange" />
 
     <div class="page-scroll">
-      <header class="attn-header">
-        <div class="space-y-4">
-          <div class="relative group">
-            <div class="header-breadcrumb !mb-2">
-              <span>Admin</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span>ATTENDANCE</span>
-            </div>
-            <h1 class="hero-title">
-              <span class="hero-word-dark hero-underlined">Library</span>
-              <span class="hero-word-gold"> Attendance</span>
-            </h1>
-            <p class="hero-subtitle">
-              Comprehensive overview of institutional engagement and borrowing patterns
-            </p>
-          </div>
-        </div>
-      </header>
+      <div class="-mt-2">
+        <AdminPageHeader :breadcrumbs="['Admin', 'ATTENDANCE']" title="Attendance">
+          <template #subtitle>
+            Comprehensive overview of institutional engagement and borrowing patterns
+          </template>
+        </AdminPageHeader>
+      </div>
 
       <div class="attn-actions">
         <button
@@ -164,7 +151,6 @@
               <h3 class="ctrl-title">Attendance <em>Overview</em></h3>
               <p class="ctrl-sub">All export data</p>
             </div>
-
           </div>
 
           <div class="export-card">
@@ -187,13 +173,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    v-if="exportLogs.length === 0"
-                    class="erow"
-                  >
-                    <td colspan="4" class="empty-state-cell">
-                      No export history found.
-                    </td>
+                  <tr v-if="exportLogs.length === 0" class="erow">
+                    <td colspan="4" class="empty-state-cell">No export history found.</td>
                   </tr>
 
                   <tr
@@ -232,9 +213,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue"
-import Sidebar from "@/components/Sidebar.vue"
-import { supabase } from "@/lib/supabase"
+import { ref, onMounted, computed } from 'vue'
+import AdminPageHeader from '@/components/AdminPageHeader.vue'
+import Sidebar from '@/components/Sidebar.vue'
+import { supabase } from '@/lib/supabase'
 
 type StudentInfo = {
   id_number: string
@@ -286,14 +268,14 @@ const barsVisible = ref(false)
 const exportLogs = ref<ExportLogView[]>([])
 
 const actionTabs = [
-  { label: "Attendance Page's Settings", route: "/admin/attendance/settings" },
-  { label: "Generate Report", route: "/admin/attendance/report" },
-  { label: "Import Student Records", route: "/admin/attendance/import" },
-  { label: "Search in Attendance", route: "/admin/attendance/logs" },
-  { label: "Search in Student Records", route: "/admin/attendance/students" },
-  { label: "View Ranking", route: "/admin/attendance/ranking" },
-  { label: "Manage Visitors' Attendance", route: "/admin/attendance/visitors" },
-  { label: "Add/Edit Event", route: "/admin/announcement/event" },
+  { label: 'Attendance Settings', route: '/admin/attendance/settings' },
+  { label: 'Generate Report', route: '/admin/attendance/report' },
+  { label: 'Import Student Records', route: '/admin/attendance/import' },
+  { label: 'Search Attendance', route: '/admin/attendance/logs' },
+  { label: 'Search Student Records', route: '/admin/attendance/students' },
+  { label: 'View Ranking', route: '/admin/attendance/ranking' },
+  { label: "Manage Visitors' Attendance", route: '/admin/attendance/visitors' },
+  { label: 'Add/Edit Event', route: '/admin/announcement/event' },
 ]
 
 onMounted(async () => {
@@ -309,7 +291,7 @@ const fetchAttendance = async () => {
 
   try {
     const { data, error } = await supabase
-      .from("attendance_logs")
+      .from('attendance_logs')
       .select(
         `
         id,
@@ -328,13 +310,13 @@ const fetchAttendance = async () => {
           college,
           year_level
         )
-      `
+      `,
       )
-      .eq("attendance_type", "library")
-      .order("time_in", { ascending: false })
+      .eq('attendance_type', 'library')
+      .order('time_in', { ascending: false })
 
     if (error) {
-      console.error("Supabase fetch error:", error)
+      console.error('Supabase fetch error:', error)
       logs.value = []
       return
     }
@@ -344,7 +326,7 @@ const fetchAttendance = async () => {
       students: Array.isArray(item.students) ? (item.students[0] ?? null) : item.students,
     }))
   } catch (err) {
-    console.error("Fetch error:", err)
+    console.error('Fetch error:', err)
     logs.value = []
   } finally {
     loading.value = false
@@ -352,59 +334,64 @@ const fetchAttendance = async () => {
 }
 
 const formatExportDate = (value: string | null) => {
-  if (!value) return { date: "--", time: "--" }
+  if (!value) return { date: '--', time: '--' }
 
   const d = new Date(value)
 
   return {
-    date: d.toLocaleDateString("en-PH", {
-      year: "numeric",
-      month: "short",
-      day: "2-digit",
+    date: d.toLocaleDateString('en-PH', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
     }),
-    time: d.toLocaleTimeString("en-PH", {
-      hour: "2-digit",
-      minute: "2-digit",
+    time: d.toLocaleTimeString('en-PH', {
+      hour: '2-digit',
+      minute: '2-digit',
     }),
   }
 }
 
 const normalizeFileType = (value: string | null) => {
-  const type = String(value || "").trim().toUpperCase()
+  const type = String(value || '')
+    .trim()
+    .toUpperCase()
 
-  if (type === "XLS" || type === "XLSX" || type === "EXCEL") return "XLSX"
-  if (type === "CSV") return "CSV"
-  if (type === "PDF") return "PDF"
-  return type || "FILE"
+  if (type === 'XLS' || type === 'XLSX' || type === 'EXCEL') return 'XLSX'
+  if (type === 'CSV') return 'CSV'
+  if (type === 'PDF') return 'PDF'
+  return type || 'FILE'
 }
 
 const getFileTypeClass = (type: string) => {
   const normalized = normalizeFileType(type).toLowerCase()
-  if (normalized === "xlsx") return "xlsx"
-  if (normalized === "csv") return "csv"
-  if (normalized === "pdf") return "pdf"
-  return "file"
+  if (normalized === 'xlsx') return 'xlsx'
+  if (normalized === 'csv') return 'csv'
+  if (normalized === 'pdf') return 'pdf'
+  return 'file'
 }
 
 const getStatusClass = (value: string | null) => {
-  const normalized = String(value || "success").trim().toLowerCase()
-  if (normalized === "failed") return "failed"
-  if (normalized === "pending") return "pending"
-  return "success"
+  const normalized = String(value || 'success')
+    .trim()
+    .toLowerCase()
+  if (normalized === 'failed') return 'failed'
+  if (normalized === 'pending') return 'pending'
+  return 'success'
 }
 
 const formatStatusLabel = (value: string | null) => {
   const normalized = getStatusClass(value)
-  if (normalized === "failed") return "Failed"
-  if (normalized === "pending") return "Pending"
-  return "Success"
+  if (normalized === 'failed') return 'Failed'
+  if (normalized === 'pending') return 'Pending'
+  return 'Success'
 }
 
 const fetchExportLogs = async () => {
   try {
     const { data, error } = await supabase
-      .from("export_batches")
-      .select(`
+      .from('export_batches')
+      .select(
+        `
         id,
         file_name,
         file_type,
@@ -412,12 +399,13 @@ const fetchExportLogs = async () => {
         row_count,
         status,
         exported_by_name
-      `)
-      .order("uploaded_at", { ascending: false })
+      `,
+      )
+      .order('uploaded_at', { ascending: false })
       .limit(5)
 
     if (error) {
-      console.error("Failed to fetch export history:", error)
+      console.error('Failed to fetch export history:', error)
       exportLogs.value = []
       return
     }
@@ -433,15 +421,15 @@ const fetchExportLogs = async () => {
         time: formatted.time,
         type,
         typeClass: getFileTypeClass(type),
-        user: row.exported_by_name || "Unknown User",
+        user: row.exported_by_name || 'Unknown User',
         status: formatStatusLabel(row.status),
         statusClass,
         rowCount: row.row_count || 0,
-        fileName: row.file_name || "--",
+        fileName: row.file_name || '--',
       }
     })
   } catch (error) {
-    console.error("Unexpected fetchExportLogs error:", error)
+    console.error('Unexpected fetchExportLogs error:', error)
     exportLogs.value = []
   }
 }
@@ -455,7 +443,7 @@ const getDateObject = (value: string | null) => {
 const getDateOnly = (value: string | null) => {
   const dt = getDateObject(value)
   if (!dt) return null
-  return dt.toISOString().split("T")[0]
+  return dt.toISOString().split('T')[0]
 }
 
 const getHour = (value: string | null) => {
@@ -466,18 +454,18 @@ const getHour = (value: string | null) => {
 
 const getDayName = (value: string | null) => {
   const dt = getDateObject(value)
-  if (!dt) return "Unknown"
-  return dt.toLocaleDateString("en-US", { weekday: "long" })
+  if (!dt) return 'Unknown'
+  return dt.toLocaleDateString('en-US', { weekday: 'long' })
 }
 
 const formatHourLabel = (hour: number) => {
-  const suffix = hour >= 12 ? "PM" : "AM"
+  const suffix = hour >= 12 ? 'PM' : 'AM'
   const displayHour = hour % 12 || 12
   return `${displayHour}:00 ${suffix}`
 }
 
 const getDurationMinutes = (log: AttendanceLog) => {
-  if (typeof log.duration_minutes === "number" && log.duration_minutes > 0) {
+  if (typeof log.duration_minutes === 'number' && log.duration_minutes > 0) {
     return log.duration_minutes
   }
 
@@ -492,12 +480,12 @@ const getDurationMinutes = (log: AttendanceLog) => {
   return Math.round(diff / 60000)
 }
 
-const buildGroupedVisits = (items: AttendanceLog[], key: "college" | "program" | "year_level") => {
+const buildGroupedVisits = (items: AttendanceLog[], key: 'college' | 'program' | 'year_level') => {
   const grouped: Record<string, number> = {}
 
   items.forEach((log) => {
     const student = Array.isArray(log.students) ? log.students[0] : log.students
-    const value = student?.[key] ?? "Unknown"
+    const value = student?.[key] ?? 'Unknown'
     const name = String(value)
     grouped[name] = (grouped[name] || 0) + 1
   })
@@ -508,7 +496,7 @@ const buildGroupedVisits = (items: AttendanceLog[], key: "college" | "program" |
 }
 
 const visitorsToday = computed(() => {
-  const today = new Date().toISOString().split("T")[0]
+  const today = new Date().toISOString().split('T')[0]
   return logs.value.filter((log) => getDateOnly(log.time_in) === today).length
 })
 
@@ -517,10 +505,10 @@ const outgoing = computed(() => 0)
 const gaugeCount = computed(() => currentlyInside.value)
 
 const gaugeStatus = computed(() => {
-  if (gaugeCount.value === 0) return "No Attendance"
-  if (gaugeCount.value <= 10) return "Low Attendance"
-  if (gaugeCount.value <= 30) return "Moderate"
-  return "High Attendance"
+  if (gaugeCount.value === 0) return 'No Attendance'
+  if (gaugeCount.value <= 10) return 'Low Attendance'
+  if (gaugeCount.value <= 30) return 'Moderate'
+  return 'High Attendance'
 })
 
 const gaugeFillPercent = computed(() => {
@@ -545,7 +533,7 @@ const averageStayDuration = computed(() => {
     .map((log) => getDurationMinutes(log))
     .filter((minutes) => minutes > 0)
 
-  if (!durations.length) return "—"
+  if (!durations.length) return '—'
 
   const avg = Math.round(durations.reduce((sum, minutes) => sum + minutes, 0) / durations.length)
 
@@ -586,9 +574,9 @@ const peakDays = computed(() => {
     .sort((a, b) => b.visits - a.visits)
 })
 
-const visitsByCollege = computed(() => buildGroupedVisits(logs.value, "college"))
-const visitsByProgram = computed(() => buildGroupedVisits(logs.value, "program"))
-const visitsByYearLevel = computed(() => buildGroupedVisits(logs.value, "year_level"))
+const visitsByCollege = computed(() => buildGroupedVisits(logs.value, 'college'))
+const visitsByProgram = computed(() => buildGroupedVisits(logs.value, 'program'))
+const visitsByYearLevel = computed(() => buildGroupedVisits(logs.value, 'year_level'))
 
 const topPeakHour = computed(() => peakHours.value[0] || null)
 const topPeakDay = computed(() => peakDays.value[0] || null)
@@ -599,57 +587,57 @@ const topYearLevel = computed(() => visitsByYearLevel.value[0] || null)
 const quickStats = computed(() => [
   {
     val: logs.value.length,
-    label: "Total Library Visits",
-    delta: "All",
+    label: 'Total Library Visits',
+    delta: 'All',
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
   },
   {
-    val: topPeakHour.value ? topPeakHour.value.label : "N/A",
-    label: "Peak Hours",
-    delta: topPeakHour.value ? `${topPeakHour.value.visits} visits` : "—",
+    val: topPeakHour.value ? topPeakHour.value.label : 'N/A',
+    label: 'Peak Hours',
+    delta: topPeakHour.value ? `${topPeakHour.value.visits} visits` : '—',
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   },
   {
-    val: topPeakDay.value ? topPeakDay.value.day : "N/A",
-    label: "Peak Days",
-    delta: topPeakDay.value ? `${topPeakDay.value.visits} visits` : "—",
+    val: topPeakDay.value ? topPeakDay.value.day : 'N/A',
+    label: 'Peak Days',
+    delta: topPeakDay.value ? `${topPeakDay.value.visits} visits` : '—',
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
   },
   {
     val: averageStayDuration.value,
-    label: "Average Stay",
-    delta: "Session",
+    label: 'Average Stay',
+    delta: 'Session',
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   },
   {
-    val: topCollege.value ? topCollege.value.name : "N/A",
-    label: "Visits by College",
-    delta: topCollege.value ? `${topCollege.value.visits} visits` : "—",
+    val: topCollege.value ? topCollege.value.name : 'N/A',
+    label: 'Visits by College',
+    delta: topCollege.value ? `${topCollege.value.visits} visits` : '—',
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
   },
   {
-    val: topProgram.value ? topProgram.value.name : "N/A",
-    label: "Visits by Program",
-    delta: topProgram.value ? `${topProgram.value.visits} visits` : "—",
+    val: topProgram.value ? topProgram.value.name : 'N/A',
+    label: 'Visits by Program',
+    delta: topProgram.value ? `${topProgram.value.visits} visits` : '—',
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
   },
   {
-    val: topYearLevel.value ? `Year ${topYearLevel.value.name}` : "N/A",
-    label: "Visits by Year Level",
-    delta: topYearLevel.value ? `${topYearLevel.value.visits} visits` : "—",
+    val: topYearLevel.value ? `Year ${topYearLevel.value.name}` : 'N/A',
+    label: 'Visits by Year Level',
+    delta: topYearLevel.value ? `${topYearLevel.value.visits} visits` : '—',
     up: true,
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
   },
 ])
 
 const handleTabChange = (name: string) => {
-  console.log("tab:", name)
+  console.log('tab:', name)
 }
 </script>
 
@@ -1035,7 +1023,7 @@ const handleTabChange = (name: string) => {
   color: #9a6500;
 }
 .gauge-status.mid {
-  background: rgba(13, 43, 15, 0.10);
+  background: rgba(13, 43, 15, 0.1);
   color: #0d2b0f;
 }
 .gauge-status.high {
@@ -1309,15 +1297,15 @@ const handleTabChange = (name: string) => {
 }
 
 .etype-badge--csv {
-  background: rgba(46, 125, 50, 0.10);
+  background: rgba(46, 125, 50, 0.1);
   color: #2e7d32;
 }
 .etype-badge--xlsx {
-  background: rgba(13, 43, 15, 0.10);
+  background: rgba(13, 43, 15, 0.1);
   color: #0d2b0f;
 }
 .etype-badge--pdf {
-  background: rgba(198, 40, 40, 0.10);
+  background: rgba(198, 40, 40, 0.1);
   color: #c62828;
 }
 .etype-badge--file {
@@ -1333,7 +1321,7 @@ const handleTabChange = (name: string) => {
 }
 
 .estatus--success {
-  background: rgba(46, 125, 50, 0.10);
+  background: rgba(46, 125, 50, 0.1);
   color: #2e7d32;
 }
 .estatus--success .estatus-dot {
@@ -1349,7 +1337,7 @@ const handleTabChange = (name: string) => {
 }
 
 .estatus--failed {
-  background: rgba(198, 40, 40, 0.10);
+  background: rgba(198, 40, 40, 0.1);
   color: #c62828;
 }
 .estatus--failed .estatus-dot {
@@ -1389,5 +1377,9 @@ const handleTabChange = (name: string) => {
   .attn-actions {
     flex-direction: column;
   }
+}
+
+.attn-actions button:hover {
+  background-color: #2f7e35;
 }
 </style>
