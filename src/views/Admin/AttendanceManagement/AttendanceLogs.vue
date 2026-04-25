@@ -25,6 +25,7 @@ type AttendanceLog = {
 }
 
 const logs = ref<AttendanceLog[]>([])
+const totalRecords = ref(0)
 const loading = ref(false)
 const errorMessage = ref("")
 
@@ -44,8 +45,27 @@ const fetchAttendanceLogs = async () => {
   errorMessage.value = ""
 
   try {
-    const data = await getAttendanceLogs()
-    logs.value = data || []
+    const result = await getAttendanceLogs({
+      filters: {
+        search: search.value,
+        program: selectedProgram.value,
+        college: selectedCollege.value,
+        yearLevel: selectedYearLevel.value,
+        attendanceType: selectedAttendanceType.value,
+        date: selectedDate.value,
+        status:
+          selectedStatus.value === "Checked In"
+            ? "checked_in"
+            : selectedStatus.value === "Checked Out"
+              ? "checked_out"
+              : "",
+      },
+      page: currentPage.value,
+      pageSize: itemsPerPage,
+    })
+
+    logs.value = result.data || []
+    totalRecords.value = result.count || 0
   } catch (error: unknown) {
     console.error("Failed to fetch attendance logs:", error)
 
@@ -67,6 +87,7 @@ const normalizeStudent = (student: Student | Student[] | null | undefined): Stud
   if (Array.isArray(student)) {
     return student[0] || {}
   }
+
   return student || {}
 }
 
@@ -74,6 +95,7 @@ const formatDateTime = (value: string | null) => {
   if (!value) return "--"
 
   return new Date(value).toLocaleString("en-PH", {
+    timeZone: "Asia/Manila",
     year: "numeric",
     month: "short",
     day: "2-digit",
@@ -131,72 +153,26 @@ const hasActiveFilters = computed(() => {
 })
 
 const filteredLogs = computed(() => {
-  return logs.value.filter((log) => {
-    const student = normalizeStudent(log.students)
-
-    const fullName =
-      `${student.first_name || ""} ${student.last_name || ""}`.trim().toLowerCase()
-
-    const idNumber = String(student.id_number || "").toLowerCase()
-    const program = String(student.program || "")
-    const college = String(student.college || "")
-    const yearLevel = String(student.year_level || "")
-    const attendanceType = String(log.attendance_type || "")
-    const status = getStatus(log)
-    const searchValue = search.value.trim().toLowerCase()
-
-    const logDate = log.time_in
-      ? new Date(log.time_in).toISOString().slice(0, 10)
-      : ""
-
-    const matchesSearch =
-      !searchValue ||
-      fullName.includes(searchValue) ||
-      idNumber.includes(searchValue)
-
-    const matchesProgram =
-      !selectedProgram.value || program === selectedProgram.value
-
-    const matchesCollege =
-      !selectedCollege.value || college === selectedCollege.value
-
-    const matchesYearLevel =
-      !selectedYearLevel.value || yearLevel === selectedYearLevel.value
-
-    const matchesAttendanceType =
-      !selectedAttendanceType.value || attendanceType === selectedAttendanceType.value
-
-    const matchesStatus =
-      !selectedStatus.value || status === selectedStatus.value
-
-    const matchesDate =
-      !selectedDate.value || logDate === selectedDate.value
-
-    return (
-      matchesSearch &&
-      matchesProgram &&
-      matchesCollege &&
-      matchesYearLevel &&
-      matchesAttendanceType &&
-      matchesStatus &&
-      matchesDate
-    )
-  })
-})
-
-const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(filteredLogs.value.length / itemsPerPage))
+  return logs.value
 })
 
 const paginatedLogs = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredLogs.value.slice(start, end)
+  return logs.value
+})
+
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil(totalRecords.value / itemsPerPage))
 })
 
 const goToNextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++
+  }
+}
+
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
   }
 }
 
@@ -212,13 +188,12 @@ watch(
   ],
   () => {
     currentPage.value = 1
+    fetchAttendanceLogs()
   }
 )
 
-watch(filteredLogs, () => {
-  if (currentPage.value > totalPages.value) {
-    currentPage.value = totalPages.value
-  }
+watch(currentPage, () => {
+  fetchAttendanceLogs()
 })
 
 const clearFilters = () => {
@@ -477,7 +452,7 @@ const exportToCSV = async () => {
                     </td>
                   </tr>
 
-                  <tr v-else-if="filteredLogs.length === 0">
+                  <tr v-else-if="paginatedLogs.length === 0">
                     <td colspan="9" class="empty">
                       No attendance records found.
                       <div class="emptyHint">
@@ -493,31 +468,39 @@ const exportToCSV = async () => {
                     <td data-label="ID Number" class="strong">
                       {{ normalizeStudent(log.students).id_number || "--" }}
                     </td>
+
                     <td data-label="Student Name">
                       {{
                         `${normalizeStudent(log.students).first_name || ""} ${normalizeStudent(log.students).last_name || ""}`.trim() || "--"
                       }}
                     </td>
+
                     <td data-label="Program">
                       {{ normalizeStudent(log.students).program || "--" }}
                     </td>
+
                     <td data-label="College">
                       {{ normalizeStudent(log.students).college || "--" }}
                     </td>
+
                     <td data-label="Year Level">
                       {{ normalizeStudent(log.students).year_level || "--" }}
                     </td>
+
                     <td data-label="Attendance Type">
                       {{ log.attendance_type || "--" }}
                     </td>
+
                     <td data-label="Time In">
                       {{ formatDateTime(log.time_in) }}
                     </td>
+
                     <td data-label="Time Out">
                       {{ formatDateTime(log.time_out) }}
                     </td>
+
                     <td data-label="Duration" class="muted">
-                      {{ log.duration_minutes ? `${log.duration_minutes} mins` : "--" }}
+                      {{ log.duration_minutes !== null && log.duration_minutes !== undefined ? `${log.duration_minutes} mins` : "--" }}
                     </td>
                   </tr>
                 </tbody>
@@ -529,7 +512,15 @@ const exportToCSV = async () => {
                 Tip: Use the filters and search to narrow down records faster.
               </div>
 
-              <div class="pager" v-if="filteredLogs.length > itemsPerPage">
+              <div class="pager" v-if="totalRecords > itemsPerPage">
+                <button
+                  v-if="currentPage > 1"
+                  class="pagerBtn"
+                  @click="goToPreviousPage"
+                >
+                  Previous
+                </button>
+
                 <button
                   v-if="currentPage < totalPages"
                   class="pagerBtn"
@@ -545,13 +536,13 @@ const exportToCSV = async () => {
             <span class="summaryText">
               Showing
               <span class="summaryStrong">
-                {{ filteredLogs.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }}
+                {{ totalRecords === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }}
               </span>
               -
               <span class="summaryStrong">
-                {{ Math.min(currentPage * itemsPerPage, filteredLogs.length) }}
+                {{ Math.min(currentPage * itemsPerPage, totalRecords) }}
               </span>
-              of <span class="summaryStrong">{{ filteredLogs.length }}</span> records
+              of <span class="summaryStrong">{{ totalRecords }}</span> records
             </span>
           </div>
         </div>
@@ -920,6 +911,12 @@ const exportToCSV = async () => {
   font-size: 12px;
   color: rgba(13, 43, 15, 0.55);
   padding-left: 6px;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .pagerBtn {

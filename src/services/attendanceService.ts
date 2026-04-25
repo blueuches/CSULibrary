@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase"
 
-type AttendanceFilters = {
+export type AttendanceFilters = {
   search?: string
   program?: string
   college?: string
@@ -10,11 +10,25 @@ type AttendanceFilters = {
   status?: "" | "checked_in" | "checked_out"
 }
 
-// GET LOGS
-export const getAttendanceLogs = async (filters: AttendanceFilters = {}) => {
+type GetAttendanceLogsParams = {
+  filters?: AttendanceFilters
+  page?: number
+  pageSize?: number
+}
+
+// GET LOGS - optimized server-side filtering + pagination
+export const getAttendanceLogs = async ({
+  filters = {},
+  page = 1,
+  pageSize = 10,
+}: GetAttendanceLogsParams = {}) => {
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
+
   let query = supabase
     .from("attendance_logs")
-    .select(`
+    .select(
+      `
       *,
       students!inner (
         id_number,
@@ -24,7 +38,9 @@ export const getAttendanceLogs = async (filters: AttendanceFilters = {}) => {
         college,
         year_level
       )
-    `)
+    `,
+      { count: "exact", head: false }
+    )
     .order("time_in", { ascending: false })
 
   if (filters.attendanceType) {
@@ -45,8 +61,8 @@ export const getAttendanceLogs = async (filters: AttendanceFilters = {}) => {
 
   if (filters.date) {
     query = query
-      .gte("time_in", `${filters.date}T00:00:00`)
-      .lte("time_in", `${filters.date}T23:59:59`)
+      .gte("time_in", `${filters.date}T00:00:00+08:00`)
+      .lte("time_in", `${filters.date}T23:59:59+08:00`)
   }
 
   if (filters.status === "checked_in") {
@@ -66,8 +82,12 @@ export const getAttendanceLogs = async (filters: AttendanceFilters = {}) => {
     )
   }
 
-  const { data, error } = await query
+  const { data, error, count } = await query.range(from, to)
 
   if (error) throw error
-  return data
+
+  return {
+    data: data || [],
+    count: count ?? 0,
+  }
 }
