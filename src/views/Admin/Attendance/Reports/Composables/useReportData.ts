@@ -15,31 +15,31 @@
 
 import { ref, computed } from 'vue'
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { generateAllPdf }      from '../PDF/Pages/pdfAll'
-import { generateCollegePdf }  from '../PDF/Pages/pdfByCollege'
+import { generateAllPdf } from '../PDF/Pages/pdfAll'
+import { generateCollegePdf } from '../PDF/Pages/pdfByCollege'
 import { generateSpecificPdf } from '../PDF/Pages/pdfSpecific'
-import type { DateFilter }     from '../PDF/Pages/pdfAll'
-import type { SpecificType }   from '../PDF/Pages/pdfSpecific'
+import type { DateFilter } from '../PDF/Pages/pdfAll'
+import type { SpecificType } from '../PDF/Pages/pdfSpecific'
 
 // ── Re-export shared types so the rest of the module only imports from here ────
 
 export type { DateFilter, SpecificType }
 
-export type ReportType    = 'all' | 'college' | 'specific'
+export type ReportType = 'all' | 'college' | 'specific'
 export type DateFilterType = 'day' | 'period' | 'month'
 
 export interface GenerateParams {
-  reportType:     ReportType
+  reportType: ReportType
   dateFilterType: DateFilterType
   /** 'YYYY-MM-DD' – used when dateFilterType === 'day' */
-  selectedDay:    string
+  selectedDay: string
   /** 'YYYY-MM-DD' */
-  periodFrom:     string
+  periodFrom: string
   /** 'YYYY-MM-DD' */
-  periodTo:       string
+  periodTo: string
   /** 1-12 array, used when dateFilterType === 'month' */
   selectedMonths: number[]
-  selectedYear:   number
+  selectedYear: number
   selectedCollege: string
   selectedProgram: string
   selectedSpecific: SpecificType
@@ -48,22 +48,21 @@ export interface GenerateParams {
 // ── Composable ─────────────────────────────────────────────────────────────────
 
 export function useReportData(supabase: SupabaseClient) {
-
   // ── Metadata state ───────────────────────────────────────────────────────────
-  const colleges         = ref<string[]>([])
+  const colleges = ref<string[]>([])
   const programsByCollege = ref<Record<string, string[]>>({})
-  const isLoadingMeta    = ref(false)
-  const metaError        = ref<string | null>(null)
+  const isLoadingMeta = ref(false)
+  const metaError = ref<string | null>(null)
 
   // ── Generation state ─────────────────────────────────────────────────────────
-  const isGenerating   = ref(false)
-  const generateError  = ref<string | null>(null)
-  const generatedBlob  = ref<Blob | null>(null)
-  const reportSummary  = ref('')
+  const isGenerating = ref(false)
+  const generateError = ref<string | null>(null)
+  const generatedBlob = ref<Blob | null>(null)
+  const reportSummary = ref('')
 
   // ── Derived ──────────────────────────────────────────────────────────────────
-  const filteredPrograms = computed(() =>
-    (college: string) => programsByCollege.value[college] ?? []
+  const filteredPrograms = computed(
+    () => (college: string) => programsByCollege.value[college] ?? [],
   )
 
   // ── Load colleges and programs from DB ───────────────────────────────────────
@@ -74,7 +73,7 @@ export function useReportData(supabase: SupabaseClient) {
    */
   async function loadCollegesAndPrograms(): Promise<void> {
     isLoadingMeta.value = true
-    metaError.value     = null
+    metaError.value = null
     try {
       const { data, error } = await supabase
         .from('students')
@@ -83,7 +82,7 @@ export function useReportData(supabase: SupabaseClient) {
 
       if (error) throw error
 
-      const collegeSet  = new Set<string>()
+      const collegeSet = new Set<string>()
       const programsMap: Record<string, Set<string>> = {}
 
       for (const row of data ?? []) {
@@ -95,9 +94,9 @@ export function useReportData(supabase: SupabaseClient) {
         if (p) programsMap[c].add(p)
       }
 
-      colleges.value          = [...collegeSet].sort()
+      colleges.value = [...collegeSet].sort()
       programsByCollege.value = Object.fromEntries(
-        Object.entries(programsMap).map(([c, ps]) => [c, [...ps].sort()])
+        Object.entries(programsMap).map(([c, ps]) => [c, [...ps].sort()]),
       )
     } catch (err: any) {
       metaError.value = err.message ?? 'Failed to load college/program data.'
@@ -110,25 +109,38 @@ export function useReportData(supabase: SupabaseClient) {
 
   function buildDateFilter(params: GenerateParams): DateFilter {
     return {
-      type:   params.dateFilterType,
-      day:    params.selectedDay   || undefined,
-      from:   params.periodFrom    || undefined,
-      to:     params.periodTo      || undefined,
+      type: params.dateFilterType,
+      day: params.selectedDay || undefined,
+      from: params.periodFrom || undefined,
+      to: params.periodTo || undefined,
       months: params.selectedMonths.length ? params.selectedMonths : undefined,
-      year:   params.selectedYear,
+      year: params.selectedYear,
     }
   }
 
   // ── Validate params before generating ────────────────────────────────────────
 
   function validate(params: GenerateParams): string | null {
-    const { dateFilterType, selectedDay, periodFrom, periodTo, selectedMonths, reportType, selectedSpecific } = params
+    const {
+      dateFilterType,
+      selectedDay,
+      periodFrom,
+      periodTo,
+      selectedMonths,
+      reportType,
+      selectedSpecific,
+      selectedCollege,
+    } = params
 
-    if (dateFilterType === 'day'    && !selectedDay)              return 'Please select a day.'
-    if (dateFilterType === 'period' && (!periodFrom || !periodTo)) return 'Please select a start and end date.'
-    if (dateFilterType === 'period' && periodFrom > periodTo)      return 'Start date must be before end date.'
-    if (dateFilterType === 'month'  && selectedMonths.length === 0) return 'Please select at least one month.'
-    if (reportType === 'specific'   && !selectedSpecific)          return 'Please select a report focus.'
+    if (dateFilterType === 'day' && !selectedDay) return 'Please select a day.'
+    if (dateFilterType === 'period' && (!periodFrom || !periodTo))
+      return 'Please select a start and end date.'
+    if (dateFilterType === 'period' && periodFrom > periodTo)
+      return 'Start date must be before end date.'
+    if (dateFilterType === 'month' && selectedMonths.length === 0)
+      return 'Please select at least one month.'
+    if (reportType === 'specific' && !selectedSpecific) return 'Please select a report focus.'
+    if (reportType === 'college' && !selectedCollege) return 'Please select a college.'
 
     return null
   }
@@ -156,27 +168,28 @@ export function useReportData(supabase: SupabaseClient) {
 
     try {
       const dateFilter = buildDateFilter(params)
-      const scope      = { college: params.selectedCollege || undefined, program: params.selectedProgram || undefined }
+      const scope = {
+        college: params.selectedCollege || undefined,
+        program: params.selectedProgram || undefined,
+      }
 
       if (params.reportType === 'all') {
-
         generatedBlob.value = await generateAllPdf(supabase, dateFilter)
         reportSummary.value = buildAllSummary(params)
-
       } else if (params.reportType === 'college') {
-
         generatedBlob.value = await generateCollegePdf(supabase, dateFilter, scope)
         reportSummary.value = buildCollegeSummary(params)
-
       } else {
-
-        generatedBlob.value = await generateSpecificPdf(supabase, dateFilter, scope, params.selectedSpecific)
+        generatedBlob.value = await generateSpecificPdf(
+          supabase,
+          dateFilter,
+          scope,
+          params.selectedSpecific,
+        )
         reportSummary.value = buildSpecificSummary(params)
-
       }
 
       return true
-
     } catch (err: any) {
       generateError.value = err.message ?? 'An unknown error occurred while generating the report.'
       return false
@@ -193,9 +206,9 @@ export function useReportData(supabase: SupabaseClient) {
    */
   function downloadPdf(filename?: string): void {
     if (!generatedBlob.value) return
-    const url  = URL.createObjectURL(generatedBlob.value)
+    const url = URL.createObjectURL(generatedBlob.value)
     const link = document.createElement('a')
-    link.href     = url
+    link.href = url
     link.download = filename ?? buildFilename()
     link.click()
     URL.revokeObjectURL(url)
@@ -210,12 +223,25 @@ export function useReportData(supabase: SupabaseClient) {
 
   // ── Summary label builders ────────────────────────────────────────────────────
 
-  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  const MONTH_NAMES = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
 
   function dateSummary(p: GenerateParams): string {
-    if (p.dateFilterType === 'day')    return p.selectedDay
+    if (p.dateFilterType === 'day') return p.selectedDay
     if (p.dateFilterType === 'period') return `${p.periodFrom} – ${p.periodTo}`
-    const mLabels = p.selectedMonths.map(m => MONTH_NAMES[m - 1]).join(', ')
+    const mLabels = p.selectedMonths.map((m) => MONTH_NAMES[m - 1]).join(', ')
     return `${mLabels} ${p.selectedYear}`
   }
 
@@ -230,9 +256,9 @@ export function useReportData(supabase: SupabaseClient) {
 
   const SPECIFIC_LABELS: Record<SpecificType, string> = {
     top_students: 'Top Visiting Students',
-    peak_hours:   'Peak & Low Hours',
-    duration:     'Duration Analysis',
-    events:       'Events Report',
+    peak_hours: 'Peak & Low Hours',
+    duration: 'Duration Analysis',
+    events: 'Events Report',
   }
 
   function buildSpecificSummary(p: GenerateParams): string {
@@ -241,7 +267,7 @@ export function useReportData(supabase: SupabaseClient) {
 
   function buildFilename(): string {
     const now = new Date()
-    const ts  = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`
+    const ts = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`
     return `attendance-report-${ts}.pdf`
   }
 
