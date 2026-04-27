@@ -196,8 +196,18 @@
         style="background: #0d2b0f"
       >
         <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 17l7-7 7 7" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 11l7-7 7 7"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 17l7-7 7 7"
+          />
         </svg>
       </button>
     </Transition>
@@ -216,9 +226,18 @@ let carouselTimer: any = null
 
 const months = [
   'All',
-  'January', 'February', 'March', 'April',
-  'May', 'June', 'July', 'August',
-  'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ]
 
 const pinnedMode = ref<'start_date' | 'created_at'>('start_date')
@@ -257,7 +276,7 @@ const fetchEvents = async () => {
         time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         pinned: index < 3,
         isPinnedGrid: false,
-        isLatest:    index === 0,
+        isLatest: index === 0,
       }
     })
 
@@ -265,11 +284,11 @@ const fetchEvents = async () => {
       let pinnedEvent: any
       if (pinnedMode.value === 'start_date') {
         pinnedEvent = events.value.reduce((prev, curr) =>
-          new Date(curr.start_date) > new Date(prev.start_date) ? curr : prev
+          new Date(curr.start_date) > new Date(prev.start_date) ? curr : prev,
         )
       } else {
         pinnedEvent = events.value.reduce((prev, curr) =>
-          new Date(curr.created_at) > new Date(prev.created_at) ? curr : prev
+          new Date(curr.created_at) > new Date(prev.created_at) ? curr : prev,
         )
       }
       events.value.forEach((e) => (e.isPinnedGrid = false))
@@ -382,15 +401,33 @@ onUnmounted(() => {
 }
 
 .kicker-line {
-  display: inline-block; height: 3px; width: 60px;
+  display: inline-block;
+  height: 3px;
+  width: 60px;
   background: linear-gradient(90deg, #dfb753, #fbc02d);
-  border-radius: 999px; transform: scaleX(0); transform-origin: left;
-  animation: lineReveal 0.9s ease forwards; animation-delay: 0.3s;
+  border-radius: 999px;
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: lineReveal 0.9s ease forwards;
+  animation-delay: 0.3s;
 }
-@keyframes lineReveal { to { transform: scaleX(1); } }
+@keyframes lineReveal {
+  to {
+    transform: scaleX(1);
+  }
+}
 
-.pill-entrance { opacity: 0; transform: translateY(10px); animation: pillPop 0.5s ease-out calc(var(--p-i) * 0.05s + 0.4s) forwards; }
-@keyframes pillPop { to { opacity: 1; transform: translateY(0); } }
+.pill-entrance {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: pillPop 0.5s ease-out calc(var(--p-i) * 0.05s + 0.4s) forwards;
+}
+@keyframes pillPop {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .event-card {
   opacity: 0;
@@ -418,11 +455,25 @@ onUnmounted(() => {
   position: absolute;
 }
 
-.scrollbar-hide::-webkit-scrollbar { display: none; }
-.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-.no-events-icon { animation: floatBounce 1.2s ease-in-out infinite alternate; }
-@keyframes floatBounce { 0% { transform: translateY(0); } 100% { transform: translateY(-10px); } }
+.no-events-icon {
+  animation: floatBounce 1.2s ease-in-out infinite alternate;
+}
+@keyframes floatBounce {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-10px);
+  }
+}
 
 .fade-enter-active,
 .fade-leave-active {

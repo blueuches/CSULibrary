@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue"
-import AdminPageHeader from "@/components/AdminPageHeader.vue"
-import Sidebar from "@/components/Sidebar.vue"
-import { getAttendanceLogs } from "@/services/attendanceService"
-import { supabase } from "@/lib/supabase"
+import { ref, computed, onMounted, watch } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
+import { getAttendanceLogs } from '@/services/attendanceService'
+import { supabase } from '@/lib/supabase'
 
 type Student = {
   id_number?: string

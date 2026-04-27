@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, type DirectiveBinding } from 'vue'
 import { useRoute } from 'vue-router'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import { supabase } from '@/lib/supabase'
 import Sidebar from '@/components/Sidebar.vue'
 import '@/assets/styles/manage-gallery.css'
@@ -94,6 +93,14 @@ const defaultAboutContent: AboutContent = {
     'Walk quietly into the library.',
     'Never run around the hallway outside the library premises.',
   ],
+}
+
+const SECTION_ORDER: Record<keyof AboutContent, number> = {
+  vision: 1,
+  mission: 2,
+  goal: 3,
+  objectives: 4,
+  rules: 5,
 }
 
 const mediaItems = ref<MediaItem[]>([])

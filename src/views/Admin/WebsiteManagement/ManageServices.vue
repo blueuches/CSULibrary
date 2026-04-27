@@ -280,7 +280,6 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import type { FunctionalComponent } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import * as LucideIcons from 'lucide-vue-next'
 import { useServicesStore } from '@/services/manageService'

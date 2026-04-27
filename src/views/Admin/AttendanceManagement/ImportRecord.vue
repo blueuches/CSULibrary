@@ -3,11 +3,28 @@
     <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
 
     <main class="report-root flex-1 overflow-y-auto">
-      <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Student Records">
-        <template #subtitle>
-          Upload a dataset and synchronize it with the CSU student database.
-        </template>
-      </AdminPageHeader>
+      <!-- HEADER -->
+      <header class="report-header">
+        <div>
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/attendance')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>STUDENT RECORDS</span>
+          </div>
+
+          <h1 class="header-title">Import <span style="color: #f9a825">Student Records</span></h1>
+
+          <p class="header-sub">
+            Upload a dataset and synchronize it with the CSU student database.
+          </p>
+        </div>
+      </header>
 
       <div style="display: flex; justify-content: space-between; align-items: center">
         <button

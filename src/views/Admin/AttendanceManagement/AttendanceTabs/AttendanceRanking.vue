@@ -257,36 +257,6 @@
           </div>
         </section>
       </div>
-
-      <input type="checkbox" id="success-trigger" class="modal-logic hidden">
-
-<div class="success-modal-overlay fixed inset-0 z-[100] flex items-center justify-center p-4 invisible opacity-0 transition-all duration-300">
-  
-  <label for="success-trigger" class="absolute inset-0 bg-[#0d2b0f]/40 backdrop-blur-sm cursor-pointer"></label>
-
-  <div class="modal-card relative bg-white w-full max-w-[340px] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] p-8 text-center transform scale-95 transition-all duration-500">
-    
-    <div class="success-ring-container mb-6">
-      <div class="w-20 h-20 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto border-4 border-green-100 shadow-inner">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" 
-            class="check-path" />
-        </svg>
-      </div>
-    </div>
-
-    <h3 class="text-xl font-black text-gray-800 mb-2 uppercase tracking-tight">Export Success!</h3>
-    <p class="text-gray-500 text-[13px] leading-relaxed mb-8 px-2">
-      Attendance ranking has been exported successfully.
-    </p>
-
-    <label for="success-trigger" 
-      class="block w-full py-4 bg-[#0d2b0f] text-white text-[11px] font-black rounded-2xl hover:bg-green-900 transition-all cursor-pointer tracking-[0.2em] uppercase shadow-lg shadow-green-900/20 active:scale-95">
-      Okay
-    </label>
-  </div>
-</div>
-
     </main>
   </div>
 </template>
@@ -306,8 +276,6 @@ interface Log {
   program: string
   name: string
   year_level: number | string
-  time_in?: string
-  time_out?: string
 }
 
 /* =====================================================
@@ -322,71 +290,6 @@ const filters = ref({
   limit: 10,
 })
 
-
-
-const exportCSV = async () => {
-  const data = filteredStudents.value
-  const rowCount = data.length
-  
-  // 1. prepare the File Name
-  const timestamp = new Date().getTime();
-  const dateString = new Date().toISOString().split('T')[0];
-  const finalFileName = `attendance-ranking-${dateString}-${timestamp}.csv`;
-
-  // 2. Generate CSV content
-  const headers = ['ID Number', 'Name', 'Course', 'Year Level', 'Visits']
-  const rows = data.map(s => [
-    s.id_number,
-    s.name,
-    s.course,
-    s.year_level,
-    s.visits
-  ])
-
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(r => r.join(','))
-  ].join('\n')
-
-  try {
-    // 3. Save to Database (export_batches table)
-    const { data: { user } } = await supabase.auth.getUser()
-
-    const { error } = await supabase
-      .from('export_batches')
-      .insert([
-        {
-          file_name: finalFileName, 
-          file_type: 'CSV',
-          uploaded_by: user?.id || null, 
-          exported_by_name: user?.user_metadata?.full_name || 'Admin', 
-          row_count: rowCount,
-          status: 'Completed'
-        }
-      ])
-
-    if (error) throw error
-
-    // 4. Trigger Download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.setAttribute('href', url)
-    link.setAttribute('download', finalFileName) 
-    link.click()
-    
-    
-    const successTrigger = document.getElementById('success-trigger') as HTMLInputElement;
-    if (successTrigger) {
-      successTrigger.checked = true;
-    }
-    
-  } catch (err) {
-    console.error('Export recording failed:', err)
-    alert('Failed to record export batch.')
-  }
-}
-
 /* =====================================================
   FETCH DATA
 ===================================================== */
@@ -399,8 +302,6 @@ const fetchAttendance = async () => {
   const { data, error } = await supabase.from('attendance_logs').select(`
       student_id,
       attendance_type,
-      time_in,
-      time_out,
       students (
         college,
         program,
@@ -454,22 +355,6 @@ const studentRanking = computed(() => {
 
   return Object.values(map).sort((a: any, b: any) => b.visits - a.visits)
 })
-
-
-const totalDistinctVisits = computed(() => {
-  const set = new Set()
-
-  logs.value.forEach(log => {
-    const date = new Date(log.time_in || Date.now())
-      .toISOString()
-      .split('T')[0]
-
-    set.add(`${log.student_id}-${date}`)
-  })
-
-  return set.size
-})
-
 
 /* =====================================================
   FILTERED STUDENTS
@@ -547,7 +432,7 @@ const collegeData = computed(() => {
 const attendanceStats = computed(() => [
   {
     label: 'Total Visits',
-    value: totalDistinctVisits.value,
+    value: logs.value.length,
     icon: 'fas fa-users',
     color: '#166534',
   },
@@ -600,28 +485,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.modal-logic:checked ~ .success-modal-overlay {
-  visibility: visible;
-  opacity: 1;
-}
-
-.modal-logic:checked ~ .success-modal-overlay .modal-card {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.check-path {
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-}
-
-.modal-logic:checked ~ .success-modal-overlay .check-path {
-  animation: draw-check 0.8s ease-in-out forwards 0.2s;
-}
-
-@keyframes draw-check {
-  to { stroke-dashoffset: 0; }
-}
 .table-row-animate {
   opacity: 0;
   transform: translateY(10px);

@@ -81,7 +81,6 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 
 const router = useRouter()

@@ -3,14 +3,17 @@
     <Sidebar :activeTab="'GALLERY'" />
     <div class="w-full relative overflow-y-auto flex flex-col items-center bg-white">
       <!-- HERO -->
-      <div class="gallery-hero w-full px-8">
-        <div class="-mt-2">
-          <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/services' }, 'Services Management']" title="Library Sections">
-            <template #subtitle>
-              Manage the CSU Library Gallery -
-              <strong>{{ totalSections }} sections · {{ totalPhotos }} photos · {{ floors.length }} floors</strong>
-            </template>
-          </AdminPageHeader>
+      <div class="gallery-hero">
+        <div class="header-breadcrumb mb-2!">
+          <span
+            class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+            @click="$router.push('/admin/website/general')"
+            >BACK</span
+          >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+          <span>Library Sections</span>
         </div>
         <h1 class="hero-title">
           <span class="hero-title--underlined">Library</span>
@@ -522,7 +525,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import '@/assets/styles/manage-gallery.css'
 

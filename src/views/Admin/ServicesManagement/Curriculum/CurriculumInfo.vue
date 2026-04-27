@@ -29,9 +29,9 @@
           </h1>
           <p class="header-sub">
             Create a new curriculum information to share with the academic community.
-          </template>
-        </AdminPageHeader>
-      </div>
+          </p>
+        </div>
+      </header>
 
       <section
         class="mx-auto flex w-full max-w-4xl flex-col gap-6 rounded-xl border border-slate-200 bg-white p-8 shadow-sm"
@@ -160,7 +160,6 @@
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { useCurriculumData } from '@/composables/useCurriculumData'
 

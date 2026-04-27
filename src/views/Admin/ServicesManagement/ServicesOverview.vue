@@ -7,11 +7,26 @@
       <div class="glow-spot-right"></div>
 
       <div class="dashboard-wrapper">
-        <AdminPageHeader :breadcrumbs="['Admin', 'SERVICES']" title="Services">
-          <template #subtitle>
-            Comprehensive overview of institutional engagement and borrowing patterns
-          </template>
-        </AdminPageHeader>
+        <header class="dashboard-header">
+          <div class="branding-group">
+            <div class="header-breadcrumb !mb-2">
+              <span>Admin</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+              <span>SERVICES</span>
+            </div>
+
+            <h1 class="portal-main-title">
+              <span class="word-forest word-underlined">Library</span>
+              <span class="word-mustard"> Services</span>
+            </h1>
+
+            <p class="portal-subtitle">
+              Comprehensive overview of institutional engagement and borrowing patterns
+            </p>
+          </div>
+        </header>
 
         <section class="nav-bento-grid">
           <!-- ── HERO: Room Reservation ── -->

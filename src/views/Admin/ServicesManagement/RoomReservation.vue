@@ -4,16 +4,33 @@
 
     <main class="reservation-root flex-1 overflow-y-auto">
       <!-- HEADER -->
-      <div class="-mt-2">
-        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/services' }, 'Services Management']" title="Room Reservation">
-          <template #subtitle>
+      <header class="reservation-header intro-header">
+        <div class="header-left">
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/services')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>RESERVATION MANAGEMENT</span>
+          </div>
+
+          <h1 class="header-title intro-title">
+            Room <span class="text-yellow-500"> Reservation</span>
+          </h1>
+
+          <p class="header-sub">
             Manage room occupancies, view schedules, and process faculty reservations.
-          </template>
-          <template #actions>
-            <button class="export-btn" @click="openModal('booking')">+ New Booking</button>
-          </template>
-        </AdminPageHeader>
-      </div>
+          </p>
+        </div>
+
+        <div class="header-right">
+          <button class="export-btn" @click="openModal('booking')">+ New Booking</button>
+        </div>
+      </header>
 
       <!-- KPI -->
       <div class="reservation-kpi-strip">
@@ -642,7 +659,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 import '@/assets/styles/avr-reservation.css'

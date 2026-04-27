@@ -8,11 +8,32 @@
       <div class="shape shape-a" aria-hidden="true"></div>
       <div class="shape shape-b" aria-hidden="true"></div>
 
-      <AdminPageHeader :breadcrumbs="['Admin', 'Reports & Analytics']" title="Report Display">
-        <template #subtitle>
-          Reports display for the top borrowers, top colleges, and top departments
-        </template>
-        <template #actions>
+      <!-- HEADER -->
+      <header class="rp-header">
+        <div class="rp-header__left">
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/analytics')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>Reports & Analytics</span>
+          </div>
+
+          <div class="rp-title-wrap">
+            <h1 class="rp-title">
+              <span class="rp-title--dark">Report</span> <span class="rp-title--gold">Display</span>
+            </h1>
+            <p class="header-sub">
+              Reports display for the top borrowers, top colleges, and top departments
+            </p>
+          </div>
+        </div>
+
+        <div class="rp-header__right">
           <button class="edit-btn" @click="openEditModal">
             <svg
               width="14"
@@ -46,8 +67,8 @@
             </svg>
             Export Report
           </button>
-        </template>
-      </AdminPageHeader>
+        </div>
+      </header>
 
       <!-- TAB BAR -->
       <div class="tab-bar">

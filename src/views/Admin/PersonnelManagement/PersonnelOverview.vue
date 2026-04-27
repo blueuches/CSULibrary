@@ -509,7 +509,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 import { personnelService } from '@/services/personnelService'
@@ -859,7 +858,7 @@ onUnmounted(() => {
   gap: 6px;
   font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: rgba(13, 43, 15, 0.4);
 }

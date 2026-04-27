@@ -8,11 +8,26 @@
     <main class="page-root pl-6 mt-5 flex-1 overflow-y-auto">
 
       <!-- HEADER -->
-      <div class="-mt-2">
-        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/management' }, 'Admin Management']" title="User Access">
-          <template #subtitle>Activate or deactivate user accounts in the system.</template>
-        </AdminPageHeader>
-      </div>
+      <header class="px-6 pt-5 pb-3">
+        <div class="header-breadcrumb">
+          <button
+            class="flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
+            @click="$router.back()"
+          >
+            <span class="uppercase tracking-widest">Back</span>
+          </button>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3 text-gray-400">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+          <span class="font-bold text-gray-400">Manage Access</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="hero-word-dark hero-underlined">User</span>
+          <span class="hero-word-gold"> Access</span>
+        </h1>
+        <p class="hero-subtitle">Activate or deactivate user accounts in the system.</p>
+      </header>
 
       <!-- CONTENT -->
       <div class="px-6 pb-10 mt-3">
@@ -111,7 +126,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { userService, type User } from '@/services/userService'
 

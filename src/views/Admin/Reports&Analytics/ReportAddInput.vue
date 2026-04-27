@@ -4,20 +4,37 @@
 
     <main class="report-root flex-1 overflow-y-auto">
       <!-- HEADER -->
-      <div class="-mt-2">
-        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/analytics' }, 'Report & Analytics']" title="Library Collection Analytics">
-          <template #subtitle>
+      <header class="report-header intro-header">
+        <div>
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/analytics')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>Collection Analytics</span>
+          </div>
+
+          <h1 class="header-title intro-title">
+            Library <span style="color: #f9a825">Collection Analytics</span>
+          </h1>
+
+          <p class="header-sub">
             Import accession files and visualize CSU Library collection trends, acquisitions,
             de-accessions, and subject distributions.
-          </template>
-          <template #actions>
-            <div class="date-badge">
-              <CalendarDays />
-              March 2026
-            </div>
-          </template>
-        </AdminPageHeader>
-      </div>
+          </p>
+        </div>
+
+        <div class="header-right">
+          <div class="date-badge">
+            <CalendarDays />
+            March 2026
+          </div>
+        </div>
+      </header>
 
       <!-- IMPORT PANEL -->
       <section class="panel">
@@ -233,7 +250,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 
 import { CalendarDays, Library, BookPlus, BookX, PieChart } from 'lucide-vue-next'

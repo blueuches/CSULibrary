@@ -94,52 +94,6 @@
                   <label
                     class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
                   >
-                    Type
-                  </label>
-                  <div class="flex gap-3">
-                    <button
-                      v-for="option in typeOptions"
-                      :key="option.value"
-                      type="button"
-                      @click="formData.type = option.value"
-                      :class="[
-                        'flex-1 py-3 rounded-xl font-bold text-sm border-2 transition-all',
-                        formData.type === option.value
-                          ? 'bg-[#0d2b0f] text-white border-[#0d2b0f]'
-                          : 'bg-gray-50 text-gray-500 border-gray-300 hover:border-[#2D7231] hover:text-[#2D7231]',
-                      ]"
-                    >
-                      {{ option.label }}
-                    </button>
-                  </div>
-                </div>
-
-                <!-- HEADLINE -->
-                <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
-                    Type
-                  </label>
-                  <div class="flex gap-3">
-                    <button
-                      v-for="option in typeOptions"
-                      :key="option.value"
-                      type="button"
-                      @click="formData.type = option.value"
-                      :class="[
-                        'flex-1 py-3 rounded-xl font-bold text-sm border-2 transition-all',
-                        formData.type === option.value
-                          ? 'bg-[#0d2b0f] text-white border-[#0d2b0f]'
-                          : 'bg-gray-50 text-gray-500 border-gray-300 hover:border-[#2D7231] hover:text-[#2D7231]',
-                      ]"
-                    >
-                      {{ option.label }}
-                    </button>
-                  </div>
-                </div>
-
-                <!-- HEADLINE -->
-                <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
                     Headline
                   </label>
                   <input
@@ -152,7 +106,9 @@
 
                 <!-- DETAILS -->
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Details
                   </label>
                   <textarea
@@ -338,9 +294,9 @@ const typeOptions: { value: 'announcement' | 'event' | 'news'; label: string }[]
 ]
 
 const formData = ref({
-  title:         '',
-  description:   '',
-  attachment:    null as File | null,
+  title: '',
+  description: '',
+  attachment: null as File | null,
   datePublished: today,
   type: 'announcement' as 'announcement' | 'event' | 'news',
   timeIn: '',
@@ -348,9 +304,9 @@ const formData = ref({
 })
 
 const toast = reactive({
-  show:    false,
+  show: false,
   message: '',
-  type:    'success' as 'success' | 'error',
+  type: 'success' as 'success' | 'error',
 })
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null
@@ -360,7 +316,9 @@ const showToast = (message: string, type: 'success' | 'error' = 'success') => {
   toast.type = type
   toast.show = true
   if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => { toast.show = false }, 2500)
+  toastTimer = setTimeout(() => {
+    toast.show = false
+  }, 2500)
 }
 
 const handleFileUpload = (event: Event) => {
@@ -368,7 +326,7 @@ const handleFileUpload = (event: Event) => {
   const file = target.files?.[0]
   if (file) {
     formData.value.attachment = file
-    imagePreview.value        = URL.createObjectURL(file)
+    imagePreview.value = URL.createObjectURL(file)
   }
 }
 
@@ -386,8 +344,8 @@ const loadForEdit = async (id: string) => {
     if (error) throw error
     if (!data) throw new Error('Record not found.')
 
-    formData.value.title         = data.title       || ''
-    formData.value.description   = data.description || ''
+    formData.value.title = data.title || ''
+    formData.value.description = data.description || ''
     formData.value.datePublished = toDateInputValue(data.start_date)
     formData.value.type = data.type || 'announcement'
 
@@ -430,7 +388,7 @@ const submitForm = async () => {
     let imageUrl = existingImageUrl.value
 
     if (formData.value.attachment) {
-      const file     = formData.value.attachment
+      const file = formData.value.attachment
       const fileName = `${Date.now()}_${file.name}`
 
       const { error: uploadError } = await supabase.storage
@@ -454,7 +412,7 @@ const submitForm = async () => {
       type: formData.value.type,
       title: formData.value.title,
       description: formData.value.description,
-      images:      imageUrl,
+      images: imageUrl,
       year,
       start_date: dateValue,
       end_date: dateValue,
