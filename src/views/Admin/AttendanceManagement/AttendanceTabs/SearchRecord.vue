@@ -1,109 +1,131 @@
 <template>
-  <div class="page-shell flex h-screen bg-[#F4F7F5]">
+  <div class="sr-page flex h-screen bg-[#F4F7F5]">
     <Sidebar />
 
     <!-- MAIN CONTENT -->
-    <div class="flex-1 p-4 lg:p-8 font-sans text-slate-700 overflow-y-auto">
+    <div class="sr-main flex-1 p-4 lg:p-8 font-sans text-slate-700 overflow-y-auto">
 
       <!-- HEADER -->
-      <header class="attn-header mb-5">
-        <div class="mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <header class="sr-header mb-3">
+        <div class="sr-header-container mx-auto flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
 
+          <!-- TITLE + BREADCRUMB -->
           <div>
-            <div class="header-breadcrumb mb-3">
-              <span class="breadcrumb-back cursor-pointer" @click="$router.push('/admin/attendance')">
+
+            <div class="sr-breadcrumb">
+              <span class="sr-back cursor-pointer" @click="$router.push('/admin/attendance')">
                 Back
               </span>
               <i class="fas fa-chevron-right text-slate-400 text-xs mx-2"></i>
               <span>Attendance</span>
             </div>
 
-            <h1 class="hero-title">
-              <span class="hero-word-dark hero-underlined">
-                Student <span class="text-yellow-500">Record</span>
+            <h1 class="sr-title">
+              <span class="sr-title-main">
+                Student <span class="sr-highlight">Record</span>
               </span>
-              <p class="text-sm font-medium text-slate-500 mt-1 ms-2">
+
+              <p class="sr-subtitle text-gray-600" style="font-weight: 400; color: gray;">
                 Filter and manage student records by college and academic program.
               </p>
             </h1>
+
           </div>
 
-          <!-- SEARCH -->
-          <div class="relative w-full lg:w-[40%] group" style="margin-bottom: -50px;">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i class="fas fa-search text-slate-300 group-focus-within:text-[#4A6741] transition-colors"></i>
-            </div>
+        </div>
+        <!-- SEARCH -->
+        <div class="sr-search ml-auto relative w-full lg:w-[40%] group items-end">
 
-            <input v-model="searchQuery" type="text" placeholder="Search by ID, Name, or Program..."
-              class="w-full bg-white border-2 border-transparent pl-12 pr-4 py-4 rounded-2xl focus:border-[#4A6741]/20 focus:ring-4 focus:ring-[#4A6741]/5 transition-all outline-none shadow-sm text-sm font-medium" />
+          <div class="sr-search-icon absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <i class="fas fa-search text-slate-300 group-focus-within:text-[#4A6741] transition-colors"></i>
           </div>
+
+          <input v-model="searchQuery" type="text" placeholder="Search by ID, Name, or Program..."
+            class="sr-search-input w-full" />
 
         </div>
       </header>
 
+
       <!-- MAIN GRID -->
-      <main class="mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main class="sr-grid mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
 
         <!-- FILTERS -->
-        <section class="lg:col-span-4 space-y-6">
-          <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40">
+        <section class="sr-filters lg:col-span-4 space-y-6">
+          <div class="sr-filter-card bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl">
 
-            <div class="flex items-center justify-between mb-8">
-              <h2 class="text-xs font-black uppercase tracking-widest text-slate-400">
+            <div class="sr-filter-header flex items-center justify-between mb-8">
+              <h2 class="sr-filter-title">
                 Filter
               </h2>
-
-              <!-- <button @click="resetFilters" class="text-[10px] font-bold text-[#D4A017] hover:underline uppercase">
-                Reset All
-              </button> -->
             </div>
 
             <!-- FILTER GRID -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="sr-filter-grid grid grid-cols-1 md:grid-cols-2 gap-4">
 
-              <div class="relative">
-                <label class="text-[10px] font-black uppercase text-slate-500 ml-1 mb-2 block">
+              <!-- COLLEGE -->
+              <div class="sr-college relative">
+                <label class="sr-label">
                   College
                 </label>
 
-                <button @click="isCollegeOpen = !isCollegeOpen; isProgramOpen = false" type="button"
-                  class="w-full h-12.5 bg-gray-200 px-5 rounded-2xl text-sm font-bold text-slate-600 flex justify-between items-center outline-none">
+                <button
+                  @click="isCollegeOpen = !isCollegeOpen; isProgramOpen = false"
+                  type="button"
+                  class="sr-dropdown-btn"
+                >
                   <span>{{ filters.college === 'All' ? '— College —' : filters.college }}</span>
-                  <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': isCollegeOpen }"></i>
+                  <i class="fas fa-chevron-down" :class="{ 'rotate-180': isCollegeOpen }"></i>
                 </button>
 
-                <div v-if="isCollegeOpen"
-                  class="absolute z-30 w-full mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-62.5 overflow-y-auto">
-                  <div @click="filters.college = 'All'; isCollegeOpen = false"
-                    class="px-5 py-3 hover:bg-gray-100 cursor-pointer text-sm font-bold text-slate-500 border-b">
+                <div v-if="isCollegeOpen" class="sr-dropdown">
+                  <div
+                    @click="filters.college = 'All'; isCollegeOpen = false"
+                    class="sr-option"
+                  >
                     — All Colleges —
                   </div>
-                  <div v-for="c in colleges" :key="c" @click="filters.college = c; isCollegeOpen = false"
-                    class="px-5 py-3 hover:bg-indigo-50 hover:text-yellow-600 cursor-pointer text-sm font-bold text-slate-600">
+
+                  <div
+                    v-for="c in colleges"
+                    :key="c"
+                    @click="filters.college = c; isCollegeOpen = false"
+                    class="sr-option"
+                  >
                     {{ c }}
                   </div>
                 </div>
               </div>
 
-              <div class="relative">
-                <label class="text-[10px] font-black uppercase text-slate-500 ml-1 mb-2 block">
+              <!-- PROGRAM -->
+              <div class="sr-program relative">
+                <label class="sr-label">
                   Program
                 </label>
 
-                <button @click="isProgramOpen = !isProgramOpen; isCollegeOpen = false" type="button"
-                  class="w-full h-12.5 bg-gray-200 px-5 rounded-2xl text-sm font-bold text-slate-600 flex justify-between items-center outline-none">
+                <button
+                  @click="isProgramOpen = !isProgramOpen; isCollegeOpen = false"
+                  type="button"
+                  class="sr-dropdown-btn"
+                >
                   <span>{{ filters.program === 'All' ? '— Program —' : filters.program }}</span>
-                  <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': isProgramOpen }"></i>
+                  <i class="fas fa-chevron-down" :class="{ 'rotate-180': isProgramOpen }"></i>
                 </button>
 
-                <div v-if="isProgramOpen"
-                  class="absolute z-30 w-full mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-62.5 overflow-y-auto">
-                  <div @click="filters.program = 'All'; isProgramOpen = false"
-                    class="px-5 py-3 hover:bg-gray-100 cursor-pointer text-sm font-bold text-slate-500 border-b">
+                <div v-if="isProgramOpen" class="sr-dropdown">
+                  <div
+                    @click="filters.program = 'All'; isProgramOpen = false"
+                    class="sr-option"
+                  >
                     — All Programs —
                   </div>
-                  <div v-for="p in programs" :key="p" @click="filters.program = p; isProgramOpen = false"
-                    class="px-5 py-3 hover:bg-indigo-50 hover:text-yellow-600 cursor-pointer text-sm font-bold text-slate-600">
+
+                  <div
+                    v-for="p in programs"
+                    :key="p"
+                    @click="filters.program = p; isProgramOpen = false"
+                    class="sr-option"
+                  >
                     {{ p }}
                   </div>
                 </div>
@@ -112,17 +134,19 @@
             </div>
 
             <!-- STATUS -->
-            <div>
-              <label class="text-[10px] font-black uppercase text-slate-500 ml-1 mb-3 mt-5 block">
+            <div class="sr-status mt-5">
+              <label class="sr-label">
                 Enrollment Status
               </label>
 
-              <div class="grid gap-2">
-                <button v-for="status in ['All', 'Enrolled', 'Withdrawn', 'Graduated']" :key="status"
-                  @click="filters.status = status" :class="filters.status === status
-                    ? 'bg-[#0A2619] text-white'
-                    : 'bg-white text-slate-500 border'"
-                  class="px-5 py-3 rounded-xl text-xs font-bold flex justify-between">
+              <div class="sr-status-list grid gap-2">
+                <button
+                  v-for="status in ['All', 'Enrolled', 'Withdrawn']"
+                  :key="status"
+                  @click="filters.status = status"
+                  :class="filters.status === status ? 'sr-active' : 'sr-inactive'"
+                  class="sr-status-btn"
+                >
                   {{ status }}
                 </button>
               </div>
@@ -132,25 +156,25 @@
         </section>
 
         <!-- TABLE -->
-        <section class="lg:col-span-8 space-y-6">
-          <div class="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <section class="sr-table lg:col-span-8 space-y-6">
+          <div class="sr-table-card bg-white rounded-3xl shadow-xl overflow-hidden">
 
             <!-- HEADER -->
-            <div class="px-8 py-6 flex justify-between">
+            <div class="sr-table-header px-8 py-6 flex justify-between">
               <div>
-                <h3 class="font-black text-sm uppercase">Registry Database</h3>
-                <p class="text-[10px] text-slate-400">
+                <h3 class="sr-table-title">Registry Database</h3>
+                <p class="sr-table-subtitle">
                   {{ filteredStudents.length }} Records Found
                 </p>
               </div>
             </div>
 
             <!-- TABLE -->
-            <div class="table-scroll overflow-y-auto max-h-[calc(100vh-300px)] overflow-x-auto pr-2">
+            <div class="sr-table-scroll overflow-y-auto max-h-[calc(100vh-300px)] overflow-x-auto pr-2">
 
               <table class="w-full text-left">
 
-                <thead class="text-[10px] uppercase text-slate-400 sticky top-0 bg-white">
+                <thead class="sr-thead text-[10px] uppercase text-slate-400 sticky top-0 bg-white">
                   <tr>
                     <th class="px-8 py-4">Identity</th>
                     <th class="px-8 py-4">College</th>
@@ -159,7 +183,11 @@
                 </thead>
 
                 <tbody>
-                  <tr v-for="s in filteredStudents" :key="s.studentId" class="cursor-pointer hover:bg-[#F9FBFA]">
+                  <tr
+                    v-for="s in filteredStudents"
+                    :key="s.studentId"
+                    class="sr-row cursor-pointer hover:bg-[#F9FBFA]"
+                  >
 
                     <td class="px-8 py-5">
                       <div class="font-bold">{{ s.name }}</div>
@@ -169,7 +197,7 @@
                     </td>
 
                     <td class="px-8 py-5">
-                      <span class="text-xs bg-slate-100 px-2 py-1 rounded">
+                      <span class="sr-badge">
                         {{ s.college }}
                       </span>
                     </td>
@@ -182,24 +210,24 @@
 
                   </tr>
                 </tbody>
+
               </table>
 
               <!-- LOADING -->
-              <div v-if="loading" class="py-20 flex justify-center">
-                <p class="text-slate-400 text-xs font-bold">Loading...</p>
+              <div v-if="loading" class="sr-loading py-20 flex justify-center">
+                Fetching the student data...
               </div>
 
               <!-- EMPTY -->
-              <div v-else-if="filteredStudents.length === 0" class="py-20 flex justify-center">
-                <p class="text-slate-300 text-xs font-bold">
-                  No Records Matched
-                </p>
+              <div v-else-if="filteredStudents.length === 0" class="sr-empty py-20 flex justify-center">
+                No Records Matched
               </div>
 
             </div>
           </div>
 
         </section>
+
       </main>
     </div>
   </div>
@@ -209,6 +237,7 @@
 import { ref, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
+import '@/assets/styles/student-record.css'
 
 interface Student {
   studentId: string
@@ -260,9 +289,7 @@ onMounted(async () => {
     name: `${s.last_name}, ${s.first_name} ${s.middle_name ?? ''}`,
     program: s.program,
     college: s.college, 
-    status: s.is_active
-      ? (s.year_level === 4 ? 'Graduated' : 'Enrolled')
-      : 'Withdrawn'
+    status: s.is_active ? 'Enrolled' : 'Withdrawn'
   }))
 
   console.log('TOTAL LOADED:', all.length)
@@ -305,6 +332,7 @@ const filteredStudents = computed(() => {
 // }
 
 /* STATUS STYLE */
+const statusOptions = ['All', 'Enrolled', 'Withdrawn']
 const statusStyle = (status: string) => {
   if (status === 'Enrolled') return 'bg-green-100 text-green-700'
   if (status === 'Withdrawn') return 'bg-red-100 text-red-600'
