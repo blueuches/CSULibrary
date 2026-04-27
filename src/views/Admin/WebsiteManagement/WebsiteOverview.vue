@@ -7,9 +7,33 @@
 
     <!-- MAIN CONTENT -->
     <div class="flex-1 py-10 px-6 md:pl-8 md:pr-16" style="font-family: 'Poppins', sans-serif">
-      <AdminPageHeader :breadcrumbs="['Admin', 'WEBSITE MANAGEMENT']" title="Web Overview">
-        <template #subtitle>Manage website visuals and assets</template>
-      </AdminPageHeader>
+      <!-- HEADER -->
+      <header class="mb-10 flex items-center gap-4">
+        <div>
+          <div class="header-breadcrumb">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/website/general')"
+            >
+              BACK
+            </span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>WEBSITE MANAGEMENT</span>
+          </div>
+          <h1
+            class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+          >
+            <span
+              class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[260px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+              >Web Images</span
+            ><span class="text-yellow-500"> Overview</span>
+          </h1>
+
+          <p class="header-sub text-gray-600">Manage website visuals and assets</p>
+        </div>
+      </header>
 
       <!-- NAVIGATION -->
       <div class="flex gap-4 mb-10 flex-wrap">

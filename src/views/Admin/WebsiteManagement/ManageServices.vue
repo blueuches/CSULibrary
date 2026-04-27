@@ -3,25 +3,57 @@
     <Sidebar />
 
     <main class="flex-1 overflow-y-auto relative">
-
       <!-- HEADER -->
-      <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/website' }, 'Website Management']" title="Manage Services">
-        <template #subtitle>Update service content, descriptions, and visibility.</template>
-        <template #actions>
+      <header class="px-10 py-8">
+        <div class="flex justify-between items-start gap-8 flex-wrap">
+          <!-- LEFT SIDE -->
+          <div>
+            <!-- BREADCRUMB -->
+            <div class="header-breadcrumb text-gray-400">
+              <button
+                @click="$router.back()"
+                class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
+              >
+                <span class="uppercase tracking-widest">Back</span>
+              </button>
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                class="w-3 h-3"
+              >
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+
+              <span class="text-gray-4000 transition font-bold"> Manage Services </span>
+            </div>
+            <!-- TITLE -->
+            <h1 class="hero-title">
+              <span class="hero-word-dark hero-underlined">Manage</span>
+              <span class="hero-word-gold"> Services</span>
+            </h1>
+            <p class="hero-subtitle">Update service content, descriptions, and visibility.</p>
+          </div>
+
+          <!-- BUTTON -->
           <button
             @click="openAddModal"
-            class="add-btn bg-[#0d2b0f] hover:bg-[#0d2b0f]/90 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
+            class="add-btn bg-[#0d2b0f] hover:bg-[#0d2b0f]/90 mt-10 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 font-bold"
           >
             + Add Service
           </button>
-        </template>
-      </AdminPageHeader>
+        </div>
+      </header>
 
       <!-- TOAST -->
       <transition name="toast">
-        <div v-if="toast.show"
+        <div
+          v-if="toast.show"
           class="fixed top-6 right-6 text-white px-5 py-3 rounded-lg shadow-xl z-50"
-          :class="toast.error ? 'bg-red-600' : 'bg-[#0d2b0f]'">
+          :class="toast.error ? 'bg-red-600' : 'bg-[#0d2b0f]'"
+        >
           {{ toast.message }}
         </div>
       </transition>
@@ -29,7 +61,9 @@
       <!-- LOADING -->
       <div v-if="store.loading" class="flex items-center justify-center py-32">
         <div class="flex flex-col items-center gap-3">
-          <div class="w-8 h-8 border-4 border-[#0d2b0f] border-t-transparent rounded-full animate-spin"></div>
+          <div
+            class="w-8 h-8 border-4 border-[#0d2b0f] border-t-transparent rounded-full animate-spin"
+          ></div>
           <p class="text-sm text-gray-500">Loading services...</p>
         </div>
       </div>
@@ -39,8 +73,10 @@
         <div class="text-center">
           <p class="text-red-500 font-semibold mb-2">Failed to load services</p>
           <p class="text-sm text-gray-400 mb-4">{{ store.error }}</p>
-          <button @click="store.fetchServices()"
-            class="bg-[#0d2b0f] text-white px-4 py-2 rounded text-sm">
+          <button
+            @click="store.fetchServices()"
+            class="bg-[#0d2b0f] text-white px-4 py-2 rounded text-sm"
+          >
             Retry
           </button>
         </div>
@@ -49,11 +85,12 @@
       <!-- CONTENT -->
       <div v-else class="p-10">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-
-          <div v-for="(service, index) in store.services" :key="service.id"
+          <div
+            v-for="(service, index) in store.services"
+            :key="service.id"
             class="card-animate border rounded-xl shadow-sm hover:shadow-lg transition transform hover:-translate-y-1 overflow-hidden"
-            :style="{ animationDelay: `${index * 80}ms` }">
-
+            :style="{ animationDelay: `${index * 80}ms` }"
+          >
             <!-- CARD HEADER -->
             <div class="flex justify-between items-center px-6 py-4 bg-gray-50 border-b">
               <div class="flex items-center gap-3">
@@ -61,12 +98,16 @@
                 <h3 class="text-sm font-bold text-[#0d2b0f]">{{ service.title }}</h3>
               </div>
               <div class="flex gap-2">
-                <button @click="toggleEdit(service)"
-                  class="bg-[#f9a825] text-white px-3 py-1 rounded text-xs">
+                <button
+                  @click="toggleEdit(service)"
+                  class="bg-[#f9a825] text-white px-3 py-1 rounded text-xs"
+                >
                   {{ service.editing ? 'Editing...' : 'Edit' }}
                 </button>
-                <button @click="handleDelete(service.id)"
-                  class="bg-red-500 text-white px-3 py-1 rounded text-xs">
+                <button
+                  @click="handleDelete(service.id)"
+                  class="bg-red-500 text-white px-3 py-1 rounded text-xs"
+                >
                   Delete
                 </button>
               </div>
@@ -83,7 +124,6 @@
 
             <!-- EDIT -->
             <div v-else class="p-6 space-y-4 edit-panel">
-
               <!-- ICON PICKER -->
               <div>
                 <label class="text-xs font-semibold uppercase text-gray-600 mb-2 block">Icon</label>
@@ -102,7 +142,7 @@
                       'p-2 border rounded flex flex-col items-center gap-1',
                       service.editIcon === iconOption.component
                         ? 'border-[#0d2b0f] bg-[#0d2b0f]/10'
-                        : 'border-gray-200 hover:border-gray-400'
+                        : 'border-gray-200 hover:border-gray-400',
                     ]"
                   >
                     <component :is="iconOption.component" class="w-4 h-4" />
@@ -111,51 +151,67 @@
                     </span>
                   </button>
                 </div>
-                <p v-if="getFilteredIcons(service.iconSearch).length === 0"
-                  class="text-xs text-gray-400 mt-1 text-center">
+                <p
+                  v-if="getFilteredIcons(service.iconSearch).length === 0"
+                  class="text-xs text-gray-400 mt-1 text-center"
+                >
                   No icons found for "{{ service.iconSearch }}"
                 </p>
               </div>
 
-              <input v-model="service.editTitle"
-                class="w-full px-4 py-2 border rounded text-sm" placeholder="Title" />
+              <input
+                v-model="service.editTitle"
+                class="w-full px-4 py-2 border rounded text-sm"
+                placeholder="Title"
+              />
 
-              <textarea v-model="service.editDescription"
+              <textarea
+                v-model="service.editDescription"
                 rows="3"
-                class="w-full px-4 py-2 border rounded text-sm" placeholder="Description"></textarea>
+                class="w-full px-4 py-2 border rounded text-sm"
+                placeholder="Description"
+              ></textarea>
 
               <div class="flex justify-end gap-2">
-                <button @click="cancelEdit(service)"
+                <button
+                  @click="cancelEdit(service)"
                   class="border px-4 py-2 rounded text-sm"
-                  :disabled="saving">
+                  :disabled="saving"
+                >
                   Cancel
                 </button>
-                <button @click="saveService(service)"
+                <button
+                  @click="saveService(service)"
                   class="bg-[#0d2b0f] text-white px-4 py-2 rounded text-sm flex items-center gap-2"
-                  :disabled="saving">
-                  <span v-if="saving" class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  :disabled="saving"
+                >
+                  <span
+                    v-if="saving"
+                    class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"
+                  ></span>
                   {{ saving ? 'Saving...' : 'Save' }}
                 </button>
               </div>
             </div>
-
           </div>
 
           <!-- EMPTY -->
           <div v-if="store.services.length === 0" class="col-span-full text-center py-20">
             <p class="text-gray-500">No services yet. Click "+ Add Service" to get started.</p>
           </div>
-
         </div>
       </div>
     </main>
   </div>
 
   <!-- ADD MODAL -->
-  <div v-if="addModal.open"
-    class="fixed inset-0 bg-black/50 flex items-center justify-center z-40 modal-backdrop">
-    <div class="modal-content bg-white p-6 rounded-xl w-[440px] space-y-4 max-h-[90vh] overflow-y-auto">
-
+  <div
+    v-if="addModal.open"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-40 modal-backdrop"
+  >
+    <div
+      class="modal-content bg-white p-6 rounded-xl w-[440px] space-y-4 max-h-[90vh] overflow-y-auto"
+    >
       <h3 class="font-bold text-lg">Add Service</h3>
 
       <!-- ICON PICKER -->
@@ -176,7 +232,7 @@
               'p-2 border rounded flex flex-col items-center gap-1',
               addModal.icon === iconOption.component
                 ? 'border-[#0d2b0f] bg-[#0d2b0f]/10'
-                : 'border-gray-200 hover:border-gray-400'
+                : 'border-gray-200 hover:border-gray-400',
             ]"
           >
             <component :is="iconOption.component" class="w-4 h-4" />
@@ -185,30 +241,35 @@
             </span>
           </button>
         </div>
-        <p v-if="getFilteredIcons(addModal.iconSearch).length === 0"
-          class="text-xs text-gray-400 mt-1 text-center">
+        <p
+          v-if="getFilteredIcons(addModal.iconSearch).length === 0"
+          class="text-xs text-gray-400 mt-1 text-center"
+        >
           No icons found for "{{ addModal.iconSearch }}"
         </p>
       </div>
 
-      <input v-model="addModal.title"
-        class="w-full px-4 py-2 border rounded"
-        placeholder="Title" />
+      <input v-model="addModal.title" class="w-full px-4 py-2 border rounded" placeholder="Title" />
 
-      <textarea v-model="addModal.description"
+      <textarea
+        v-model="addModal.description"
         class="w-full px-4 py-2 border rounded"
-        placeholder="Description"></textarea>
+        placeholder="Description"
+      ></textarea>
 
       <div class="flex justify-end gap-2">
-        <button @click="closeAddModal"
-          class="border px-4 py-2 rounded"
-          :disabled="saving">
+        <button @click="closeAddModal" class="border px-4 py-2 rounded" :disabled="saving">
           Cancel
         </button>
-        <button @click="handleAdd"
+        <button
+          @click="handleAdd"
           class="bg-[#0d2b0f] text-white px-4 py-2 rounded flex items-center gap-2"
-          :disabled="saving">
-          <span v-if="saving" class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          :disabled="saving"
+        >
+          <span
+            v-if="saving"
+            class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"
+          ></span>
           {{ saving ? 'Adding...' : 'Add' }}
         </button>
       </div>
@@ -219,7 +280,6 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import type { FunctionalComponent } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import * as LucideIcons from 'lucide-vue-next'
 import { useServicesStore } from '@/services/manageService'
@@ -235,28 +295,32 @@ onMounted(() => {
 // ── ICON HELPERS ──────────────────────────────────────────────────────────────
 const allIcons: { name: string; component: FunctionalComponent<LucideIcons.LucideProps> }[] =
   Object.entries(LucideIcons)
-    .filter(([name, component]) =>
-      /^[A-Z]/.test(name) &&
-      typeof component === 'function' &&
-      !name.endsWith('Icon') &&
-      !['createIcons'].includes(name)
+    .filter(
+      ([name, component]) =>
+        /^[A-Z]/.test(name) &&
+        typeof component === 'function' &&
+        !name.endsWith('Icon') &&
+        !['createIcons'].includes(name),
     )
     .map(([name, component]) => ({
       name,
-      component: component as FunctionalComponent<LucideIcons.LucideProps>
+      component: component as FunctionalComponent<LucideIcons.LucideProps>,
     }))
 
 function getFilteredIcons(query: string) {
   const q = query.trim().toLowerCase()
   if (!q) return allIcons.slice(0, 40)
-  return allIcons.filter(i => i.name.toLowerCase().includes(q))
+  return allIcons.filter((i) => i.name.toLowerCase().includes(q))
 }
 
 // ── DATE FORMAT ───────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-PH', {
-    year: 'numeric', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
@@ -289,7 +353,7 @@ async function saveService(s: Service) {
     await store.updateService(s.id, {
       title: s.editTitle,
       description: s.editDescription,
-      icon: s.editIcon
+      icon: s.editIcon,
     })
     s.editing = false
     showToast('Service updated!')
@@ -319,10 +383,12 @@ const addModal = reactive({
   title: '',
   description: '',
   icon: Monitor as FunctionalComponent<LucideIcons.LucideProps>,
-  iconSearch: ''
+  iconSearch: '',
 })
 
-function openAddModal() { addModal.open = true }
+function openAddModal() {
+  addModal.open = true
+}
 function closeAddModal() {
   addModal.open = false
   addModal.title = ''
@@ -342,7 +408,7 @@ async function handleAdd() {
       id: '',
       title: addModal.title.trim(),
       description: addModal.description.trim(),
-      icon: addModal.icon
+      icon: addModal.icon,
     })
     closeAddModal()
     showToast('Service added!')
@@ -355,7 +421,6 @@ async function handleAdd() {
 </script>
 
 <style scoped>
-
 /* ─── BREADCRUMB ─── */
 .header-breadcrumb {
   font-family: 'Poppins', sans-serif;
@@ -438,10 +503,18 @@ async function handleAdd() {
 }
 
 @keyframes iconBounce {
-  0%   { transform: scale(1) rotate(0deg); }
-  40%  { transform: scale(1.35) rotate(-10deg); }
-  70%  { transform: scale(0.95) rotate(4deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  40% {
+    transform: scale(1.35) rotate(-10deg);
+  }
+  70% {
+    transform: scale(0.95) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 /* ─── EDIT PANEL SLIDE-DOWN ─── */
@@ -470,8 +543,12 @@ async function handleAdd() {
 }
 
 @keyframes backdropIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalIn {
@@ -486,27 +563,54 @@ async function handleAdd() {
 }
 
 /* ─── TOAST ─── */
-.toast-enter-active, .toast-leave-active { transition: all 0.3s; }
-.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(100%); }
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.3s;
+}
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
 
 /* ─── KEYFRAMES ─── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideRight {
-  from { opacity: 0; transform: translateX(-10px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes underlineGrow {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 </style>

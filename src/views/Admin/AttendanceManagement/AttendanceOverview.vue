@@ -3,13 +3,26 @@
     <Sidebar :activeTab="'ATTENDANCE'" @updateActiveTab="handleTabChange" />
 
     <div class="page-scroll">
-      <div class="-mt-2">
-        <AdminPageHeader :breadcrumbs="['Admin', 'ATTENDANCE']" title="Attendance">
-          <template #subtitle>
-            Comprehensive overview of institutional engagement and borrowing patterns
-          </template>
-        </AdminPageHeader>
-      </div>
+      <header class="attn-header">
+        <div class="space-y-4">
+          <div class="relative group">
+            <div class="header-breadcrumb !mb-2">
+              <span>Admin</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+              <span>ATTENDANCE</span>
+            </div>
+            <h1 class="hero-title">
+              <span class="hero-word-dark hero-underlined">Library</span>
+              <span class="hero-word-gold"> Attendance</span>
+            </h1>
+            <p class="hero-subtitle">
+              Comprehensive overview of institutional engagement and borrowing patterns
+            </p>
+          </div>
+        </div>
+      </header>
 
       <div class="attn-actions">
         <button
@@ -214,7 +227,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
@@ -827,7 +839,7 @@ const handleTabChange = (name: string) => {
 }
 
 .attn-actions button {
-  border: none;
+  border: 1.3px solid #0d2b0f;
   background: #ffffff;
   color: #0d2b0f;
   padding: 10px 16px;
@@ -835,11 +847,18 @@ const handleTabChange = (name: string) => {
   cursor: pointer;
   font-weight: 700;
   box-shadow: 0 2px 10px rgba(13, 43, 15, 0.05);
+  transition: all 0.2s ease;
+}
+
+.attn-actions button:hover {
+  background: #0d2b0f;
+  color: #ffffff;
 }
 
 .attn-actions button.action-active {
   background: #0d2b0f;
   color: #ffffff;
+  border: 1.5px solid #0d2b0f; 
 }
 
 .stat-strip {

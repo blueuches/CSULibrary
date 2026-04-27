@@ -3,28 +3,40 @@
     <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
 
     <main class="report-root flex-1 overflow-y-auto">
-      <AdminPageHeader :breadcrumbs="['Admin', 'Attendance']" title="Student Records">
-        <template #subtitle>
-          Upload a dataset and synchronize it with the CSU student database.
-        </template>
-      </AdminPageHeader>
+      <!-- HEADER -->
+      <header class="report-header">
+        <div>
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/attendance')"
+              >BACK</span
+            >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>STUDENT RECORDS</span>
+          </div>
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  
-  <!-- Left: Button -->
-  <button 
-    @click="$router.push('/admin/attendance/import/add')"
-    style="padding: 10px 16px; cursor: pointer;"
-  >
-    Import A Student Manually
-  </button>
+          <h1 class="header-title">Import <span style="color: #f9a825">Student Records</span></h1>
 
-  <!-- Right: Timestamp -->
-  <h1 style="margin: 0;">
-    Last Import Time: DATE
-  </h1>
+          <p class="header-sub">
+            Upload a dataset and synchronize it with the CSU student database.
+          </p>
+        </div>
+      </header>
 
-</div>
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <button
+          @click="$router.push('/admin/attendance/import/add')"
+          class="bg-[#0d2b0f] hover:bg-[#0d2b0f]/90 text-white mb-5 font-bold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
+        >
+          Import A Student Manually
+        </button>
+
+        <!-- Right: Timestamp -->
+        <!-- <h1 style="margin: 0; font-weight: 800">Last Import Time: DATE</h1> -->
+      </div>
 
       <!-- STEPPER -->
       <section class="panel">
@@ -523,11 +535,7 @@
 
         <!-- ── CONTROLS ── -->
         <div class="step-controls" v-if="syncStatus !== 'loading' && syncStatus !== 'success'">
-          <button
-            v-if="currentStep > 0"
-            class="nav-btn"
-            @click="goBack"
-          >
+          <button v-if="currentStep > 0" class="nav-btn" @click="goBack">
             <svg
               viewBox="0 0 24 24"
               fill="none"

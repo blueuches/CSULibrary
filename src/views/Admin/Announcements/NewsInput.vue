@@ -15,14 +15,35 @@
     </transition>
 
     <main class="report-root flex-1 overflow-y-auto">
-      <div class="-mt-2">
-        <AdminPageHeader :breadcrumbs="[{ label: 'Back', to: '/admin/announcement' }, 'Announcement Management']" title="News Announcements">
-          <template #subtitle>Create a new news article for BSP, NBWC, Starbooks, and more.</template>
-        </AdminPageHeader>
+      <div class="flex flex-col">
+        <div
+          class="flex items-center gap-1.5 leading-none text-[0.68rem] font-bold tracking-[0.15em] uppercase text-[rgba(13,43,15,0.4)]"
+        >
+          <span
+            class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+            @click="$router.push('/admin/announcement')"
+            >BACK</span
+          >
+          <svg class="w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+          <span>CREATE NEWS ANNOUNCEMENT</span>
+        </div>
+        <h1
+          class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+        >
+          <span
+            class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[110px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+            >News</span
+          ><span class="text-yellow-500"> Announcements</span>
+        </h1>
+        <p class="text-sm text-[rgba(13,43,15,0.5)]">
+          Latest updates and announcements for everyone.
+        </p>
       </div>
 
       <!-- Form Section -->
-      <div class="max-w-4xl mx-auto px-4 pb-16">
+      <div class="max-w-4xl mx-auto mt-10 px-4 pb-16">
         <form @submit.prevent="handlePublish" class="space-y-6">
           <!-- News Type -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
@@ -342,7 +363,6 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 import '@/assets/styles/report-analytics.css'
@@ -382,7 +402,9 @@ const toDateInputValue = (dateString?: string | null) => {
   return date.toISOString().split('T')[0] || today
 }
 
-const parseNewsTypeAndTitle = (rawTitle: string): { type: 'news_nbwc' | 'news_bsp' | 'news_starbooks'; cleanTitle: string } => {
+const parseNewsTypeAndTitle = (
+  rawTitle: string,
+): { type: 'news_nbwc' | 'news_bsp' | 'news_starbooks'; cleanTitle: string } => {
   const match = rawTitle.match(/^\[([^\]]+)\]\s*(.*)$/)
   if (!match) return { type: 'news_nbwc', cleanTitle: rawTitle }
 

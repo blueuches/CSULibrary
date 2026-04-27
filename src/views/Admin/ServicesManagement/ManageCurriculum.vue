@@ -3,11 +3,29 @@
     <Sidebar :activeTab="'SERVICES'" />
 
     <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
-      <AdminPageHeader :breadcrumbs="['Admin', 'SERVICES']" title="College Curriculum">
-        <template #subtitle>
-          Create a new curriculum information to share with the academic community.
-        </template>
-      </AdminPageHeader>
+      <header class="attn-header">
+        <div class="space-y-4">
+          <div class="relative group">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+              <div class="header-breadcrumb !mb-0">
+                <span>Admin</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+                <span>Curriculum</span>
+              </div>
+            </div>
+            <h1 class="header-title intro-title">
+              <span class="text-[#0d2b0f]">College</span>
+              <span class="text-yellow-500"> Curriculum</span>
+            </h1>
+            <p class="header-sub">
+              Create a new curriculum information to share with the academic community.
+            </p>
+            <br />
+          </div>
+        </div>
+      </header>
 
       <section class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -33,12 +51,20 @@
           v-for="college in colleges"
           :key="college.code"
           type="button"
-          class="rounded-xl border border-[#d8e3db] bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#164d23] hover:shadow-md"
+          class="rounded-xl border-2 border-[#164d23] bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#0d2b0f] hover:bg-[#164d23] hover:shadow-md group"
           @click="openCollege(college.code)"
         >
-          <p class="text-lg font-bold text-[#164d23]">{{ college.code }}</p>
-          <p class="mt-1 text-sm font-medium text-slate-700">{{ college.name }}</p>
-          <p class="mt-3 text-xs font-semibold text-slate-500">
+          <p class="text-lg font-bold text-[#164d23] group-hover:text-white transition-colors">
+            {{ college.code }}
+          </p>
+          <p
+            class="mt-1 text-sm font-medium text-slate-700 group-hover:text-emerald-100 transition-colors"
+          >
+            {{ college.name }}
+          </p>
+          <p
+            class="mt-3 text-xs font-semibold text-slate-500 group-hover:text-emerald-200 transition-colors"
+          >
             {{ college.programs.length }} programs
           </p>
         </button>
@@ -134,7 +160,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import AdminPageHeader from '@/components/AdminPageHeader.vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 

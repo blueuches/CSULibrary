@@ -19,37 +19,39 @@
       style="font-family: 'Poppins', sans-serif; color: #1a1a1a"
     >
       <!-- HEADER -->
-      <div
-        class="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6"
-      >
-        <div class="flex items-center gap-6">
-          <div class="header-left">
-            <div class="header-breadcrumb !mb-2">
+      <div class="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-end justify-between">
+        <div class="flex items-center">
+          <div class="flex flex-col">
+            <div
+              class="flex items-center gap-1.5 leading-none text-[0.68rem] font-bold tracking-[0.15em] uppercase text-[rgba(13,43,15,0.4)]"
+            >
               <span
                 class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
                 @click="$router.push('/admin/announcement')"
                 >BACK</span
               >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <svg
+                class="w-3"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+              >
                 <path d="M9 5l7 7-7 7" />
               </svg>
               <span>EVENT ANNOUNCEMENT</span>
             </div>
-
-            <h1 class="header-title">Event <span class="text-yellow-500">Announcement</span></h1>
-            <p class="header-sub">Compose and publish updates for the library community.</p>
-          </div>
-        </div>
-
-        <!-- STATUS + VISIBILITY -->
-        <div class="flex gap-4 justify-end mb-4">
-          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-            <p class="text-xs text-green-700 uppercase font-bold tracking-widest">Status</p>
-            <p class="text-gray-900 font-bold">Drafting</p>
-          </div>
-          <div class="px-6 py-3 rounded-2xl bg-white border border-gray-200 shadow-sm">
-            <p class="text-xs text-orange-600 uppercase font-bold tracking-widest">Visibility</p>
-            <p class="text-gray-900 font-bold">Public</p>
+            <h1
+              class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+            >
+              <span
+                class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[120px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+                >Event</span
+              ><span class="text-yellow-500"> Announcements</span>
+            </h1>
+            <p class="text-sm text-[rgba(13,43,15,0.5)]">
+              Compose and publish updates for the library community.
+            </p>
           </div>
         </div>
       </div>
@@ -59,14 +61,14 @@
         <!-- FORM -->
         <div class="lg:col-span-7 space-y-6">
           <form @submit.prevent="submitForm" class="space-y-6">
-
             <!-- MAIN CARD -->
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-200">
               <div class="space-y-6">
-
                 <!-- TYPE SELECTOR -->
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Type
                   </label>
                   <div class="flex gap-3">
@@ -89,7 +91,9 @@
 
                 <!-- HEADLINE -->
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Headline
                   </label>
                   <input
@@ -102,7 +106,9 @@
 
                 <!-- DETAILS -->
                 <div>
-                  <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
                     Details
                   </label>
                   <textarea
@@ -150,11 +156,15 @@
                 <label class="text-sm font-bold text-gray-700 uppercase mb-1 block tracking-wider">
                   Event Duration
                 </label>
-                <p class="text-xs text-gray-400 mb-4 ml-1">Set the start and end time of the event.</p>
+                <p class="text-xs text-gray-400 mb-4 ml-1">
+                  Set the start and end time of the event.
+                </p>
 
                 <div class="grid grid-cols-2 gap-4">
                   <div>
-                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1">
+                    <label
+                      class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1"
+                    >
                       Time In
                     </label>
                     <input
@@ -164,7 +174,9 @@
                     />
                   </div>
                   <div>
-                    <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1">
+                    <label
+                      class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 block ml-1"
+                    >
                       Time Out
                     </label>
                     <input
@@ -198,11 +210,9 @@
 
         <!-- LIVE PREVIEW -->
         <div class="lg:col-span-5 hidden lg:block">
-          <p class="text-xs font-bold text-green-700 uppercase tracking-[0.3em] mb-4 ml-2">
-            Live Preview
-          </p>
+        
 
-          <div class="bg-gray-900 rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200">
+          <div class="rounded-[2.5rem] p-3 shadow-2xl overflow-hidden border-8 border-gray-200">
             <div class="bg-white rounded-[1.8rem] overflow-hidden min-h-[450px]">
               <!-- IMAGE PREVIEW -->
               <div class="h-44 w-full overflow-hidden">
@@ -230,7 +240,13 @@
                   v-if="formData.type === 'event' && (formData.timeIn || formData.timeOut)"
                   class="mt-4 flex items-center gap-2 text-xs font-semibold text-green-700 bg-green-50 px-3 py-2 rounded-xl w-fit"
                 >
-                  <svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <svg
+                    class="w-3 h-3 shrink-0"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6v6l4 2" />
                   </svg>
@@ -243,7 +259,10 @@
                     {{ formData.datePublished }}
                   </span>
                 </div>
+
+                
               </div>
+              
             </div>
           </div>
         </div>
@@ -270,42 +289,44 @@ const imagePreview = ref<string | null>(null)
 
 const typeOptions: { value: 'announcement' | 'event' | 'news'; label: string }[] = [
   { value: 'announcement', label: 'Announcement' },
-  { value: 'event',        label: 'Event' },
-  { value: 'news',         label: 'News' },
+  { value: 'event', label: 'Event' },
+  { value: 'news', label: 'News' },
 ]
 
 const formData = ref({
-  title:         '',
-  description:   '',
-  attachment:    null as File | null,
+  title: '',
+  description: '',
+  attachment: null as File | null,
   datePublished: today,
-  type:          'announcement' as 'announcement' | 'event' | 'news',
-  timeIn:        '',
-  timeOut:       '',
+  type: 'announcement' as 'announcement' | 'event' | 'news',
+  timeIn: '',
+  timeOut: '',
 })
 
 const toast = reactive({
-  show:    false,
+  show: false,
   message: '',
-  type:    'success' as 'success' | 'error',
+  type: 'success' as 'success' | 'error',
 })
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null
 
 const showToast = (message: string, type: 'success' | 'error' = 'success') => {
   toast.message = message
-  toast.type    = type
-  toast.show    = true
+  toast.type = type
+  toast.show = true
   if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => { toast.show = false }, 2500)
+  toastTimer = setTimeout(() => {
+    toast.show = false
+  }, 2500)
 }
 
 const handleFileUpload = (event: Event) => {
   const target = event.target as HTMLInputElement
-  const file   = target.files?.[0]
+  const file = target.files?.[0]
   if (file) {
     formData.value.attachment = file
-    imagePreview.value        = URL.createObjectURL(file)
+    imagePreview.value = URL.createObjectURL(file)
   }
 }
 
@@ -318,28 +339,24 @@ const toDateInputValue = (dateString?: string | null) => {
 
 const loadForEdit = async (id: string) => {
   try {
-    const { data, error } = await supabase
-      .from('events')
-      .select('*')
-      .eq('id', id)
-      .single()
+    const { data, error } = await supabase.from('events').select('*').eq('id', id).single()
 
     if (error) throw error
     if (!data) throw new Error('Record not found.')
 
-    formData.value.title         = data.title       || ''
-    formData.value.description   = data.description || ''
+    formData.value.title = data.title || ''
+    formData.value.description = data.description || ''
     formData.value.datePublished = toDateInputValue(data.start_date)
-    formData.value.type          = data.type        || 'announcement'
+    formData.value.type = data.type || 'announcement'
 
     // Load existing time_start / time_end — stored as "HH:MM:SS", slice to "HH:MM"
-    formData.value.timeIn  = data.time_start ? String(data.time_start).slice(0, 5) : ''
-    formData.value.timeOut = data.time_end   ? String(data.time_end).slice(0, 5)   : ''
+    formData.value.timeIn = data.time_start ? String(data.time_start).slice(0, 5) : ''
+    formData.value.timeOut = data.time_end ? String(data.time_end).slice(0, 5) : ''
 
     existingImageUrl.value = data.images || null
-    imagePreview.value     = data.images || null
-    editingId.value        = String(data.id)
-    isEditing.value        = true
+    imagePreview.value = data.images || null
+    editingId.value = String(data.id)
+    isEditing.value = true
   } catch (error) {
     console.error('Error loading record for edit:', error)
     showToast('Failed to load announcement', 'error')
@@ -371,7 +388,7 @@ const submitForm = async () => {
     let imageUrl = existingImageUrl.value
 
     if (formData.value.attachment) {
-      const file     = formData.value.attachment
+      const file = formData.value.attachment
       const fileName = `${Date.now()}_${file.name}`
 
       const { error: uploadError } = await supabase.storage
@@ -388,23 +405,23 @@ const submitForm = async () => {
     }
 
     const dateValue = formData.value.datePublished || new Date().toISOString()
-    const year      = new Date(dateValue).getFullYear()
-    const isEvent   = formData.value.type === 'event'
+    const year = new Date(dateValue).getFullYear()
+    const isEvent = formData.value.type === 'event'
 
     const payload = {
-      type:        formData.value.type,
-      title:       formData.value.title,
+      type: formData.value.type,
+      title: formData.value.title,
       description: formData.value.description,
-      images:      imageUrl,
+      images: imageUrl,
       year,
-      start_date:  dateValue,
-      end_date:    dateValue,
-      location:    'Library',
-      is_active:   true,
-      created_by:  '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
+      start_date: dateValue,
+      end_date: dateValue,
+      location: 'Library',
+      is_active: true,
+      created_by: '81a8d7f2-2277-4fd1-a331-dc545092dcf7',
       // time_start and time_end: only set for events, null for news/announcement
-      time_start:  isEvent ? (formData.value.timeIn  || null) : null,
-      time_end:    isEvent ? (formData.value.timeOut || null) : null,
+      time_start: isEvent ? formData.value.timeIn || null : null,
+      time_end: isEvent ? formData.value.timeOut || null : null,
     }
 
     if (isEditing.value && editingId.value) {
@@ -416,7 +433,7 @@ const submitForm = async () => {
     showToast(
       isEditing.value
         ? 'Announcement updated successfully!'
-        : 'Announcement published successfully!'
+        : 'Announcement published successfully!',
     )
     setTimeout(() => router.push('/admin/announcement'), 400)
   } catch (error) {
@@ -435,14 +452,31 @@ onMounted(() => {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
+@keyframes titleFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .toast-enter-active,
-.toast-leave-active { transition: all 0.2s ease; }
+.toast-leave-active {
+  transition: all 0.2s ease;
+}
 .toast-enter-from,
-.toast-leave-to { opacity: 0; transform: translateY(-8px); }
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 
-.slide-fade-enter-active { transition: all 0.25s ease; }
-.slide-fade-leave-active { transition: all 0.2s ease; }
+.slide-fade-enter-active {
+  transition: all 0.25s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.2s ease;
+}
 .slide-fade-enter-from,
-.slide-fade-leave-to { opacity: 0; transform: translateY(-8px); }
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
 </style>
