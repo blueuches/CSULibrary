@@ -49,22 +49,6 @@
             <div class="space-y-4">
               <label
                 class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-slate-300"
-                :class="selectedFilterMode === 'all-records' ? 'border-[#164d23] bg-white shadow-sm' : ''"
-              >
-                <div class="flex items-center gap-3 text-sm font-semibold text-slate-700">
-                  <input
-                    v-model="selectedFilterMode"
-                    type="radio"
-                    name="visitor-filter-mode"
-                    value="all-records"
-                    class="h-4 w-4 accent-[#164d23]"
-                  />
-                  <span>All Records</span>
-                </div>
-              </label>
-
-              <label
-                class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-slate-300"
                 :class="
                   selectedFilterMode === 'specific-date'
                     ? 'border-[#164d23] bg-white shadow-sm'

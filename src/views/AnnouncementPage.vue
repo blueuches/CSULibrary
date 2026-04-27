@@ -116,7 +116,6 @@
               />
 
               <!-- Pinned Badge -->
-              <!-- Pinned Badge -->
               <div class="absolute top-4 left-4" v-if="event.isPinnedGrid">
                 <div
                   class="bg-yellow-400 text-green-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg border border-yellow-500"
@@ -125,7 +124,6 @@
                 </div>
               </div>
 
-              <!-- Type Badge -->
               <!-- Type Badge -->
               <div class="absolute top-4 right-4">
                 <div
@@ -168,7 +166,6 @@
                 <!-- NEWS / ANNOUNCEMENT: show null (nothing) or just the date time -->
                 <span v-else class="text-gray-400 font-bold">{{ event.time }}</span>
               </div>
-
 
               <h3
                 class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800"

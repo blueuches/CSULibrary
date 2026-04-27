@@ -91,6 +91,31 @@
 
                 <!-- HEADLINE -->
                 <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1"
+                  >
+                    Type
+                  </label>
+                  <div class="flex gap-3">
+                    <button
+                      v-for="option in typeOptions"
+                      :key="option.value"
+                      type="button"
+                      @click="formData.type = option.value"
+                      :class="[
+                        'flex-1 py-3 rounded-xl font-bold text-sm border-2 transition-all',
+                        formData.type === option.value
+                          ? 'bg-[#0d2b0f] text-white border-[#0d2b0f]'
+                          : 'bg-gray-50 text-gray-500 border-gray-300 hover:border-[#2D7231] hover:text-[#2D7231]',
+                      ]"
+                    >
+                      {{ option.label }}
+                    </button>
+                  </div>
+                </div>
+
+                <!-- HEADLINE -->
+                <div>
                   <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
                     Type
                   </label>
@@ -125,7 +150,6 @@
                   />
                 </div>
 
-                <!-- DETAILS -->
                 <!-- DETAILS -->
                 <div>
                   <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider mb-2 ml-1">
@@ -245,7 +269,6 @@
                   class="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold uppercase mb-4 tracking-wider"
                 >
                   {{ formData.type || 'Announcement' }}
-                  {{ formData.type || 'Announcement' }}
                 </span>
 
                 <h3 class="text-2xl font-bold text-gray-900 leading-tight mb-4">
@@ -362,7 +385,6 @@ const loadForEdit = async (id: string) => {
 
     if (error) throw error
     if (!data) throw new Error('Record not found.')
-    if (!data) throw new Error('Record not found.')
 
     formData.value.title         = data.title       || ''
     formData.value.description   = data.description || ''
@@ -379,9 +401,7 @@ const loadForEdit = async (id: string) => {
     isEditing.value = true
   } catch (error) {
     console.error('Error loading record for edit:', error)
-    console.error('Error loading record for edit:', error)
     showToast('Failed to load announcement', 'error')
-    setTimeout(() => router.push('/admin/announcement'), 600)
     setTimeout(() => router.push('/admin/announcement'), 600)
   }
 }
@@ -465,11 +485,9 @@ const submitForm = async () => {
 }
 
 const goBack = () => router.push('/admin/announcement')
-const goBack = () => router.push('/admin/announcement')
 
 onMounted(() => {
   const id = route.query.id
-  if (typeof id === 'string' && id.trim()) loadForEdit(id)
   if (typeof id === 'string' && id.trim()) loadForEdit(id)
 })
 </script>

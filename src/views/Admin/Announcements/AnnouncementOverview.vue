@@ -142,13 +142,6 @@
                     </p>
                     <p><strong>Location:</strong> {{ event.location }}</p>
                   </div>
-                 <div class="row-meta row-meta-split">
-  <p><strong>Event Date:</strong> {{ formatDate(event.start_date) }}</p>
-  <p v-if="event.time_start">
-    <strong>Duration:</strong> {{ formatTime(event.time_start) }} — {{ formatTime(event.time_end) }}
-  </p>
-  <p><strong>Location:</strong> {{ event.location }}</p>
-</div>
                 </div>
                 <div class="row-actions">
                   <RouterLink
@@ -713,26 +706,6 @@ const formatTime = (timeStr: string | null | undefined): string => {
   return `${h}:${minute} ${period}`
 }
 
-const formatTime = (timeStr: string | null | undefined): string => {
-  if (!timeStr) return ''
-  const [hourStr, minuteStr] = timeStr.split(':')
-  const hour = parseInt(hourStr ?? '0', 10)
-  const minute = minuteStr || '00'
-  const period = hour >= 12 ? 'PM' : 'AM'
-  const h = hour % 12 || 12
-  return `${h}:${minute} ${period}`
-}
-
-const formatTime = (timeStr: string | null | undefined): string => {
-  if (!timeStr) return ''
-  const [hourStr, minuteStr] = timeStr.split(':')
-  const hour = parseInt(hourStr ?? '0', 10)
-  const minute = minuteStr || '00'
-  const period = hour >= 12 ? 'PM' : 'AM'
-  const h = hour % 12 || 12
-  return `${h}:${minute} ${period}`
-}
-
 // --- CLOSE DROPDOWN ON CLICK OUTSIDE ---
 function handleClickOutside(e: MouseEvent) {
   if (dropdownRef.value && !dropdownRef.value.contains(e.target as Node)) {
@@ -1002,6 +975,7 @@ onBeforeUnmount(() => {
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
