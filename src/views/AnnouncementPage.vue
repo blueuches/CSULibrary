@@ -7,7 +7,7 @@
             <span class="kicker-line"></span>
             <span class="kicker-text">WHAT'S HAPPENING AT CSU LIBRARY</span>
           </span>
-          <h1 class="section-headline title-headline"><span>ANNOUNCEMENTS & </span>EVENTS</h1>
+          <h1 class="section-headline title-headline">ANNOUNCEMENTS</h1>
         </div>
       </div>
 
@@ -21,7 +21,7 @@
             :class="[
               'pill-entrance whitespace-nowrap px-5 py-2 rounded-full text-sm font-medium transition-all duration-300',
               selectedEventMonth === month
-                ? 'bg-[#0d2b0f] text-white shadow-lg scale-105'
+                ? 'bg-[#003300] text-white shadow-lg scale-105'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
             ]"
             :style="{ '--p-i': index }"
@@ -41,7 +41,7 @@
             <div
               v-for="event in pinnedEvents"
               :key="'pinned-' + event.id"
-              class="min-w-full group relative bg-[#0d2b0f] flex flex-col md:flex-row h-auto md:h-[350px]"
+              class="min-w-full group relative bg-[#003300] flex flex-col md:flex-row h-auto md:h-[350px]"
             >
               <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
                 <img
@@ -51,12 +51,12 @@
               </div>
               <div class="md:w-1/2 p-10 flex flex-col justify-center space-y-4">
                 <span
-                  class="bg-yellow-400 text-green-900 self-start px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse"
+                  class="bg-[#f9dc07] text-[#ffffff] self-start px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse"
                 >
                   PINNED HIGHLIGHT
                 </span>
                 <h3
-                  class="text-3xl font-bold text-white leading-tight group-hover:text-yellow-400 transition-colors"
+                  class="text-3xl font-bold text-white leading-tight group-hover:text-[#f9dc07] transition-colors"
                 >
                   {{ event.title }}
                 </h3>
@@ -64,7 +64,7 @@
                   {{ event.description }}
                 </p>
                 <div
-                  class="pt-4 flex items-center gap-3 text-yellow-400 text-xs font-bold uppercase tracking-widest"
+                  class="pt-4 flex items-center gap-3 text-[#f9dc07] text-xs font-bold uppercase tracking-widest"
                 >
                   <span>{{ event.location }}</span>
                   <span class="w-1 h-1 bg-white/20 rounded-full"></span>
@@ -118,7 +118,7 @@
               <!-- Pinned Badge -->
               <div class="absolute top-4 left-4" v-if="event.isPinnedGrid">
                 <div
-                  class="bg-yellow-400 text-green-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg border border-yellow-500"
+                  class="bg-[#f9dc07] text-[#009900] px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg border border-[#f9dc07]"
                 >
                   PINNED
                 </div>
@@ -128,7 +128,7 @@
               <div class="absolute top-4 right-4">
                 <div
                   class="backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm border border-white/20"
-                  :style="{ background: '#0d2b0f', color: '#fff' }"
+                  :style="{ background: '#003300', color: '#fff' }"
                 >
                   {{ event.month }} '{{ event.year.slice(-2) }}
                 </div>
@@ -139,7 +139,7 @@
               class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1"
             >
               <div
-                class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest flex-wrap"
+                class="flex items-center gap-2 text-[#f9dc07] text-[10px] font-black uppercase tracking-widest flex-wrap"
               >
                 <span>{{ event.location }}</span>
                 <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
@@ -168,7 +168,7 @@
               </div>
 
               <h3
-                class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800"
+                class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-#009900"
               >
                 {{ event.title }}
               </h3>
@@ -193,7 +193,7 @@
         v-if="showScrollTop"
         @click="scrollToTop"
         class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
-        style="background: #0d2b0f"
+        style="background: #003300"
       >
         <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -365,14 +365,14 @@ onUnmounted(() => {
   font-weight: 800;
   letter-spacing: 6px;
   font-size: 0.7rem;
-  color: #0d2b0f;
+  color: #003300;
   text-transform: uppercase;
 }
 .section-headline {
   margin: 10px 0 1%;
   font-weight: 900;
   font-size: clamp(1.6rem, 5vw, 3.3rem);
-  color: #0d2b0f;
+  color: #003300;
   text-transform: uppercase;
 }
 
@@ -404,7 +404,7 @@ onUnmounted(() => {
   display: inline-block;
   height: 3px;
   width: 60px;
-  background: linear-gradient(90deg, #dfb753, #fbc02d);
+  background: #f9dc07;
   border-radius: 999px;
   transform: scaleX(0);
   transform-origin: left;

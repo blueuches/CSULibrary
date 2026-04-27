@@ -67,8 +67,7 @@ const defaultAboutContent: AboutContent = {
     "The CSU-HERO Learning Commons envisions itself as a prenier repository of knowledge, champoining the university's commitment to becoming a socially engaged, digitally innovative, and entrepreneurial institution-excelling in science, engineering, and the arts by 2028.",
   mission:
     "The CSU-HERO Learning Commons provides resources and delivers essentials services that align with the University's mission as a transformative institution. It remains committed to the fostering a sustainable future for the regiion, the nation, and beyond.",
-  goal:
-    'To ensure a well-organized library system with a vast collection of information and education materials that support the academic programs of the University and respond to the evolving needs of society within the region.',
+  goal: 'To ensure a well-organized library system with a vast collection of information and education materials that support the academic programs of the University and respond to the evolving needs of society within the region.',
   objectives: [
     'Ensure the provision and maintainance of efficient facilities and equipment to support high-quality library services and operations.;',
     'Employ committed and competent library personnel to deliver excellent library services.;',
@@ -171,7 +170,9 @@ const heroMedia = computed(() =>
 
 const iconMedia = computed(() => {
   const icons = mediaItems.value
-    .filter((item) => item.page === 'aboutpage' && item.section === 'icons' && item.type === 'image')
+    .filter(
+      (item) => item.page === 'aboutpage' && item.section === 'icons' && item.type === 'image',
+    )
     .sort((a, b) => a.order - b.order)
 
   return icons.length ? icons : defaultIconMedia
@@ -283,12 +284,7 @@ onBeforeUnmount(() => {
 
     <div class="hero-bleed" v-reveal="80">
       <div class="hero-wrap hero-overlay">
-        <img
-          :src="heroImageSrc"
-          alt="CSU Library"
-          class="hero-img"
-          loading="lazy"
-        />
+        <img :src="heroImageSrc" alt="CSU Library" class="hero-img" loading="lazy" />
       </div>
     </div>
 
@@ -386,11 +382,7 @@ onBeforeUnmount(() => {
               <h3 class="green-heading with-accent bottom-box">Rules and Regulation</h3>
               <div class="card-body hide-scrollbar">
                 <div class="custom-list-counter">
-                  <div
-                    v-for="(item, i) in aboutContent.rules"
-                    :key="i"
-                    class="custom-list-item"
-                  >
+                  <div v-for="(item, i) in aboutContent.rules" :key="i" class="custom-list-item">
                     {{ item }}
                   </div>
                 </div>
@@ -400,9 +392,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <div v-if="loadingAbout" class="loading-text">
-        Loading about content...
-      </div>
+      <div v-if="loadingAbout" class="loading-text">Loading about content...</div>
     </div>
 
     <button
@@ -426,9 +416,9 @@ onBeforeUnmount(() => {
 .about-page {
   font-family: 'Poppins', sans-serif;
   --page-bg: #f3f4f6;
-  --ribbon-green: #0d2b0f;
-  --accent-orange: #fbc02d;
-  --text-color: #1f1f1f;
+  --ribbon-green: #003300;
+  --accent-orange: #f9dc07;
+  --text-color: #003300;
   --float-shadow-green: 13, 43, 15;
   width: 100%;
   min-height: 100vh;
@@ -684,7 +674,7 @@ onBeforeUnmount(() => {
   font-size: 0.98rem;
 }
 .custom-list-item::before {
-  content: counter(item) ".";
+  content: counter(item) '.';
   position: absolute;
   left: 0;
   top: 0;
@@ -706,13 +696,15 @@ onBeforeUnmount(() => {
   height: 44px;
   border: 0;
   border-radius: 10px;
-  background: #06260f;
+  background: #003300;
   color: #ffffff;
   display: grid;
   place-items: center;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .scroll-top-btn:hover {

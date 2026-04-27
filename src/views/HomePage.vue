@@ -28,7 +28,7 @@
       </div>
       <button
         @click="prev"
-        class="absolute left-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
+        class="absolute left-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#f9dc07] transition opacity-0 hover:opacity-100 p-2 rounded-full"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
@@ -41,7 +41,7 @@
       </button>
       <button
         @click="next"
-        class="absolute right-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#F5C300] transition opacity-0 hover:opacity-100 p-2 rounded-full"
+        class="absolute right-2 top-1/2 -translate-y-1/2 text-[#1a1a1a] bg-transparent hover:bg-[#f9dc07] transition opacity-0 hover:opacity-100 p-2 rounded-full"
       >
         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -61,7 +61,7 @@
     <div
       v-else
       class="w-full flex items-center justify-center"
-      :style="{ height: imageHeight, background: '#f4f6f4' }"
+      :style="{ height: imageHeight, background: '#ffffff' }"
     >
       <span style="color: rgba(13, 43, 15, 0.55); font-weight: 700">Loading carousel...</span>
     </div>
@@ -76,7 +76,7 @@
           font-size: 0.6rem;
           font-weight: 800;
           letter-spacing: 0.35em;
-          color: #f9a825;
+          color: #003300;
           text-transform: uppercase;
         "
         >CSU Library System</span
@@ -89,17 +89,17 @@
     >
       <span
         class="animate-fade-in inline-block"
-        style="animation-delay: 0s; animation-fill-mode: both; color: #0d2b0f"
+        style="animation-delay: 0s; animation-fill-mode: both; color: #003300"
         >HERO</span
       >
       <span
         class="animate-fade-in inline-block mx-2"
-        style="animation-delay: 0.4s; animation-fill-mode: both; color: #1b5e20"
+        style="animation-delay: 0.4s; animation-fill-mode: both; color: #009900"
         >LEARNING</span
       >
       <span
         class="animate-fade-in inline-block"
-        style="animation-delay: 0.8s; animation-fill-mode: both; color: #fbc02d"
+        style="animation-delay: 0.8s; animation-fill-mode: both; color: #f9dc07"
         >COMMONS</span
       >
     </h2>
@@ -110,7 +110,7 @@
         animation-fill-mode: both;
         font-size: 0.78rem;
         letter-spacing: 0.2em;
-        color: #0d2b0f;
+        color: #003300;
         text-transform: uppercase;
         font-weight: 600;
       "
@@ -121,11 +121,11 @@
       class="animate-fade-in flex items-center gap-2 mt-1"
       style="animation-delay: 1.3s; animation-fill-mode: both"
     >
-      <div style="width: 6px; height: 6px; border-radius: 50%; background: #0d2b0f"></div>
+      <div style="width: 6px; height: 6px; border-radius: 50%; background: #003300"></div>
       <div style="width: 30px; height: 2px; background: #1b5e20; border-radius: 2px"></div>
-      <div style="width: 8px; height: 8px; border-radius: 50%; background: #fbc02d"></div>
+      <div style="width: 8px; height: 8px; border-radius: 50%; background: #f9dc07"></div>
       <div style="width: 30px; height: 2px; background: #1b5e20; border-radius: 2px"></div>
-      <div style="width: 6px; height: 6px; border-radius: 50%; background: #0d2b0f"></div>
+      <div style="width: 6px; height: 6px; border-radius: 50%; background: #003300"></div>
     </div>
   </div>
 
@@ -144,12 +144,12 @@
         <img :src="libraryMainImage" alt="Students" class="w-full h-full object-cover rounded-sm" />
       </div>
       <div class="sr-right flex flex-col text-white px-4 relative">
-        <div style="width: 60px; height: 4px; background: #f9a825; margin-bottom: 16px"></div>
+        <div style="width: 60px; height: 4px; background: #f9dc07; margin-bottom: 16px"></div>
         <div class="mb-4">
           <span
             style="
-              background: #f9a825;
-              color: #0d2b0f;
+              background: #f9dc07;
+              color: #003300;
               font-size: 0.75rem;
               font-weight: 900;
               letter-spacing: 0.15em;
@@ -170,7 +170,7 @@
             style="
               width: 100%;
               height: 1px;
-              background: linear-gradient(to right, #f9a825, transparent);
+              background: linear-gradient(to right, #f9dc07, transparent);
             "
           ></div>
         </div>
@@ -193,7 +193,7 @@
             font-size: 0.68rem;
             font-weight: 800;
             letter-spacing: 0.3em;
-            color: #f9a825;
+            color: #003300;
             text-transform: uppercase;
           "
         >
@@ -203,14 +203,14 @@
           style="
             font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 900;
-            color: #0d2b0f;
+            color: #003300;
             line-height: 1;
             letter-spacing: -0.03em;
             text-align: center;
           "
         >
-          Read.<span style="color: #1b5e20">Learn.</span
-          ><span style="color: #f9a825">Discover.</span>
+          Read.<span style="color: #009900">Learn.</span
+          ><span style="color: #f9dc07">Discover.</span>
         </h2>
       </div>
 
@@ -260,10 +260,10 @@
                 font-size: 0.62rem;
                 font-weight: 800;
                 letter-spacing: 0.2em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
-                background: rgba(249, 168, 37, 0.12);
-                border: 1px solid rgba(249, 168, 37, 0.3);
+                background: rgba(249, 220, 7, 0.15);
+                background: rgba(255, 153, 0, 0.15);
                 padding: 4px 10px;
                 border-radius: 20px;
               "
@@ -302,7 +302,7 @@
               style="
                 height: 2px;
                 width: 32px;
-                background: linear-gradient(to right, #f9a825, rgba(249, 168, 37, 0.2));
+                background: linear-gradient(to right, #f9dc07, rgba(249, 168, 37, 0.2));
                 margin-bottom: 14px;
                 transition: width 0.4s ease;
                 border-radius: 2px;
@@ -378,7 +378,7 @@
             class="absolute top-0 left-0 right-0"
             style="
               height: 2px;
-              background: linear-gradient(to right, transparent, #f9a825, transparent);
+              background: linear-gradient(to right, #f9dc07, rgba(249, 168, 37, 0.2));
             "
           ></div>
           <div class="absolute top-5 left-5">
@@ -387,9 +387,10 @@
                 font-size: 0.62rem;
                 font-weight: 800;
                 letter-spacing: 0.2em;
-                color: #0d2b0f;
+                color: #f9dc07;
                 text-transform: uppercase;
-                background: #f9a825;
+                background: rgba(249, 220, 7, 0.15);
+                background: rgba(255, 153, 0, 0.15);
                 padding: 4px 10px;
                 border-radius: 20px;
               "
@@ -428,7 +429,7 @@
               style="
                 height: 2px;
                 width: 32px;
-                background: linear-gradient(to right, #f9a825, rgba(249, 168, 37, 0.2));
+                background: linear-gradient(to right, #f9dc07, rgba(249, 168, 37, 0.2));
                 margin-bottom: 14px;
                 transition: width 0.4s ease;
                 border-radius: 2px;
@@ -505,10 +506,10 @@
                 font-size: 0.62rem;
                 font-weight: 800;
                 letter-spacing: 0.2em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
-                background: rgba(249, 168, 37, 0.12);
-                border: 1px solid rgba(249, 168, 37, 0.3);
+                background: rgba(249, 220, 7, 0.15);
+                background: rgba(255, 153, 0, 0.15);
                 padding: 4px 10px;
                 border-radius: 20px;
               "
@@ -547,7 +548,7 @@
               style="
                 height: 2px;
                 width: 32px;
-                background: linear-gradient(to right, #f9a825, rgba(249, 168, 37, 0.2));
+                background: linear-gradient(to right, #f9dc07, rgba(249, 168, 37, 0.2));
                 margin-bottom: 14px;
                 transition: width 0.4s ease;
                 border-radius: 2px;
@@ -585,18 +586,18 @@
               font-size: 0.68rem;
               font-weight: 700;
               letter-spacing: 0.15em;
-              color: #0d2b0f;
+              color: #003300;
               text-transform: uppercase;
             "
             >CSU Library</span
           >
-          <div style="width: 1px; height: 12px; background: #0d2b0f; opacity: 0.3"></div>
+          <div style="width: 1px; height: 12px; background: #003300; opacity: 0.3"></div>
           <span
             style="
               font-size: 0.68rem;
               font-weight: 700;
               letter-spacing: 0.15em;
-              color: #0d2b0f;
+              color: #003300;
               text-transform: uppercase;
             "
             >Butuan City</span
@@ -1204,13 +1205,13 @@
     <div class="w-[100%] mx-auto">
       <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
         <div class="flex items-center gap-3">
-          <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+          <div style="width: 32px; height: 3px; background: #f9dc07; border-radius: 2px"></div>
           <span
             style="
               font-size: 0.68rem;
               font-weight: 800;
               letter-spacing: 0.25em;
-              color: #0d2b0f;
+              color: #003300;
               text-transform: uppercase;
             "
             >Latest from the Library</span
@@ -1220,7 +1221,7 @@
           style="
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 900;
-            color: #0d2b0f;
+            color: #003300;
             line-height: 1;
             letter-spacing: -0.02em;
             text-align: center;
@@ -1272,7 +1273,7 @@
           </div>
           <div class="p-5">
             <h3
-              style="font-size: 0.95rem; font-weight: 800; color: #0d2b0f; line-height: 1.4"
+              style="font-size: 0.95rem; font-weight: 800; color: #003300; line-height: 1.4"
               class="mb-3"
             >
               {{ announcement.title }}
@@ -1283,7 +1284,7 @@
               }}</span>
               <span
                 class="flex items-center gap-1 group-hover:gap-2 transition-all duration-200"
-                style="font-size: 0.75rem; font-weight: 700; color: #1b5e20"
+                style="font-size: 0.75rem; font-weight: 700; color: #003300"
                 >Read more
                 <svg
                   style="width: 12px; height: 12px"
@@ -1302,7 +1303,7 @@
           </div>
           <div
             class="absolute bottom-0 left-0 right-0 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
-            style="background: linear-gradient(to right, #1b5e20, #f9a825)"
+            style="background: linear-gradient(to right, #1b5e20, #f9dc07)"
           ></div>
         </RouterLink>
       </div>
@@ -1312,7 +1313,7 @@
   <!-- USEFUL LINKS -->
   <div
     class="w-[100%] px-6 py-16"
-    style="background: #0d2b0f; position: relative; overflow: hidden"
+    style="background: #003300; position: relative; overflow: hidden"
   >
     <div
       class="absolute pointer-events-none"
@@ -1339,13 +1340,13 @@
     <div class="w-[100%] mx-auto relative z-10">
       <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
         <div class="flex items-center gap-3">
-          <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+          <div style="width: 32px; height: 3px; background: #f9dc07; border-radius: 2px"></div>
           <span
             style="
               font-size: 0.68rem;
               font-weight: 800;
               letter-spacing: 0.25em;
-              color: #f9a825;
+              color: #f9dc07;
               text-transform: uppercase;
             "
             >External Resources</span
@@ -1393,7 +1394,7 @@
                 font-size: 0.65rem;
                 font-weight: 700;
                 letter-spacing: 0.15em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
                 margin-bottom: 2px;
               "
@@ -1414,7 +1415,7 @@
             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
             <svg
-              style="width: 18px; height: 18px; color: #f9a825"
+              style="width: 18px; height: 18px; color: #f9dc07"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -1459,7 +1460,7 @@
                 font-size: 0.65rem;
                 font-weight: 700;
                 letter-spacing: 0.15em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
                 margin-bottom: 2px;
               "
@@ -1480,7 +1481,7 @@
             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
             <svg
-              style="width: 18px; height: 18px; color: #f9a825"
+              style="width: 18px; height: 18px; color: #f9dc07"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -1521,7 +1522,7 @@
                 font-size: 0.65rem;
                 font-weight: 700;
                 letter-spacing: 0.15em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
                 margin-bottom: 2px;
               "
@@ -1542,7 +1543,7 @@
             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
             <svg
-              style="width: 18px; height: 18px; color: #f9a825"
+              style="width: 18px; height: 18px; color: #f9dc07"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -1587,7 +1588,7 @@
                 font-size: 0.65rem;
                 font-weight: 700;
                 letter-spacing: 0.15em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
                 margin-bottom: 2px;
               "
@@ -1608,7 +1609,7 @@
             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
             <svg
-              style="width: 18px; height: 18px; color: #f9a825"
+              style="width: 18px; height: 18px; color: #f9dc07"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -1649,7 +1650,7 @@
                 font-size: 0.65rem;
                 font-weight: 700;
                 letter-spacing: 0.15em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
                 margin-bottom: 2px;
               "
@@ -1670,7 +1671,7 @@
             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
             <svg
-              style="width: 18px; height: 18px; color: #f9a825"
+              style="width: 18px; height: 18px; color: #f9dc07"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -1715,7 +1716,7 @@
                 font-size: 0.65rem;
                 font-weight: 700;
                 letter-spacing: 0.15em;
-                color: #f9a825;
+                color: #f9dc07;
                 text-transform: uppercase;
                 margin-bottom: 2px;
               "
@@ -1736,7 +1737,7 @@
             class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           >
             <svg
-              style="width: 18px; height: 18px; color: #f9a825"
+              style="width: 18px; height: 18px; color: #f9dc07"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -1759,13 +1760,13 @@
     <div class="w-[100%] mx-auto">
       <div class="sr-item flex flex-col items-center mb-12 gap-3 text-center">
         <div class="flex items-center gap-3">
-          <div style="width: 32px; height: 3px; background: #f9a825; border-radius: 2px"></div>
+          <div style="width: 32px; height: 3px; background: #f9dc07; border-radius: 2px"></div>
           <span
             style="
               font-size: 0.68rem;
               font-weight: 800;
               letter-spacing: 0.25em;
-              color: #0d2b0f;
+              color: #003300;
               text-transform: uppercase;
             "
             >Featured Media</span
@@ -1775,7 +1776,7 @@
           style="
             font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 900;
-            color: #0d2b0f;
+            color: #003300;
             line-height: 1;
             letter-spacing: -0.02em;
             text-align: center;
@@ -1857,7 +1858,7 @@
               ></div>
             </template>
           </div>
-          <div class="p-6" style="background: #0d2b0f">
+          <div class="p-6" style="background: #003300">
             <h3
               style="font-size: 1.25rem; font-weight: 900; color: white; line-height: 1.2"
               class="mb-2"
@@ -1871,7 +1872,7 @@
               class="mt-5 pt-4 flex items-center gap-2"
               style="border-top: 1px solid rgba(255, 255, 255, 0.07)"
             >
-              <div style="width: 20px; height: 2px; background: #f9a825; border-radius: 2px"></div>
+              <div style="width: 20px; height: 2px; background: #f9dc07; border-radius: 2px"></div>
               <span
                 style="
                   font-size: 0.65rem;
@@ -1942,7 +1943,7 @@
       v-if="showScrollTop"
       @click="scrollToTop"
       class="fixed bottom-6 right-6 z-50 rounded-lg p-3 transition-all duration-300 hover:scale-110 hover:opacity-90"
-      style="background: #0d2b0f"
+      style="background: #003300"
     >
       <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 11l7-7 7 7" />
@@ -1963,8 +1964,6 @@ import photo3 from '@/assets/images/img1.jpg'
 import photo4 from '@/assets/images/img2.jpg'
 import photo5 from '@/assets/images/img3.jpg'
 import designBg from '@/assets/images/design.png'
-import tinay from '@/assets/images/tinay.jpg'
-import eden from '@/assets/images/eden.jpg'
 import card1 from '@/assets/images/card1.jpg'
 import card2 from '@/assets/images/card2.jpg'
 import card3 from '@/assets/images/card3.png'
