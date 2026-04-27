@@ -15,13 +15,13 @@
     <!-- HEADER -->
     <div class="relative z-10 mt-16 mb-6 text-center reveal-header">
       <div class="flex items-center justify-center gap-3 mb-2">
-        <span class="block w-10 h-[2px] bg-yellow-500 rounded-full"></span>
-        <span class="text-[10px] font-extrabold tracking-[0.32em] text-[#1a2e1a] uppercase">
+        <span class="block w-10 h-[2px] bg-[#f9dc07] rounded-full"></span>
+        <span class="text-[10px] font-extrabold tracking-[0.32em] text-[#003300] uppercase">
           What we offer
         </span>
       </div>
       <h1
-        class="services text-5xl md:text-7xl font-black text-[#0d2b0f] text-center tracking-tight uppercase leading-none"
+        class="services text-5xl md:text-7xl font-black text-[#003300] text-center tracking-tight uppercase leading-none"
       >
         Services
       </h1>
@@ -38,7 +38,7 @@
               >CSU Library</span
             >
             is committed to providing high-quality academic resources, fostering an environment of
-            <span class="text-[#0d2b0f] font-bold not-italic">innovation and discovery</span>."
+            <span class="text-[#003300] font-bold not-italic">innovation and discovery</span>."
           </p>
         </div>
       </div>
@@ -47,7 +47,7 @@
       <div v-if="store.loading" class="flex items-center justify-center py-32">
         <div class="flex flex-col items-center gap-4">
           <div
-            class="w-10 h-10 border-4 border-[#1b5e20] border-t-transparent rounded-full animate-spin"
+            class="w-10 h-10 border-4 border-[#009900] border-t-transparent rounded-full animate-spin"
           ></div>
           <p class="text-sm text-gray-500">Loading services...</p>
         </div>
@@ -60,7 +60,7 @@
           <p class="text-sm text-gray-400 mb-4">{{ store.error }}</p>
           <button
             @click="store.fetchServices()"
-            class="bg-[#0d2b0f] text-white px-4 py-2 rounded-lg text-sm"
+            class="bg-[#003300] text-white px-4 py-2 rounded-lg text-sm"
           >
             Try Again
           </button>
@@ -78,15 +78,15 @@
             class="h-44 flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9]"
           >
             <div
-              class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"
+              class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#009900]/10 to-[#2e7d32]/20"
             ></div>
 
             <div
-              class="relative z-10 p-5 rounded-2xl bg-[#1b5e20]/10 backdrop-blur-sm border border-[#1b5e20]/20 group-hover:bg-[#1b5e20] group-hover:rotate-6 transition-all duration-500"
+              class="relative z-10 p-5 rounded-2xl bg-[#009900]/10 backdrop-blur-sm border border-[#003300]/20 group-hover:bg-[#003300] group-hover:rotate-6 transition-all duration-500"
             >
               <component
                 :is="service.icon"
-                class="w-10 h-10 text-[#1b5e20] group-hover:text-white transition-colors duration-500"
+                class="w-10 h-10 text-[#003300] group-hover:text-white transition-colors duration-500"
               />
             </div>
           </div>
