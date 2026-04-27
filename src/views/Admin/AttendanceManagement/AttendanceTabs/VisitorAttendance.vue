@@ -251,7 +251,8 @@
 
             <button
               type="button"
-              class="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+              @click="exportVisitorLogs"
+              class="inline-flex h-10 items-center justify-center rounded-lg bg-[#164d23] px-5 text-sm font-semibold text-white transition hover:bg-[#123d1b] lg:w-auto"
             >
               Export
             </button>
@@ -264,6 +265,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import * as XLSX from 'xlsx'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
@@ -348,6 +350,27 @@ const formatDisplayTime = (value: string | null) => {
 }
 
 const getVisitorName = (log: VisitorLog) => log.visitor_name || log.full_name || log.name || '--'
+
+const exportVisitorLogs = () => {
+  const headers = ['Name', 'Cellphone', 'Email', 'School/Institution', 'Date', 'Time In', 'Time Out']
+
+  const rows = visitorLogs.value.map((log) => [
+    getVisitorName(log),
+    log.contact_details || log.contact || log.cellphone || '--',
+    log.email || '--',
+    log.institution || log.company_institution || '--',
+    formatDisplayDate(log.time_in),
+    formatDisplayTime(log.time_in),
+    log.time_out ? formatDisplayTime(log.time_out) : '(Optional)',
+  ])
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Visitor Attendance')
+
+  const fileName = `visitor-attendance-${new Date().toISOString().slice(0, 10)}.xlsx`
+  XLSX.writeFile(workbook, fileName)
+}
 
 const buildDateRange = () => {
   if (selectedFilterMode.value === 'specific-date' && specificDate.value) {
