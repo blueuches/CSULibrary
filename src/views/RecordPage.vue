@@ -4,22 +4,28 @@
   >
     <!-- Decorative background -->
     <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#1b5e20]/5 blur-[120px] translate-x-1/3 -translate-y-1/3"></div>
-      <div class="absolute bottom-0 left-0 w-[500px] h-[400px] rounded-full bg-[#2e7d32]/4 blur-[100px] -translate-x-1/4 translate-y-1/4"></div>
-      <svg class="absolute inset-0 w-full h-full opacity-[0.025]" xmlns="http://www.w3.org/2000/svg">
+      <div
+        class="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-[#009900]/5 blur-[120px] translate-x-1/3 -translate-y-1/3"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 w-[500px] h-[400px] rounded-full bg-[#2e7d32]/4 blur-[100px] -translate-x-1/4 translate-y-1/4"
+      ></div>
+      <svg
+        class="absolute inset-0 w-full h-full opacity-[0.025]"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1b5e20" stroke-width="0.5" />
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#009900" stroke-width="0.5" />
         </pattern>
         <rect width="100%" height="100%" fill="url(#grid)" />
       </svg>
     </div>
 
     <div class="w-full px-2 sm:px-4 lg:px-8 relative z-10">
-
       <!-- Page Header -->
       <div class="page-header mb-14 text-center">
         <div class="flex mt-8 items-center justify-center gap-3">
-          <div class="w-10 h-[2px] bg-[#f9a825]"></div>
+          <div class="w-10 h-[2px] bg-[#f9dc07]"></div>
           <span class="text-[10px] font-extrabold tracking-[0.32em] text-[#1a2e1a] uppercase">
             Digital Resources at CSU Library
           </span>
@@ -30,8 +36,12 @@
         >
           Digital Records
         </h1>
-        <p class="text-[14px] text-[#888] leading-relaxed max-w-lg mx-auto font-normal tracking-wide"></p>
-        <p class="text-[14px] mt-10 text-[#888] leading-relaxed max-w-xl mx-auto font-normal tracking-wide">
+        <p
+          class="text-[14px] text-[#888] leading-relaxed max-w-lg mx-auto font-normal tracking-wide"
+        ></p>
+        <p
+          class="text-[14px] mt-10 text-[#888] leading-relaxed max-w-xl mx-auto font-normal tracking-wide"
+        >
           Your gateway to institutional archives, digital collections, and academic resources —
           organized, accessible, and always available.
         </p>
@@ -40,8 +50,9 @@
       <!-- Loading Skeleton -->
       <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div
-          v-for="n in 4" :key="n"
-          class="flex flex-col w-full bg-white rounded-xl overflow-hidden border border-[#1b5e20]/10 shadow-sm animate-pulse"
+          v-for="n in 4"
+          :key="n"
+          class="flex flex-col w-full bg-white rounded-xl overflow-hidden border border-[#009900] shadow-sm animate-pulse"
         >
           <div class="h-44 bg-[#e8f5e9]"></div>
           <div class="p-6 flex flex-col gap-3">
@@ -56,13 +67,25 @@
       <!-- Error State -->
       <div v-else-if="loadError" class="text-center py-24">
         <div class="inline-flex p-5 rounded-xl bg-red-50 mb-4">
-          <svg class="w-8 h-8 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          <svg
+            class="w-8 h-8 text-red-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+            />
           </svg>
         </div>
         <p class="text-[14px] text-red-400 font-light mb-4">{{ loadError }}</p>
-        <button @click="loadRecords"
-          class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1b5e20] text-white text-[12px] font-semibold tracking-wider uppercase rounded-lg hover:bg-[#2e7d32] transition-colors">
+        <button
+          @click="loadRecords"
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#003300] text-white text-[12px] font-semibold tracking-wider uppercase rounded-lg hover:bg-[#009900] transition-colors"
+        >
           Retry
         </button>
       </div>
@@ -77,31 +100,45 @@
         <div
           v-for="(record, index) in records"
           :key="record.id"
-          class="record-card group flex flex-col w-full h-full bg-white rounded-xl overflow-hidden border border-[#1b5e20]/10 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300"
+          class="record-card group flex flex-col w-full h-full bg-white rounded-xl overflow-hidden border border-[#003300] shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300"
           :style="`animation-delay: ${0.2 + index * 0.1}s`"
         >
           <!-- Icon Banner -->
-          <div class="relative h-44 flex items-center justify-center bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] overflow-hidden">
-            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"></div>
-            <div class="relative z-10 p-5 rounded-2xl bg-[#1b5e20]/10 backdrop-blur-sm border border-[#1b5e20]/20 group-hover:bg-[#1b5e20] group-hover:rotate-6 transition-all duration-500">
+          <div
+            class="relative h-44 flex items-center justify-center bg-gradient-to-br from-[#e8f5e9] to-[#c8e6c9] overflow-hidden"
+          >
+            <div
+              class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#1b5e20]/10 to-[#2e7d32]/20"
+            ></div>
+            <div
+              class="relative z-10 p-5 rounded-2xl bg-[#009900]/10 backdrop-blur-sm border border-[#003300]/20 group-hover:bg-[#003300] group-hover:rotate-6 transition-all duration-500"
+            >
               <component
                 :is="resolveIcon(record.icon_key)"
-                class="w-10 h-10 text-[#1b5e20] group-hover:text-white transition-colors duration-500"
+                class="w-10 h-10 text-[#003300] group-hover:text-white transition-colors duration-500"
               />
             </div>
-            <div class="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-[#1b5e20]/30 rounded-tr-sm"></div>
-            <div class="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-[#1b5e20]/30 rounded-bl-sm"></div>
+            <div
+              class="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-[#1b5e20]/30 rounded-tr-sm"
+            ></div>
+            <div
+              class="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-[#1b5e20]/30 rounded-bl-sm"
+            ></div>
           </div>
 
           <!-- Card Body -->
           <div class="p-6 flex flex-col flex-grow">
             <div class="flex items-center gap-2 mb-3">
               <span class="w-5 h-[2px] bg-[#1b5e20]"></span>
-              <h3 class="text-[15px] font-bold tracking-widest uppercase text-[#1b5e20] font-['Poppins']">
+              <h3
+                class="text-[15px] font-bold tracking-widest uppercase text-[#1b5e20] font-['Poppins']"
+              >
                 {{ record.title }}
               </h3>
             </div>
-            <p class="text-[14px] text-[#555] leading-relaxed mb-6 flex-grow font-['Poppins'] font-light">
+            <p
+              class="text-[14px] text-[#555] leading-relaxed mb-6 flex-grow font-['Poppins'] font-light"
+            >
               {{ record.description }}
             </p>
 
@@ -112,8 +149,13 @@
               class="record-btn group/btn relative flex items-center justify-between px-4 py-2.5 bg-[#1b5e20] text-white text-[12px] font-semibold tracking-wider uppercase font-['Poppins'] rounded-lg overflow-hidden transition-all duration-300 hover:bg-[#2e7d32]"
             >
               <span class="relative z-10">{{ record.button_label }}</span>
-              <svg class="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg
+                class="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </RouterLink>
@@ -127,8 +169,13 @@
               class="record-btn group/btn relative flex items-center justify-between px-4 py-2.5 bg-[#1b5e20] text-white text-[12px] font-semibold tracking-wider uppercase font-['Poppins'] rounded-lg overflow-hidden transition-all duration-300 hover:bg-[#2e7d32]"
             >
               <span class="relative z-10">{{ record.button_label }}</span>
-              <svg class="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg
+                class="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </a>
@@ -140,8 +187,13 @@
               class="record-btn group/btn relative flex items-center justify-between px-4 py-2.5 bg-[#1b5e20] text-white text-[12px] font-semibold tracking-wider uppercase font-['Poppins'] rounded-lg overflow-hidden transition-all duration-300 hover:bg-[#2e7d32]"
             >
               <span class="relative z-10">{{ record.button_label }}</span>
-              <svg class="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
-                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg
+                class="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </a>
@@ -151,26 +203,66 @@
     </div>
 
     <!-- Video Modal -->
-    <div v-if="isModalOpen"
+    <div
+      v-if="isModalOpen"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
-      @click.self="isModalOpen = false">
-      <div class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-        <button @click="isModalOpen = false"
-          class="absolute top-4 right-4 text-white/70 hover:text-[#ffb74d] text-2xl font-bold transition-colors z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60">✕</button>
-        <iframe class="w-full h-full" src="https://www.youtube.com/embed/Lv0URTSBniY?autoplay=1" frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      @click.self="isModalOpen = false"
+    >
+      <div
+        class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10"
+      >
+        <button
+          @click="isModalOpen = false"
+          class="absolute top-4 right-4 text-white/70 hover:text-[#ffb74d] text-2xl font-bold transition-colors z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60"
+        >
+          ✕
+        </button>
+        <iframe
+          class="w-full h-full"
+          src="https://www.youtube.com/embed/Lv0URTSBniY?autoplay=1"
+          frameborder="0"
+          allow="
+            accelerometer;
+            autoplay;
+            clipboard-write;
+            encrypted-media;
+            gyroscope;
+            picture-in-picture;
+          "
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
 
     <!-- Orientation Modal -->
-    <div v-if="isOrientationModalOpen"
+    <div
+      v-if="isOrientationModalOpen"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
-      @click.self="isOrientationModalOpen = false">
-      <div class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-        <button @click="isOrientationModalOpen = false"
-          class="absolute top-4 right-4 text-white/70 hover:text-[#66bb6a] text-2xl font-bold transition-colors z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60">✕</button>
-        <iframe class="w-full h-full" src="https://www.youtube.com/embed/HAEPrH2aYpc?autoplay=1" frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      @click.self="isOrientationModalOpen = false"
+    >
+      <div
+        class="relative w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10"
+      >
+        <button
+          @click="isOrientationModalOpen = false"
+          class="absolute top-4 right-4 text-white/70 hover:text-[#66bb6a] text-2xl font-bold transition-colors z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60"
+        >
+          ✕
+        </button>
+        <iframe
+          class="w-full h-full"
+          src="https://www.youtube.com/embed/HAEPrH2aYpc?autoplay=1"
+          frameborder="0"
+          allow="
+            accelerometer;
+            autoplay;
+            clipboard-write;
+            encrypted-media;
+            gyroscope;
+            picture-in-picture;
+          "
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
 
@@ -193,19 +285,103 @@
 import { ref, onBeforeUnmount, onMounted } from 'vue'
 import { createClient } from '@supabase/supabase-js'
 import {
-  Upload, Disc3, BookOpen, Database, FileText, Globe, Link, Star,
-  Archive, Award, Bell, BarChart2, BookMarked, BookCopy,
-  Briefcase, Building, Camera, CheckSquare, Clock, Cloud,
-  Code, Coffee, Cpu, CreditCard, Download, File, FileArchive,
-  FileBadge, FileImage, Film, Filter, Flag, Folder, FolderOpen, GraduationCap,
-  Hash, Heart, HelpCircle, Home, ImageIcon, Info, Inbox, Layers, Layout,
-  Library, LifeBuoy, List, Lock, LogIn, Mail, Map, MessageCircle,
-  MessageSquare, Monitor, Moon, Music, Navigation, Package, Paperclip,
-  PenTool, Phone, PieChart, Pin, Printer, Radio, RefreshCw,
-  Search, Send, Server, Settings, Share, Shield, ShoppingBag, Sidebar as SidebarIcon,
-  Sliders, Smartphone, Speaker, Table, Tag, Terminal, ThumbsUp,
-  Ticket, ToggleLeft, Wrench, TrendingUp, Tv, User, Users, Video,
-  Wifi, Zap, BookOpenCheck, FlaskConical, Microscope, Atom, Dna, Pencil,
+  Upload,
+  Disc3,
+  BookOpen,
+  Database,
+  FileText,
+  Globe,
+  Link,
+  Star,
+  Archive,
+  Award,
+  Bell,
+  BarChart2,
+  BookMarked,
+  BookCopy,
+  Briefcase,
+  Building,
+  Camera,
+  CheckSquare,
+  Clock,
+  Cloud,
+  Code,
+  Coffee,
+  Cpu,
+  CreditCard,
+  Download,
+  File,
+  FileArchive,
+  FileBadge,
+  FileImage,
+  Film,
+  Filter,
+  Flag,
+  Folder,
+  FolderOpen,
+  GraduationCap,
+  Hash,
+  Heart,
+  HelpCircle,
+  Home,
+  ImageIcon,
+  Info,
+  Inbox,
+  Layers,
+  Layout,
+  Library,
+  LifeBuoy,
+  List,
+  Lock,
+  LogIn,
+  Mail,
+  Map,
+  MessageCircle,
+  MessageSquare,
+  Monitor,
+  Moon,
+  Music,
+  Navigation,
+  Package,
+  Paperclip,
+  PenTool,
+  Phone,
+  PieChart,
+  Pin,
+  Printer,
+  Radio,
+  RefreshCw,
+  Search,
+  Send,
+  Server,
+  Settings,
+  Share,
+  Shield,
+  ShoppingBag,
+  Sidebar as SidebarIcon,
+  Sliders,
+  Smartphone,
+  Speaker,
+  Table,
+  Tag,
+  Terminal,
+  ThumbsUp,
+  Ticket,
+  ToggleLeft,
+  Wrench,
+  TrendingUp,
+  Tv,
+  User,
+  Users,
+  Video,
+  Wifi,
+  Zap,
+  BookOpenCheck,
+  FlaskConical,
+  Microscope,
+  Atom,
+  Dna,
+  Pencil,
 } from 'lucide-vue-next'
 
 // ─── Supabase client ──────────────────────────────────────────────────────────
@@ -228,19 +404,103 @@ interface PublicRecordRow {
 
 // ─── Icon map ─────────────────────────────────────────────────────────────────
 const ICON_MAP: Record<string, unknown> = {
-  Upload, Disc3, BookOpen, Database, FileText, Globe, Link, Star,
-  Archive, Award, Bell, BarChart2, BookMarked, BookCopy,
-  Briefcase, Building, Camera, CheckSquare, Clock, Cloud,
-  Code, Coffee, Cpu, CreditCard, Download, File, FileArchive,
-  FileBadge, FileImage, Film, Filter, Flag, Folder, FolderOpen, GraduationCap,
-  Hash, Heart, HelpCircle, Home, ImageIcon, Info, Inbox, Layers, Layout,
-  Library, LifeBuoy, List, Lock, LogIn, Mail, Map, MessageCircle,
-  MessageSquare, Monitor, Moon, Music, Navigation, Package, Paperclip,
-  PenTool, Phone, PieChart, Pin, Printer, Radio, RefreshCw,
-  Search, Send, Server, Settings, Share, Shield, ShoppingBag,
-  Sidebar: SidebarIcon, Sliders, Smartphone, Speaker, Table, Tag, Terminal, ThumbsUp,
-  Ticket, ToggleLeft, Wrench, TrendingUp, Tv, User, Users, Video,
-  Wifi, Zap, BookOpenCheck, FlaskConical, Microscope, Atom, Dna, FilePen: Pencil,
+  Upload,
+  Disc3,
+  BookOpen,
+  Database,
+  FileText,
+  Globe,
+  Link,
+  Star,
+  Archive,
+  Award,
+  Bell,
+  BarChart2,
+  BookMarked,
+  BookCopy,
+  Briefcase,
+  Building,
+  Camera,
+  CheckSquare,
+  Clock,
+  Cloud,
+  Code,
+  Coffee,
+  Cpu,
+  CreditCard,
+  Download,
+  File,
+  FileArchive,
+  FileBadge,
+  FileImage,
+  Film,
+  Filter,
+  Flag,
+  Folder,
+  FolderOpen,
+  GraduationCap,
+  Hash,
+  Heart,
+  HelpCircle,
+  Home,
+  ImageIcon,
+  Info,
+  Inbox,
+  Layers,
+  Layout,
+  Library,
+  LifeBuoy,
+  List,
+  Lock,
+  LogIn,
+  Mail,
+  Map,
+  MessageCircle,
+  MessageSquare,
+  Monitor,
+  Moon,
+  Music,
+  Navigation,
+  Package,
+  Paperclip,
+  PenTool,
+  Phone,
+  PieChart,
+  Pin,
+  Printer,
+  Radio,
+  RefreshCw,
+  Search,
+  Send,
+  Server,
+  Settings,
+  Share,
+  Shield,
+  ShoppingBag,
+  Sidebar: SidebarIcon,
+  Sliders,
+  Smartphone,
+  Speaker,
+  Table,
+  Tag,
+  Terminal,
+  ThumbsUp,
+  Ticket,
+  ToggleLeft,
+  Wrench,
+  TrendingUp,
+  Tv,
+  User,
+  Users,
+  Video,
+  Wifi,
+  Zap,
+  BookOpenCheck,
+  FlaskConical,
+  Microscope,
+  Atom,
+  Dna,
+  FilePen: Pencil,
 }
 
 function resolveIcon(key: string | null): unknown {
@@ -318,15 +578,26 @@ onBeforeUnmount(() => {
 }
 
 @keyframes cardFadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .record-btn::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%);
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 60%
+  );
   transform: translateX(-100%);
   transition: transform 0.5s ease;
 }
@@ -356,7 +627,9 @@ onBeforeUnmount(() => {
   place-items: center;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .scroll-top-btn:hover {
