@@ -6,12 +6,14 @@
       <header class="attn-header">
         <div class="space-y-4">
           <div class="relative group">
-            <div class="header-breadcrumb !mb-2">
-              <span>Admin</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span>ATTENDANCE</span>
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+              <div class="header-breadcrumb !mb-0">
+                <span>Admin</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+                <span>Curriculum</span>
+              </div>
             </div>
             <h1 class="header-title intro-title">
               <span class="text-[#0d2b0f]">College</span>
@@ -49,12 +51,20 @@
           v-for="college in colleges"
           :key="college.code"
           type="button"
-          class="rounded-xl border border-[#d8e3db] bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#164d23] hover:shadow-md"
+          class="rounded-xl border-2 border-[#164d23] bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-[#0d2b0f] hover:bg-[#164d23] hover:shadow-md group"
           @click="openCollege(college.code)"
         >
-          <p class="text-lg font-bold text-[#164d23]">{{ college.code }}</p>
-          <p class="mt-1 text-sm font-medium text-slate-700">{{ college.name }}</p>
-          <p class="mt-3 text-xs font-semibold text-slate-500">
+          <p class="text-lg font-bold text-[#164d23] group-hover:text-white transition-colors">
+            {{ college.code }}
+          </p>
+          <p
+            class="mt-1 text-sm font-medium text-slate-700 group-hover:text-emerald-100 transition-colors"
+          >
+            {{ college.name }}
+          </p>
+          <p
+            class="mt-3 text-xs font-semibold text-slate-500 group-hover:text-emerald-200 transition-colors"
+          >
             {{ college.programs.length }} programs
           </p>
         </button>

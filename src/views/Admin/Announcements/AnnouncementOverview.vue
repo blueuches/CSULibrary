@@ -66,13 +66,25 @@
               </button>
               <transition name="dropdown">
                 <div v-if="dropdownOpen" class="dropdown-menu">
-                  <RouterLink to="/admin/announcement/general" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                  <RouterLink
+                    to="/admin/announcement/general"
+                    class="dropdown-item whitespace-nowrap"
+                    @click="dropdownOpen = false"
+                  >
                     New General Announcement
                   </RouterLink>
-                  <RouterLink to="/admin/announcement/event" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                  <RouterLink
+                    to="/admin/announcement/event"
+                    class="dropdown-item whitespace-nowrap"
+                    @click="dropdownOpen = false"
+                  >
                     New Event Announcement
                   </RouterLink>
-                  <RouterLink to="/admin/announcement/news" class="dropdown-item whitespace-nowrap" @click="dropdownOpen = false">
+                  <RouterLink
+                    to="/admin/announcement/news"
+                    class="dropdown-item whitespace-nowrap"
+                    @click="dropdownOpen = false"
+                  >
                     News
                   </RouterLink>
                 </div>
@@ -92,7 +104,11 @@
         <div class="overview-kpis">
           <div class="kpi-card">
             <p class="kpi-label">Total Posts</p>
-            <p class="kpi-value">{{ eventAnnouncements.length + generalAnnouncements.length + newsAnnouncements.length }}</p>
+            <p class="kpi-value">
+              {{
+                eventAnnouncements.length + generalAnnouncements.length + newsAnnouncements.length
+              }}
+            </p>
           </div>
           <div class="kpi-card">
             <p class="kpi-label">This Week</p>
@@ -108,30 +124,82 @@
           <article class="stack-panel">
             <div class="panel-head">
               <h2 class="panel-title">Event Announcements</h2>
-              <span class="panel-badge panel-badge-amber">{{ eventAnnouncements.length }} posts</span>
+              <span class="panel-badge panel-badge-amber"
+                >{{ eventAnnouncements.length }} posts</span
+              >
             </div>
-            <div v-if="eventAnnouncements.length === 0" class="empty-state">No event announcements yet.</div>
+            <div v-if="eventAnnouncements.length === 0" class="empty-state">
+              No event announcements yet.
+            </div>
             <div v-else class="stack-list">
-              <div v-for="event in eventAnnouncements" :key="event.id" class="row-card row-card-clickable" @click="openEventPreview(event)">
-                <div v-if="event.images" class="row-thumb-wrap" @click="openEventPreview(event)"><img :src="event.images" class="row-thumb" /></div>
-                <div v-else class="row-thumb-wrap row-thumb-fallback" @click="openEventPreview(event)">EVENT</div>
+              <div
+                v-for="event in eventAnnouncements"
+                :key="event.id"
+                class="row-card row-card-clickable"
+                @click="openEventPreview(event)"
+              >
+                <div v-if="event.images" class="row-thumb-wrap" @click="openEventPreview(event)">
+                  <img :src="event.images" class="row-thumb" />
+                </div>
+                <div
+                  v-else
+                  class="row-thumb-wrap row-thumb-fallback"
+                  @click="openEventPreview(event)"
+                >
+                  EVENT
+                </div>
                 <div class="row-body" @click="openEventPreview(event)">
                   <h3 class="row-title">{{ event.title }}</h3>
                   <p class="row-text">{{ event.description }}</p>
                   <div class="row-meta row-meta-split">
                     <p><strong>Event Date:</strong> {{ formatDate(event.start_date) }}</p>
+                    <p v-if="event.time_start">
+                      <strong>Duration:</strong> {{ formatTime(event.time_start) }} —
+                      {{ formatTime(event.time_end) }}
+                    </p>
                     <p><strong>Location:</strong> {{ event.location }}</p>
                   </div>
                 </div>
                 <div class="row-actions">
-                  <RouterLink :to="`/admin/announcement/event?id=${event.id}`" class="icon-action" title="Edit Announcement" @click.stop>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <RouterLink
+                    :to="`/admin/announcement/event?id=${event.id}`"
+                    class="icon-action"
+                    title="Edit Announcement"
+                    @click.stop
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
                     </svg>
                   </RouterLink>
-                  <button @click.stop="deleteAnnouncement(event.id)" class="icon-action icon-action-danger" title="Delete Announcement">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <button
+                    @click.stop="deleteAnnouncement(event.id)"
+                    class="icon-action icon-action-danger"
+                    title="Delete Announcement"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -144,11 +212,30 @@
               <h2 class="panel-title">General Announcements</h2>
               <span class="panel-badge">{{ generalAnnouncements.length }} posts</span>
             </div>
-            <div v-if="generalAnnouncements.length === 0" class="empty-state">No general updates yet.</div>
+            <div v-if="generalAnnouncements.length === 0" class="empty-state">
+              No general updates yet.
+            </div>
             <div v-else class="stack-list">
-              <div v-for="announcement in generalAnnouncements" :key="announcement.id" class="row-card row-card-clickable" @click="openGeneralPreview(announcement)">
-                <div v-if="announcement.image_url" class="row-thumb-wrap" @click="openGeneralPreview(announcement)"><img :src="announcement.image_url" class="row-thumb" /></div>
-                <div v-else class="row-thumb-wrap row-thumb-fallback" @click="openGeneralPreview(announcement)">GENERAL</div>
+              <div
+                v-for="announcement in generalAnnouncements"
+                :key="announcement.id"
+                class="row-card row-card-clickable"
+                @click="openGeneralPreview(announcement)"
+              >
+                <div
+                  v-if="announcement.image_url"
+                  class="row-thumb-wrap"
+                  @click="openGeneralPreview(announcement)"
+                >
+                  <img :src="announcement.image_url" class="row-thumb" />
+                </div>
+                <div
+                  v-else
+                  class="row-thumb-wrap row-thumb-fallback"
+                  @click="openGeneralPreview(announcement)"
+                >
+                  GENERAL
+                </div>
                 <div class="row-body" @click="openGeneralPreview(announcement)">
                   <h3 class="row-title">{{ announcement.title }}</h3>
                   <p class="row-text">{{ announcement.content }}</p>
@@ -157,14 +244,45 @@
                   </div>
                 </div>
                 <div class="row-actions">
-                  <RouterLink :to="`/admin/announcement/general?id=${announcement.id}`" class="icon-action" title="Edit General Announcement" @click.stop>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <RouterLink
+                    :to="`/admin/announcement/general?id=${announcement.id}`"
+                    class="icon-action"
+                    title="Edit General Announcement"
+                    @click.stop
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
                     </svg>
                   </RouterLink>
-                  <button @click.stop="deleteGeneralAnnouncement(announcement.id)" class="icon-action icon-action-danger" title="Delete General Update">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <button
+                    @click.stop="deleteGeneralAnnouncement(announcement.id)"
+                    class="icon-action icon-action-danger"
+                    title="Delete General Update"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -185,29 +303,77 @@
                 class="row-card row-card-clickable"
                 @click="openNewsPreview(announcement)"
               >
-                <div v-if="announcement.image_url" class="row-thumb-wrap" @click="openNewsPreview(announcement)"><img :src="announcement.image_url" class="row-thumb" /></div>
-                <div v-else class="row-thumb-wrap row-thumb-fallback" @click="openNewsPreview(announcement)">NEWS</div>
+                <div
+                  v-if="announcement.image_url"
+                  class="row-thumb-wrap"
+                  @click="openNewsPreview(announcement)"
+                >
+                  <img :src="announcement.image_url" class="row-thumb" />
+                </div>
+                <div
+                  v-else
+                  class="row-thumb-wrap row-thumb-fallback"
+                  @click="openNewsPreview(announcement)"
+                >
+                  NEWS
+                </div>
                 <div class="row-body" @click="openNewsPreview(announcement)">
                   <div class="flex items-center gap-2">
-                    <span class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase" :style="getBadgeColor(extractNewsCategory(announcement.title).category)">
+                    <span
+                      class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase"
+                      :style="getBadgeColor(extractNewsCategory(announcement.title).category)"
+                    >
                       {{ getNewsTypeDisplay(extractNewsCategory(announcement.title).category) }}
                     </span>
                   </div>
-                  <h3 class="row-title">{{ extractNewsCategory(announcement.title).cleanTitle }}</h3>
+                  <h3 class="row-title">
+                    {{ extractNewsCategory(announcement.title).cleanTitle }}
+                  </h3>
                   <p class="row-text">{{ announcement.content }}</p>
                   <div class="row-meta row-meta-right">
                     <p><strong>Posted:</strong> {{ formatDate(announcement.created_at) }}</p>
                   </div>
                 </div>
                 <div class="row-actions">
-                  <RouterLink :to="`/admin/announcement/news?id=${announcement.id}`" class="icon-action" title="Edit News" @click.stop>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  <RouterLink
+                    :to="`/admin/announcement/news?id=${announcement.id}`"
+                    class="icon-action"
+                    title="Edit News"
+                    @click.stop
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
                     </svg>
                   </RouterLink>
-                  <button @click.stop="deleteNewsAnnouncement(announcement.id)" class="icon-action icon-action-danger" title="Delete News">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  <button
+                    @click.stop="deleteNewsAnnouncement(announcement.id)"
+                    class="icon-action icon-action-danger"
+                    title="Delete News"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -221,7 +387,14 @@
     <transition name="fade-modal">
       <div v-if="activePreview" class="news-preview-overlay" @click="closePreview">
         <article class="news-preview-card" @click.stop>
-          <button class="news-preview-close" type="button" @click="closePreview" aria-label="Close preview">×</button>
+          <button
+            class="news-preview-close"
+            type="button"
+            @click="closePreview"
+            aria-label="Close preview"
+          >
+            ×
+          </button>
 
           <div class="news-preview-head">
             <span
@@ -230,12 +403,18 @@
             >
               {{ activePreview.badgeLabel }}
             </span>
-            <p class="news-preview-date">{{ activePreview.metaLabel }}: {{ formatDate(activePreview.metaDate) }}</p>
+            <p class="news-preview-date">
+              {{ activePreview.metaLabel }}: {{ formatDate(activePreview.metaDate) }}
+            </p>
           </div>
 
           <h3 class="news-preview-title">{{ activePreview.title }}</h3>
 
-          <img v-if="activePreview.imageUrl" :src="activePreview.imageUrl" class="news-preview-image" />
+          <img
+            v-if="activePreview.imageUrl"
+            :src="activePreview.imageUrl"
+            class="news-preview-image"
+          />
 
           <p v-if="activePreview.location" class="news-preview-extra">
             <strong>Location:</strong> {{ activePreview.location }}
@@ -275,6 +454,8 @@ interface EventAnnouncement {
   location: string
   type: string
   images: string
+  time_start: string | null
+  time_end: string | null
 }
 
 interface GeneralAnnouncement {
@@ -366,13 +547,13 @@ const getErrorMessage = (error: unknown) => {
 
 const extractNewsCategory = (title?: string): { category: string; cleanTitle: string } => {
   if (!title) return { category: 'News', cleanTitle: title || '' }
-  
+
   const match = title.match(/^\[([^\]]+)\]\s*(.*)$/)
   if (match) {
     const cat = (match[1] ?? 'News').trim()
     return {
       category: cat,
-      cleanTitle: (match[2] ?? '').trim()
+      cleanTitle: (match[2] ?? '').trim(),
     }
   }
   return { category: 'News', cleanTitle: title }
@@ -436,15 +617,16 @@ const confirmDelete = async () => {
   await action()
 }
 
-// --- FETCH ANNOUNCEMENTS ---
+// --- FETCH ANNOUNCEMENTS() ---
 const fetchAnnouncements = async () => {
   try {
     isLoading.value = true
     const [eventsResult, generalResult, newsResult] = await Promise.all([
+      // AFTER
       supabase
         .from('events')
         .select('*')
-        .eq('type', 'announcement')
+        .eq('type', 'event')
         .order('created_at', { ascending: false }),
       supabase
         .from('announcements')
@@ -455,7 +637,7 @@ const fetchAnnouncements = async () => {
         .from('announcements')
         .select('id, title, content, type, image_url, created_at')
         .eq('type', 'news')
-        .order('created_at', { ascending: false })
+        .order('created_at', { ascending: false }),
     ])
 
     if (eventsResult.error) throw eventsResult.error
@@ -479,7 +661,7 @@ const deleteAnnouncement = async (id: number) => {
       const { error } = await supabase.from('events').delete().eq('id', id)
       if (error) throw error
 
-      eventAnnouncements.value = eventAnnouncements.value.filter(item => item.id !== id)
+      eventAnnouncements.value = eventAnnouncements.value.filter((item) => item.id !== id)
       showToast('Announcement deleted successfully')
     } catch (error) {
       const message = getErrorMessage(error)
@@ -495,7 +677,7 @@ const deleteGeneralAnnouncement = async (id: string) => {
       const { error } = await supabase.from('announcements').delete().eq('id', id)
       if (error) throw error
 
-      generalAnnouncements.value = generalAnnouncements.value.filter(item => item.id !== id)
+      generalAnnouncements.value = generalAnnouncements.value.filter((item) => item.id !== id)
       showToast('General announcement deleted successfully')
     } catch (error) {
       const message = getErrorMessage(error)
@@ -511,7 +693,7 @@ const deleteNewsAnnouncement = async (id: string) => {
       const { error } = await supabase.from('announcements').delete().eq('id', id)
       if (error) throw error
 
-      newsAnnouncements.value = newsAnnouncements.value.filter(item => item.id !== id)
+      newsAnnouncements.value = newsAnnouncements.value.filter((item) => item.id !== id)
       showToast('News deleted successfully')
     } catch (error) {
       const message = getErrorMessage(error)
@@ -527,8 +709,18 @@ const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
   })
+}
+
+const formatTime = (timeStr: string | null | undefined): string => {
+  if (!timeStr) return ''
+  const [hourStr, minuteStr] = timeStr.split(':')
+  const hour = parseInt(hourStr ?? '0', 10)
+  const minute = minuteStr || '00'
+  const period = hour >= 12 ? 'PM' : 'AM'
+  const h = hour % 12 || 12
+  return `${h}:${minute} ${period}`
 }
 
 // --- CLOSE DROPDOWN ON CLICK OUTSIDE ---
@@ -712,7 +904,6 @@ onBeforeUnmount(() => {
   color: #9a4b00;
 }
 
-
 .stack-list {
   display: grid;
   gap: 14px;
@@ -730,7 +921,9 @@ onBeforeUnmount(() => {
   grid-template-columns: 180px minmax(0, 1fr) auto;
   gap: 14px;
   align-items: center;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   animation: cardFadeIn 0.35s ease both;
 }
 
@@ -799,6 +992,7 @@ onBeforeUnmount(() => {
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -927,7 +1121,9 @@ onBeforeUnmount(() => {
   place-items: center;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .scroll-top-btn:hover {
@@ -1015,8 +1211,14 @@ onBeforeUnmount(() => {
 }
 
 @keyframes cardFadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .toast-enter-active,
