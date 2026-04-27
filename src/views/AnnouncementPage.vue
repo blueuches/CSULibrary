@@ -41,7 +41,8 @@
             <div
               v-for="event in pinnedEvents"
               :key="'pinned-' + event.id"
-              class="min-w-full group relative bg-[#003300] flex flex-col md:flex-row h-auto md:h-[350px]"
+              class="min-w-full group relative bg-[#0d2b0f] flex flex-col md:flex-row h-auto md:h-[350px]"
+              @click="openEventPreview(event)"
             >
               <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
                 <img
@@ -68,31 +69,21 @@
                 >
                   <span>{{ event.location }}</span>
                   <span class="w-1 h-1 bg-white/20 rounded-full"></span>
-                  <!-- Show duration if event type has time_start & time_end, else show date time -->
-                  <span
-                    v-if="event.type === 'event' && event.time_start"
-                    class="text-white/60 flex items-center gap-1"
-                  >
-                    <svg
-                      class="w-3 h-3"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="M12 6v6l4 2" />
-                    </svg>
-                    {{ formatTime(event.time_start ?? null) }} —
-                    {{ formatTime(event.time_end ?? null) }}
-                  </span>
-                  <span v-else class="text-white/60">{{ event.time }}</span>
+                  <span class="text-white/60">{{ event.time }}</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+              <div class="section-title section-title-center">
+          <span class="section-kicker title-container">
+            <span class="kicker-line"></span>
+            <span class="kicker-text">EVENT UPDATES</span>
+          </span>
+          <h2 class="section-headline title-headline"><span>EVENTS </span></h2>
+        </div>
 
       <!-- Grid Events -->
       <div>
@@ -106,6 +97,7 @@
             :key="event.id"
             class="group cursor-pointer event-card"
             :style="{ '--i': index }"
+            @click="openEventPreview(event)"
           >
             <div
               class="relative aspect-[16/10] overflow-hidden rounded-3xl mb-5 bg-gray-100 shadow-sm group-hover:shadow-2xl transition-all duration-500"
@@ -115,7 +107,7 @@
                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
 
-              <!-- Pinned Badge -->
+              <!-- Pinned Badge sa Grid -->
               <div class="absolute top-4 left-4" v-if="event.isPinnedGrid">
                 <div
                   class="bg-[#f9dc07] text-[#009900] px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg border border-[#f9dc07]"
@@ -124,7 +116,6 @@
                 </div>
               </div>
 
-              <!-- Type Badge -->
               <div class="absolute top-4 right-4">
                 <div
                   class="backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm border border-white/20"
@@ -139,34 +130,12 @@
               class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1"
             >
               <div
-                class="flex items-center gap-2 text-[#f9dc07] text-[10px] font-black uppercase tracking-widest flex-wrap"
+                class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest"
               >
                 <span>{{ event.location }}</span>
                 <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-
-                <!-- EVENT TYPE: show time_start — time_end -->
-                <span
-                  v-if="event.type === 'event' && event.time_start"
-                  class="text-gray-500 font-bold flex items-center gap-1"
-                >
-                  <svg
-                    class="w-3 h-3"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 6v6l4 2" />
-                  </svg>
-                  {{ formatTime(event.time_start ?? null) }} —
-                  {{ formatTime(event.time_end ?? null) }}
-                </span>
-
-                <!-- NEWS / ANNOUNCEMENT: show null (nothing) or just the date time -->
-                <span v-else class="text-gray-400 font-bold">{{ event.time }}</span>
+                <span class="text-gray-400 font-bold">{{ event.time }}</span>
               </div>
-
               <h3
                 class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-#009900"
               >
@@ -185,7 +154,155 @@
           No events scheduled for {{ selectedEventMonth }}.
         </p>
       </div>
+
+      <!-- General Announcements -->
+      <div class="mt-16" v-if="generalAnnouncements.length > 0">
+        <div class="section-title section-title-center">
+          <span class="section-kicker title-container">
+            <span class="kicker-line"></span>
+            <span class="kicker-text">GENERAL UPDATES</span>
+          </span>
+          <h2 class="section-headline title-headline"><span>GENERAL </span>ANNOUNCEMENTS</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <article
+            v-for="(announcement, index) in generalAnnouncements"
+            :key="announcement.id"
+            class="group event-card cursor-pointer"
+            :style="{ '--i': index }"
+            @click="openGeneralPreview(announcement)"
+          >
+            <div
+              class="relative aspect-[16/10] overflow-hidden rounded-3xl mb-5 bg-gray-100 shadow-sm group-hover:shadow-2xl transition-all duration-500"
+            >
+              <img
+                v-if="announcement.image_url"
+                :src="announcement.image_url"
+                :alt="announcement.title"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div v-else class="w-full h-full bg-gradient-to-br from-[#f1f6f1] to-[#dce8de]"></div>
+
+              <div class="absolute top-4 left-4">
+                <span class="bg-[#0d2b0f] text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg">
+                  GENERAL
+                </span>
+              </div>
+
+              <div class="absolute top-4 right-4">
+                <span
+                  class="backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm border border-white/20"
+                  :style="{ background: '#0d2b0f', color: '#fff' }"
+                >
+                  {{ formatAnnouncementDate(announcement.created_at) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1">
+              <h3 class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800">
+                {{ announcement.title }}
+              </h3>
+              <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
+                {{ announcement.content }}
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- News -->
+      <div class="mt-16" v-if="newsAnnouncements.length > 0">
+        <div class="section-title section-title-center">
+          <span class="section-kicker title-container">
+            <span class="kicker-line"></span>
+            <span class="kicker-text">LIBRARY NEWS</span>
+          </span>
+          <h2 class="section-headline title-headline"><span>LATEST </span>NEWS</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <article
+            v-for="(announcement, index) in newsAnnouncements"
+            :key="announcement.id"
+            class="group event-card cursor-pointer"
+            :style="{ '--i': index }"
+            @click="openNewsPreview(announcement)"
+          >
+            <div
+              class="relative aspect-[16/10] overflow-hidden rounded-3xl mb-5 bg-gray-100 shadow-sm group-hover:shadow-2xl transition-all duration-500"
+            >
+              <img
+                v-if="announcement.image_url"
+                :src="announcement.image_url"
+                :alt="announcement.headline"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div v-else class="w-full h-full bg-gradient-to-br from-[#eef4ff] to-[#dbe7ff]"></div>
+
+              <div class="absolute top-4 left-4 flex items-center gap-2">
+                <span class="bg-[#0d2b0f] text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg">
+                  NEWS
+                </span>
+                <span class="bg-white/95 text-[#1f4b99] px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg">
+                  {{ announcement.category }}
+                </span>
+              </div>
+
+              <div class="absolute top-4 right-4">
+                <span
+                  class="backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm border border-white/20"
+                  :style="{ background: '#0d2b0f', color: '#fff' }"
+                >
+                  {{ formatAnnouncementDate(announcement.created_at) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1">
+              <h3 class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800">
+                {{ announcement.headline }}
+              </h3>
+              <p class="text-gray-500 text-sm leading-relaxed line-clamp-3">
+                {{ announcement.content }}
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+
     </div>
+
+    <transition name="fade-modal">
+      <div v-if="activePreview" class="preview-overlay" @click="closePreview">
+        <article class="preview-card" @click.stop>
+          <button class="preview-close" type="button" @click="closePreview" aria-label="Close preview">×</button>
+
+          <div class="preview-head">
+            <span class="preview-badge" :style="activePreview.badgeStyle">
+              {{ activePreview.badgeLabel }}
+            </span>
+            <p class="preview-date">{{ activePreview.metaLabel }}: {{ formatFullDate(activePreview.metaDate) }}</p>
+          </div>
+
+          <h3 class="preview-title">{{ activePreview.title }}</h3>
+
+          <img
+            v-if="activePreview.imageUrl"
+            :src="activePreview.imageUrl"
+            :alt="activePreview.title"
+            class="preview-image"
+          />
+
+          <p v-if="activePreview.location" class="preview-extra">
+            <strong>Location:</strong> {{ activePreview.location }}
+          </p>
+
+          <p class="preview-content">{{ activePreview.content }}</p>
+        </article>
+      </div>
+    </transition>
 
     <!-- SCROLL TO TOP -->
     <Transition name="fade">
@@ -218,10 +335,24 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { supabase } from '@/lib/supabase'
 
+type PreviewItem = {
+  title: string
+  content: string
+  imageUrl: string | null
+  metaLabel: string
+  metaDate: string
+  location?: string
+  badgeLabel: string
+  badgeStyle: Record<string, string>
+}
+
 const events = ref<any[]>([])
+const generalAnnouncements = ref<any[]>([])
+const newsAnnouncements = ref<any[]>([])
 const selectedEventMonth = ref('All')
 const currentPinnedIndex = ref(0)
 const showScrollTop = ref(false)
+const activePreview = ref<PreviewItem | null>(null)
 let carouselTimer: any = null
 
 const months = [
@@ -240,31 +371,20 @@ const months = [
   'December',
 ]
 
+// Toggle mode: 'start_date' = schedule based, 'created_at' = upload based
 const pinnedMode = ref<'start_date' | 'created_at'>('start_date')
-
-/**
- * Format "HH:MM:SS" or "HH:MM" → "08:00 AM"
- * Returns empty string if null/undefined
- */
-const formatTime = (timeStr: string | null | undefined): string => {
-  if (!timeStr) return ''
-  const [hourStr, minuteStr] = timeStr.split(':')
-  const hour = parseInt(hourStr ?? '0', 10)
-  const minute = minuteStr || '00'
-  const period = hour >= 12 ? 'PM' : 'AM'
-  const h = hour % 12 || 12
-  return `${h}:${minute} ${period}`
-}
 
 const fetchEvents = async () => {
   try {
     const { data, error } = await supabase
       .from('events')
       .select('*')
+      .eq('type', 'announcement')
       .order('start_date', { ascending: false })
 
     if (error) throw error
 
+    // Map events
     events.value = (data || []).map((event, index) => {
       const date = new Date(event.start_date)
       return {
@@ -272,14 +392,14 @@ const fetchEvents = async () => {
         image: event.images,
         month: date.toLocaleString('en-US', { month: 'long' }),
         year: date.getFullYear().toString(),
-        // fallback time display for non-event types
         time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        pinned: index < 3,
+        pinned: index < 3, // carousel top 3
         isPinnedGrid: false,
         isLatest: index === 0,
       }
     })
 
+    // Decide pinned grid card based on pinnedMode
     if (events.value.length > 0) {
       let pinnedEvent: any
       if (pinnedMode.value === 'start_date') {
@@ -301,12 +421,136 @@ const fetchEvents = async () => {
   }
 }
 
+const splitNewsTitle = (rawTitle: string): { category: string; headline: string } => {
+  const match = rawTitle.match(/^\[([^\]]+)\]\s*(.*)$/)
+  if (!match) {
+    return { category: 'GENERAL', headline: rawTitle }
+  }
+
+  const category = (match[1] ?? 'GENERAL').trim().toUpperCase()
+  const headline = (match[2] ?? rawTitle).trim()
+  return { category, headline }
+}
+
+const formatAnnouncementDate = (dateStr: string): string => {
+  const date = new Date(dateStr)
+  if (Number.isNaN(date.getTime())) return 'N/A'
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+const formatFullDate = (dateStr: string): string => {
+  const date = new Date(dateStr)
+  if (Number.isNaN(date.getTime())) return 'N/A'
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+}
+
+const openEventPreview = (event: any) => {
+  activePreview.value = {
+    title: event.title ?? 'Event Announcement',
+    content: event.description ?? '',
+    imageUrl: event.image ?? event.images ?? null,
+    metaLabel: 'Event Date',
+    metaDate: event.start_date ?? event.created_at ?? '',
+    location: event.location ?? 'Library',
+    badgeLabel: 'EVENT ANNOUNCEMENT',
+    badgeStyle: {
+      backgroundColor: '#fff0c4',
+      color: '#8a4b00',
+    },
+  }
+}
+
+const openGeneralPreview = (announcement: any) => {
+  activePreview.value = {
+    title: announcement.title ?? 'General Announcement',
+    content: announcement.content ?? '',
+    imageUrl: announcement.image_url ?? null,
+    metaLabel: 'Posted',
+    metaDate: announcement.created_at ?? '',
+    badgeLabel: 'GENERAL ANNOUNCEMENT',
+    badgeStyle: {
+      backgroundColor: '#ebf5ec',
+      color: '#1b5e20',
+    },
+  }
+}
+
+const openNewsPreview = (announcement: any) => {
+  activePreview.value = {
+    title: announcement.headline ?? announcement.title ?? 'News',
+    content: announcement.content ?? '',
+    imageUrl: announcement.image_url ?? null,
+    metaLabel: 'Posted',
+    metaDate: announcement.created_at ?? '',
+    badgeLabel: `NEWS • ${announcement.category ?? 'GENERAL'}`,
+    badgeStyle: {
+      backgroundColor: '#dce9ff',
+      color: '#204a93',
+    },
+  }
+}
+
+const closePreview = () => {
+  activePreview.value = null
+}
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    closePreview()
+  }
+}
+
+const fetchGeneralAndNews = async () => {
+  try {
+    const [generalResult, newsResult] = await Promise.all([
+      supabase
+        .from('announcements')
+        .select('id, title, content, image_url, created_at, type')
+        .eq('type', 'general')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('announcements')
+        .select('id, title, content, image_url, created_at, type')
+        .eq('type', 'news')
+        .order('created_at', { ascending: false }),
+    ])
+
+    if (generalResult.error) throw generalResult.error
+    if (newsResult.error) throw newsResult.error
+
+    generalAnnouncements.value = (generalResult.data ?? []).map((item) => ({
+      id: item.id,
+      title: item.title ?? '',
+      content: item.content ?? '',
+      image_url: item.image_url ?? null,
+      created_at: item.created_at ?? '',
+    }))
+
+    newsAnnouncements.value = (newsResult.data ?? []).map((item) => {
+      const parsed = splitNewsTitle(item.title ?? '')
+      return {
+        id: item.id,
+        headline: parsed.headline,
+        category: parsed.category,
+        content: item.content ?? '',
+        image_url: item.image_url ?? null,
+        created_at: item.created_at ?? '',
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching general/news announcements:', error)
+    generalAnnouncements.value = []
+    newsAnnouncements.value = []
+  }
+}
+
 const pinnedEvents = computed(() => events.value.filter((e) => e.pinned))
 
 const filteredEvents = computed(() => {
   let list = events.value.filter(
     (e) => selectedEventMonth.value === 'All' || e.month === selectedEventMonth.value,
   )
+
   return list.sort((a, b) => {
     if (a.isLatest !== b.isLatest) return a.isLatest ? -1 : 1
     return new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
@@ -332,35 +576,38 @@ const stopCarousel = () => {
 const handleScroll = () => {
   showScrollTop.value = window.scrollY > 300
 }
+
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 onMounted(() => {
   fetchEvents()
+  fetchGeneralAndNews()
   window.addEventListener('scroll', handleScroll)
+  window.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
   stopCarousel()
   window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
 <style scoped>
-.section {
-  font-family: 'Poppins', sans-serif;
-}
 .section-title {
   width: min(100%, 1500px);
   margin: 8px auto 14px;
   text-align: center;
 }
+
 .section-kicker {
   display: inline-flex;
   align-items: center;
   gap: 14px;
 }
+
 .kicker-text {
   font-weight: 800;
   letter-spacing: 6px;
@@ -368,6 +615,7 @@ onUnmounted(() => {
   color: #003300;
   text-transform: uppercase;
 }
+
 .section-headline {
   margin: 10px 0 1%;
   font-weight: 900;
@@ -376,6 +624,7 @@ onUnmounted(() => {
   text-transform: uppercase;
 }
 
+/* Animations */
 @keyframes fadeSlideUp {
   to {
     opacity: 1;
@@ -441,9 +690,11 @@ onUnmounted(() => {
   }
 }
 
+/* Grid Shuffle */
 .shuffle-move {
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .shuffle-enter-active {
   transition: opacity 0.4s ease;
 }
@@ -481,6 +732,107 @@ onUnmounted(() => {
 }
 .fade-enter-from,
 .fade-leave-to {
+  opacity: 0;
+}
+
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+}
+
+.preview-card {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(88vh, 820px);
+  overflow-y: auto;
+  border-radius: 1.6rem;
+  background: #ffffff;
+  padding: 1.5rem 1.4rem;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+}
+
+.preview-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 999px;
+  background: #eef2ef;
+  color: #0d2b0f;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-right: 2.2rem;
+}
+
+.preview-badge {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.preview-date {
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.preview-title {
+  margin-top: 0.9rem;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 900;
+  line-height: 1.2;
+  color: #0d2b0f;
+}
+
+.preview-image {
+  margin-top: 1rem;
+  width: 100%;
+  max-height: 330px;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+
+.preview-extra {
+  margin-top: 1rem;
+  color: #374151;
+  font-size: 0.92rem;
+}
+
+.preview-content {
+  margin-top: 0.95rem;
+  white-space: pre-wrap;
+  color: #4b5563;
+  line-height: 1.8;
+}
+
+.fade-modal-enter-active,
+.fade-modal-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-modal-enter-from,
+.fade-modal-leave-to {
   opacity: 0;
 }
 </style>

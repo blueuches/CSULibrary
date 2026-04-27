@@ -24,7 +24,7 @@
 
         <h1 class="hero-title">
           <span class="hero-word-dark hero-underlined">Student</span>
-          <span class="hero-word-gold"> Enrollment</span>
+          <span class="hero-word-gold"> Information</span>
         </h1>
         <p class="hero-subtitle">Fill in all required fields to register a student record.</p>
       </header>
@@ -34,6 +34,22 @@
         <div class="form-wrapper">
 
           <form @submit.prevent="handleSubmit">
+
+            <!-- Student ID -->
+            <fieldset class="form-section">
+              <div class="field-grid two-col">
+                <div class="field-group">
+                  <label for="studentId">Student ID <span class="required">*</span></label>
+                  <input
+                    id="studentId"
+                    v-model="form.studentId"
+                    type="text"
+                    placeholder="e.g. 2023-12345"
+                    required
+                  />
+                </div>
+              </div>
+            </fieldset>
 
             <!-- Name Section -->
             <fieldset class="form-section">
@@ -61,7 +77,7 @@
                 <div class="field-group">
                   <label for="college">College <span class="required">*</span></label>
                   <div class="select-wrapper">
-                    <select id="college" v-model="form.college" required>
+                    <select id="college" v-model="form.college" required @change="form.program = ''">
                       <option value="" disabled>Select college</option>
                       <option value="CEGS">College of Engineering and Geo Science</option>
                       <option value="CCIS">College of Computing and Information Technology</option>
@@ -78,17 +94,17 @@
                 <div class="field-group">
                   <label for="program">Program <span class="required">*</span></label>
                   <div class="select-wrapper">
-                  <select id="program" v-model="form.program" required>
-                    <option value="" disabled>Select program</option>
-                    <option
-                      v-for="prog in filteredPrograms"
-                      :key="prog"
-                      :value="prog"
-                    >
-                      {{ prog }}
-                    </option>
-                  </select>
-                  <span class="select-icon">▾</span>
+                    <select id="program" v-model="form.program" required>
+                      <option value="" disabled>Select program</option>
+                      <option
+                        v-for="prog in filteredPrograms"
+                        :key="prog"
+                        :value="prog"
+                      >
+                        {{ prog }}
+                      </option>
+                    </select>
+                    <span class="select-icon">▾</span>
                   </div>
                 </div>
               </div>
@@ -122,21 +138,24 @@
 
             <!-- Actions -->
             <div class="form-actions">
-              <button type="button" class="btn-ghost" @click="resetForm">Reset</button>
-              <button type="submit" class="btn-primary">
-                <span>Save Student</span>
-                <span class="btn-arrow">→</span>
+              <button type="button" class="btn-ghost" @click="resetForm" :disabled="isLoading">Reset</button>
+              <button type="submit" class="btn-primary" :disabled="isLoading">
+                <span v-if="!isLoading">Save Student</span>
+                <span v-else>Saving...</span>
+                <span class="btn-arrow" v-if="!isLoading">→</span>
+                <span class="btn-spinner" v-else></span>
               </button>
             </div>
 
           </form>
 
-          <!-- Success Toast -->
+          <!-- Toast -->
           <transition name="toast">
-            <div v-if="showToast" class="toast">
-              ✓ Student record saved successfully!
+            <div v-if="toast.show" :class="['toast', toast.type === 'error' ? 'toast-error' : '']">
+              {{ toast.message }}
             </div>
           </transition>
+
         </div>
       </div>
 
@@ -145,14 +164,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
+import { createClient } from '@supabase/supabase-js'
 import Sidebar from "@/components/Sidebar.vue"
-import { computed } from 'vue'
 
-const filteredPrograms = computed(() => {
-  return programsByCollege[form.college] || []
-})
+// ── SUPABASE SETUP ─────────────────────────────────────────────
+const supabase = createClient(
+  'https://yorlzoraugqcntqlgswc.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlvcmx6b3JhdWdxY250cWxnc3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4Mjc2MDcsImV4cCI6MjA4ODQwMzYwN30._fAIwFyOH60KzAWlGIXOHxSoNSlfCwFM1gyNqK4vjSY'  // Replace with your Supabase anon/public key
+)
 
+// ── PROGRAMS BY COLLEGE ────────────────────────────────────────
 const programsByCollege: Record<string, string[]> = {
   'CEGS': [
     'BS Agricultural and Biosystem Engineering',
@@ -210,7 +232,9 @@ const genders = [
   { value: 'other', label: 'Other' },
 ]
 
+// ── FORM STATE ─────────────────────────────────────────────────
 const emptyForm = () => ({
+  studentId: '',
   firstName: '',
   middleName: '',
   lastName: '',
@@ -221,16 +245,50 @@ const emptyForm = () => ({
 })
 
 const form = reactive(emptyForm())
-const showToast = ref(false)
+const isLoading = ref(false)
+const toast = reactive({ show: false, message: '', type: 'success' })
 
+const filteredPrograms = computed(() => programsByCollege[form.college] || [])
+
+// ── HELPERS ────────────────────────────────────────────────────
 function resetForm() {
   Object.assign(form, emptyForm())
 }
 
-function handleSubmit() {
-  console.log('Student data:', { ...form })
-  showToast.value = true
-  setTimeout(() => (showToast.value = false), 3000)
+function showToast(message: string, type: 'success' | 'error' = 'success') {
+  toast.message = message
+  toast.type = type
+  toast.show = true
+  setTimeout(() => (toast.show = false), 3500)
+}
+
+// ── SUBMIT ─────────────────────────────────────────────────────
+async function handleSubmit() {
+  isLoading.value = true
+
+  try {
+    const { error } = await supabase.from('students').insert({
+      id_number: form.studentId,
+      first_name:  form.firstName.toUpperCase(),
+      middle_name: form.middleName ? form.middleName.toUpperCase() : null,
+      last_name:   form.lastName.toUpperCase(),
+      college:     form.college,
+      program:     form.program,
+      year_level:  Number(form.yearLevel),
+      gender:      form.gender.toUpperCase(),
+    })
+
+    if (error) throw error
+
+    showToast('✓ Student record saved successfully!')
+    resetForm()
+
+  } catch (err: any) {
+    console.error('Supabase error:', err)
+    showToast(`✗ ${err.message ?? 'Failed to save. Please try again.'}`, 'error')
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -368,6 +426,12 @@ select:focus {
   box-shadow: 0 0 0 3px rgba(13,43,15,0.1);
 }
 
+/* ── DISABLED STATE ── */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .select-wrapper { position: relative; }
 .select-wrapper select { cursor: pointer; padding-right: 2rem; }
 .select-icon {
@@ -450,7 +514,7 @@ select:focus {
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-ghost:hover { border-color: #0d2b0f; color: #0d2b0f; }
+.btn-ghost:hover:not(:disabled) { border-color: #0d2b0f; color: #0d2b0f; }
 
 .btn-primary {
   font-family: 'Poppins', sans-serif;
@@ -466,10 +530,23 @@ select:focus {
   align-items: center;
   gap: 0.5rem;
   transition: background 0.2s, transform 0.15s;
+  min-width: 130px;
+  justify-content: center;
 }
-.btn-primary:hover { background: #183d1b; transform: translateY(-1px); }
+.btn-primary:hover:not(:disabled) { background: #183d1b; transform: translateY(-1px); }
 .btn-arrow { transition: transform 0.2s; }
-.btn-primary:hover .btn-arrow { transform: translateX(3px); }
+.btn-primary:hover:not(:disabled) .btn-arrow { transform: translateX(3px); }
+
+/* ── SPINNER ── */
+.btn-spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
 
 /* ── TOAST ── */
 .toast {
@@ -487,6 +564,7 @@ select:focus {
   box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   z-index: 50;
 }
+.toast-error { background: #7f1d1d; }
 
 .toast-enter-active, .toast-leave-active { transition: all 0.3s ease; }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(-50%) translateY(10px); }
@@ -507,5 +585,8 @@ select:focus {
 @keyframes underlineGrow {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>
