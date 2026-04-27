@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue"
-import Sidebar from "@/components/Sidebar.vue"
-import { getAttendanceLogs } from "@/services/attendanceService"
-import { supabase } from "@/lib/supabase"
+import { ref, computed, onMounted, watch } from 'vue'
+import Sidebar from '@/components/Sidebar.vue'
+import { getAttendanceLogs } from '@/services/attendanceService'
+import { supabase } from '@/lib/supabase'
 
 type Student = {
   id_number?: string
@@ -27,22 +27,22 @@ type AttendanceLog = {
 const logs = ref<AttendanceLog[]>([])
 const totalRecords = ref(0)
 const loading = ref(false)
-const errorMessage = ref("")
+const errorMessage = ref('')
 
-const search = ref("")
-const selectedProgram = ref("")
-const selectedCollege = ref("")
-const selectedYearLevel = ref("")
-const selectedAttendanceType = ref("")
-const selectedStatus = ref("")
-const selectedDate = ref("")
+const search = ref('')
+const selectedProgram = ref('')
+const selectedCollege = ref('')
+const selectedYearLevel = ref('')
+const selectedAttendanceType = ref('')
+const selectedStatus = ref('')
+const selectedDate = ref('')
 
 const currentPage = ref(1)
 const itemsPerPage = 10
 
 const fetchAttendanceLogs = async () => {
   loading.value = true
-  errorMessage.value = ""
+  errorMessage.value = ''
 
   try {
     const result = await getAttendanceLogs({
@@ -67,12 +67,12 @@ const fetchAttendanceLogs = async () => {
     logs.value = result.data || []
     totalRecords.value = result.count || 0
   } catch (error: unknown) {
-    console.error("Failed to fetch attendance logs:", error)
+    console.error('Failed to fetch attendance logs:', error)
 
     if (error instanceof Error) {
       errorMessage.value = error.message
     } else {
-      errorMessage.value = "Failed to load attendance logs."
+      errorMessage.value = 'Failed to load attendance logs.'
     }
   } finally {
     loading.value = false
@@ -92,7 +92,7 @@ const normalizeStudent = (student: Student | Student[] | null | undefined): Stud
 }
 
 const formatDateTime = (value: string | null) => {
-  if (!value) return "--"
+  if (!value) return '--'
 
   return new Date(value).toLocaleString("en-PH", {
     timeZone: "Asia/Manila",
@@ -101,11 +101,17 @@ const formatDateTime = (value: string | null) => {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+  return new Date(value).toLocaleString('en-PH', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
   })
 }
 
 const getStatus = (log: AttendanceLog) => {
-  return log.time_out ? "Checked Out" : "Checked In"
+  return log.time_out ? 'Checked Out' : 'Checked In'
 }
 
 const uniquePrograms = computed(() => {
@@ -127,15 +133,13 @@ const uniqueColleges = computed(() => {
 const uniqueYearLevels = computed(() => {
   const values = logs.value
     .map((log) => normalizeStudent(log.students).year_level)
-    .filter((v) => v !== null && v !== undefined && v !== "") as (string | number)[]
+    .filter((v) => v !== null && v !== undefined && v !== '') as (string | number)[]
 
   return [...new Set(values.map(String))].sort((a, b) => Number(a) - Number(b))
 })
 
 const uniqueAttendanceTypes = computed(() => {
-  const values = logs.value
-    .map((log) => log.attendance_type)
-    .filter(Boolean) as string[]
+  const values = logs.value.map((log) => log.attendance_type).filter(Boolean) as string[]
 
   return [...new Set(values)].sort((a, b) => a.localeCompare(b))
 })
@@ -153,11 +157,47 @@ const hasActiveFilters = computed(() => {
 })
 
 const filteredLogs = computed(() => {
-  return logs.value
-})
+  return logs.value.filter((log) => {
+    const student = normalizeStudent(log.students)
 
-const paginatedLogs = computed(() => {
-  return logs.value
+    const fullName = `${student.first_name || ''} ${student.last_name || ''}`.trim().toLowerCase()
+
+    const idNumber = String(student.id_number || '').toLowerCase()
+    const program = String(student.program || '')
+    const college = String(student.college || '')
+    const yearLevel = String(student.year_level || '')
+    const attendanceType = String(log.attendance_type || '')
+    const status = getStatus(log)
+    const searchValue = search.value.trim().toLowerCase()
+
+    const logDate = log.time_in ? new Date(log.time_in).toISOString().slice(0, 10) : ''
+
+    const matchesSearch =
+      !searchValue || fullName.includes(searchValue) || idNumber.includes(searchValue)
+
+    const matchesProgram = !selectedProgram.value || program === selectedProgram.value
+
+    const matchesCollege = !selectedCollege.value || college === selectedCollege.value
+
+    const matchesYearLevel = !selectedYearLevel.value || yearLevel === selectedYearLevel.value
+
+    const matchesAttendanceType =
+      !selectedAttendanceType.value || attendanceType === selectedAttendanceType.value
+
+    const matchesStatus = !selectedStatus.value || status === selectedStatus.value
+
+    const matchesDate = !selectedDate.value || logDate === selectedDate.value
+
+    return (
+      matchesSearch &&
+      matchesProgram &&
+      matchesCollege &&
+      matchesYearLevel &&
+      matchesAttendanceType &&
+      matchesStatus &&
+      matchesDate
+    )
+  })
 })
 
 const totalPages = computed(() => {
@@ -188,8 +228,7 @@ watch(
   ],
   () => {
     currentPage.value = 1
-    fetchAttendanceLogs()
-  }
+  },
 )
 
 watch(currentPage, () => {
@@ -197,13 +236,13 @@ watch(currentPage, () => {
 })
 
 const clearFilters = () => {
-  search.value = ""
-  selectedProgram.value = ""
-  selectedCollege.value = ""
-  selectedYearLevel.value = ""
-  selectedAttendanceType.value = ""
-  selectedStatus.value = ""
-  selectedDate.value = ""
+  search.value = ''
+  selectedProgram.value = ''
+  selectedCollege.value = ''
+  selectedYearLevel.value = ''
+  selectedAttendanceType.value = ''
+  selectedStatus.value = ''
+  selectedDate.value = ''
   currentPage.value = 1
 }
 
@@ -214,82 +253,79 @@ const saveExportHistory = async (fileName: string, fileType: string, rowCount: n
     } = await supabase.auth.getUser()
 
     const exportedByName =
-      user?.user_metadata?.full_name ||
-      user?.user_metadata?.name ||
-      user?.email ||
-      "Unknown User"
+      user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || 'Unknown User'
 
-    const { error } = await supabase.from("export_batches").insert({
+    const { error } = await supabase.from('export_batches').insert({
       file_name: fileName,
       file_type: fileType,
       row_count: rowCount,
       uploaded_at: new Date().toISOString(),
       exported_by_name: exportedByName,
-      status: "success",
+      status: 'success',
     })
 
     if (error) {
-      console.error("Failed to save export history:", error)
+      console.error('Failed to save export history:', error)
       alert(`Failed to save export history: ${error.message}`)
     }
   } catch (error) {
-    console.error("Unexpected export history error:", error)
-    alert("Unexpected export history error. Check console.")
+    console.error('Unexpected export history error:', error)
+    alert('Unexpected export history error. Check console.')
   }
 }
 
 const exportToCSV = async () => {
   const headers = [
-    "ID Number",
-    "Student Name",
-    "Program",
-    "College",
-    "Year Level",
-    "Attendance Type",
-    "Time In",
-    "Time Out",
-    "Duration (mins)",
+    'ID Number',
+    'Student Name',
+    'Program',
+    'College',
+    'Year Level',
+    'Attendance Type',
+    'Time In',
+    'Time Out',
+    'Duration (mins)',
   ]
 
   const rows = filteredLogs.value.map((log) => {
     const student = normalizeStudent(log.students)
 
     return [
-      student.id_number || "",
-      `${student.first_name || ""} ${student.last_name || ""}`.trim(),
-      student.program || "",
-      student.college || "",
-      student.year_level || "",
-      log.attendance_type || "",
-      log.time_in ? formatDateTime(log.time_in) : "",
-      log.time_out ? formatDateTime(log.time_out) : "",
-      log.duration_minutes ?? "",
+      student.id_number || '',
+      `${student.first_name || ''} ${student.last_name || ''}`.trim(),
+      student.program || '',
+      student.college || '',
+      student.year_level || '',
+      log.attendance_type || '',
+      log.time_in ? formatDateTime(log.time_in) : '',
+      log.time_out ? formatDateTime(log.time_out) : '',
+      log.duration_minutes ?? '',
     ]
   })
 
   const csvContent = [headers, ...rows]
-    .map((row) =>
-      row
-        .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
-        .join(",")
-    )
-    .join("\n")
+    .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n')
 
   const fileName = `attendance-logs-${new Date().toISOString().slice(0, 10)}.csv`
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
 
-  const link = document.createElement("a")
+  const link = document.createElement('a')
   link.href = url
-  link.setAttribute("download", fileName)
+  link.setAttribute('download', fileName)
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
 
   URL.revokeObjectURL(url)
 
-  await saveExportHistory(fileName, "CSV", filteredLogs.value.length)
+  await saveExportHistory(fileName, 'CSV', filteredLogs.value.length)
+}
+
+const goToPrevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
 }
 </script>
 
@@ -326,6 +362,9 @@ const exportToCSV = async () => {
 
               <div class="heroUnderline"></div>
             </div>
+            <p class="hero-subtitle">
+              View and monitor attendance records by department, course, and time period.
+            </p>
           </div>
 
           <div class="toolbar">
@@ -333,11 +372,7 @@ const exportToCSV = async () => {
               <div class="stackCol">
                 <select v-model="selectedProgram" class="control selectControl">
                   <option value="">All Programs</option>
-                  <option
-                    v-for="program in uniquePrograms"
-                    :key="program"
-                    :value="program"
-                  >
+                  <option v-for="program in uniquePrograms" :key="program" :value="program">
                     {{ program }}
                   </option>
                 </select>
@@ -352,18 +387,17 @@ const exportToCSV = async () => {
               <div class="stackCol">
                 <select v-model="selectedCollege" class="control selectControl">
                   <option value="">All Colleges</option>
-                  <option
-                    v-for="college in uniqueColleges"
-                    :key="college"
-                    :value="college"
-                  >
+                  <option v-for="college in uniqueColleges" :key="college" :value="college">
                     {{ college }}
                   </option>
                 </select>
 
                 <button
                   @click="clearFilters"
-                  :class="['control actionBtn clearButton', { clearButtonActive: hasActiveFilters }]"
+                  :class="[
+                    'control actionBtn clearButton',
+                    { clearButtonActive: hasActiveFilters },
+                  ]"
                 >
                   Reset
                 </button>
@@ -371,25 +405,14 @@ const exportToCSV = async () => {
 
               <select v-model="selectedYearLevel" class="control selectControl narrow">
                 <option value="">All Year</option>
-                <option
-                  v-for="year in uniqueYearLevels"
-                  :key="year"
-                  :value="year"
-                >
+                <option v-for="year in uniqueYearLevels" :key="year" :value="year">
                   {{ year }}
                 </option>
               </select>
 
-              <select
-                v-model="selectedAttendanceType"
-                class="control selectControl medium"
-              >
+              <select v-model="selectedAttendanceType" class="control selectControl medium">
                 <option value="">All Types</option>
-                <option
-                  v-for="type in uniqueAttendanceTypes"
-                  :key="type"
-                  :value="type"
-                >
+                <option v-for="type in uniqueAttendanceTypes" :key="type" :value="type">
                   {{ type }}
                 </option>
               </select>
@@ -447,48 +470,42 @@ const exportToCSV = async () => {
 
                 <tbody>
                   <tr v-if="loading">
-                    <td colspan="9" class="empty">
-                      Loading attendance logs...
-                    </td>
+                    <td colspan="9" class="empty">Loading attendance logs...</td>
                   </tr>
 
                   <tr v-else-if="paginatedLogs.length === 0">
                     <td colspan="9" class="empty">
                       No attendance records found.
-                      <div class="emptyHint">
-                        Try changing your search or filter selection.
-                      </div>
+                      <div class="emptyHint">Try changing your search or filter selection.</div>
                     </td>
                   </tr>
 
-                  <tr
-                    v-for="log in paginatedLogs"
-                    :key="log.id"
-                  >
+                  <tr v-for="log in paginatedLogs" :key="log.id">
                     <td data-label="ID Number" class="strong">
-                      {{ normalizeStudent(log.students).id_number || "--" }}
+                      {{ normalizeStudent(log.students).id_number || '--' }}
                     </td>
 
                     <td data-label="Student Name">
                       {{
-                        `${normalizeStudent(log.students).first_name || ""} ${normalizeStudent(log.students).last_name || ""}`.trim() || "--"
+                        `${normalizeStudent(log.students).first_name || ''} ${normalizeStudent(log.students).last_name || ''}`.trim() ||
+                        '--'
                       }}
                     </td>
 
                     <td data-label="Program">
-                      {{ normalizeStudent(log.students).program || "--" }}
+                      {{ normalizeStudent(log.students).program || '--' }}
                     </td>
 
                     <td data-label="College">
-                      {{ normalizeStudent(log.students).college || "--" }}
+                      {{ normalizeStudent(log.students).college || '--' }}
                     </td>
 
                     <td data-label="Year Level">
-                      {{ normalizeStudent(log.students).year_level || "--" }}
+                      {{ normalizeStudent(log.students).year_level || '--' }}
                     </td>
 
                     <td data-label="Attendance Type">
-                      {{ log.attendance_type || "--" }}
+                      {{ log.attendance_type || '--' }}
                     </td>
 
                     <td data-label="Time In">
@@ -500,7 +517,7 @@ const exportToCSV = async () => {
                     </td>
 
                     <td data-label="Duration" class="muted">
-                      {{ log.duration_minutes !== null && log.duration_minutes !== undefined ? `${log.duration_minutes} mins` : "--" }}
+                      {{ log.duration_minutes ? `${log.duration_minutes} mins` : '--' }}
                     </td>
                   </tr>
                 </tbody>
@@ -512,22 +529,19 @@ const exportToCSV = async () => {
                 Tip: Use the filters and search to narrow down records faster.
               </div>
 
-              <div class="pager" v-if="totalRecords > itemsPerPage">
-                <button
-                  v-if="currentPage > 1"
-                  class="pagerBtn"
-                  @click="goToPreviousPage"
+              <div class="pager" v-if="filteredLogs.length > itemsPerPage">
+                <div
+                  class="pager"
+                  v-if="filteredLogs.length > itemsPerPage"
+                  style="display: flex; gap: 6px"
                 >
-                  Previous
-                </button>
-
-                <button
-                  v-if="currentPage < totalPages"
-                  class="pagerBtn"
-                  @click="goToNextPage"
-                >
-                  Next
-                </button>
+                  <button v-if="currentPage > 1" class="pagerBtn" @click="goToPrevPage">
+                    Prev
+                  </button>
+                  <button v-if="currentPage < totalPages" class="pagerBtn" @click="goToNextPage">
+                    Next
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -600,7 +614,7 @@ const exportToCSV = async () => {
 }
 
 .heroTitlePrimary {
-  color: #003b0f;
+  color: #0d2b0f;
 }
 
 .heroTitleAccent {
@@ -609,7 +623,7 @@ const exportToCSV = async () => {
 
 .heroUnderline {
   margin-top: 14px;
-  width: 150px;
+  width: 250px;
   height: 4px;
   border-radius: 2px;
   background: linear-gradient(90deg, #214b1f 0%, #c49317 100%);
@@ -828,7 +842,7 @@ const exportToCSV = async () => {
   border: 1px solid var(--border);
   background:
     radial-gradient(900px circle at 18% 18%, rgba(34, 197, 94, 0.14), transparent 60%),
-    radial-gradient(700px circle at 85% 35%, rgba(16, 185, 129, 0.10), transparent 62%),
+    radial-gradient(700px circle at 85% 35%, rgba(16, 185, 129, 0.1), transparent 62%),
     linear-gradient(180deg, #f4fbf6 0%, #eef8f1 55%, #ffffff 100%);
   scrollbar-width: none;
 }
@@ -905,6 +919,14 @@ const exportToCSV = async () => {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 6px 2px;
+}
+
+.hero-subtitle {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-top: 10px;
+  animation: fadeIn 0.6s ease 0.55s both;
 }
 
 .footText {

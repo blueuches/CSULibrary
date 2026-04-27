@@ -1,6 +1,5 @@
 <template>
   <div class="flex min-h-screen bg-gray-50">
-
     <!-- SIDEBAR -->
     <div class="sticky top-0 h-screen">
       <Sidebar />
@@ -8,29 +7,32 @@
 
     <!-- MAIN CONTENT -->
     <div class="flex-1 py-10 px-6 md:pl-8 md:pr-16" style="font-family: 'Poppins', sans-serif">
-
       <!-- HEADER -->
       <header class="mb-10">
-        <div class="header-breadcrumb">
-          <span>Admin</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="inline-block w-4 h-4 mx-2">
-            <path d="M9 5l7 7-7 7"/>
-          </svg>
-          <span>Website Management</span>
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div class="header-breadcrumb !mb-0">
+            <span>Admin</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>Website Management</span>
+          </div>
         </div>
 
-        <h1 class="text-3xl font-black">
-          Website <span class="text-yellow-500">Overview</span>
+        <h1
+          class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+        >
+          <span
+            class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[170px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+            >Website</span
+          ><span class="text-yellow-500"> Overview</span>
         </h1>
 
-        <p class="text-gray-600">
-          Manage website content and system modules
-        </p>
+        <p class="header-sub">Manage website content and system modules</p>
       </header>
 
       <!-- GRID BUTTONS -->
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
         <!-- WEBSITE MEDIA -->
         <div @click="goTo('website')" class="card">
           <h3>Website Media</h3>
@@ -72,9 +74,7 @@
           <h3>About Us</h3>
           <p>Manage Library's About displayed in the website</p>
         </div>
-
       </div>
-
     </div>
   </div>
 </template>
@@ -100,7 +100,8 @@ const goTo = (name: string) => {
   padding: 24px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 2px solid #164d23;
 }
 
 .card h3 {
@@ -117,9 +118,10 @@ const goTo = (name: string) => {
 /* HOVER EFFECT */
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-  background: #0B2010;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  background: #0b2010;
   color: white;
+  border-color: #0b2010;
 }
 
 .card:hover p {
@@ -136,6 +138,14 @@ const goTo = (name: string) => {
   transform: none;
   background: white;
   color: inherit;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.header-sub {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-top: 8px;
+  animation: fadeIn 0.6s ease 0.55s both;
 }
 </style>

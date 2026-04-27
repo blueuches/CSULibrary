@@ -62,6 +62,7 @@ import ManageAssignation from '@/views/Admin/AdminManagement/ManageAssignation.v
 import ManagePermission from '@/views/Admin/AdminManagement/ManagePermission.vue'
 import ManageRoles from '@/views/Admin/AdminManagement/ManageRoles.vue'
 import ViewUsers from '@/views/Admin/AdminManagement/ViewUsers.vue'
+import BackupSettings from '@/views/Admin/AdminManagement/BackupSettings.vue'
 import Developers from '@/views/Developers.vue'
 
 const router = createRouter({
@@ -129,6 +130,7 @@ const router = createRouter({
     { path: '/admin/management/roles', name: 'admin-management-roles', component: ManageRoles, meta: { requiresAuth: true }  }, 
     { path: '/admin/management/assignation', name: 'admin-management-assignation', component: ManageAssignation, meta: { requiresAuth: true }  }, 
     { path: '/admin/management/permission', name: 'admin-management-permission', component: ManagePermission, meta: { requiresAuth: true }  }, 
+    { path: '/admin/settings/backup', name: 'admin-settings-backup', component: BackupSettings, meta: { requiresAdmin: true, requiresAuth: true } }, 
 
   ],
    scrollBehavior(to, from, savedPosition) {

@@ -15,29 +15,35 @@
     </transition>
 
     <main class="report-root flex-1 overflow-y-auto">
-      <header class="report-header intro-header">
-        <div class="header-left">
-          <div class="header-breadcrumb !mb-2">
-            <span
-              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/announcement')"
-              >BACK</span
-            >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 5l7 7-7 7" />
-            </svg>
-
-            <span>GENERAL ANNOUNCEMENTS</span>
-          </div>
-          <h1 class="header-title intro-title">
-            General <span class="text-yellow-500">Announcement</span>
-          </h1>
-          <p class="header-sub">Create a new general announcement to share with the community.</p>
+      <div class="flex flex-col">
+        <div
+          class="flex items-center gap-1.5 leading-none text-[0.68rem] font-bold tracking-[0.15em] uppercase text-[rgba(13,43,15,0.4)]"
+        >
+          <span
+            class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+            @click="$router.push('/admin/announcement')"
+            >BACK</span
+          >
+          <svg class="w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+          <span>GENERAL ANNOUNCEMENTS</span>
         </div>
-      </header>
+        <h1
+          class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+        >
+          <span
+            class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[160px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+            >General</span
+          ><span class="text-yellow-500"> Announcements</span>
+        </h1>
+        <p class="text-sm text-[rgba(13,43,15,0.5)]">
+          Create a new general announcement to share with the community.
+        </p>
+      </div>
 
       <!-- Form Section -->
-      <div class="max-w-4xl mx-auto px-4 pb-16">
+      <div class="max-w-4xl mx-auto mt-10 px-4 pb-16">
         <form @submit.prevent="submitForm" class="space-y-6">
           <!-- Announcement Title -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
@@ -438,7 +444,11 @@ const submitForm = async () => {
       if (insertError) throw insertError
     }
 
-    showToast(isEditing.value ? 'General announcement updated successfully!' : 'General announcement published successfully!')
+    showToast(
+      isEditing.value
+        ? 'General announcement updated successfully!'
+        : 'General announcement published successfully!',
+    )
     setTimeout(() => {
       router.push('/admin/announcement')
     }, 400)

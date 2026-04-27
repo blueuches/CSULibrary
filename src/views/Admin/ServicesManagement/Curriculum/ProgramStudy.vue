@@ -5,21 +5,27 @@
     <main class="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
       <header class="report-header intro-header">
         <div class="header-left">
-          <div class="header-breadcrumb !mb-2">
+          <div class="header-breadcrumb !mb-0">
             <span
               class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-              @click="$router.push('/admin/services/curriculum/curriculum-info')"
-              >BACK</span
+              @click="$router.push('/admin/services/curriculum')"
             >
+              BACK
+            </span>
+
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M9 5l7 7-7 7" />
             </svg>
 
             <span>Curriculum</span>
           </div>
-          <h1 class="header-title intro-title">
-            <span class="text-[#0d2b0f]">Program</span>
-            <span class="text-yellow-500"> Study</span>
+          <h1
+            class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+          >
+            <span
+              class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[170px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+              >Program</span
+            ><span class="text-yellow-500"> Study</span>
           </h1>
           <p class="header-sub">
             Create a new curriculum information to share with the academic community.
@@ -169,12 +175,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
 import { useCurriculumData } from '@/composables/useCurriculumData'
 import type { ProgramStudyPlanRow } from '@/types/Curriculum'
 
 const route = useRoute()
+const router = useRouter()
 
 const {
   activeProgramId,
@@ -261,6 +268,21 @@ const getSemesterBlockData = (year: number, semester: number): SemesterBlock => 
   )
 }
 
+const goBackToCurriculumInfo = async (): Promise<void> => {
+  if (!activeProgramId.value) {
+    await router.push({ name: 'services-curriculum' })
+    return
+  }
+
+  await router.push({
+    name: 'curriculum-info-dynamic',
+    params: {
+      programId: activeProgramId.value,
+      ...(activeSpecializationId.value ? { specializationId: activeSpecializationId.value } : {}),
+    },
+  })
+}
+
 onMounted(() => {
   void fetchCurriculumData(route, { allowAllStudyPlans: true })
 })
@@ -274,7 +296,11 @@ watch(
 </script>
 
 <style scoped>
-/* We keep this empty to avoid conflicting with Tailwind. 
-  All margins, padding, and widths are handled via utility classes above.
-*/
+.header-sub {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-top: 20px;
+  animation: fadeIn 0.6s ease 0.55s both;
+}
 </style>

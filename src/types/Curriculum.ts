@@ -8,13 +8,6 @@ export interface SemesterCurriculum {
   subjects: CurriculumSubject[]
 }
 
-export interface CollegeCurriculum {
-  code: string
-  name: string
-  programs: ProgramCurriculum[]
-  note?: string
-}
-
 export interface CurriculumData {
   id: string
   program_id?: string
@@ -116,6 +109,18 @@ export interface ProgramStudyPlanRow {
   subject_code?: string | null
   subject_title?: string | null
   units?: number | null
+  courses?:
+    | {
+        id: string
+        course_code?: string | null
+        course_title?: string | null
+      }
+    | Array<{
+        id: string
+        course_code?: string | null
+        course_title?: string | null
+      }>
+    | null
 }
 
 
@@ -124,6 +129,7 @@ export interface CollegeCurriculum {
   code: string
   name: string
   programs: ProgramCurriculum[]
+  note?: string
 }
 
 export interface ProgramCurriculum {

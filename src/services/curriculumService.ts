@@ -206,7 +206,6 @@ export const getCurriculums = async (): Promise<CurriculumData[]> => {
       supabase
         .from('programs')
         .select('id, program_name, created_at, college_id, colleges(code, name), curricula(id, effectivity_term, created_at), program_specializations(id, program_id, program_sp_name, program_sp_code)')
-        .eq('is_active', true)
         .order('program_name', { ascending: true }),
     ])
 
@@ -244,7 +243,6 @@ export const getCurriculumsByCollege = async (collegeCode: string): Promise<Curr
   const { data: programsData, error: programsError } = await supabase
     .from('programs')
     .select('id, program_name, created_at, college_id, colleges(code, name), curricula(id, effectivity_term, created_at), program_specializations(id, program_id, program_sp_name, program_sp_code)')
-    .eq('is_active', true)
     .eq('college_id', collegeData.id)
     .order('program_name', { ascending: true })
 
@@ -285,7 +283,7 @@ export const transformCurriculumsToCollege = (curriculumData: CurriculumData[]):
       continue
     }
 
-    let program = college.programs.find((p) => p.name === item.program_name)
+    let program = college.programs.find((p) => p.id === (item.program_id || `${item.college_code}-${item.program_name}`))
 
     // Create program if it doesn't exist
     if (!program) {
@@ -326,14 +324,15 @@ export const getCurriculumDetailByProgramId = async (
   programId: string,
   specializationId?: string | null,
 ): Promise<CurriculumDetail | null> => {
-  let curriculumQuery = supabase
-    .from(CURRICULA_TABLE)
-    .select('id, program_id, revision_year, revision_no, legal_basis, effectivity_term, description, created_at, program_specialization_id')
-    .eq('program_id', programId)
+  const curriculumSelect =
+    'id, program_id, revision_year, revision_no, legal_basis, effectivity_term, description, created_at, program_specialization_id'
 
-  if (specializationId) {
-    curriculumQuery = curriculumQuery.eq('program_specialization_id', specializationId)
-  }
+  const curriculumQuery = specializationId
+    ? supabase
+        .from(CURRICULA_TABLE)
+        .select(curriculumSelect)
+        .eq('program_specialization_id', specializationId)
+    : supabase.from(CURRICULA_TABLE).select(curriculumSelect).eq('program_id', programId)
 
   const { data: curriculumData, error: curriculumError } = await curriculumQuery
     .order('revision_year', { ascending: false })
@@ -606,30 +605,29 @@ export const getProgramStudyPlans = async (
   programSpecializationId?: string | null,
 ): Promise<ProgramStudyPlanRow[]> => {
   // First, get the curriculum for this program/specialization
-  let curriculumQuery = supabase
-    .from('curricula')
-    .select('id')
-    .eq('program_id', programId)
+  const curriculumQuery = programSpecializationId
+    ? supabase
+        .from('curricula')
+        .select('id')
+        .eq('program_specialization_id', programSpecializationId)
+    : supabase.from('curricula').select('id').eq('program_id', programId)
 
-  if (programSpecializationId) {
-    curriculumQuery = curriculumQuery.eq('program_specialization_id', programSpecializationId)
+  const { data: curriculumList, error: curriculumError } = await curriculumQuery
+    .order('revision_year', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(1)
+
+  if (curriculumError) {
+    console.error('Error fetching curriculum for study plans:', curriculumError)
+    return []
   }
 
-const { data: curriculumList, error: curriculumError } = await curriculumQuery
-  .order('revision_year', { ascending: false })
-  .limit(1)
+  const curriculumData = curriculumList?.[0]
 
-if (curriculumError) {
-  console.error('Error fetching curriculum for study plans:', curriculumError)
-  return []
-}
-
-const curriculumData = curriculumList?.[0]
-
-if (!curriculumData) {
-  console.warn(`No curriculum found for programId: ${programId}`)
-  return []
-}
+  if (!curriculumData) {
+    console.warn(`No curriculum found for programId: ${programId}`)
+    return []
+  }
 
   // Now fetch the study plan with course details
   const { data: studyPlanData, error: studyPlanError } = await supabase
@@ -637,11 +635,12 @@ if (!curriculumData) {
     .select(`
       id,
       curriculum_id,
+      course_id,
       year_level,
       semester,
       display_order,
       type,
-      course:courses(id, course_code, course_title)
+      courses(id, course_code, course_title)
     `)
     .eq('curriculum_id', curriculumData.id)
     .order('year_level', { ascending: true })
@@ -653,19 +652,83 @@ if (!curriculumData) {
     return []
   }
 
-  console.log('CURRICULUM:', curriculumData)
-console.log('STUDY PLAN:', studyPlanData)
+  const transformedData: ProgramStudyPlanRow[] = ((studyPlanData as Array<Record<string, unknown>> | null) ?? []).map((row) => {
+    const relatedCourseValue = (row.courses ?? row.course) as
+      | { course_code?: string | null; course_title?: string | null }
+      | Array<{ course_code?: string | null; course_title?: string | null }>
+      | null
+      | undefined
+    const relatedCourse = Array.isArray(relatedCourseValue)
+      ? (relatedCourseValue[0] ?? null)
+      : (relatedCourseValue ?? null)
 
-  // Transform the data to flatten course info
-const transformedData: ProgramStudyPlanRow[] = (studyPlanData ?? []).map((row: any) => ({
-  id: row.id,
-  program_id: programId,
-  year_level: row.year_level,
-  semester: row.semester,
-  display_order: row.display_order,
-  course_code: row.course?.course_code ?? null,
-  course_title: row.course?.course_title ?? null,
-}))
+    return {
+      id: String(row.id ?? ''),
+      program_id: programId,
+      year_level: Number(row.year_level ?? 0),
+      semester: Number(row.semester ?? 0),
+      display_order: Number(row.display_order ?? 0),
+      course_code: relatedCourse?.course_code ?? null,
+      course_title: relatedCourse?.course_title ?? null,
+    }
+  })
+
+  const missingCourseRows = ((studyPlanData as Array<Record<string, unknown>> | null) ?? [])
+    .map((row, index) => ({
+      index,
+      courseId: typeof row.course_id === 'string' ? row.course_id : null,
+    }))
+    .filter(({ index, courseId }) => {
+      if (!courseId) {
+        return false
+      }
+
+      const transformed = transformedData[index]
+      if (!transformed) {
+        return false
+      }
+
+      return !transformed.course_code || !transformed.course_title
+    })
+
+  if (missingCourseRows.length) {
+    const uniqueCourseIds = Array.from(new Set(missingCourseRows.map((item) => item.courseId).filter(Boolean))) as string[]
+    const { data: fallbackCourses, error: fallbackCoursesError } = await supabase
+      .from('courses')
+      .select('id, course_code, course_title')
+      .in('id', uniqueCourseIds)
+
+    if (!fallbackCoursesError) {
+      const courseById = new Map(
+        ((fallbackCourses as Array<{ id: string; course_code: string | null; course_title: string | null }> | null) ?? []).map((course) => [
+          course.id,
+          course,
+        ]),
+      )
+
+      for (const { index, courseId } of missingCourseRows) {
+        if (!courseId) {
+          continue
+        }
+
+        const existingRow = transformedData[index]
+        if (!existingRow) {
+          continue
+        }
+
+        const fallbackCourse = courseById.get(courseId)
+        if (!fallbackCourse) {
+          continue
+        }
+
+        transformedData[index] = {
+          ...existingRow,
+          course_code: existingRow.course_code || fallbackCourse.course_code,
+          course_title: existingRow.course_title || fallbackCourse.course_title,
+        }
+      }
+    }
+  }
 
   return transformedData
 }

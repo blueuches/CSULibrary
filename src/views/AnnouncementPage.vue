@@ -68,7 +68,25 @@
                 >
                   <span>{{ event.location }}</span>
                   <span class="w-1 h-1 bg-white/20 rounded-full"></span>
-                  <span class="text-white/60">{{ event.time }}</span>
+                  <!-- Show duration if event type has time_start & time_end, else show date time -->
+                  <span
+                    v-if="event.type === 'event' && event.time_start"
+                    class="text-white/60 flex items-center gap-1"
+                  >
+                    <svg
+                      class="w-3 h-3"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 6v6l4 2" />
+                    </svg>
+                    {{ formatTime(event.time_start ?? null) }} —
+                    {{ formatTime(event.time_end ?? null) }}
+                  </span>
+                  <span v-else class="text-white/60">{{ event.time }}</span>
                 </div>
               </div>
             </div>
@@ -97,7 +115,7 @@
                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
 
-              <!-- Pinned Badge sa Grid -->
+              <!-- Pinned Badge -->
               <div class="absolute top-4 left-4" v-if="event.isPinnedGrid">
                 <div
                   class="bg-yellow-400 text-green-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter shadow-lg border border-yellow-500"
@@ -106,6 +124,7 @@
                 </div>
               </div>
 
+              <!-- Type Badge -->
               <div class="absolute top-4 right-4">
                 <div
                   class="backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase shadow-sm border border-white/20"
@@ -120,12 +139,34 @@
               class="space-y-3 transform transition-transform duration-500 group-hover:translate-x-1"
             >
               <div
-                class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest"
+                class="flex items-center gap-2 text-yellow-600 text-[10px] font-black uppercase tracking-widest flex-wrap"
               >
                 <span>{{ event.location }}</span>
                 <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-                <span class="text-gray-400 font-bold">{{ event.time }}</span>
+
+                <!-- EVENT TYPE: show time_start — time_end -->
+                <span
+                  v-if="event.type === 'event' && event.time_start"
+                  class="text-gray-500 font-bold flex items-center gap-1"
+                >
+                  <svg
+                    class="w-3 h-3"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 6v6l4 2" />
+                  </svg>
+                  {{ formatTime(event.time_start ?? null) }} —
+                  {{ formatTime(event.time_end ?? null) }}
+                </span>
+
+                <!-- NEWS / ANNOUNCEMENT: show null (nothing) or just the date time -->
+                <span v-else class="text-gray-400 font-bold">{{ event.time }}</span>
               </div>
+
               <h3
                 class="text-xl font-extrabold text-gray-900 transition-colors group-hover:text-green-800"
               >
@@ -144,7 +185,6 @@
           No events scheduled for {{ selectedEventMonth }}.
         </p>
       </div>
-
     </div>
 
     <!-- SCROLL TO TOP -->
@@ -200,20 +240,31 @@ const months = [
   'December',
 ]
 
-// Toggle mode: 'start_date' = schedule based, 'created_at' = upload based
 const pinnedMode = ref<'start_date' | 'created_at'>('start_date')
+
+/**
+ * Format "HH:MM:SS" or "HH:MM" → "08:00 AM"
+ * Returns empty string if null/undefined
+ */
+const formatTime = (timeStr: string | null | undefined): string => {
+  if (!timeStr) return ''
+  const [hourStr, minuteStr] = timeStr.split(':')
+  const hour = parseInt(hourStr ?? '0', 10)
+  const minute = minuteStr || '00'
+  const period = hour >= 12 ? 'PM' : 'AM'
+  const h = hour % 12 || 12
+  return `${h}:${minute} ${period}`
+}
 
 const fetchEvents = async () => {
   try {
     const { data, error } = await supabase
       .from('events')
       .select('*')
-      .eq('type', 'announcement')
       .order('start_date', { ascending: false })
 
     if (error) throw error
 
-    // Map events
     events.value = (data || []).map((event, index) => {
       const date = new Date(event.start_date)
       return {
@@ -221,14 +272,14 @@ const fetchEvents = async () => {
         image: event.images,
         month: date.toLocaleString('en-US', { month: 'long' }),
         year: date.getFullYear().toString(),
+        // fallback time display for non-event types
         time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        pinned: index < 3, // carousel top 3
+        pinned: index < 3,
         isPinnedGrid: false,
         isLatest: index === 0,
       }
     })
 
-    // Decide pinned grid card based on pinnedMode
     if (events.value.length > 0) {
       let pinnedEvent: any
       if (pinnedMode.value === 'start_date') {
@@ -256,14 +307,12 @@ const filteredEvents = computed(() => {
   let list = events.value.filter(
     (e) => selectedEventMonth.value === 'All' || e.month === selectedEventMonth.value,
   )
-
   return list.sort((a, b) => {
     if (a.isLatest !== b.isLatest) return a.isLatest ? -1 : 1
     return new Date(b.start_date).getTime() - new Date(a.start_date).getTime()
   })
 })
 
-// CAROUSEL CONTROLS
 const nextPinned = () => {
   if (pinnedEvents.value.length === 0) return
   currentPinnedIndex.value = (currentPinnedIndex.value + 1) % pinnedEvents.value.length
@@ -283,7 +332,6 @@ const stopCarousel = () => {
 const handleScroll = () => {
   showScrollTop.value = window.scrollY > 300
 }
-
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
@@ -300,35 +348,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Base Fonts & Transitions */
-.section {
-  font-family: 'Poppins', sans-serif;
-}
-
-.section-title {
-  width: min(100%, 1500px);
-  margin: 8px auto 14px;
-  text-align: center;
-}
-.section-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-}
-.kicker-text {
-  font-weight: 800;
-  letter-spacing: 6px;
-  font-size: 0.7rem;
-  color: #0d2b0f;
-  text-transform: uppercase;
-}
-.section-headline {
-  margin: 10px 0 1%;
-  font-weight: 900;
-  font-size: clamp(1.6rem, 5vw, 3.3rem);
-  color: #0d2b0f;
-  text-transform: uppercase;
-}
 .section {
   font-family: 'Poppins', sans-serif;
 }
@@ -357,7 +376,6 @@ onUnmounted(() => {
   text-transform: uppercase;
 }
 
-/* Animations */
 @keyframes fadeSlideUp {
   to {
     opacity: 1;
@@ -423,7 +441,6 @@ onUnmounted(() => {
   }
 }
 
-/* Grid Shuffle */
 .shuffle-move {
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
