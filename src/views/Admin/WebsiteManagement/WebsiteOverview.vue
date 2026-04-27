@@ -22,9 +22,13 @@
             </svg>
             <span>WEBSITE MANAGEMENT</span>
           </div>
-
-          <h1 class="header-title text-3xl font-black">
-            Web <span class="text-yellow-500">Overview</span>
+          <h1
+            class="-mt-3 text-[clamp(1.8rem,3vw,2.6rem)] font-black mb-5 tracking-[-0.03em] opacity-0 translate-y-2.5 [animation:titleFade_0.6s_ease_forwards_0.2s]"
+          >
+            <span
+              class="relative inline-block after:content-[''] after:absolute after:bottom-[2px] after:left-0 after:w-[260px] after:h-1 after:rounded-sm after:bg-[linear-gradient(90deg,#0d2b0f_0%,#1b5e20_20%,#f9a825_100%)]"
+              >Web Images</span
+            ><span class="text-yellow-500"> Overview</span>
           </h1>
 
           <p class="header-sub text-gray-600">Manage website visuals and assets</p>

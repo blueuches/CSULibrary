@@ -4,23 +4,20 @@
 
     <main class="page-root">
       <header class="hero">
-        <div class="header-breadcrumb">
-          <span>Admin</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="crumb-arrow">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span>Settings</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="crumb-arrow">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span>Backup</span>
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div class="header-breadcrumb !mb-3">
+            <span>Admin</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>Settings Backup</span>
+          </div>
         </div>
 
-        <h1 class="hero-title">
-          <span class="hero-word-dark">System</span>
-          <span class="hero-word-gold"> Backup</span>
-        </h1>
-        <p class="hero-subtitle">Read-only export of database tables and storage files into one ZIP archive.</p>
+        <h1 class="header-title intro-title">System <span class="text-yellow-500">Backup</span></h1>
+        <p class="hero-subtitle">
+          Read-only export of database tables and storage files into one ZIP archive.
+        </p>
       </header>
 
       <section class="backup-grid">
@@ -58,7 +55,9 @@
 
         <article class="backup-card stat-card">
           <p class="stat-label">Tables Exported</p>
-          <p class="stat-value">{{ completedTables }} <span>/ {{ totalTables }}</span></p>
+          <p class="stat-value">
+            {{ completedTables }} <span>/ {{ totalTables }}</span>
+          </p>
         </article>
 
         <article class="backup-card stat-card">
@@ -170,7 +169,9 @@ const handleTabChange = (_tab: string) => {
 .hero-subtitle {
   margin: 10px 0 0;
   color: #4f6755;
-  font: 500 0.96rem/1.6 'DM Sans', sans-serif;
+  font:
+    500 0.96rem/1.6 'DM Sans',
+    sans-serif;
   max-width: 640px;
 }
 
@@ -218,7 +219,9 @@ const handleTabChange = (_tab: string) => {
 .stage-pill {
   padding: 6px 12px;
   border-radius: 999px;
-  font: 700 0.73rem/1 'DM Sans', sans-serif;
+  font:
+    700 0.73rem/1 'DM Sans',
+    sans-serif;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   border: 1px solid transparent;
@@ -264,10 +267,14 @@ const handleTabChange = (_tab: string) => {
   padding: 12px 20px;
   color: #ffffff;
   background: linear-gradient(135deg, #0d2b0f, #1e4f24);
-  font: 700 0.86rem/1 'DM Sans', sans-serif;
+  font:
+    700 0.86rem/1 'DM Sans',
+    sans-serif;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .backup-btn:hover:not(:disabled) {
@@ -283,7 +290,9 @@ const handleTabChange = (_tab: string) => {
 .status-text {
   margin: 0;
   color: #4b5f50;
-  font: 600 0.88rem/1.4 'DM Sans', sans-serif;
+  font:
+    600 0.88rem/1.4 'DM Sans',
+    sans-serif;
 }
 
 .meter-wrap {
@@ -296,7 +305,9 @@ const handleTabChange = (_tab: string) => {
   align-items: center;
   margin-bottom: 6px;
   color: #516756;
-  font: 600 0.8rem/1 'DM Sans', sans-serif;
+  font:
+    600 0.8rem/1 'DM Sans',
+    sans-serif;
 }
 
 .meter-track {
@@ -317,7 +328,9 @@ const handleTabChange = (_tab: string) => {
 .error-text {
   margin: 12px 0 0;
   color: #b91c1c;
-  font: 600 0.86rem/1.45 'DM Sans', sans-serif;
+  font:
+    600 0.86rem/1.45 'DM Sans',
+    sans-serif;
 }
 
 .stat-card {
@@ -327,7 +340,9 @@ const handleTabChange = (_tab: string) => {
 .stat-label {
   margin: 0;
   color: #5d7461;
-  font: 700 0.72rem/1 'DM Sans', sans-serif;
+  font:
+    700 0.72rem/1 'DM Sans',
+    sans-serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -335,7 +350,9 @@ const handleTabChange = (_tab: string) => {
 .stat-value {
   margin: 10px 0 0;
   color: #102813;
-  font: 800 1.7rem/1.1 'Poppins', sans-serif;
+  font:
+    800 1.7rem/1.1 'Poppins',
+    sans-serif;
 }
 
 .stat-value span {
@@ -376,7 +393,9 @@ const handleTabChange = (_tab: string) => {
   padding: 6px 10px;
   background: #fff5d7;
   color: #8a5a08;
-  font: 700 0.72rem/1 'DM Sans', sans-serif;
+  font:
+    700 0.72rem/1 'DM Sans',
+    sans-serif;
 }
 
 .warn-list {
@@ -387,7 +406,9 @@ const handleTabChange = (_tab: string) => {
 .warn-list li {
   margin-bottom: 8px;
   color: #6e4d19;
-  font: 500 0.84rem/1.5 'DM Sans', sans-serif;
+  font:
+    500 0.84rem/1.5 'DM Sans',
+    sans-serif;
 }
 
 .warn-source {
