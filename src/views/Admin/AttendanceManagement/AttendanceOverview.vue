@@ -226,7 +226,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
@@ -274,10 +274,25 @@ type ExportLogView = {
   fileName: string
 }
 
-const logs = ref<AttendanceLog[]>([])
 const loading = ref(false)
 const barsVisible = ref(false)
 const exportLogs = ref<ExportLogView[]>([])
+
+const totalLibraryVisits = ref(0)
+const visitorsTodayCount = ref(0)
+const outgoingCount = ref(0)
+const currentlyInsideCount = ref(0)
+const averageStayDurationText = ref('—')
+
+const topPeakHour = ref<{ label: string; visits: number } | null>(null)
+const topPeakDay = ref<{ day: string; visits: number } | null>(null)
+const topCollege = ref<{ name: string; visits: number } | null>(null)
+const topProgram = ref<{ name: string; visits: number } | null>(null)
+const topYearLevel = ref<{ name: string; visits: number } | null>(null)
+
+let analyticsRunId = 0
+let liveChannel: ReturnType<typeof supabase.channel> | null = null
+let refreshTimer: ReturnType<typeof setTimeout> | null = null
 
 const actionTabs = [
   { label: 'Attendance Settings', route: '/admin/attendance/settings' },
@@ -293,108 +308,378 @@ const actionTabs = [
 onMounted(async () => {
   setTimeout(() => {
     barsVisible.value = true
-  }, 1600)
+  }, 300)
 
-  await Promise.all([fetchAttendance(), fetchExportLogs()])
+  await Promise.all([fetchLiveCounts(), fetchExportLogs()])
+
+  fetchAttendanceAnalytics()
+
+  liveChannel = supabase
+    .channel('attendance-overview-live')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'attendance_logs',
+      },
+      () => {
+        scheduleRealtimeRefresh()
+      },
+    )
+    .subscribe()
 })
 
-const fetchAttendance = async () => {
+onBeforeUnmount(() => {
+  analyticsRunId++
+
+  if (refreshTimer) {
+    clearTimeout(refreshTimer)
+    refreshTimer = null
+  }
+
+  if (liveChannel) {
+    supabase.removeChannel(liveChannel)
+    liveChannel = null
+  }
+})
+
+const scheduleRealtimeRefresh = () => {
+  if (refreshTimer) clearTimeout(refreshTimer)
+
+  refreshTimer = setTimeout(async () => {
+    await fetchLiveCounts()
+    fetchAttendanceAnalytics()
+  }, 400)
+}
+
+const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const normalizeStudent = (student: StudentInfo | StudentInfo[] | null | undefined): StudentInfo | null => {
+  if (Array.isArray(student)) return student[0] || null
+  return student || null
+}
+
+const getTodayPH = () => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date())
+}
+
+const getPHDateRangeForToday = () => {
+  const today = getTodayPH()
+
+  return {
+    start: `${today}T00:00:00+08:00`,
+    end: `${today}T23:59:59+08:00`,
+  }
+}
+
+const getPHDateOnly = (value: string | null) => {
+  if (!value) return null
+
+  const dt = new Date(value)
+  if (Number.isNaN(dt.getTime())) return null
+
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(dt)
+}
+
+const getDateObject = (value: string | null) => {
+  if (!value) return null
+  const dt = new Date(value)
+  return Number.isNaN(dt.getTime()) ? null : dt
+}
+
+const getHour = (value: string | null) => {
+  const dt = getDateObject(value)
+  if (!dt) return null
+
+  return Number(
+    new Intl.DateTimeFormat('en-PH', {
+      timeZone: 'Asia/Manila',
+      hour: '2-digit',
+      hour12: false,
+    }).format(dt),
+  )
+}
+
+const getDayName = (value: string | null) => {
+  const dt = getDateObject(value)
+  if (!dt) return 'Unknown'
+
+  return dt.toLocaleDateString('en-US', {
+    timeZone: 'Asia/Manila',
+    weekday: 'long',
+  })
+}
+
+const formatHourLabel = (hour: number) => {
+  const suffix = hour >= 12 ? 'PM' : 'AM'
+  const displayHour = hour % 12 || 12
+  return `${displayHour}:00 ${suffix}`
+}
+
+const getDurationMinutes = (log: AttendanceLog) => {
+  if (typeof log.duration_minutes === 'number' && log.duration_minutes > 0) {
+    return log.duration_minutes
+  }
+
+  const timeIn = getDateObject(log.time_in)
+  const timeOut = getDateObject(log.time_out)
+
+  if (!timeIn || !timeOut) return 0
+
+  const diff = timeOut.getTime() - timeIn.getTime()
+  if (diff < 0) return 0
+
+  return Math.round(diff / 60000)
+}
+
+const fetchLiveCounts = async () => {
+  const todayRange = getPHDateRangeForToday()
+
+  const [totalResult, incomingResult, activeResult, outgoingResult] = await Promise.all([
+    supabase
+      .from('attendance_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('attendance_type', 'library'),
+
+    supabase
+      .from('attendance_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('attendance_type', 'library')
+      .gte('time_in', todayRange.start)
+      .lte('time_in', todayRange.end),
+
+    supabase
+      .from('attendance_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('attendance_type', 'library')
+      .gte('time_in', todayRange.start)
+      .lte('time_in', todayRange.end)
+      .is('time_out', null),
+
+    supabase
+      .from('attendance_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('attendance_type', 'library')
+      .gte('time_out', todayRange.start)
+      .lte('time_out', todayRange.end),
+  ])
+
+  if (totalResult.error) console.error('Failed to count total visits:', totalResult.error)
+  if (incomingResult.error) console.error('Failed to count incoming:', incomingResult.error)
+  if (activeResult.error) console.error('Failed to count active visitors:', activeResult.error)
+  if (outgoingResult.error) console.error('Failed to count outgoing:', outgoingResult.error)
+
+  totalLibraryVisits.value = totalResult.count ?? 0
+  visitorsTodayCount.value = incomingResult.count ?? 0
+  currentlyInsideCount.value = activeResult.count ?? 0
+  outgoingCount.value = outgoingResult.count ?? 0
+}
+
+const fetchAttendanceAnalytics = async () => {
+  const runId = ++analyticsRunId
   loading.value = true
 
   try {
-    const { data, error } = await supabase
-      .from('attendance_logs')
-      .select(
-        `
-        id,
-        student_id,
-        time_in,
-        time_out,
-        attendance_type,
-        event_id,
-        duration_minutes,
-        students!attendance_logs_student_id_fkey (
-          id_number,
-          first_name,
-          middle_name,
-          last_name,
-          program,
-          college,
-          year_level
+    let totalDuration = 0
+    let durationCount = 0
+
+    const hourMap: Record<number, number> = {}
+    const dayMap: Record<string, number> = {}
+    const collegeMap: Record<string, number> = {}
+    const programMap: Record<string, number> = {}
+    const yearLevelMap: Record<string, number> = {}
+
+    const batchSize = 300
+    let from = 0
+
+    while (true) {
+      if (runId !== analyticsRunId) return
+
+      const to = from + batchSize - 1
+
+      const { data, error } = await supabase
+        .from('attendance_logs')
+        .select(
+          `
+          id,
+          student_id,
+          time_in,
+          time_out,
+          attendance_type,
+          event_id,
+          duration_minutes,
+          students!attendance_logs_student_id_fkey (
+            id_number,
+            first_name,
+            middle_name,
+            last_name,
+            program,
+            college,
+            year_level
+          )
+        `,
         )
-      `,
-      )
-      .eq('attendance_type', 'library')
-      .order('time_in', { ascending: false })
+        .eq('attendance_type', 'library')
+        .order('time_in', { ascending: false })
+        .range(from, to)
 
-    if (error) {
-      console.error('Supabase fetch error:', error)
-      logs.value = []
-      return
+      if (error) {
+        console.error('Supabase analytics fetch error:', error)
+        return
+      }
+
+      const rows = data || []
+
+      for (const item of rows as any[]) {
+        const log: AttendanceLog = {
+          ...item,
+          students: normalizeStudent(item.students),
+        }
+
+        const student = normalizeStudent(log.students)
+
+        const duration = getDurationMinutes(log)
+        if (duration > 0) {
+          totalDuration += duration
+          durationCount++
+        }
+
+        const hour = getHour(log.time_in)
+        if (hour !== null && !Number.isNaN(hour)) {
+          hourMap[hour] = (hourMap[hour] || 0) + 1
+        }
+
+        const day = getDayName(log.time_in)
+        dayMap[day] = (dayMap[day] || 0) + 1
+
+        const college = String(student?.college || 'Unknown')
+        const program = String(student?.program || 'Unknown')
+        const yearLevel = String(student?.year_level || 'Unknown')
+
+        collegeMap[college] = (collegeMap[college] || 0) + 1
+        programMap[program] = (programMap[program] || 0) + 1
+        yearLevelMap[yearLevel] = (yearLevelMap[yearLevel] || 0) + 1
+      }
+
+      if (durationCount > 0) {
+        const avg = Math.round(totalDuration / durationCount)
+        const hrs = Math.floor(avg / 60)
+        const mins = avg % 60
+        averageStayDurationText.value = hrs > 0 ? `${hrs}h ${mins}m` : `${mins} mins`
+      }
+
+      topPeakHour.value =
+        Object.entries(hourMap)
+          .map(([hour, visits]) => ({
+            label: formatHourLabel(Number(hour)),
+            visits,
+          }))
+          .sort((a, b) => b.visits - a.visits)[0] || null
+
+      topPeakDay.value =
+        Object.entries(dayMap)
+          .map(([day, visits]) => ({ day, visits }))
+          .sort((a, b) => b.visits - a.visits)[0] || null
+
+      topCollege.value =
+        Object.entries(collegeMap)
+          .map(([name, visits]) => ({ name, visits }))
+          .sort((a, b) => b.visits - a.visits)[0] || null
+
+      topProgram.value =
+        Object.entries(programMap)
+          .map(([name, visits]) => ({ name, visits }))
+          .sort((a, b) => b.visits - a.visits)[0] || null
+
+      topYearLevel.value =
+        Object.entries(yearLevelMap)
+          .map(([name, visits]) => ({ name, visits }))
+          .sort((a, b) => b.visits - a.visits)[0] || null
+
+      if (rows.length < batchSize) break
+
+      from += batchSize
+      await sleep(0)
     }
-
-    logs.value = (data || []).map((item: any) => ({
-      ...item,
-      students: Array.isArray(item.students) ? (item.students[0] ?? null) : item.students,
-    }))
   } catch (err) {
-    console.error('Fetch error:', err)
-    logs.value = []
+    console.error('Analytics fetch error:', err)
   } finally {
-    loading.value = false
+    if (runId === analyticsRunId) {
+      loading.value = false
+    }
   }
 }
 
 const formatExportDate = (value: string | null) => {
   if (!value) return { date: '--', time: '--' }
 
-  const d = new Date(value)
+  const normalizedValue = /Z$|[+-]\d{2}:\d{2}$/.test(value) ? value : `${value}Z`
+  const d = new Date(normalizedValue)
+
+  if (Number.isNaN(d.getTime())) return { date: '--', time: '--' }
 
   return {
     date: d.toLocaleDateString('en-PH', {
+      timeZone: 'Asia/Manila',
       year: 'numeric',
       month: 'short',
       day: '2-digit',
     }),
     time: d.toLocaleTimeString('en-PH', {
+      timeZone: 'Asia/Manila',
       hour: '2-digit',
       minute: '2-digit',
+      hour12: true,
     }),
   }
 }
 
 const normalizeFileType = (value: string | null) => {
-  const type = String(value || '')
-    .trim()
-    .toUpperCase()
+  const type = String(value || '').trim().toUpperCase()
 
   if (type === 'XLS' || type === 'XLSX' || type === 'EXCEL') return 'XLSX'
   if (type === 'CSV') return 'CSV'
   if (type === 'PDF') return 'PDF'
+
   return type || 'FILE'
 }
 
 const getFileTypeClass = (type: string) => {
   const normalized = normalizeFileType(type).toLowerCase()
+
   if (normalized === 'xlsx') return 'xlsx'
   if (normalized === 'csv') return 'csv'
   if (normalized === 'pdf') return 'pdf'
+
   return 'file'
 }
 
 const getStatusClass = (value: string | null) => {
-  const normalized = String(value || 'success')
-    .trim()
-    .toLowerCase()
+  const normalized = String(value || 'success').trim().toLowerCase()
+
   if (normalized === 'failed') return 'failed'
   if (normalized === 'pending') return 'pending'
+
   return 'success'
 }
 
 const formatStatusLabel = (value: string | null) => {
   const normalized = getStatusClass(value)
+
   if (normalized === 'failed') return 'Failed'
   if (normalized === 'pending') return 'Pending'
+
   return 'Success'
 }
 
@@ -446,81 +731,16 @@ const fetchExportLogs = async () => {
   }
 }
 
-const getDateObject = (value: string | null) => {
-  if (!value) return null
-  const dt = new Date(value)
-  return Number.isNaN(dt.getTime()) ? null : dt
-}
-
-const getDateOnly = (value: string | null) => {
-  const dt = getDateObject(value)
-  if (!dt) return null
-  return dt.toISOString().split('T')[0]
-}
-
-const getHour = (value: string | null) => {
-  const dt = getDateObject(value)
-  if (!dt) return null
-  return dt.getHours()
-}
-
-const getDayName = (value: string | null) => {
-  const dt = getDateObject(value)
-  if (!dt) return 'Unknown'
-  return dt.toLocaleDateString('en-US', { weekday: 'long' })
-}
-
-const formatHourLabel = (hour: number) => {
-  const suffix = hour >= 12 ? 'PM' : 'AM'
-  const displayHour = hour % 12 || 12
-  return `${displayHour}:00 ${suffix}`
-}
-
-const getDurationMinutes = (log: AttendanceLog) => {
-  if (typeof log.duration_minutes === 'number' && log.duration_minutes > 0) {
-    return log.duration_minutes
-  }
-
-  const timeIn = getDateObject(log.time_in)
-  const timeOut = getDateObject(log.time_out)
-
-  if (!timeIn || !timeOut) return 0
-
-  const diff = timeOut.getTime() - timeIn.getTime()
-  if (diff < 0) return 0
-
-  return Math.round(diff / 60000)
-}
-
-const buildGroupedVisits = (items: AttendanceLog[], key: 'college' | 'program' | 'year_level') => {
-  const grouped: Record<string, number> = {}
-
-  items.forEach((log) => {
-    const student = Array.isArray(log.students) ? log.students[0] : log.students
-    const value = student?.[key] ?? 'Unknown'
-    const name = String(value)
-    grouped[name] = (grouped[name] || 0) + 1
-  })
-
-  return Object.entries(grouped)
-    .map(([name, visits]) => ({ name, visits }))
-    .sort((a, b) => b.visits - a.visits)
-}
-
-const visitorsToday = computed(() => {
-  const today = new Date().toISOString().split('T')[0]
-  return logs.value.filter((log) => getDateOnly(log.time_in) === today).length
-})
-
-const currentlyInside = computed(() => visitorsToday.value)
-const outgoing = computed(() => 0)
+const visitorsToday = computed(() => visitorsTodayCount.value)
+const outgoing = computed(() => outgoingCount.value)
+const currentlyInside = computed(() => currentlyInsideCount.value)
 const gaugeCount = computed(() => currentlyInside.value)
 
 const gaugeStatus = computed(() => {
-  if (gaugeCount.value === 0) return 'No Attendance'
-  if (gaugeCount.value <= 10) return 'Low Attendance'
+  if (gaugeCount.value === 0) return 'No Active Visitors'
+  if (gaugeCount.value <= 10) return 'Low Active Visitors'
   if (gaugeCount.value <= 30) return 'Moderate'
-  return 'High Attendance'
+  return 'High Active Visitors'
 })
 
 const gaugeFillPercent = computed(() => {
@@ -540,65 +760,9 @@ const outgoingBarWidth = computed(() => {
   return `${Math.max((outgoing.value / flowMax.value) * 100, outgoing.value ? 12 : 0)}%`
 })
 
-const averageStayDuration = computed(() => {
-  const durations = logs.value
-    .map((log) => getDurationMinutes(log))
-    .filter((minutes) => minutes > 0)
-
-  if (!durations.length) return '—'
-
-  const avg = Math.round(durations.reduce((sum, minutes) => sum + minutes, 0) / durations.length)
-
-  const hrs = Math.floor(avg / 60)
-  const mins = avg % 60
-
-  return hrs > 0 ? `${hrs}h ${mins}m` : `${mins} mins`
-})
-
-const peakHours = computed(() => {
-  const hourMap: Record<number, number> = {}
-
-  logs.value.forEach((log) => {
-    const hour = getHour(log.time_in)
-    if (hour === null) return
-    hourMap[hour] = (hourMap[hour] || 0) + 1
-  })
-
-  return Object.entries(hourMap)
-    .map(([hour, visits]) => ({
-      hour: Number(hour),
-      label: formatHourLabel(Number(hour)),
-      visits,
-    }))
-    .sort((a, b) => b.visits - a.visits)
-})
-
-const peakDays = computed(() => {
-  const dayMap: Record<string, number> = {}
-
-  logs.value.forEach((log) => {
-    const day = getDayName(log.time_in)
-    dayMap[day] = (dayMap[day] || 0) + 1
-  })
-
-  return Object.entries(dayMap)
-    .map(([day, visits]) => ({ day, visits }))
-    .sort((a, b) => b.visits - a.visits)
-})
-
-const visitsByCollege = computed(() => buildGroupedVisits(logs.value, 'college'))
-const visitsByProgram = computed(() => buildGroupedVisits(logs.value, 'program'))
-const visitsByYearLevel = computed(() => buildGroupedVisits(logs.value, 'year_level'))
-
-const topPeakHour = computed(() => peakHours.value[0] || null)
-const topPeakDay = computed(() => peakDays.value[0] || null)
-const topCollege = computed(() => visitsByCollege.value[0] || null)
-const topProgram = computed(() => visitsByProgram.value[0] || null)
-const topYearLevel = computed(() => visitsByYearLevel.value[0] || null)
-
 const quickStats = computed(() => [
   {
-    val: logs.value.length,
+    val: totalLibraryVisits.value,
     label: 'Total Library Visits',
     delta: 'All',
     up: true,
@@ -619,7 +783,7 @@ const quickStats = computed(() => [
     icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>`,
   },
   {
-    val: averageStayDuration.value,
+    val: averageStayDurationText.value,
     label: 'Average Stay',
     delta: 'Session',
     up: true,

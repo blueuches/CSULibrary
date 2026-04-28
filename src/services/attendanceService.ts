@@ -16,15 +16,12 @@ type GetAttendanceLogsParams = {
   pageSize?: number
 }
 
-// GET LOGS - optimized server-side filtering + pagination
+// GET LOGS - server-side filtering with optional pagination
 export const getAttendanceLogs = async ({
   filters = {},
-  page = 1,
-  pageSize = 10,
+  page,
+  pageSize,
 }: GetAttendanceLogsParams = {}) => {
-  const from = (page - 1) * pageSize
-  const to = from + pageSize - 1
-
   let query = supabase
     .from("attendance_logs")
     .select(
@@ -82,7 +79,13 @@ export const getAttendanceLogs = async ({
     )
   }
 
-  const { data, error, count } = await query.range(from, to)
+  if (page && pageSize) {
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+    query = query.range(from, to)
+  }
+
+  const { data, error, count } = await query
 
   if (error) throw error
 
