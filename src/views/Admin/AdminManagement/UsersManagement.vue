@@ -6,12 +6,14 @@
 
     <div class="page-scroll">
       <header class="attn-header">
-        <div class="header-breadcrumb">
-          <span>Admin</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span class="breadcrumb-current">User Management</span>
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div class="header-breadcrumb !mb-3">
+            <span>Admin</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+            <span>User Management</span>
+          </div>
         </div>
         <h1 class="hero-title">
           <span class="hero-word-dark hero-underlined">User</span>
@@ -159,13 +161,6 @@ const roleButtons = [
     title: 'Manage Roles',
     desc: 'Create and edit system roles',
     icon: iconShield,
-  },
-  {
-    color: 'indigo',
-    route: '/admin/management/assignation',
-    title: 'Assign Roles to Users',
-    desc: 'Link personnel to specific roles',
-    icon: iconAssign,
   },
   {
     color: 'gold',

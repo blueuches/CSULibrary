@@ -4,25 +4,34 @@
 
     <main class="flex-1 overflow-y-auto px-4 py-6 text-slate-900 sm:px-6 lg:px-10">
       <div class="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <div class="header-breadcrumb !mb-2">
-          <span
-            class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
-            @click="$router.push('/admin/attendance')"
-          >
-            BACK
-          </span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-          <span>VISITOR</span>
-        </div>
+        <div class="headBlock">
+          <div class="header-breadcrumb !mb-2">
+            <span
+              class="cursor-pointer hover:text-[#0d2b0f] transition-colors"
+              @click="$router.push('/admin/attendance')"
+            >
+              BACK
+            </span>
 
-        <header class="rounded-xl bg-white p-6 shadow-sm">
-          <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">Visitor Attendance</h1>
-          <p class="mt-2 text-sm text-slate-600">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 5l7 7-7 7" />
+            </svg>
+
+            <span>Attendance</span>
+          </div>
+
+          <div class="titleHero">
+            <h1 class="heroTitle">
+              <span class="heroTitlePrimary">Visitors</span>
+              <span class="heroTitleAccent">Attendance</span>
+            </h1>
+
+            <div class="heroUnderline"></div>
+          </div>
+          <p class="hero-subtitle">
             Review and filter visitor entries from the library attendance section.
           </p>
-        </header>
+        </div>
 
         <section class="rounded-xl bg-white p-6 shadow-sm">
           <div class="mb-5 flex items-center justify-between gap-4">
@@ -40,7 +49,11 @@
             <div class="space-y-4">
               <label
                 class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-slate-300"
-                :class="selectedFilterMode === 'specific-date' ? 'border-[#164d23] bg-white shadow-sm' : ''"
+                :class="
+                  selectedFilterMode === 'specific-date'
+                    ? 'border-[#164d23] bg-white shadow-sm'
+                    : ''
+                "
               >
                 <div class="flex items-center gap-3 text-sm font-semibold text-slate-700">
                   <input
@@ -63,7 +76,11 @@
 
               <label
                 class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-slate-300"
-                :class="selectedFilterMode === 'specific-month' ? 'border-[#164d23] bg-white shadow-sm' : ''"
+                :class="
+                  selectedFilterMode === 'specific-month'
+                    ? 'border-[#164d23] bg-white shadow-sm'
+                    : ''
+                "
               >
                 <div class="flex items-center gap-3 text-sm font-semibold text-slate-700">
                   <input
@@ -87,7 +104,9 @@
                         {{ month.label }}
                       </option>
                     </select>
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">month</span>
+                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500"
+                      >month</span
+                    >
                   </div>
 
                   <div class="grid gap-1">
@@ -98,14 +117,18 @@
                     >
                       <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                     </select>
-                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500">year</span>
+                    <span class="text-xs font-medium uppercase tracking-wide text-slate-500"
+                      >year</span
+                    >
                   </div>
                 </div>
               </label>
 
               <label
                 class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 transition hover:border-slate-300"
-                :class="selectedFilterMode === 'period' ? 'border-[#164d23] bg-white shadow-sm' : ''"
+                :class="
+                  selectedFilterMode === 'period' ? 'border-[#164d23] bg-white shadow-sm' : ''
+                "
               >
                 <div class="flex items-center gap-3 text-sm font-semibold text-slate-700">
                   <input
@@ -151,21 +174,29 @@
         <section class="rounded-xl bg-white p-6 shadow-sm">
           <div class="mb-5 flex items-center gap-3">
             <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
-            <h2 class="text-lg font-bold text-slate-900">Visitor Log</h2>
+            <h2 class="text-lg font-bold text-slate-900">Visitor Logs</h2>
           </div>
 
-          <div v-if="loading" class="rounded-xl border border-slate-200 px-4 py-10 text-center text-sm text-slate-500">
+          <div
+            v-if="loading"
+            class="rounded-xl border border-slate-200 px-4 py-10 text-center text-sm text-slate-500"
+          >
             Loading visitor records...
           </div>
 
-          <div v-else-if="errorMessage" class="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
+          <div
+            v-else-if="errorMessage"
+            class="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700"
+          >
             {{ errorMessage }}
           </div>
 
           <div v-else class="overflow-hidden rounded-xl border border-slate-200">
             <div class="overflow-x-auto">
               <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-                <thead class="bg-slate-100 text-xs font-bold uppercase tracking-wide text-slate-600">
+                <thead
+                  class="bg-slate-100 text-xs font-bold uppercase tracking-wide text-slate-600"
+                >
                   <tr>
                     <th class="px-4 py-3">Name</th>
                     <th class="px-4 py-3">Cellphone</th>
@@ -210,14 +241,18 @@
             </div>
           </div>
 
-          <div class="mt-5 flex flex-col gap-4 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div
+            class="mt-5 flex flex-col gap-4 border-t border-slate-200 pt-5 sm:flex-row sm:items-center sm:justify-between"
+          >
             <p class="text-sm font-medium text-slate-700">
-              Total number of library visit: <span class="font-bold text-slate-900">{{ visitorLogs.length }}</span>
+              Total number of library visit:
+              <span class="font-bold text-slate-900">{{ visitorLogs.length }}</span>
             </p>
 
             <button
               type="button"
-              class="inline-flex h-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+              @click="exportVisitorLogs"
+              class="inline-flex h-10 items-center justify-center rounded-lg bg-[#164d23] px-5 text-sm font-semibold text-white transition hover:bg-[#123d1b] lg:w-auto"
             >
               Export
             </button>
@@ -230,6 +265,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import * as XLSX from 'xlsx'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
@@ -315,6 +351,27 @@ const formatDisplayTime = (value: string | null) => {
 
 const getVisitorName = (log: VisitorLog) => log.visitor_name || log.full_name || log.name || '--'
 
+const exportVisitorLogs = () => {
+  const headers = ['Name', 'Cellphone', 'Email', 'School/Institution', 'Date', 'Time In', 'Time Out']
+
+  const rows = visitorLogs.value.map((log) => [
+    getVisitorName(log),
+    log.contact_details || log.contact || log.cellphone || '--',
+    log.email || '--',
+    log.institution || log.company_institution || '--',
+    formatDisplayDate(log.time_in),
+    formatDisplayTime(log.time_in),
+    log.time_out ? formatDisplayTime(log.time_out) : '(Optional)',
+  ])
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const workbook = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Visitor Attendance')
+
+  const fileName = `visitor-attendance-${new Date().toISOString().slice(0, 10)}.xlsx`
+  XLSX.writeFile(workbook, fileName)
+}
+
 const buildDateRange = () => {
   if (selectedFilterMode.value === 'specific-date' && specificDate.value) {
     return {
@@ -375,9 +432,45 @@ const loadVisitorLogs = async () => {
   }
 }
 
-
-
 onMounted(() => {
   loadVisitorLogs()
 })
 </script>
+
+<style scoped>
+.heroTitle {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  line-height: 0.95;
+  font-size: clamp(3rem, 3vw, 1.7rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.heroTitlePrimary {
+  color: #0d2b0f;
+}
+
+.heroTitleAccent {
+  color: #efb72d;
+}
+
+.heroUnderline {
+  margin-top: 14px;
+  width: 160px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #214b1f 0%, #c49317 100%);
+}
+
+.hero-subtitle {
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-top: 10px;
+  animation: fadeIn 0.6s ease 0.55s both;
+}
+</style>

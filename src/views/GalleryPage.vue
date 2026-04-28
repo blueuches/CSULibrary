@@ -97,7 +97,7 @@
 
             <div
               v-if="!isLoading && wing.sections.length === 0"
-              class="w-full py-20 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-[2rem] bg-gray-50/30 mb-10 group/empty animate-fade-in"
+              class="w-full py-20 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-4xl bg-gray-50/30 mb-10 group/empty animate-fade-in"
             >
               <div class="relative w-24 h-24 flex items-center justify-center mb-6">
                 <div class="absolute inset-0 bg-yellow-500/10 rounded-full animate-ping"></div>
@@ -187,7 +187,7 @@
         aria-label="Scroll to top"
         type="button"
       >
-        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -273,7 +273,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
-import { getGallerySections, getImagesBySection } from '@/services/manageGallery'
+import { getGallerySectionsWithImages } from '@/services/manageGallery'
 
 /* =====================================================
   TYPES & STATE
@@ -304,85 +304,44 @@ const currentImgIndex = ref(0)
 const showScrollTop = ref(false)
 const hoverIntervals = new Map<string, any>()
 
-const floors = ref<Floor[]>([
-  {
-    id: 'floor1',
-    name: '1st Floor',
-    wings: [
-      { name: 'Left Wing', sections: [] },
-      { name: 'Right Wing', sections: [] },
-    ],
-  },
-  {
-    id: 'floor2',
-    name: '2nd Floor',
-    wings: [
-      { name: 'Left Wing', sections: [] },
-      { name: 'Right Wing', sections: [] },
-    ],
-  },
-  {
-    id: 'floor3',
-    name: '3rd Floor',
-    wings: [
-      { name: 'Left Wing', sections: [] },
-      { name: 'Right Wing', sections: [] },
-    ],
-  },
-])
+// Utility to reset structure without repetition
+const createFloorStructure = (): Floor[] => [
+  { id: 'floor1', name: '1st Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] },
+  { id: 'floor2', name: '2nd Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] },
+  { id: 'floor3', name: '3rd Floor', wings: [{ name: 'Left Wing', sections: [] }, { name: 'Right Wing', sections: [] }] },
+]
+
+const floors = ref<Floor[]>(createFloorStructure())
 
 /* =====================================================
-  DATA FETCHING
+  DATA FETCHING (Optimized to 1 Request)
 ===================================================== */
 const fetchGalleryData = async () => {
   try {
     isLoading.value = true
-    const rawSections = await getGallerySections()
-    const temp: Floor[] = [
-      {
-        id: 'floor1',
-        name: '1st Floor',
-        wings: [
-          { name: 'Left Wing', sections: [] },
-          { name: 'Right Wing', sections: [] },
-        ],
-      },
-      {
-        id: 'floor2',
-        name: '2nd Floor',
-        wings: [
-          { name: 'Left Wing', sections: [] },
-          { name: 'Right Wing', sections: [] },
-        ],
-      },
-      {
-        id: 'floor3',
-        name: '3rd Floor',
-        wings: [
-          { name: 'Left Wing', sections: [] },
-          { name: 'Right Wing', sections: [] },
-        ],
-      },
-    ]
+    
+    const rawData = await getGallerySectionsWithImages()
+    const temp = createFloorStructure()
 
-    for (const sec of rawSections) {
-      const imgs = await getImagesBySection(sec.id)
+    rawData.forEach((sec: any) => {
       const formatted: Section = {
         id: sec.id,
         title: sec.section_name,
         description: sec.description,
         note: sec.note,
-        images: imgs.map((i: any) => i.image_url),
+        images: sec.gallery_images?.map((img: any) => img.image_url) || [],
       }
+
       const floorObj = temp.find((f) => f.name === sec.floor)
       if (floorObj) {
         const wingObj = floorObj.wings.find((w) => w.name === sec.wing)
         if (wingObj) wingObj.sections.push(formatted)
       }
-    }
+    })
+
     floors.value = temp
   } catch (err) {
-    console.error(err)
+    console.error('Failed to fetch gallery:', err)
   } finally {
     isLoading.value = false
     nextTick(initObserver)
@@ -390,14 +349,13 @@ const fetchGalleryData = async () => {
 }
 
 /* =====================================================
-  CAROUSEL LOGIC (Matching Admin Side)
+  CAROUSEL LOGIC
 ===================================================== */
 const startCarousel = (section: Section) => {
   if (!section.images || section.images.length < 2) return
-  stopCarousel(section) // Clear existing
+  stopCarousel(section) 
 
   const intervalId = setInterval(() => {
-    // Array manipulation to shift images
     const img = section.images.shift()
     if (img) section.images.push(img)
   }, 1200)
@@ -414,7 +372,7 @@ const stopCarousel = (section: Section) => {
 }
 
 /* =====================================================
-  COMPUTED & SEARCH (Safe path check)
+  COMPUTED & SEARCH
 ===================================================== */
 const activeFloorName = computed(
   () => floors.value.find((f) => f.id === activeFloor.value)?.name || '',
@@ -423,10 +381,8 @@ const activeFloorName = computed(
 const displayedFloors = computed(() => {
   const q = searchQuery.value.toLowerCase().trim()
 
-  // Show only active floor if no search
   if (!q) return floors.value.filter((f) => f.id === activeFloor.value)
 
-  // Global search across all floors if searching
   return floors.value
     .map((f) => ({
       ...f,
@@ -450,6 +406,7 @@ const displayedFloors = computed(() => {
 const handleWindowScroll = () => {
   showScrollTop.value = window.scrollY > 400
 }
+
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
@@ -473,18 +430,29 @@ const openGallery = (section: Section) => {
   currentImgIndex.value = 0
   showModal.value = true
 }
+
 const closeModal = () => {
   showModal.value = false
 }
+
 const nextImg = () => {
+
   if (selectedSection.value)
+
     currentImgIndex.value = (currentImgIndex.value + 1) % selectedSection.value.images.length
+
 }
+
 const prevImg = () => {
+
   if (selectedSection.value)
+
     currentImgIndex.value =
+
       (currentImgIndex.value - 1 + selectedSection.value.images.length) %
+
       selectedSection.value.images.length
+
 }
 
 onMounted(() => {
@@ -495,12 +463,18 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleWindowScroll)
   if (observer) observer.disconnect()
+  
+  
+  hoverIntervals.forEach((intervalId) => clearInterval(intervalId))
+  hoverIntervals.clear()
 })
 
 watch([activeFloor, searchQuery], () => {
   setTimeout(initObserver, 200)
 })
 </script>
+
+
 
 <style scoped>
 /* Skeleton Animation */

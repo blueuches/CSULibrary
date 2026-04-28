@@ -2,6 +2,12 @@
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
     <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
 
+    <ExcelInstruct 
+      :isOpen="isInstructModalOpen" 
+@close="closeInstructions" 
+  @accepted="handleInstructionsAccepted"
+    />
+
     <main class="report-root flex-1 overflow-y-auto">
       <!-- HEADER -->
       <header class="report-header">
@@ -26,22 +32,17 @@
         </div>
       </header>
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  
-  <!-- Left: Button -->
-  <button 
-    @click="$router.push('/admin/attendance/import/add')"
-    style="padding: 10px 16px; cursor: pointer;"
-  >
-    Import A Student Manually
-  </button>
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <button
+          @click="$router.push('/admin/attendance/import/add')"
+          class="bg-[#0d2b0f] hover:bg-[#0d2b0f]/90 text-white mb-5 font-bold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
+        >
+          Import A Student Manually
+        </button>
 
-  <!-- Right: Timestamp -->
-  <h1 style="margin: 0;">
-    Last Import Time: DATE
-  </h1>
-
-</div>
+        <!-- Right: Timestamp -->
+        <h1 style="margin: 0; font-weight: 800">Last Import Time: DATE</h1> 
+      </div>
 
       <!-- STEPPER -->
       <section class="panel">
@@ -540,11 +541,7 @@
 
         <!-- ── CONTROLS ── -->
         <div class="step-controls" v-if="syncStatus !== 'loading' && syncStatus !== 'success'">
-          <button
-            v-if="currentStep > 0"
-            class="nav-btn"
-            @click="goBack"
-          >
+          <button v-if="currentStep > 0" class="nav-btn" @click="goBack">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -617,6 +614,7 @@ import { ref, computed } from 'vue'
 import * as XLSX from 'xlsx'
 import { createClient } from '@supabase/supabase-js'
 import Sidebar from '@/components/Sidebar.vue'
+import ExcelInstruct from '@/components/ExcelInstruct.vue'
 
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const supabase = createClient(
@@ -668,6 +666,7 @@ const steps = [
   { title: 'Sync', sub: 'Update database' },
 ]
 
+const isInstructModalOpen = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const uploadedFile = ref<File | null>(null)
 const isDragging = ref(false)
@@ -702,7 +701,23 @@ const isMappedColumn = (col: string) => Object.keys(COLUMN_MAP).includes(col)
 
 // ── File Handling ─────────────────────────────────────────────────────────────
 function triggerFileInput() {
-  fileInputRef.value?.click()
+  if (uploadedFile.value) {
+    fileInputRef.value?.click()
+  } else {
+    isInstructModalOpen.value = true
+  }
+}
+
+function handleInstructionsAccepted() {
+  isInstructModalOpen.value = false;
+  setTimeout(() => {
+    fileInputRef.value?.click();
+  }, 100);
+}
+
+// NEW: Function for the "X" button (Just closes)
+function closeInstructions() {
+  isInstructModalOpen.value = false;
 }
 
 function handleDrop(e: DragEvent) {

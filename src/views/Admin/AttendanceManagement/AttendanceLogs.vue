@@ -25,7 +25,9 @@ type AttendanceLog = {
 }
 
 const logs = ref<AttendanceLog[]>([])
+const totalRecords = ref(0)
 const loading = ref(false)
+const exporting = ref(false)
 const errorMessage = ref("")
 
 const search = ref("")
@@ -39,13 +41,36 @@ const selectedDate = ref("")
 const currentPage = ref(1)
 const itemsPerPage = 10
 
+const buildFilters = () => {
+  return {
+    search: search.value,
+    program: selectedProgram.value,
+    college: selectedCollege.value,
+    yearLevel: selectedYearLevel.value,
+    attendanceType: selectedAttendanceType.value,
+    date: selectedDate.value,
+    status:
+      selectedStatus.value === "Checked In"
+        ? "checked_in"
+        : selectedStatus.value === "Checked Out"
+          ? "checked_out"
+          : "",
+  } as const
+}
+
 const fetchAttendanceLogs = async () => {
   loading.value = true
   errorMessage.value = ""
 
   try {
-    const data = await getAttendanceLogs()
-    logs.value = data || []
+    const result = await getAttendanceLogs({
+      filters: buildFilters(),
+      page: currentPage.value,
+      pageSize: itemsPerPage,
+    })
+
+    logs.value = result.data || []
+    totalRecords.value = result.count || 0
   } catch (error: unknown) {
     console.error("Failed to fetch attendance logs:", error)
 
@@ -67,6 +92,7 @@ const normalizeStudent = (student: Student | Student[] | null | undefined): Stud
   if (Array.isArray(student)) {
     return student[0] || {}
   }
+
   return student || {}
 }
 
@@ -74,16 +100,13 @@ const formatDateTime = (value: string | null) => {
   if (!value) return "--"
 
   return new Date(value).toLocaleString("en-PH", {
+    timeZone: "Asia/Manila",
     year: "numeric",
     month: "short",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
   })
-}
-
-const getStatus = (log: AttendanceLog) => {
-  return log.time_out ? "Checked Out" : "Checked In"
 }
 
 const uniquePrograms = computed(() => {
@@ -130,73 +153,23 @@ const hasActiveFilters = computed(() => {
   )
 })
 
-const filteredLogs = computed(() => {
-  return logs.value.filter((log) => {
-    const student = normalizeStudent(log.students)
-
-    const fullName =
-      `${student.first_name || ""} ${student.last_name || ""}`.trim().toLowerCase()
-
-    const idNumber = String(student.id_number || "").toLowerCase()
-    const program = String(student.program || "")
-    const college = String(student.college || "")
-    const yearLevel = String(student.year_level || "")
-    const attendanceType = String(log.attendance_type || "")
-    const status = getStatus(log)
-    const searchValue = search.value.trim().toLowerCase()
-
-    const logDate = log.time_in
-      ? new Date(log.time_in).toISOString().slice(0, 10)
-      : ""
-
-    const matchesSearch =
-      !searchValue ||
-      fullName.includes(searchValue) ||
-      idNumber.includes(searchValue)
-
-    const matchesProgram =
-      !selectedProgram.value || program === selectedProgram.value
-
-    const matchesCollege =
-      !selectedCollege.value || college === selectedCollege.value
-
-    const matchesYearLevel =
-      !selectedYearLevel.value || yearLevel === selectedYearLevel.value
-
-    const matchesAttendanceType =
-      !selectedAttendanceType.value || attendanceType === selectedAttendanceType.value
-
-    const matchesStatus =
-      !selectedStatus.value || status === selectedStatus.value
-
-    const matchesDate =
-      !selectedDate.value || logDate === selectedDate.value
-
-    return (
-      matchesSearch &&
-      matchesProgram &&
-      matchesCollege &&
-      matchesYearLevel &&
-      matchesAttendanceType &&
-      matchesStatus &&
-      matchesDate
-    )
-  })
+const paginatedLogs = computed(() => {
+  return logs.value
 })
 
 const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(filteredLogs.value.length / itemsPerPage))
-})
-
-const paginatedLogs = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredLogs.value.slice(start, end)
+  return Math.max(1, Math.ceil(totalRecords.value / itemsPerPage))
 })
 
 const goToNextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++
+  }
+}
+
+const goToPreviousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
   }
 }
 
@@ -212,13 +185,12 @@ watch(
   ],
   () => {
     currentPage.value = 1
+    fetchAttendanceLogs()
   }
 )
 
-watch(filteredLogs, () => {
-  if (currentPage.value > totalPages.value) {
-    currentPage.value = totalPages.value
-  }
+watch(currentPage, () => {
+  fetchAttendanceLogs()
 })
 
 const clearFilters = () => {
@@ -264,57 +236,78 @@ const saveExportHistory = async (fileName: string, fileType: string, rowCount: n
 }
 
 const exportToCSV = async () => {
-  const headers = [
-    "ID Number",
-    "Student Name",
-    "Program",
-    "College",
-    "Year Level",
-    "Attendance Type",
-    "Time In",
-    "Time Out",
-    "Duration (mins)",
-  ]
+  exporting.value = true
+  errorMessage.value = ""
 
-  const rows = filteredLogs.value.map((log) => {
-    const student = normalizeStudent(log.students)
+  try {
+    const exportResult = await getAttendanceLogs({
+      filters: buildFilters(),
+    })
 
-    return [
-      student.id_number || "",
-      `${student.first_name || ""} ${student.last_name || ""}`.trim(),
-      student.program || "",
-      student.college || "",
-      student.year_level || "",
-      log.attendance_type || "",
-      log.time_in ? formatDateTime(log.time_in) : "",
-      log.time_out ? formatDateTime(log.time_out) : "",
-      log.duration_minutes ?? "",
+    const exportLogs = exportResult.data || []
+
+    const headers = [
+      "ID Number",
+      "Student Name",
+      "Program",
+      "College",
+      "Year Level",
+      "Attendance Type",
+      "Time In",
+      "Time Out",
+      "Duration (mins)",
     ]
-  })
 
-  const csvContent = [headers, ...rows]
-    .map((row) =>
-      row
-        .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
-        .join(",")
-    )
-    .join("\n")
+    const rows = exportLogs.map((log) => {
+      const student = normalizeStudent(log.students)
 
-  const fileName = `attendance-logs-${new Date().toISOString().slice(0, 10)}.csv`
+      return [
+        student.id_number || "",
+        `${student.first_name || ""} ${student.last_name || ""}`.trim(),
+        student.program || "",
+        student.college || "",
+        student.year_level || "",
+        log.attendance_type || "",
+        log.time_in ? formatDateTime(log.time_in) : "",
+        log.time_out ? formatDateTime(log.time_out) : "",
+        log.duration_minutes ?? "",
+      ]
+    })
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-  const url = URL.createObjectURL(blob)
+    const csvContent = [headers, ...rows]
+      .map((row) =>
+        row
+          .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+          .join(",")
+      )
+      .join("\n")
 
-  const link = document.createElement("a")
-  link.href = url
-  link.setAttribute("download", fileName)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+    const fileName = `attendance-logs-${new Date().toISOString().slice(0, 10)}.csv`
 
-  URL.revokeObjectURL(url)
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
 
-  await saveExportHistory(fileName, "CSV", filteredLogs.value.length)
+    const link = document.createElement("a")
+    link.href = url
+    link.setAttribute("download", fileName)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    URL.revokeObjectURL(url)
+
+    await saveExportHistory(fileName, "CSV", exportLogs.length)
+  } catch (error: unknown) {
+    console.error("Failed to export attendance logs:", error)
+
+    if (error instanceof Error) {
+      errorMessage.value = error.message
+    } else {
+      errorMessage.value = "Failed to export attendance logs."
+    }
+  } finally {
+    exporting.value = false
+  }
 }
 </script>
 
@@ -421,7 +414,11 @@ const exportToCSV = async () => {
             </div>
 
             <div class="toolbarRight">
-              <button @click="exportToCSV" class="exportBtn">
+              <button
+                @click="exportToCSV"
+                class="exportBtn"
+                :disabled="exporting"
+              >
                 <svg
                   width="16"
                   height="16"
@@ -437,7 +434,7 @@ const exportToCSV = async () => {
                   <path d="M7 10l5 5 5-5" />
                   <path d="M5 21h14" />
                 </svg>
-                <span>Export CSV</span>
+                <span>{{ exporting ? "Exporting..." : "Export CSV" }}</span>
               </button>
 
               <input
@@ -477,7 +474,7 @@ const exportToCSV = async () => {
                     </td>
                   </tr>
 
-                  <tr v-else-if="filteredLogs.length === 0">
+                  <tr v-else-if="paginatedLogs.length === 0">
                     <td colspan="9" class="empty">
                       No attendance records found.
                       <div class="emptyHint">
@@ -493,31 +490,39 @@ const exportToCSV = async () => {
                     <td data-label="ID Number" class="strong">
                       {{ normalizeStudent(log.students).id_number || "--" }}
                     </td>
+
                     <td data-label="Student Name">
                       {{
                         `${normalizeStudent(log.students).first_name || ""} ${normalizeStudent(log.students).last_name || ""}`.trim() || "--"
                       }}
                     </td>
+
                     <td data-label="Program">
                       {{ normalizeStudent(log.students).program || "--" }}
                     </td>
+
                     <td data-label="College">
                       {{ normalizeStudent(log.students).college || "--" }}
                     </td>
+
                     <td data-label="Year Level">
                       {{ normalizeStudent(log.students).year_level || "--" }}
                     </td>
+
                     <td data-label="Attendance Type">
                       {{ log.attendance_type || "--" }}
                     </td>
+
                     <td data-label="Time In">
                       {{ formatDateTime(log.time_in) }}
                     </td>
+
                     <td data-label="Time Out">
                       {{ formatDateTime(log.time_out) }}
                     </td>
+
                     <td data-label="Duration" class="muted">
-                      {{ log.duration_minutes ? `${log.duration_minutes} mins` : "--" }}
+                      {{ log.duration_minutes !== null && log.duration_minutes !== undefined ? `${log.duration_minutes} mins` : "--" }}
                     </td>
                   </tr>
                 </tbody>
@@ -529,7 +534,15 @@ const exportToCSV = async () => {
                 Tip: Use the filters and search to narrow down records faster.
               </div>
 
-              <div class="pager" v-if="filteredLogs.length > itemsPerPage">
+              <div class="pager" v-if="totalRecords > itemsPerPage">
+                <button
+                  v-if="currentPage > 1"
+                  class="pagerBtn"
+                  @click="goToPreviousPage"
+                >
+                  Previous
+                </button>
+
                 <button
                   v-if="currentPage < totalPages"
                   class="pagerBtn"
@@ -545,13 +558,13 @@ const exportToCSV = async () => {
             <span class="summaryText">
               Showing
               <span class="summaryStrong">
-                {{ filteredLogs.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }}
+                {{ totalRecords === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }}
               </span>
               -
               <span class="summaryStrong">
-                {{ Math.min(currentPage * itemsPerPage, filteredLogs.length) }}
+                {{ Math.min(currentPage * itemsPerPage, totalRecords) }}
               </span>
-              of <span class="summaryStrong">{{ filteredLogs.length }}</span> records
+              of <span class="summaryStrong">{{ totalRecords }}</span> records
             </span>
           </div>
         </div>
@@ -670,13 +683,18 @@ const exportToCSV = async () => {
   box-shadow: 0 8px 18px rgba(10, 58, 16, 0.18);
 }
 
-.exportBtn:hover {
+.exportBtn:hover:not(:disabled) {
   background: linear-gradient(180deg, #165b1b 0%, #1d6a22 100%);
   transform: translateY(-1px);
 }
 
 .exportBtn:active {
   transform: translateY(0);
+}
+
+.exportBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .stackCol {
@@ -837,7 +855,7 @@ const exportToCSV = async () => {
   border: 1px solid var(--border);
   background:
     radial-gradient(900px circle at 18% 18%, rgba(34, 197, 94, 0.14), transparent 60%),
-    radial-gradient(700px circle at 85% 35%, rgba(16, 185, 129, 0.10), transparent 62%),
+    radial-gradient(700px circle at 85% 35%, rgba(16, 185, 129, 0.1), transparent 62%),
     linear-gradient(180deg, #f4fbf6 0%, #eef8f1 55%, #ffffff 100%);
   scrollbar-width: none;
 }
@@ -920,6 +938,12 @@ const exportToCSV = async () => {
   font-size: 12px;
   color: rgba(13, 43, 15, 0.55);
   padding-left: 6px;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .pagerBtn {
