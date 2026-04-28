@@ -163,13 +163,6 @@ const roleButtons = [
     icon: iconShield,
   },
   {
-    color: 'indigo',
-    route: '/admin/management/assignation',
-    title: 'Assign Roles to Users',
-    desc: 'Link personnel to specific roles',
-    icon: iconAssign,
-  },
-  {
     color: 'gold',
     route: '/admin/management/permission',
     title: 'Set Permissions',
