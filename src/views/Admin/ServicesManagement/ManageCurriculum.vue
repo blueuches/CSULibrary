@@ -46,6 +46,8 @@
         </article>
       </section>
 
+      <h1 @click="$router.push('/admin/services/curriculum/edit')">GO TO EDIT</h1>
+
       <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <button
           v-for="college in colleges"
