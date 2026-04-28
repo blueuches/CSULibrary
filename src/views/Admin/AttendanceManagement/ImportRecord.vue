@@ -2,6 +2,12 @@
   <div class="flex h-screen w-full overflow-hidden bg-[#f5f3ef]">
     <Sidebar :activeTab="activeTab" @updateActiveTab="handleTabChange" />
 
+    <ExcelInstruct 
+      :isOpen="isInstructModalOpen" 
+@close="closeInstructions" 
+  @accepted="handleInstructionsAccepted"
+    />
+
     <main class="report-root flex-1 overflow-y-auto">
       <!-- HEADER -->
       <header class="report-header">
@@ -35,7 +41,7 @@
         </button>
 
         <!-- Right: Timestamp -->
-        <!-- <h1 style="margin: 0; font-weight: 800">Last Import Time: DATE</h1> -->
+        <h1 style="margin: 0; font-weight: 800">Last Import Time: DATE</h1> 
       </div>
 
       <!-- STEPPER -->
@@ -608,6 +614,7 @@ import { ref, computed } from 'vue'
 import * as XLSX from 'xlsx'
 import { createClient } from '@supabase/supabase-js'
 import Sidebar from '@/components/Sidebar.vue'
+import ExcelInstruct from '@/components/ExcelInstruct.vue'
 
 // ── Supabase ──────────────────────────────────────────────────────────────────
 const supabase = createClient(
@@ -659,6 +666,7 @@ const steps = [
   { title: 'Sync', sub: 'Update database' },
 ]
 
+const isInstructModalOpen = ref(false)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const uploadedFile = ref<File | null>(null)
 const isDragging = ref(false)
@@ -693,7 +701,23 @@ const isMappedColumn = (col: string) => Object.keys(COLUMN_MAP).includes(col)
 
 // ── File Handling ─────────────────────────────────────────────────────────────
 function triggerFileInput() {
-  fileInputRef.value?.click()
+  if (uploadedFile.value) {
+    fileInputRef.value?.click()
+  } else {
+    isInstructModalOpen.value = true
+  }
+}
+
+function handleInstructionsAccepted() {
+  isInstructModalOpen.value = false;
+  setTimeout(() => {
+    fileInputRef.value?.click();
+  }, 100);
+}
+
+// NEW: Function for the "X" button (Just closes)
+function closeInstructions() {
+  isInstructModalOpen.value = false;
 }
 
 function handleDrop(e: DragEvent) {
