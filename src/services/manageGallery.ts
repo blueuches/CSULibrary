@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase"
 
 /* =====================================================
- TYPES
+  TYPES
 ===================================================== */
 
 export interface GallerySection {
@@ -12,6 +12,7 @@ export interface GallerySection {
   description?: string
   created_at?: string
   note?: string
+  gallery_images?: GalleryImage[] // Nested relation
 }
 
 export interface GalleryImage {
@@ -24,12 +25,32 @@ export interface GalleryImage {
   created_at?: string
 }
 
-
 /* =====================================================
- GALLERY SECTIONS CRUD
+  OPTIMIZED FETCH (SINGLE REQUEST)
 ===================================================== */
 
-// GET ALL SECTIONS
+/**
+ * Fetches all sections with their related images in one query.
+ */
+export const getGallerySectionsWithImages = async () => {
+  const { data, error } = await supabase
+    .from('gallery_sections')
+    .select(`
+      *,
+      gallery_images (*)
+    `)
+    .order('created_at', { ascending: true })
+    .order('display_order', { referencedTable: 'gallery_images', ascending: true })
+
+  if (error) throw error
+  return data as GallerySection[]
+}
+
+/* =====================================================
+  GALLERY SECTIONS CRUD
+===================================================== */
+
+// Get all sections
 export const getGallerySections = async () => {
   const { data, error } = await supabase
     .from('gallery_sections')
@@ -40,8 +61,7 @@ export const getGallerySections = async () => {
   return data
 }
 
-
-// GET SINGLE SECTION
+// Get section by ID
 export const getGallerySectionById = async (id: string) => {
   const { data, error } = await supabase
     .from('gallery_sections')
@@ -53,8 +73,7 @@ export const getGallerySectionById = async (id: string) => {
   return data
 }
 
-
-// CREATE SECTION
+// Create new section
 export const createGallerySection = async (section: GallerySection) => {
   const { data, error } = await supabase
     .from('gallery_sections')
@@ -66,8 +85,7 @@ export const createGallerySection = async (section: GallerySection) => {
   return data
 }
 
-
-// UPDATE SECTION
+// Update section
 export const updateGallerySection = async (id: string, section: GallerySection) => {
   const { data, error } = await supabase
     .from('gallery_sections')
@@ -80,8 +98,7 @@ export const updateGallerySection = async (id: string, section: GallerySection) 
   return data
 }
 
-
-// DELETE SECTION
+// Delete section
 export const deleteGallerySection = async (id: string) => {
   const { error } = await supabase
     .from('gallery_sections')
@@ -91,13 +108,11 @@ export const deleteGallerySection = async (id: string) => {
   if (error) throw error
 }
 
-
-
 /* =====================================================
- GALLERY IMAGES CRUD
+  GALLERY IMAGES CRUD
 ===================================================== */
 
-// GET IMAGES BY SECTION
+// Get images for a specific section
 export const getImagesBySection = async (sectionId: string) => {
   const { data, error } = await supabase
     .from('gallery_images')
@@ -109,8 +124,7 @@ export const getImagesBySection = async (sectionId: string) => {
   return data
 }
 
-
-// ADD IMAGE
+// Add image to section
 export const addGalleryImage = async (image: GalleryImage) => {
   const { data, error } = await supabase
     .from('gallery_images')
@@ -122,8 +136,7 @@ export const addGalleryImage = async (image: GalleryImage) => {
   return data
 }
 
-
-// UPDATE IMAGE
+// Update image details
 export const updateGalleryImage = async (id: string, image: Partial<GalleryImage>) => {
   const { data, error } = await supabase
     .from('gallery_images')
@@ -136,8 +149,7 @@ export const updateGalleryImage = async (id: string, image: Partial<GalleryImage
   return data
 }
 
-
-// DELETE IMAGE
+// Delete image
 export const deleteGalleryImage = async (id: string) => {
   const { error } = await supabase
     .from('gallery_images')
@@ -147,12 +159,11 @@ export const deleteGalleryImage = async (id: string) => {
   if (error) throw error
 }
 
-
-
 /* =====================================================
- IMAGE ORDERING
+  IMAGE ORDERING
 ===================================================== */
 
+// Update display order of an image
 export const updateImageOrder = async (id: string, order: number) => {
   const { data, error } = await supabase
     .from('gallery_images')

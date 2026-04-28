@@ -26,22 +26,17 @@
         </div>
       </header>
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  
-  <!-- Left: Button -->
-  <button 
-    @click="$router.push('/admin/attendance/import/add')"
-    style="padding: 10px 16px; cursor: pointer;"
-  >
-    Import A Student Manually
-  </button>
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <button
+          @click="$router.push('/admin/attendance/import/add')"
+          class="bg-[#0d2b0f] hover:bg-[#0d2b0f]/90 text-white mb-5 font-bold px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5"
+        >
+          Import A Student Manually
+        </button>
 
-  <!-- Right: Timestamp -->
-  <h1 style="margin: 0;">
-    Last Import Time: DATE
-  </h1>
-
-</div>
+        <!-- Right: Timestamp -->
+        <!-- <h1 style="margin: 0; font-weight: 800">Last Import Time: DATE</h1> -->
+      </div>
 
       <!-- STEPPER -->
       <section class="panel">
@@ -540,11 +535,7 @@
 
         <!-- ── CONTROLS ── -->
         <div class="step-controls" v-if="syncStatus !== 'loading' && syncStatus !== 'success'">
-          <button
-            v-if="currentStep > 0"
-            class="nav-btn"
-            @click="goBack"
-          >
+          <button v-if="currentStep > 0" class="nav-btn" @click="goBack">
             <svg
               viewBox="0 0 24 24"
               fill="none"
