@@ -4,7 +4,7 @@
       <div class="flex justify-between items-center h-20">
         <div class="flex items-center">
           <img src="/csu-logo.png" alt="University Logo" class="w-40 h-auto" />
-          <div class="flex flex-col font-serif leading-tight text-[#0d2b0f]"></div>
+          <div class="flex flex-col font-serif leading-tight text-[#003300]"></div>
         </div>
 
         <nav class="hidden xl:flex items-center">
@@ -14,7 +14,7 @@
         </nav>
 
         <div class="xl:hidden">
-          <button class="p-2 text-[#1B5E20]">
+          <button class="p-2 text-[#f9dc07]">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 stroke-linecap="round"
@@ -59,19 +59,19 @@ const navLinks = [
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
-  color: #0d2b0f;
+  color: #003300;
   transition: all 0.3s ease;
   text-transform: capitalize;
   margin: 0 10px;
 }
 
 .nav-link:hover {
-  color: #2e7d32;
+  color: #009900;
 }
 
 /* Active route */
 .router-link-active {
-  color: #2e7d32;
-  border-bottom: 2px solid #fbc02d;
+  color: #009900;
+  border-bottom: 2px solid #f9dc07;
 }
 </style>
