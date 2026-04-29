@@ -106,7 +106,7 @@ const router = createRouter({
     { path: '/admin/analytics/books', name: 'announcement-books', component: ReportBooks, meta: { requiresAuth: true }  },
     { path: '/admin/attendance', name: 'attendance', component: AttendanceOverview, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/logs', name: 'attendance-logs', component: AttendanceLogs, meta: { requiresAuth: true }  },
-    { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAdmin: true, requiresAuth: true  }  },
+    { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAdmin: true,requiresAuth: true  }   },
     { path: '/admin/attendance/import/add', name: 'attendance-add', component: ManualInsert, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/settings', name: 'attendance-settings', component: AttendanceGeneral, meta: { requiresAdmin: true,requiresAuth: true  }  },
     { path: '/admin/attendance/report', name: 'attendance-report', component: ReportPage, meta: { requiresAuth: true }  },

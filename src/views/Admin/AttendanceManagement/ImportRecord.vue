@@ -41,7 +41,9 @@
         </button>
 
         <!-- Right: Timestamp -->
-        <h1 style="margin: 0; font-weight: 800">Last Import Time: DATE</h1> 
+        <h1 style="margin: 0; font-weight: 800">
+          Last Import Time: <span style="color: #f9a825">{{ lastImportTime }}</span>
+        </h1> 
       </div>
 
       <!-- STEPPER -->
@@ -696,6 +698,42 @@ const errorMessage = ref('')
 
 const syncResult = ref({ inserted: 0, updated: 0, deleted: 0 })
 
+const lastImportTime = ref<string>('Loading...')
+
+async function fetchLastImportTime() {
+  try {
+    const { data, error } = await supabase
+      .from('students')
+      .select('created_at')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (error) throw error
+
+    if (data?.created_at) {
+      const date = new Date(data.created_at)
+      lastImportTime.value = date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    } else {
+      lastImportTime.value = 'No records found'
+    }
+  } catch (err) {
+    console.error('Error fetching last import time:', err)
+    lastImportTime.value = 'N/A'
+  }
+}
+
+import { onMounted } from 'vue'
+onMounted(() => {
+  fetchLastImportTime()
+})
+
 // ── Computed ──────────────────────────────────────────────────────────────────
 const isMappedColumn = (col: string) => Object.keys(COLUMN_MAP).includes(col)
 
@@ -789,6 +827,27 @@ async function parseExcel(file: File): Promise<Record<string, any>[]> {
   })
 }
 
+function sanitizeEncoding(val: any): any {
+  if (typeof val !== 'string') return val;
+
+  // Map of corrupted sequences to correct characters
+  const corrections: Record<string, string> = {
+    'Ã‘': 'Ñ',
+    'Ã±': 'ñ',
+    'Ã ': 'À',
+    'Ã©': 'é',
+    'Ã³': 'ó',
+    // Add others if you encounter more, but these are the most common for PH names
+  };
+
+  let cleaned = val;
+  Object.entries(corrections).forEach(([corrupt, correct]) => {
+    cleaned = cleaned.replace(new RegExp(corrupt, 'g'), correct);
+  });
+
+  return cleaned.trim();
+}
+
 // ── Map row to DB record ──────────────────────────────────────────────────────
 function mapRow(row: Record<string, any>): Record<string, any> | null {
   const mapped: Record<string, any> = {}
@@ -796,6 +855,7 @@ function mapRow(row: Record<string, any>): Record<string, any> | null {
   for (const [excelCol, dbCol] of Object.entries(COLUMN_MAP)) {
     if (row[excelCol] !== undefined) {
       let val = row[excelCol]
+      val = sanitizeEncoding(val);
       if (dbCol === 'year_level' && val !== null) val = parseInt(String(val), 10) || null
       if (dbCol === 'is_active' && val !== null) val = Boolean(val)
       mapped[dbCol] = val
@@ -957,6 +1017,10 @@ async function importStudents() {
     syncStatus.value = 'error'
     addLog(`❌ Error: ${err.message}`)
   }
+
+  if (syncStatus.value === 'success') {
+  await fetchLastImportTime() // Refresh the timestamp
+}
 }
 
 // ── Fetch all existing IDs (paginated, handles 10k+) ─────────────────────────
