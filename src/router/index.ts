@@ -49,6 +49,7 @@ import ManageRecords from '@/views/Admin/ServicesManagement/ManageRecords.vue'
 import ManageGallery from '@/views/Admin/ServicesManagement/ManageGallery.vue'
 import ManageCurriculum from '@/views/Admin/ServicesManagement/ManageCurriculum.vue'
 import CurriculumInfo from '@/views/Admin/ServicesManagement/Curriculum/CurriculumInfo.vue'
+import CurriculumEdit from '@/views/Admin/ServicesManagement/Curriculum/CurriculumEdit.vue';
 import ProgramStudy from '@/views/Admin/ServicesManagement/Curriculum/ProgramStudy.vue'
 import ManageBorrowing from '@/views/Admin/ServicesManagement/ManageBorrowing.vue'
 import WebsiteOverview from '@/views/Admin/WebsiteManagement/WebsiteOverview.vue'
@@ -64,6 +65,9 @@ import ManageRoles from '@/views/Admin/AdminManagement/ManageRoles.vue'
 import ViewUsers from '@/views/Admin/AdminManagement/ViewUsers.vue'
 import BackupSettings from '@/views/Admin/AdminManagement/BackupSettings.vue'
 import Developers from '@/views/Developers.vue'
+
+//report
+import ReportPage from '@/views/Admin/Attendance/Reports/ReportPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.pBASE_URL),
@@ -105,7 +109,7 @@ const router = createRouter({
     { path: '/admin/attendance/import', name: 'attendance-import', component: ImportRecord, meta: { requiresAdmin: true, requiresAuth: true  }  },
     { path: '/admin/attendance/import/add', name: 'attendance-add', component: ManualInsert, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/settings', name: 'attendance-settings', component: AttendanceGeneral, meta: { requiresAdmin: true,requiresAuth: true  }  },
-    { path: '/admin/attendance/report', name: 'attendance-report', component: AttendanceReport, meta: { requiresAuth: true }  },
+    { path: '/admin/attendance/report', name: 'attendance-report', component: ReportPage, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/search', name: 'attendance-search', component: AttendanceSearch, meta: { requiresAuth: true }  },
     { path: '/admin/attendance/students', name: 'attendance-students', component: SearchRecord, meta: { requiresAdmin: true,requiresAuth: true  }  },
     { path: '/admin/attendance/ranking', name: 'attendance-ranking', component: AttendanceRanking, meta: { requiresAuth: true }  },
@@ -118,6 +122,7 @@ const router = createRouter({
   { path: '/admin/services/curriculum/curriculum-info', name: 'curriculum-info', component: CurriculumInfo, meta: { requiresAuth: true }  },
   { path: '/admin/curriculum/info/:programId/:specializationId?', name: 'curriculum-info-dynamic', component: CurriculumInfo, meta: { requiresAuth: true }  },
 { path: '/admin/services/curriculum/program-study/:programId/:specializationId?', name: 'program-study', component: ProgramStudy, meta: { requiresAuth: true }  },
+{ path: '/admin/services/curriculum/edit', name: 'curriculum-edit', component: CurriculumEdit, meta: { requiresAuth: true }  },
     { path: '/admin/services/borrowing', name: 'services-borrowing', component: ManageBorrowing, meta: { requiresAuth: true }  },
     { path: '/admin/website', name: 'website', component: WebsiteOverview, meta: { requiresAdmin: true, requiresAuth: true  }  },
     { path: '/admin/website/images', name: 'website-images', component: WebsiteImages, meta: { requiresAuth: true }  },
@@ -131,7 +136,7 @@ const router = createRouter({
     { path: '/admin/management/assignation', name: 'admin-management-assignation', component: ManageAssignation, meta: { requiresAuth: true }  }, 
     { path: '/admin/management/permission', name: 'admin-management-permission', component: ManagePermission, meta: { requiresAuth: true }  }, 
     { path: '/admin/settings/backup', name: 'admin-settings-backup', component: BackupSettings, meta: { requiresAdmin: true, requiresAuth: true } }, 
-
+    { path: '/admin/attendance/report-test', name: 'attendance-report-test', component: ReportPage, meta: { requiresAuth: true } }, 
   ],
    scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

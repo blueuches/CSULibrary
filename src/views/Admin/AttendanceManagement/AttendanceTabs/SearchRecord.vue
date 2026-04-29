@@ -3,60 +3,68 @@
     <Sidebar />
 
     <!-- MAIN CONTENT -->
-    <div class="flex-1 p-4 lg:p-8 font-sans text-slate-700 overflow-y-auto">
+    <div class="sr-main flex-1 p-4 lg:p-8 font-sans text-slate-700 overflow-y-auto">
 
-      <!-- HEADER -->
-      <header class="attn-header mb-5">
-        <div class="mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <header class="sr-header mb-3">
+  <div class="sr-header-container mx-auto flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
 
-          <div>
-            <div class="header-breadcrumb text-gray-400">
-              <button
-                class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
-                @click="$router.push('/admin/attendance')"
-              >
-                <span class="uppercase tracking-widest">Back</span>
-              </button>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3">
-                <path d="M9 5l7 7-7 7" />
-              </svg>
-              <span class="text-gray-400 transition font-bold">Attendance</span>
-            </div>
+    <!-- LEFT SIDE -->
+    <div>
+      <div class="header-breadcrumb text-gray-400">
+        <button
+          class="back-btn flex items-center gap-1.5 text-gray-400 hover:text-[#0d2b0f] transition-colors"
+          @click="$router.push('/admin/attendance')"
+        >
+          <span class="uppercase tracking-widest">Back</span>
+        </button>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-3 h-3">
+          <path d="M9 5l7 7-7 7" />
+        </svg>
+        <span class="text-gray-400 font-bold">Attendance</span>
+      </div>
 
-           <h1 class="hero-title">
-              <span class="hero-word-dark hero-underlined">Student</span>
-              <span class="hero-word-gold"> Record</span>
-              <p class="hero-subtitle">
-                Filter and manage student records by college and academic program.
-              </p>
-            </h1>
-          </div>
+      <h1 class="hero-title">
+        <span class="hero-word-dark hero-underlined">Student</span>
+        <span class="hero-word-gold"> Record</span>
+        <p class="hero-subtitle">
+          Filter and manage student records by college and academic program.
+        </p>
+      </h1>
+    </div>
 
-          <!-- SEARCH -->
-          <div class="relative w-full lg:w-[40%] group" style="margin-bottom: -50px;">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i class="fas fa-search text-slate-300 group-focus-within:text-[#0d2b0f] transition-colors"></i>
-            </div>
-            <input v-model="searchQuery" type="text" placeholder="Search by ID, Name, or Program..."
-              class="w-full bg-white border-2 border-transparent pl-12 pr-4 py-4 rounded-2xl focus:border-[#0d2b0f]/20 focus:ring-4 focus:ring-[#0d2b0f]/5 transition-all outline-none shadow-sm text-sm font-medium" />
-          </div>
-
+    <!-- RIGHT SIDE SEARCH -->
+    <div class="w-full lg:w-[32%]" style="padding-top: 50px;">
+      <div class="relative group mt-4 lg:mt-0">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <i class="fas fa-search text-slate-300 group-focus-within:text-[#0d2b0f] transition-colors"></i>
         </div>
-      </header>
+
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search by ID, Name, or Program..."
+          class="w-full bg-white border-2 border-transparent pl-12 pr-4 py-4 rounded-2xl focus:border-[#0d2b0f]/20 focus:ring-4 focus:ring-[#0d2b0f]/5 transition-all outline-none shadow-sm text-sm font-medium"
+        />
+      </div>
+    </div>
+
+  </div>
+</header>
+
 
       <!-- MAIN GRID -->
-      <main class="mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main class="sr-grid mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
 
         <!-- FILTERS -->
         <section class="lg:col-span-4 space-y-6">
-          <div class="bg-white p-8 rounded-[2.5rem] border border-[#c2d4cb] shadow-xl shadow-slate-200/40">
+          <div class="bg-white p-8 rounded-[1.5rem] border border-[#c2d4cb] shadow-xl shadow-slate-200/40">
 
             <div class="flex items-center justify-between mb-8">
               <h2 class="text-xs font-black uppercase tracking-widest text-[#4a7060]">Filter</h2>
             </div>
 
             <!-- FILTER GRID -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="sr-filter-grid grid grid-cols-1 md:grid-cols-2 gap-4">
 
               <div class="relative">
                 <label class="text-[10px] font-black uppercase text-[#4a7060] ml-1 mb-2 block">College</label>
@@ -171,6 +179,7 @@
                     </td>
                   </tr>
                 </tbody>
+
               </table>
 
               <div v-if="loading" class="py-20 flex justify-center">
@@ -182,6 +191,7 @@
             </div>
           </div>
         </section>
+
       </main>
     </div>
 
@@ -445,6 +455,7 @@
 import { ref, computed, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
+import '@/assets/styles/student-record.css'
 
 interface Student {
   studentId: string

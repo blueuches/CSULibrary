@@ -21,14 +21,12 @@
       >
         <transition name="fade" mode="out-in">
           <div :key="activeTab" class="w-full max-w-6xl py-12">
-            <!-- DASHBOARD -->
             <div v-if="activeTab === 'DASHBOARD'" class="space-y-12">
               <h2 class="text-[#0d2b0f] text-6xl md:text-7xl font-black">
                 Welcome,
                 <span class="anim-shimmer"> {{ firstName || 'User' }} </span>.
               </h2>
 
-              <!-- STATS -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
                 <div
                   v-for="(stat, i) in quickStats"
@@ -47,23 +45,15 @@
                     "
                     :style="cardStyles[i]"
                   >
-                    <!-- Mouse-tracked shimmer -->
                     <div class="stat-shimmer" :style="shimmerStyles[i]"></div>
-
-                    <!-- Top accent bar -->
                     <div class="stat-accent-bar"></div>
-
-                    <!-- ICON -->
                     <span class="stat-icon" v-html="stat.icon"></span>
-
-                    <!-- VALUE -->
                     <h3 class="stat-value">{{ stat.value ?? '—' }}</h3>
-
-                    <!-- LABEL -->
                     <p class="stat-label">{{ stat.label }}</p>
                   </div>
                 </div>
               </div>
+
               <div
                 class="relative py-4 max-w-2xl mx-auto anim-fade-in"
                 style="animation-delay: 0.5s"
@@ -84,7 +74,6 @@
               </div>
             </div>
 
-            <!-- OTHER TABS -->
             <div v-else class="text-[#1b5e20]">
               <h2 class="text-5xl font-black">{{ activeTab }}</h2>
               <p>Loading...</p>
@@ -93,7 +82,6 @@
         </transition>
       </div>
 
-      <!-- FOOTER -->
       <footer class="p-6 text-center">
         <p class="text-[10px] uppercase tracking-[0.5em] font-black text-[#0d2b0f]">
           Caraga State University Library Management
@@ -104,41 +92,39 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted } from 'vue'
+import { ref, computed, reactive, onMounted, onBeforeUnmount } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 
-// QUOTE
 const currentQuote = ref({
   text: 'A library is not a luxury but one of the necessities of life.',
   author: 'Henry Ward Beecher',
 })
 
-/* ======================
-   STATE
-====================== */
 const firstName = ref('')
 const activeTab = ref('DASHBOARD')
 
 const monthlyAttendance = ref(0)
 const activeVisitors = ref(0)
 const timedOutVisitors = ref(0)
-const topDepartment = ref('—')
+const topDepartment = ref('Loading...')
 
-const displayMonthly = ref<number | null>(null)
-const displayVisitors = ref<number | null>(null)
-const displayTimedOut = ref<number | null>(null)
+const displayMonthly = ref<number | null>(0)
+const displayVisitors = ref<number | null>(0)
+const displayTimedOut = ref<number | null>(0)
 
-/* ======================
-   3D TILT
-====================== */
 const CARD_COUNT = 4
 const cardRefs = reactive<any[]>(new Array(CARD_COUNT).fill(null))
 
 const cardStyles = reactive<string[]>(
   new Array(CARD_COUNT).fill('transform: perspective(800px) rotateX(0deg) rotateY(0deg) scale(1);'),
 )
+
 const shimmerStyles = reactive<string[]>(new Array(CARD_COUNT).fill(''))
+
+let liveChannel: ReturnType<typeof supabase.channel> | null = null
+let refreshTimer: ReturnType<typeof setTimeout> | null = null
+let topDepartmentRunId = 0
 
 function onMouseMove(e: MouseEvent, index: number) {
   const card = cardRefs[index]
@@ -157,6 +143,7 @@ function onMouseMove(e: MouseEvent, index: number) {
 
   const px = (x / rect.width) * 100
   const py = (y / rect.height) * 100
+
   shimmerStyles[index] =
     `background: radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.22) 0%, transparent 60%);`
 }
@@ -166,15 +153,13 @@ function onMouseLeave(index: number) {
   shimmerStyles[index] = ''
 }
 
-/* ======================
-   HELPERS
-====================== */
 const handleTabChange = (name: string) => {
   activeTab.value = name
 }
 
 const currentDate = computed(() =>
   new Date().toLocaleDateString('en-PH', {
+    timeZone: 'Asia/Manila',
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -182,160 +167,233 @@ const currentDate = computed(() =>
   }),
 )
 
-/* ======================
-   COUNT-UP ANIMATION
-====================== */
-const animateValue = (target: any, final: number, duration = 800) => {
-  let start = Math.floor(final * 0.3)
-  const step = (final - start) / (duration / 16)
-  target.value = start
-  const interval = setInterval(() => {
-    start += step
-    if (start >= final) {
-      target.value = final
-      clearInterval(interval)
-    } else target.value = Math.floor(start)
-  }, 16)
-}
+const animateValue = (target: any, final: number, duration = 500) => {
+  const current = Number(target.value || 0)
 
-/* ======================
-   CACHE
-====================== */
-const CACHE_KEY = 'dashboard_stats'
-const TTL_MS = 1 * 60 * 1000 // 1 minute — driven by today's counts which change often
-
-interface DashboardCache {
-  firstName: string
-  monthlyAttendance: number
-  activeVisitors: number
-  timedOutVisitors: number
-  topDepartment: string
-  fetchedAt: number
-}
-
-function readCache(): DashboardCache | null {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY)
-    if (!raw) return null
-    return JSON.parse(raw) as DashboardCache
-  } catch {
-    return null
-  }
-}
-
-function writeCache(data: Omit<DashboardCache, 'fetchedAt'>) {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ ...data, fetchedAt: Date.now() }))
-  } catch {
-    /* storage full or private mode — fail silently */
-  }
-}
-
-function isCacheValid(cache: DashboardCache): boolean {
-  return Date.now() - cache.fetchedAt < TTL_MS
-}
-
-/* ======================
-   LOAD DATA
-====================== */
-onMounted(async () => {
-  // --- Try cache first ---
-  const cached = readCache()
-  if (cached && isCacheValid(cached)) {
-    firstName.value = cached.firstName
-    monthlyAttendance.value = cached.monthlyAttendance
-    activeVisitors.value = cached.activeVisitors
-    timedOutVisitors.value = cached.timedOutVisitors
-    topDepartment.value = cached.topDepartment
-    animateValue(displayMonthly, cached.monthlyAttendance)
-    animateValue(displayVisitors, cached.activeVisitors)
-    animateValue(displayTimedOut, cached.timedOutVisitors)
+  if (current === final) {
+    target.value = final
     return
   }
 
-  // --- Cache miss: fetch from Supabase ---
-  const now = new Date()
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString()
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
-  const todayEnd = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    23,
-    59,
-    59,
-  ).toISOString()
+  let start = current
+  const step = (final - start) / (duration / 16)
 
-  // Auth (sequential — needed before we can use email)
+  const interval = setInterval(() => {
+    start += step
+
+    if ((step >= 0 && start >= final) || (step < 0 && start <= final)) {
+      target.value = final
+      clearInterval(interval)
+    } else {
+      target.value = Math.floor(start)
+    }
+  }, 16)
+}
+
+const sleep = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms))
+
+function getPHDateParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
+
+  const [year, month, day] = parts.split('-').map(Number)
+
+  return { year, month, day }
+}
+
+function getPHDateRangeForToday() {
+  const { year, month, day } = getPHDateParts()
+
+  return {
+    start: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T00:00:00+08:00`,
+    end: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T23:59:59+08:00`,
+  }
+}
+
+function getPHDateRangeForCurrentMonth() {
+  const { year, month } = getPHDateParts()
+  const lastDay = new Date(year, month, 0).getDate()
+
+  return {
+    start: `${year}-${String(month).padStart(2, '0')}-01T00:00:00+08:00`,
+    end: `${year}-${String(month).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}T23:59:59+08:00`,
+  }
+}
+
+async function fetchUserName() {
   const { data: auth } = await supabase.auth.getUser()
-  let fetchedName = ''
-  if (auth?.user) {
-    const { data } = await supabase
-      .from('users')
-      .select('first_name')
-      .eq('email', auth.user.email)
-      .single()
-    if (data) fetchedName = data.first_name
-    firstName.value = fetchedName
+
+  if (!auth?.user?.email) return ''
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('first_name')
+    .eq('email', auth.user.email)
+    .single()
+
+  if (error) {
+    console.error('Failed to fetch user name:', error)
+    return ''
   }
 
-  // All three stat queries in parallel
-  const [{ count: monthCount }, { data: todayRows }, { data: collegeCounts }] = await Promise.all([
-    // Query 1: monthly total
+  return data?.first_name || ''
+}
+
+async function fetchFastDashboardStats() {
+  const todayRange = getPHDateRangeForToday()
+  const monthRange = getPHDateRangeForCurrentMonth()
+
+  const [fetchedName, monthlyResult, activeResult, timedOutResult] = await Promise.all([
+    fetchUserName(),
+
     supabase
       .from('attendance_logs')
-      .select('*', { count: 'exact', head: true })
-      .gte('time_in', startOfMonth)
-      .lte('time_in', endOfMonth),
+      .select('id', { count: 'exact', head: true })
+      .eq('attendance_type', 'library')
+      .gte('time_in', monthRange.start)
+      .lte('time_in', monthRange.end),
 
-    // Query 2: today's rows — only fetch time_out to derive active vs timed-out
     supabase
       .from('attendance_logs')
-      .select('time_out')
-      .gte('time_in', todayStart)
-      .lte('time_in', todayEnd),
+      .select('id', { count: 'exact', head: true })
+      .eq('attendance_type', 'library')
+      .gte('time_in', todayRange.start)
+      .lte('time_in', todayRange.end)
+      .is('time_out', null),
 
-    // Query 3: join to students, pull college only
-    supabase.from('attendance_logs').select('students!inner(college)'),
+    supabase
+      .from('attendance_logs')
+      .select('id', { count: 'exact', head: true })
+      .eq('attendance_type', 'library')
+      .gte('time_out', todayRange.start)
+      .lte('time_out', todayRange.end),
   ])
 
-  const active = todayRows?.filter((r) => r.time_out === null).length ?? 0
-  const timedOut = todayRows?.filter((r) => r.time_out !== null).length ?? 0
+  if (monthlyResult.error) console.error('Failed to fetch monthly attendance:', monthlyResult.error)
+  if (activeResult.error) console.error('Failed to fetch active visitors:', activeResult.error)
+  if (timedOutResult.error) console.error('Failed to fetch timed out visitors:', timedOutResult.error)
 
-  monthlyAttendance.value = monthCount ?? 0
-  activeVisitors.value = active
-  timedOutVisitors.value = timedOut
+  firstName.value = fetchedName
+
+  monthlyAttendance.value = monthlyResult.count ?? 0
+  activeVisitors.value = activeResult.count ?? 0
+  timedOutVisitors.value = timedOutResult.count ?? 0
 
   animateValue(displayMonthly, monthlyAttendance.value)
   animateValue(displayVisitors, activeVisitors.value)
   animateValue(displayTimedOut, timedOutVisitors.value)
+}
 
-  if (collegeCounts?.length) {
-    const tally: Record<string, number> = {}
-    for (const row of collegeCounts) {
-      const college = (row.students as any)?.college
-      if (college) tally[college] = (tally[college] ?? 0) + 1
+async function fetchTopDepartmentInBackground() {
+  const runId = ++topDepartmentRunId
+  const tally: Record<string, number> = {}
+  const batchSize = 300
+  let from = 0
+
+  try {
+    while (true) {
+      if (runId !== topDepartmentRunId) return
+
+      const to = from + batchSize - 1
+
+      const { data, error } = await supabase
+        .from('attendance_logs')
+        .select(
+          `
+          id,
+          attendance_type,
+          students!inner (
+            college
+          )
+        `,
+        )
+        .eq('attendance_type', 'library')
+        .range(from, to)
+
+      if (error) {
+        console.error('Failed to fetch top department:', error)
+        topDepartment.value = '—'
+        return
+      }
+
+      const rows = data || []
+
+      for (const row of rows) {
+        const student = Array.isArray(row.students) ? row.students[0] : row.students
+        const college = student?.college
+
+        if (college) {
+          tally[college] = (tally[college] || 0) + 1
+        }
+      }
+
+      const top = Object.entries(tally).sort((a, b) => b[1] - a[1])[0]
+      topDepartment.value = top ? top[0] : '—'
+
+      if (rows.length < batchSize) break
+
+      from += batchSize
+      await sleep(0)
     }
-    const top = Object.entries(tally).sort((a, b) => b[1] - a[1])[0]
-    if (top) topDepartment.value = top[0]
+  } catch (error) {
+    console.error('Unexpected top department error:', error)
+    topDepartment.value = '—'
   }
+}
 
-  writeCache({
-    firstName: fetchedName,
-    monthlyAttendance: monthlyAttendance.value,
-    activeVisitors: activeVisitors.value,
-    timedOutVisitors: timedOutVisitors.value,
-    topDepartment: topDepartment.value,
-  })
+const scheduleRealtimeRefresh = () => {
+  if (refreshTimer) clearTimeout(refreshTimer)
+
+  refreshTimer = setTimeout(async () => {
+    await fetchFastDashboardStats()
+    fetchTopDepartmentInBackground()
+  }, 400)
+}
+
+onMounted(async () => {
+  localStorage.removeItem('dashboard_stats')
+
+  await fetchFastDashboardStats()
+
+  fetchTopDepartmentInBackground()
+
+  liveChannel = supabase
+    .channel('dashboard-live')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'attendance_logs',
+      },
+      () => {
+        scheduleRealtimeRefresh()
+      },
+    )
+    .subscribe()
 })
 
-/* ======================
-   STATS
-====================== */
+onBeforeUnmount(() => {
+  topDepartmentRunId++
+
+  if (refreshTimer) {
+    clearTimeout(refreshTimer)
+    refreshTimer = null
+  }
+
+  if (liveChannel) {
+    supabase.removeChannel(liveChannel)
+    liveChannel = null
+  }
+})
+
 const quickStats = computed(() => [
   {
-    label: 'Active Students',
+    label: 'Active Visitors',
     value: displayVisitors.value,
     icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
   },
@@ -362,7 +420,6 @@ const quickStats = computed(() => [
 .stat-card-wrapper {
   animation: card-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: calc(var(--i) * 0.1s);
-  /* perspective must be on the PARENT, not the card itself */
   perspective: 600px;
   perspective-origin: center center;
 }
@@ -378,7 +435,6 @@ const quickStats = computed(() => [
   }
 }
 
-/* ── Card ── */
 .stat-card {
   position: relative;
   background: #fff;
@@ -390,11 +446,8 @@ const quickStats = computed(() => [
   align-items: center;
   justify-content: center;
   cursor: default;
-  /* DO NOT use overflow:hidden — it flattens 3D in some browsers */
   transform-style: preserve-3d;
   will-change: transform;
-
-  /* smooth spring-back when mouse leaves */
   transition:
     transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.35s ease,
@@ -410,7 +463,6 @@ const quickStats = computed(() => [
     0 10px 20px rgba(27, 94, 32, 0.18);
 }
 
-/* ── Mouse-tracked radial shimmer ── */
 .stat-shimmer {
   position: absolute;
   inset: 0;
@@ -419,7 +471,6 @@ const quickStats = computed(() => [
   transition: background 0.08s linear;
 }
 
-/* ── Amber top-edge accent ── */
 .stat-accent-bar {
   position: absolute;
   top: 0;
@@ -435,7 +486,6 @@ const quickStats = computed(() => [
   opacity: 1;
 }
 
-/* ── Icon ── */
 .stat-icon {
   color: #f9a825;
   display: flex;
@@ -449,7 +499,6 @@ const quickStats = computed(() => [
   transform: scale(1.18);
 }
 
-/* ── Value ── */
 .stat-value {
   font-size: 2.25rem;
   font-weight: 900;
@@ -463,7 +512,6 @@ const quickStats = computed(() => [
   color: #fff;
 }
 
-/* ── Label ── */
 .stat-label {
   font-size: 0.6875rem;
   text-transform: uppercase;
@@ -478,7 +526,6 @@ const quickStats = computed(() => [
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* ── Tab fade ── */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.25s ease;

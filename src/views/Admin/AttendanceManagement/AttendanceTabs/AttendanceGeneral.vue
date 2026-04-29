@@ -364,8 +364,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
+import { supabase } from '@/lib/supabase'
+
+// ── Supabase config ───────────────────────────────────────────────
+const TABLE_NAME = 'attendance_page'
+const ELEMENT_NAME = 'school_info'
+
+// One bucket only for both image and video
+const STORAGE_BUCKET = 'attendance_video'
 
 // ── Banners ───────────────────────────────────────────────────────
 const errorMsg = ref<string | null>(null)
@@ -393,31 +401,350 @@ const videoFileInput = ref<HTMLInputElement | null>(null)
 // ── Settings ──────────────────────────────────────────────────────
 const settings = reactive({
   bg_path: '',
+  bg_storage_path: '',
   video_path: '',
+  video_storage_path: '',
   time_out_enabled: true,
 })
 
-// ── Stubs (replace with your real implementations) ────────────────
+const pageRowId = ref<string | null>(null)
+
+// ── Helpers ───────────────────────────────────────────────────────
+function showSuccess(message: string) {
+  successMsg.value = message
+  errorMsg.value = null
+
+  window.setTimeout(() => {
+    successMsg.value = null
+  }, 2500)
+}
+
+function showError(message: string) {
+  errorMsg.value = message
+  successMsg.value = null
+}
+
+function formatDateTime(value?: string | null) {
+  if (!value) return null
+
+  try {
+    return new Intl.DateTimeFormat('en-PH', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'Asia/Manila',
+    }).format(new Date(value))
+  } catch {
+    return value
+  }
+}
+
+function safeParseElementForm(value: unknown) {
+  if (!value || value === 'EMPTY') {
+    return {}
+  }
+
+  if (typeof value === 'object') {
+    return value as Record<string, any>
+  }
+
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value)
+    } catch {
+      return {}
+    }
+  }
+
+  return {}
+}
+
+async function getCurrentUser() {
+  const { data, error } = await supabase.auth.getUser()
+
+  if (error) {
+    throw error
+  }
+
+  return data.user
+}
+
+async function getFileUrl(path: string) {
+  if (!path) return ''
+
+  // Works for private bucket
+  const { data, error } = await supabase.storage
+    .from(STORAGE_BUCKET)
+    .createSignedUrl(path, 60 * 60)
+
+  if (!error && data?.signedUrl) {
+    return data.signedUrl
+  }
+
+  // Fallback if bucket is public
+  const { data: publicData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path)
+  return publicData.publicUrl
+}
+
+async function uploadFileToStorage(file: File, folder: string) {
+  const fileExt = file.name.split('.').pop()
+  const cleanName = file.name
+    .replace(/\.[^/.]+$/, '')
+    .replace(/[^a-zA-Z0-9-_]/g, '-')
+    .toLowerCase()
+
+  const filePath = `${folder}/${Date.now()}-${cleanName}.${fileExt}`
+
+  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(filePath, file, {
+    cacheControl: '3600',
+    upsert: true,
+    contentType: file.type,
+  })
+
+  if (error) {
+    throw error
+  }
+
+  return filePath
+}
+
+async function saveSettingsToSupabase() {
+  const user = await getCurrentUser()
+
+  const elementForm = {
+    bg_path: settings.bg_path,
+    bg_storage_path: settings.bg_storage_path,
+    video_path: settings.video_path,
+    video_storage_path: settings.video_storage_path,
+    time_out_enabled: settings.time_out_enabled,
+  }
+
+  const payload = {
+    element_name: ELEMENT_NAME,
+    element_form: JSON.stringify(elementForm),
+    edited_by: user?.id ?? null,
+    edited_at: new Date().toISOString(),
+  }
+
+  if (pageRowId.value) {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .update(payload)
+      .eq('id', pageRowId.value)
+      .select('id, edited_at')
+      .single()
+
+    if (error) throw error
+
+    lastUpdated.value = formatDateTime(data?.edited_at)
+    editedByEmail.value = user?.email ?? null
+    return
+  }
+
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .insert(payload)
+    .select('id, edited_at')
+    .single()
+
+  if (error) throw error
+
+  pageRowId.value = data.id
+  lastUpdated.value = formatDateTime(data?.edited_at)
+  editedByEmail.value = user?.email ?? null
+}
+
+// ── Load existing settings ────────────────────────────────────────
+async function loadSettings() {
+  loading.value = true
+  errorMsg.value = null
+
+  try {
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('id, element_name, element_form, edited_by, edited_at')
+      .eq('element_name', ELEMENT_NAME)
+      .limit(1)
+      .maybeSingle()
+
+    if (error) throw error
+
+    if (data) {
+      pageRowId.value = data.id
+
+      const parsed = safeParseElementForm(data.element_form)
+
+      settings.bg_storage_path = parsed.bg_storage_path || ''
+      settings.video_storage_path = parsed.video_storage_path || ''
+
+      settings.bg_path = settings.bg_storage_path
+        ? await getFileUrl(settings.bg_storage_path)
+        : parsed.bg_path || ''
+
+      settings.video_path = settings.video_storage_path
+        ? await getFileUrl(settings.video_storage_path)
+        : parsed.video_path || ''
+
+      settings.time_out_enabled =
+        typeof parsed.time_out_enabled === 'boolean' ? parsed.time_out_enabled : true
+
+      lastUpdated.value = formatDateTime(data.edited_at)
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    editedByEmail.value = user?.email ?? null
+  } catch (error: any) {
+    console.error('Failed to load attendance page settings:', error)
+    showError(error?.message || 'Failed to load settings.')
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadSettings)
+
+// ── Edit controls ─────────────────────────────────────────────────
 function editSection() {
   editing.value = true
 }
+
 function cancelEdit() {
   editing.value = false
+  errorMsg.value = null
 }
-function saveSection() {
-  /* your save logic */
+
+async function saveSection() {
+  saving.value = true
+
+  try {
+    await saveSettingsToSupabase()
+    editing.value = false
+    showSuccess('Background settings saved.')
+  } catch (error: any) {
+    console.error('Failed to save background settings:', error)
+    showError(error?.message || 'Failed to save background settings.')
+  } finally {
+    saving.value = false
+  }
 }
-function saveVideo() {
-  /* your save logic */
+
+async function saveVideo() {
+  savingVideo.value = true
+
+  try {
+    await saveSettingsToSupabase()
+    editingVideo.value = false
+    showSuccess('Video settings saved.')
+  } catch (error: any) {
+    console.error('Failed to save video settings:', error)
+    showError(error?.message || 'Failed to save video settings.')
+  } finally {
+    savingVideo.value = false
+  }
 }
-function onToggleTimeOut() {
+
+// ── Toggle ────────────────────────────────────────────────────────
+async function onToggleTimeOut() {
+  const previousValue = settings.time_out_enabled
   settings.time_out_enabled = !settings.time_out_enabled
+  savingToggle.value = true
+
+  try {
+    await saveSettingsToSupabase()
+    showSuccess(
+      settings.time_out_enabled
+        ? 'Time Out feature enabled.'
+        : 'Time Out feature disabled.',
+    )
+  } catch (error: any) {
+    settings.time_out_enabled = previousValue
+    console.error('Failed to update Time Out setting:', error)
+    showError(error?.message || 'Failed to update Time Out setting.')
+  } finally {
+    savingToggle.value = false
+  }
 }
-function onBgFileChange(e: Event) {
-  /* your upload logic */
+
+// ── Upload handlers ───────────────────────────────────────────────
+async function onBgFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+
+  if (!file) return
+
+  if (!file.type.startsWith('image/')) {
+    showError('Please upload a valid image file.')
+    input.value = ''
+    return
+  }
+
+  uploadingBg.value = true
+
+  try {
+    const filePath = await uploadFileToStorage(file, 'attendance-page/backgrounds')
+    const fileUrl = await getFileUrl(filePath)
+
+    settings.bg_storage_path = filePath
+    settings.bg_path = fileUrl
+
+    await saveSettingsToSupabase()
+
+    editing.value = false
+    showSuccess('Background image uploaded and saved.')
+  } catch (error: any) {
+    console.error('Failed to upload background image:', error)
+    showError(error?.message || 'Failed to upload background image.')
+  } finally {
+    uploadingBg.value = false
+    input.value = ''
+  }
 }
-function onVideoFileChange(e: Event) {
-  /* your upload logic */
+
+async function onVideoFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+
+  if (!file) return
+
+  if (!file.type.startsWith('video/')) {
+    showError('Please upload a valid video file.')
+    input.value = ''
+    return
+  }
+
+  uploadingVideo.value = true
+  videoProgress.value = 10
+
+  try {
+    const filePath = await uploadFileToStorage(file, 'attendance-page/videos')
+
+    videoProgress.value = 70
+
+    const fileUrl = await getFileUrl(filePath)
+
+    settings.video_storage_path = filePath
+    settings.video_path = fileUrl
+
+    videoProgress.value = 90
+
+    await saveSettingsToSupabase()
+
+    videoProgress.value = 100
+    editingVideo.value = false
+    showSuccess('Video uploaded and saved.')
+  } catch (error: any) {
+    console.error('Failed to upload video:', error)
+    showError(error?.message || 'Failed to upload video.')
+  } finally {
+    window.setTimeout(() => {
+      videoProgress.value = 0
+    }, 700)
+
+    uploadingVideo.value = false
+    input.value = ''
+  }
 }
 </script>
 
