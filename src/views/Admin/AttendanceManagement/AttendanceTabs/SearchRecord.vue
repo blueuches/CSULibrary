@@ -182,7 +182,7 @@
 
               </table>
 
-              <div v-if="loading" class="py-20 flex justify-center">
+              <div v-if="loadingStudents" class="py-20 flex justify-center">
                 <p class="text-[#4a7060] text-xs font-bold">Loading...</p>
               </div>
               <div v-else-if="filteredStudents.length === 0" class="py-20 flex justify-center">
@@ -225,7 +225,7 @@
             <div class="flex items-center gap-2">
               <!-- Refresh button -->
               <button
-                @click="fetchData(true)"
+                @click="fetchAttendanceLogs(true)"
                 :disabled="refreshing"
                 class="w-9 h-9 rounded-xl bg-[#f0f4f1] border border-[#c2d4cb] flex items-center justify-center text-[#4a7060] hover:bg-[#e6f2ec] hover:text-[#0d2b0f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title="Refresh data"
@@ -279,7 +279,7 @@
               </div>
 
               <div class="grid grid-cols-2 gap-3 mb-4">
-                <!-- Female card — Dark Green accent -->
+                <!-- Female card -->
                 <div class="bg-white/10 rounded-xl px-4 py-3 flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg bg-[#4a7060]/30 flex items-center justify-center flex-shrink-0">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8ccb8" stroke-width="2">
@@ -291,7 +291,7 @@
                     <div class="text-[10px] text-[#a8ccb8] font-bold uppercase tracking-wide">Female</div>
                   </div>
                 </div>
-                <!-- Male card — Yellow accent -->
+                <!-- Male card -->
                 <div class="bg-white/10 rounded-xl px-4 py-3 flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg bg-[#e6a800]/20 flex items-center justify-center flex-shrink-0">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e6a800" stroke-width="2">
@@ -342,12 +342,10 @@
                       <p class="text-[10px] text-[#4a7060] mt-0.5">{{ college.total }} students total</p>
                     </div>
                     <div class="flex items-center gap-3 flex-shrink-0 mt-0.5">
-                      <!-- Female dot — dark green -->
                       <div class="flex items-center gap-1">
                         <div class="w-2 h-2 rounded-full bg-[#4a7060]"></div>
                         <span class="text-xs font-black text-[#0d2b0f]">{{ college.female }}</span>
                       </div>
-                      <!-- Male dot — yellow -->
                       <div class="flex items-center gap-1">
                         <div class="w-2 h-2 rounded-full bg-[#e6a800]"></div>
                         <span class="text-xs font-black text-[#0d2b0f]">{{ college.male }}</span>
@@ -384,15 +382,12 @@
                     <div v-if="expandedColleges.has(college.name)" class="border-t border-[#d4e4da]">
                       <div class="px-5 py-4 bg-white">
 
-                        <!-- Legend row -->
                         <div class="flex items-center gap-4 mb-3">
                           <p class="text-[10px] font-black uppercase tracking-widest text-[#4a7060] flex-1">By Year Level</p>
-                          <!-- Female legend — dark green -->
                           <div class="flex items-center gap-1.5">
                             <div class="w-2 h-2 rounded-full bg-[#4a7060]"></div>
                             <span class="text-[10px] text-[#4a7060] font-bold">F</span>
                           </div>
-                          <!-- Male legend — yellow -->
                           <div class="flex items-center gap-1.5">
                             <div class="w-2 h-2 rounded-full bg-[#e6a800]"></div>
                             <span class="text-[10px] text-[#4a7060] font-bold">M</span>
@@ -400,7 +395,6 @@
                           <span class="text-[10px] text-[#4a7060] font-bold w-8 text-right">Total</span>
                         </div>
 
-                        <!-- Year level rows -->
                         <div class="space-y-3">
                           <div
                             v-for="yl in college.yearLevels"
@@ -412,21 +406,16 @@
                                 {{ yl.level === 0 ? 'N/A' : `Year ${yl.level}` }}
                               </span>
                               <div class="flex items-center gap-3">
-                                <!-- Female count — dark green text -->
                                 <span class="text-xs font-black text-[#4a7060]">{{ yl.female }}</span>
-                                <!-- Male count — yellow text -->
                                 <span class="text-xs font-black text-[#e6a800]">{{ yl.male }}</span>
                                 <span class="text-xs font-black text-[#0d2b0f] w-8 text-right">{{ yl.total }}</span>
                               </div>
                             </div>
-                            <!-- Stacked bar -->
                             <div class="h-1.5 rounded-full bg-[#d4e4da] overflow-hidden flex">
-                              <!-- Female bar — dark green -->
                               <div
                                 class="h-full bg-[#4a7060] transition-all duration-500"
                                 :style="{ width: yl.total ? (yl.female / yl.total * 100) + '%' : '0%' }"
                               />
-                              <!-- Male bar — yellow -->
                               <div
                                 class="h-full bg-[#e6a800] transition-all duration-500"
                                 :style="{ width: yl.total ? (yl.male / yl.total * 100) + '%' : '0%' }"
@@ -457,6 +446,8 @@ import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
 import '@/assets/styles/student-record.css'
 
+// ─── TYPES ───────────────────────────────────────────────────────────────────
+
 interface Student {
   studentId: string
   name: string
@@ -468,8 +459,16 @@ interface Student {
   timeIn: string
 }
 
-const students = ref<Student[]>([])
-const loading = ref(true)
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+/** Registry table — fetched directly from `students` */
+const allStudents = ref<Student[]>([])
+
+/** Attendance logs — fetched from `attendance_logs` (used for gender breakdown) */
+const attendanceLogs = ref<Student[]>([])
+
+const loadingStudents = ref(true)
+const loadingLogs = ref(true)
 const refreshing = ref(false)
 
 const searchQuery = ref('')
@@ -482,26 +481,12 @@ const filters = ref({
   status: 'All'
 })
 
-// DATE FILTER
-const dateOptions = ['today', 'week', 'month', 'all'] as const
-const dateFilter = ref<'today' | 'week' | 'month' | 'all'>('today')
-
 // GENDER DRAWER
 const genderModalOpen = ref(false)
 const expandedColleges = ref<Set<string>>(new Set())
 
-function openGenderModal() {
-  genderModalOpen.value = true
-  expandedColleges.value = new Set()
-}
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
 
-function toggleCollege(name: string) {
-  const next = new Set(expandedColleges.value)
-  next.has(name) ? next.delete(name) : next.add(name)
-  expandedColleges.value = next
-}
-
-// Normalize college
 const COLLEGE_ALIASES: Record<string, string> = {
   SS: 'GS'
 }
@@ -511,12 +496,56 @@ const normalizeCollege = (raw: string | null) => {
   return COLLEGE_ALIASES[upper] ?? upper
 }
 
-// FETCH DATA
-async function fetchData(isRefresh = false) {
+// ─── FETCH: STUDENTS TABLE (Registry) ────────────────────────────────────────
+
+async function fetchStudents() {
+  loadingStudents.value = true
+
+  const pageSize = 1000
+  let from = 0
+  let all: any[] = []
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('students')
+      .select('id_number, first_name, last_name, middle_name, program, college, year_level, gender, is_active')
+      .range(from, from + pageSize - 1)
+
+    if (error) {
+      console.error('fetchStudents error:', error)
+      break
+    }
+
+    if (!data || data.length === 0) break
+
+    all = all.concat(data)
+    if (data.length < pageSize) break
+    from += pageSize
+  }
+
+  allStudents.value = all.map((s: any) => ({
+    studentId: s.id_number ?? '',
+    name: `${s.last_name ?? ''}, ${s.first_name ?? ''} ${s.middle_name ?? ''}`.trim(),
+    program: s.program ?? '',
+    college: normalizeCollege(s.college),
+    status: s.is_active
+      ? (s.year_level === 4 ? 'Graduated' : 'Enrolled')
+      : 'Withdrawn',
+    gender: (s.gender ?? '').toLowerCase(),
+    yearLevel: s.year_level ?? 0,
+    timeIn: ''
+  }))
+
+  loadingStudents.value = false
+}
+
+// ─── FETCH: ATTENDANCE LOGS (Gender Breakdown) ───────────────────────────────
+
+async function fetchAttendanceLogs(isRefresh = false) {
   if (isRefresh) {
     refreshing.value = true
   } else {
-    loading.value = true
+    loadingLogs.value = true
   }
 
   const pageSize = 1000
@@ -545,28 +574,25 @@ async function fetchData(isRefresh = false) {
       .range(from, from + pageSize - 1)
 
     if (error) {
-      console.error(error)
+      console.error('fetchAttendanceLogs error:', error)
       break
     }
 
     if (!data || data.length === 0) break
 
     all = all.concat(data)
-
     if (data.length < pageSize) break
     from += pageSize
   }
 
-  // MAP DATA (NO UNIQUE FILTERING)
-  const mapped: Student[] = all
+  attendanceLogs.value = all
     .filter((row: any) => row.students)
     .map((row: any) => {
       const s = row.students
-
       return {
-        studentId: s.id_number,
-        name: `${s.last_name}, ${s.first_name} ${s.middle_name ?? ''}`,
-        program: s.program,
+        studentId: s.id_number ?? '',
+        name: `${s.last_name ?? ''}, ${s.first_name ?? ''} ${s.middle_name ?? ''}`.trim(),
+        program: s.program ?? '',
         college: normalizeCollege(s.college),
         status: s.is_active
           ? (s.year_level === 4 ? 'Graduated' : 'Enrolled')
@@ -577,46 +603,23 @@ async function fetchData(isRefresh = false) {
       }
     })
 
-  students.value = mapped
-  loading.value = false
+  loadingLogs.value = false
   refreshing.value = false
 }
 
-onMounted(() => fetchData())
+// ─── LIFECYCLE ───────────────────────────────────────────────────────────────
 
-// DATE FILTER
-const filteredByDate = computed(() => {
-  const now = new Date()
-
-  return students.value.filter(s => {
-    const t = new Date(s.timeIn)
-
-    if (dateFilter.value === 'today') {
-      return t.toDateString() === now.toDateString()
-    }
-
-    if (dateFilter.value === 'week') {
-      const start = new Date()
-      start.setDate(now.getDate() - 7)
-      return t >= start
-    }
-
-    if (dateFilter.value === 'month') {
-      return (
-        t.getMonth() === now.getMonth() &&
-        t.getFullYear() === now.getFullYear()
-      )
-    }
-
-    return true
-  })
+onMounted(() => {
+  fetchStudents()        // Registry Database table
+  fetchAttendanceLogs()  // Gender Breakdown drawer
 })
 
-// FILTERED TABLE
+// ─── REGISTRY: FILTERED TABLE ────────────────────────────────────────────────
+
 const filteredStudents = computed(() => {
   const q = searchQuery.value.toLowerCase()
 
-  return filteredByDate.value.filter(s =>
+  return allStudents.value.filter(s =>
     (s.name.toLowerCase().includes(q) ||
       s.studentId.includes(q) ||
       s.program.toLowerCase().includes(q)) &&
@@ -626,18 +629,45 @@ const filteredStudents = computed(() => {
   )
 })
 
-// DROPDOWNS
-const colleges = computed(() => [...new Set(students.value.map(s => s.college))])
-const programs = computed(() => [...new Set(students.value.map(s => s.program))])
+/** Dropdowns sourced from students table */
+const colleges = computed(() => [...new Set(allStudents.value.map(s => s.college))].sort())
+const programs = computed(() => [...new Set(allStudents.value.map(s => s.program))].sort())
 
-// GENDER TOTAL
+// ─── GENDER BREAKDOWN (based on attendance_logs) ─────────────────────────────
+
+/** Date filter for gender breakdown — uses attendance log timeIn */
+const dateFilter = ref<'today' | 'week' | 'month' | 'all'>('all')
+
+const filteredByDate = computed(() => {
+  const now = new Date()
+
+  return attendanceLogs.value.filter(s => {
+    const t = new Date(s.timeIn)
+
+    if (dateFilter.value === 'today') {
+      return t.toDateString() === now.toDateString()
+    }
+    if (dateFilter.value === 'week') {
+      const start = new Date()
+      start.setDate(now.getDate() - 7)
+      return t >= start
+    }
+    if (dateFilter.value === 'month') {
+      return (
+        t.getMonth() === now.getMonth() &&
+        t.getFullYear() === now.getFullYear()
+      )
+    }
+    return true
+  })
+})
+
 const genderStats = computed(() => ({
   total: filteredByDate.value.length,
   female: filteredByDate.value.filter(s => s.gender === 'female').length,
   male: filteredByDate.value.filter(s => s.gender === 'male').length
 }))
 
-// GENDER BY COLLEGE + YEAR LEVEL
 const genderByCollege = computed(() => {
   const map = new Map<
     string,
@@ -682,12 +712,26 @@ const genderByCollege = computed(() => {
     .sort((a, b) => b.total - a.total)
 })
 
-// STATUS STYLE
+// ─── GENDER DRAWER CONTROLS ──────────────────────────────────────────────────
+
+function openGenderModal() {
+  genderModalOpen.value = true
+  expandedColleges.value = new Set()
+}
+
+function toggleCollege(name: string) {
+  const next = new Set(expandedColleges.value)
+  next.has(name) ? next.delete(name) : next.add(name)
+  expandedColleges.value = next
+}
+
+// ─── STATUS STYLE ────────────────────────────────────────────────────────────
+
 const statusStyle = (status: string) => {
-  if (status === 'Enrolled') return 'bg-green-100 -700'
+  if (status === 'Enrolled') return 'bg-green-100 text-green-700'
   if (status === 'Withdrawn') return 'bg-red-100 text-red-600'
   if (status === 'Graduated') return 'bg-blue-100 text-blue-600'
-  return 'bg-gray-100'
+  return 'bg-gray-100 text-gray-500'
 }
 </script>
 
