@@ -25,23 +25,18 @@
       </header>
 
       <div class="attn-actions">
-        <button
-          v-for="tab in actionTabs"
-          :key="tab.label"
-          :class="{ 'action-active': tab.label === 'Settings' }"
-          @click="$router.push(tab.route)"
-        >
+        <button v-for="tab in actionTabs" :key="tab.label" :class="{ 'action-active': tab.label === 'Settings' }"
+          @click="$router.push(tab.route)">
           {{ tab.label }}
+        </button>
+        <button @click="() => { console.log('CLICKED'); genderModalOpen = true }">
+          Gender Breakdown
         </button>
       </div>
 
       <div class="stat-strip">
-        <div
-          v-for="(s, i) in quickStats"
-          :key="s.label"
-          class="qstat"
-          :style="{ animationDelay: 0.25 + i * 0.08 + 's' }"
-        >
+        <div v-for="(s, i) in quickStats" :key="s.label" class="qstat"
+          :style="{ animationDelay: 0.25 + i * 0.08 + 's' }">
           <div class="qstat-icon" v-html="s.icon"></div>
           <div>
             <p class="qstat-val">{{ s.val }}</p>
@@ -62,42 +57,15 @@
 
           <div class="gauge-wrap">
             <svg viewBox="0 0 320 320" class="gauge-svg">
-              <circle
-                cx="160"
-                cy="160"
-                r="120"
-                fill="none"
-                stroke="rgba(13,43,15,0.05)"
-                stroke-width="20"
-              />
+              <circle cx="160" cy="160" r="120" fill="none" stroke="rgba(13,43,15,0.05)" stroke-width="20" />
 
-              <circle
-                cx="160"
-                cy="160"
-                r="120"
-                fill="none"
-                stroke="url(#gaugeGrad)"
-                stroke-width="20"
-                stroke-linecap="round"
-                :stroke-dasharray="754"
-                :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
-                transform="rotate(-90 160 160)"
-                class="gauge-arc"
-              />
+              <circle cx="160" cy="160" r="120" fill="none" stroke="url(#gaugeGrad)" stroke-width="20"
+                stroke-linecap="round" :stroke-dasharray="754" :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
+                transform="rotate(-90 160 160)" class="gauge-arc" />
 
-              <circle
-                cx="160"
-                cy="160"
-                r="120"
-                fill="none"
-                stroke="url(#gaugeGlow)"
-                stroke-width="28"
-                stroke-linecap="round"
-                :stroke-dasharray="754"
-                :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
-                transform="rotate(-90 160 160)"
-                class="gauge-glow"
-              />
+              <circle cx="160" cy="160" r="120" fill="none" stroke="url(#gaugeGlow)" stroke-width="28"
+                stroke-linecap="round" :stroke-dasharray="754" :stroke-dashoffset="754 - (754 * gaugeFillPercent) / 100"
+                transform="rotate(-90 160 160)" class="gauge-glow" />
 
               <defs>
                 <linearGradient id="gaugeGrad">
@@ -119,14 +87,11 @@
 
               <span class="gauge-sublabel">STUDENTS TODAY</span>
 
-              <span
-                class="gauge-status"
-                :class="{
-                  low: gaugeCount <= 10,
-                  mid: gaugeCount > 10 && gaugeCount <= 30,
-                  high: gaugeCount > 30,
-                }"
-              >
+              <span class="gauge-status" :class="{
+                low: gaugeCount <= 10,
+                mid: gaugeCount > 10 && gaugeCount <= 30,
+                high: gaugeCount > 30,
+              }">
                 {{ gaugeStatus }}
               </span>
             </div>
@@ -190,12 +155,8 @@
                     <td colspan="4" class="empty-state-cell">No export history found.</td>
                   </tr>
 
-                  <tr
-                    v-for="(log, i) in exportLogs"
-                    :key="log.id"
-                    class="erow"
-                    :style="{ animationDelay: 0.6 + i * 0.07 + 's' }"
-                  >
+                  <tr v-for="(log, i) in exportLogs" :key="log.id" class="erow"
+                    :style="{ animationDelay: 0.6 + i * 0.07 + 's' }">
                     <td class="erow-date">
                       <span class="erow-date__main">{{ log.date }}</span>
                       <span class="erow-date__time">{{ log.time }}</span>
@@ -222,13 +183,139 @@
         </div>
       </div>
     </div>
+
+    <!-- GENDER MODAL -->
+    <Transition name="fade">
+      <div v-if="genderModalOpen" class="fixed inset-0 z-50">
+
+        <!-- BACKDROP (FULL SCREEN) -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="genderModalOpen = false" />
+
+        <!-- MODAL CONTAINER (CENTERED) -->
+        <div class="relative h-full w-full flex items-center justify-center p-4">
+
+          <!-- MODAL BOX -->
+          <div class="w-full max-w-5xl bg-white rounded-3xl shadow-2xl
+               max-h-[85vh] flex flex-col overflow-hidden">
+
+            <!-- HEADER (fixed top inside modal) -->
+            <div class="flex items-center justify-between p-6 border-b border-[#e6f2ec]">
+              <div>
+                <h2 class="text-xl font-black text-[#0d2b0f]">
+                  Gender Breakdown
+                </h2>
+                <p class="text-xs text-[#4a7060]">
+                  Library Attendance Analytics
+                </p>
+              </div>
+
+              <button @click="genderModalOpen = false"
+                class="w-9 h-9 rounded-full bg-[#f0f4f1] hover:bg-[#e6f2ec] flex items-center justify-center">
+                ✕
+              </button>
+            </div>
+
+            <!-- SCROLLABLE CONTENT -->
+            <div class="p-6 overflow-y-auto flex-1 space-y-8">
+
+              <!-- OVERALL CARD -->
+              <div class="rounded-2xl bg-[#0d2b0f] p-6 text-white">
+                <p class="text-[10px] font-black uppercase tracking-widest text-[#a8ccb8] mb-4">
+                  Overall Total — All Colleges
+                </p>
+
+                <div class="flex items-end gap-3 mb-5">
+                  <span class="text-5xl font-black">{{ genderStats.total }}</span>
+                  <span class="text-sm text-[#a8ccb8] mb-1">students</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-4">
+
+                  <!-- Female -->
+                  <div class="bg-white/10 rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-[#4a7060]/30 flex items-center justify-center">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8ccb8" stroke-width="2">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M12 12v8M9 17h6" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="text-2xl font-black">{{ genderStats.female }}</div>
+                      <div class="text-[10px] text-[#a8ccb8] uppercase">Female</div>
+                    </div>
+                  </div>
+
+                  <!-- Male -->
+                  <div class="bg-white/10 rounded-xl px-4 py-3 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-[#e6a800]/20 flex items-center justify-center">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e6a800" stroke-width="2">
+                        <circle cx="10" cy="14" r="4" />
+                        <path d="M19 5l-5 5M19 5h-4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="text-2xl font-black">{{ genderStats.male }}</div>
+                      <div class="text-[10px] text-[#fde68a] uppercase">Male</div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- BAR -->
+                <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div class="h-full" :style="{
+                    width: genderStats.total
+                      ? (genderStats.female / genderStats.total * 100) + '%'
+                      : '0%',
+                    background: 'linear-gradient(to right, #4a7060, #e6a800)'
+                  }" />
+                </div>
+              </div>
+
+              <!-- BY COLLEGE -->
+              <div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-[#4a7060] mb-4">
+                  By College
+                </p>
+
+                <div class="space-y-3">
+                  <div v-for="college in genderByCollege" :key="college.name"
+                    class="bg-[#f0f4f1] border border-[#d4e4da] rounded-2xl p-4">
+                    <div class="flex justify-between">
+                      <div>
+                        <p class="text-xs font-black text-[#0d2b0f]">
+                          {{ college.name }}
+                        </p>
+                        <p class="text-[10px] text-[#4a7060]">
+                          {{ college.total }} students
+                        </p>
+                      </div>
+
+                      <div class="text-xs font-black">
+                        <span class="text-[#4a7060]">{{ college.female }}</span> /
+                        <span class="text-[#e6a800]">{{ college.male }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </Transition>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { supabase } from '@/lib/supabase'
+
 
 type StudentInfo = {
   id_number: string
@@ -238,6 +325,17 @@ type StudentInfo = {
   program: string | null
   college: string | null
   year_level: number | string | null
+}
+
+type StudentLite = {
+  gender: string | null
+  college: string | null
+  year_level: number | string | null
+}
+
+type AttendanceRow = {
+  student_id: string
+  students: StudentLite[] | null
 }
 
 type AttendanceLog = {
@@ -304,6 +402,33 @@ const actionTabs = [
   { label: "Manage Visitors' Attendance", route: '/admin/attendance/visitors' },
   { label: 'Add/Edit Event', route: '/admin/announcement/event' },
 ]
+
+const genderModalOpen = ref(false)
+const refreshing = ref(false)
+
+watch(genderModalOpen, (val) => {
+  if (val) fetchAttendanceLogs()
+})
+
+const genderStats = ref({
+  total: 0,
+  male: 0,
+  female: 0,
+})
+
+const genderByCollege = ref<any[]>([])
+const expandedColleges = ref(new Set<string>())
+
+const toggleCollege = (name: string) => {
+  if (expandedColleges.value.has(name)) {
+    expandedColleges.value.delete(name)
+  } else {
+    expandedColleges.value.add(name)
+  }
+
+  // force reactivity
+  expandedColleges.value = new Set(expandedColleges.value)
+}
 
 onMounted(async () => {
   setTimeout(() => {
@@ -484,6 +609,97 @@ const fetchLiveCounts = async () => {
   visitorsTodayCount.value = incomingResult.count ?? 0
   currentlyInsideCount.value = activeResult.count ?? 0
   outgoingCount.value = outgoingResult.count ?? 0
+}
+
+
+
+const fetchAttendanceLogs = async () => {
+  refreshing.value = true
+
+  const { start, end } = getPHDateRangeForToday()
+
+  try {
+    const { data, error } = await supabase
+      .from('attendance_logs')
+      .select(`
+        student_id,
+        students (
+          gender,
+          college,
+          year_level
+        )
+      `)
+      .eq('attendance_type', 'library')
+      .gte('time_in', start)
+      .lte('time_in', end)
+
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    let male = 0
+    let female = 0
+
+    const collegeMap: Record<string, any> = {}
+
+    for (const row of (data || []) as any[]) {
+      const student = Array.isArray(row.students)
+        ? row.students[0]
+        : row.students
+
+      if (!student) continue
+
+      const gender = (student.gender || '').toLowerCase()
+      const college = student.college || 'Unknown'
+      const yl = Number(student.year_level) || 0
+
+      if (gender === 'male') male++
+      if (gender === 'female') female++
+
+      if (!collegeMap[college]) {
+        collegeMap[college] = {
+          name: college,
+          male: 0,
+          female: 0,
+          total: 0,
+          yearLevels: {},
+        }
+      }
+
+      const c = collegeMap[college]
+
+      if (gender === 'male') c.male++
+      if (gender === 'female') c.female++
+      c.total++
+
+      if (!c.yearLevels[yl]) {
+        c.yearLevels[yl] = {
+          level: yl,
+          male: 0,
+          female: 0,
+          total: 0,
+        }
+      }
+
+      if (gender === 'male') c.yearLevels[yl].male++
+      if (gender === 'female') c.yearLevels[yl].female++
+      c.yearLevels[yl].total++
+    }
+
+    genderStats.value = {
+      total: male + female,
+      male,
+      female,
+    }
+
+    genderByCollege.value = Object.values(collegeMap).map((c: any) => ({
+      ...c,
+      yearLevels: Object.values(c.yearLevels),
+    }))
+  } finally {
+    refreshing.value = false
+  }
 }
 
 const fetchAttendanceAnalytics = async () => {
@@ -825,82 +1041,100 @@ const handleTabChange = (name: string) => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
+
 @keyframes slideRight {
   from {
     opacity: 0;
     transform: translateX(-16px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
+
 @keyframes scaleIn {
   from {
     opacity: 0;
     transform: scale(0.88);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
+
 @keyframes scaleInBounce {
   from {
     opacity: 0;
     transform: scale(0.7);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
+
 @keyframes arcDraw {
   from {
     stroke-dashoffset: 691.2;
   }
+
   to {
     stroke-dashoffset: 43.9;
   }
 }
+
 @keyframes countUp {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 @keyframes ping {
+
   0%,
   100% {
     transform: scale(1);
     opacity: 0.4;
   }
+
   50% {
     transform: scale(1.8);
     opacity: 0;
   }
 }
+
 @keyframes underlineGrow {
   from {
     transform: scaleX(0);
   }
+
   to {
     transform: scaleX(1);
   }
@@ -921,9 +1155,11 @@ const handleTabChange = (name: string) => {
   padding: 40px 48px 80px 48px;
   box-sizing: border-box;
 }
+
 .page-scroll::-webkit-scrollbar {
   width: 5px;
 }
+
 .page-scroll::-webkit-scrollbar-thumb {
   background: rgba(13, 43, 15, 0.1);
   border-radius: 5px;
@@ -949,6 +1185,7 @@ const handleTabChange = (name: string) => {
   margin-bottom: 8px;
   animation: slideRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
+
 .header-breadcrumb svg {
   width: 12px;
   height: 12px;
@@ -965,16 +1202,20 @@ const handleTabChange = (name: string) => {
   display: inline-block;
   animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
 }
+
 .hero-word-dark {
   color: #0d2b0f;
 }
+
 .hero-word-gold {
   color: #e6a800;
 }
+
 .hero-underlined {
   position: relative;
   display: inline-block;
 }
+
 .hero-underlined::after {
   content: '';
   position: absolute;
@@ -987,6 +1228,7 @@ const handleTabChange = (name: string) => {
   transform-origin: left;
   animation: underlineGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
+
 .hero-subtitle {
   font-size: 0.88rem;
   font-weight: 400;
@@ -1022,7 +1264,7 @@ const handleTabChange = (name: string) => {
 .attn-actions button.action-active {
   background: #0d2b0f;
   color: #ffffff;
-  border: 1.5px solid #0d2b0f; 
+  border: 1.5px solid #0d2b0f;
 }
 
 .stat-strip {
@@ -1031,6 +1273,7 @@ const handleTabChange = (name: string) => {
   gap: 12px;
   margin-bottom: 28px;
 }
+
 .qstat {
   background: white;
   border: 1px solid rgba(13, 43, 15, 0.07);
@@ -1045,10 +1288,12 @@ const handleTabChange = (name: string) => {
     transform 0.2s,
     box-shadow 0.2s;
 }
+
 .qstat:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(13, 43, 15, 0.09);
 }
+
 .qstat-icon {
   width: 40px;
   height: 40px;
@@ -1060,6 +1305,7 @@ const handleTabChange = (name: string) => {
   justify-content: center;
   flex-shrink: 0;
 }
+
 .qstat-val {
   font-size: 1.4rem;
   font-weight: 700;
@@ -1068,6 +1314,7 @@ const handleTabChange = (name: string) => {
   line-height: 1;
   margin: 0 0 2px;
 }
+
 .qstat-label {
   font-size: 0.58rem;
   font-weight: 600;
@@ -1076,6 +1323,7 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.1em;
   margin: 0;
 }
+
 .qstat-badge {
   margin-left: auto;
   flex-shrink: 0;
@@ -1084,10 +1332,12 @@ const handleTabChange = (name: string) => {
   padding: 3px 8px;
   border-radius: 7px;
 }
+
 .qstat-badge--up {
   background: rgba(27, 94, 32, 0.08);
   color: #1b5e20;
 }
+
 .qstat-badge--dn {
   background: rgba(198, 40, 40, 0.07);
   color: #c62828;
@@ -1109,12 +1359,14 @@ const handleTabChange = (name: string) => {
   box-shadow: 0 4px 24px rgba(13, 43, 15, 0.06);
   animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
+
 .dial-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
 }
+
 .section-eyebrow {
   font-size: 0.6rem;
   font-weight: 700;
@@ -1122,6 +1374,7 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.18em;
   color: rgba(13, 43, 15, 0.35);
 }
+
 .live-chip {
   display: flex;
   align-items: center;
@@ -1136,6 +1389,7 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.18em;
   animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
 }
+
 .live-dot {
   width: 5px;
   height: 5px;
@@ -1152,15 +1406,18 @@ const handleTabChange = (name: string) => {
   align-items: center;
   justify-content: center;
 }
+
 .gauge-svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
+
 .gauge-arc {
   animation: arcDraw 1.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
 }
+
 .gauge-center {
   position: relative;
   z-index: 10;
@@ -1170,11 +1427,13 @@ const handleTabChange = (name: string) => {
   align-items: center;
   gap: 2px;
 }
+
 .gauge-num {
   display: flex;
   align-items: flex-start;
   line-height: 1;
 }
+
 .gauge-pct {
   font-family: 'Poppins', sans-serif;
   font-size: 6rem;
@@ -1184,6 +1443,7 @@ const handleTabChange = (name: string) => {
   line-height: 1;
   animation: countUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
 }
+
 .gauge-sublabel {
   font-size: 0.5rem;
   font-weight: 700;
@@ -1192,6 +1452,7 @@ const handleTabChange = (name: string) => {
   text-transform: uppercase;
   animation: fadeIn 0.4s ease 1.4s both;
 }
+
 .gauge-status {
   margin-top: 6px;
   font-size: 0.62rem;
@@ -1201,14 +1462,17 @@ const handleTabChange = (name: string) => {
   padding: 6px 12px;
   border-radius: 999px;
 }
+
 .gauge-status.low {
   background: rgba(249, 168, 37, 0.14);
   color: #9a6500;
 }
+
 .gauge-status.mid {
   background: rgba(13, 43, 15, 0.1);
   color: #0d2b0f;
 }
+
 .gauge-status.high {
   background: rgba(46, 125, 50, 0.12);
   color: #2e7d32;
@@ -1223,15 +1487,18 @@ const handleTabChange = (name: string) => {
   margin-top: 12px;
   animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both;
 }
+
 .flow-col {
   flex: 1;
 }
+
 .flow-divider {
   width: 1px;
   background: rgba(13, 43, 15, 0.08);
   margin: 0 20px;
   align-self: stretch;
 }
+
 .flow-bar-wrap {
   height: 3px;
   background: rgba(13, 43, 15, 0.07);
@@ -1239,23 +1506,28 @@ const handleTabChange = (name: string) => {
   overflow: hidden;
   margin-bottom: 8px;
 }
+
 .flow-bar {
   height: 100%;
   border-radius: 2px;
   width: 0;
   transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .flow-bar--in {
   background: #f9a825;
 }
+
 .flow-bar--out {
   background: rgba(13, 43, 15, 0.2);
 }
+
 .flow-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 .flow-label {
   font-size: 0.55rem;
   font-weight: 700;
@@ -1263,6 +1535,7 @@ const handleTabChange = (name: string) => {
   letter-spacing: 0.16em;
   color: rgba(13, 43, 15, 0.35);
 }
+
 .flow-num {
   font-family: 'Poppins', sans-serif;
   font-size: 1.4rem;
@@ -1270,9 +1543,11 @@ const handleTabChange = (name: string) => {
   letter-spacing: -0.03em;
   color: rgba(13, 43, 15, 0.3);
 }
+
 .flow-num--in {
   color: #0d2b0f;
 }
+
 .flow-num--out {
   color: rgba(13, 43, 15, 0.3);
 }
@@ -1282,6 +1557,7 @@ const handleTabChange = (name: string) => {
   flex-direction: column;
   gap: 16px;
 }
+
 .ctrl-header {
   display: flex;
   align-items: flex-start;
@@ -1289,6 +1565,7 @@ const handleTabChange = (name: string) => {
   gap: 16px;
   animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
+
 .ctrl-eyebrow {
   font-size: 0.58rem;
   font-weight: 700;
@@ -1297,6 +1574,7 @@ const handleTabChange = (name: string) => {
   color: #c8930a;
   margin: 0 0 4px;
 }
+
 .ctrl-title {
   font-family: 'Poppins', sans-serif;
   font-size: clamp(1.6rem, 2.2vw, 2rem);
@@ -1306,10 +1584,12 @@ const handleTabChange = (name: string) => {
   line-height: 0.95;
   margin: 0 0 4px;
 }
+
 .ctrl-title em {
   font-style: italic;
   color: #f9a825;
 }
+
 .ctrl-sub {
   font-size: 0.72rem;
   color: rgba(13, 43, 15, 0.4);
@@ -1339,12 +1619,15 @@ const handleTabChange = (name: string) => {
   overflow: hidden;
   transition: all 0.2s;
 }
+
 .sync-btn--1 {
   animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
 }
+
 .sync-btn--2 {
   animation: scaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.62s both;
 }
+
 .sync-btn::after {
   content: '';
   position: absolute;
@@ -1353,11 +1636,13 @@ const handleTabChange = (name: string) => {
   transform: translateX(-100%);
   transition: transform 0.7s;
 }
+
 .sync-btn:hover {
   background: #1b5e20;
   transform: translateY(-2px);
   box-shadow: 0 10px 28px rgba(13, 43, 15, 0.25);
 }
+
 .sync-btn:hover::after {
   transform: translateX(100%);
 }
@@ -1442,9 +1727,11 @@ const handleTabChange = (name: string) => {
   flex-direction: column;
   gap: 2px;
 }
+
 .erow-date__main {
   font-weight: 700;
 }
+
 .erow-date__time {
   font-size: 0.72rem;
   color: rgba(13, 43, 15, 0.45);
@@ -1455,6 +1742,7 @@ const handleTabChange = (name: string) => {
   align-items: center;
   gap: 10px;
 }
+
 .erow-avatar {
   width: 32px;
   height: 32px;
@@ -1483,14 +1771,17 @@ const handleTabChange = (name: string) => {
   background: rgba(46, 125, 50, 0.1);
   color: #2e7d32;
 }
+
 .etype-badge--xlsx {
   background: rgba(13, 43, 15, 0.1);
   color: #0d2b0f;
 }
+
 .etype-badge--pdf {
   background: rgba(198, 40, 40, 0.1);
   color: #c62828;
 }
+
 .etype-badge--file {
   background: rgba(13, 43, 15, 0.08);
   color: #0d2b0f;
@@ -1507,6 +1798,7 @@ const handleTabChange = (name: string) => {
   background: rgba(46, 125, 50, 0.1);
   color: #2e7d32;
 }
+
 .estatus--success .estatus-dot {
   background: #2e7d32;
 }
@@ -1515,6 +1807,7 @@ const handleTabChange = (name: string) => {
   background: rgba(249, 168, 37, 0.14);
   color: #9a6500;
 }
+
 .estatus--pending .estatus-dot {
   background: #f9a825;
 }
@@ -1523,6 +1816,7 @@ const handleTabChange = (name: string) => {
   background: rgba(198, 40, 40, 0.1);
   color: #c62828;
 }
+
 .estatus--failed .estatus-dot {
   background: #c62828;
 }
