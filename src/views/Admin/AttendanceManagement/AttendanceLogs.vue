@@ -24,9 +24,34 @@ type AttendanceLog = {
   students?: Student | Student[] | null
 }
 
+type StudentFilterRow = {
+  program?: string | null
+  college?: string | null
+  year_level?: string | number | null
+}
+
+type ProgramOption = {
+  program_code?: string | null
+  program_name?: string | null
+  is_active?: boolean | null
+}
+
+type CollegeOption = {
+  code?: string | null
+  name?: string | null
+  level?: string | null
+}
+
+type AttendanceFilters = ReturnType<typeof buildFilters>
+
 const logs = ref<AttendanceLog[]>([])
+const studentFilterRows = ref<StudentFilterRow[]>([])
+const programsMasterList = ref<ProgramOption[]>([])
+const collegesMasterList = ref<CollegeOption[]>([])
+
 const totalRecords = ref(0)
 const loading = ref(false)
+const filterOptionsLoading = ref(false)
 const exporting = ref(false)
 const errorMessage = ref("")
 
@@ -40,6 +65,45 @@ const selectedDate = ref("")
 
 const currentPage = ref(1)
 const itemsPerPage = 10
+
+const normalizeText = (value: unknown) => {
+  return String(value ?? "").trim()
+}
+
+const normalizeCode = (value: unknown) => {
+  return normalizeText(value).toUpperCase().replace(/\s+/g, "")
+}
+
+const isGraduateStudiesValue = (value: unknown) => {
+  const text = normalizeCode(value)
+
+  return (
+    text === "GS" ||
+    text === "SS" ||
+    text.includes("GRADUATE") ||
+    text.includes("MASTER") ||
+    text.includes("DOCTOR") ||
+    text.startsWith("MS") ||
+    text.startsWith("MA") ||
+    text.startsWith("PHD") ||
+    text.startsWith("MSC") ||
+    text.startsWith("MSCED") ||
+    text.startsWith("SPCLSTUD")
+  )
+}
+
+const isUndergraduateYearLevel = (value: unknown) => {
+  const year = normalizeText(value)
+  return ["1", "2", "3", "4"].includes(year)
+}
+
+const normalizeStudent = (student: Student | Student[] | null | undefined): Student => {
+  if (Array.isArray(student)) {
+    return student[0] || {}
+  }
+
+  return student || {}
+}
 
 const buildFilters = () => {
   return {
@@ -56,6 +120,97 @@ const buildFilters = () => {
           ? "checked_out"
           : "",
   } as const
+}
+
+const getEmptyFilters = (): AttendanceFilters => {
+  return {
+    search: "",
+    program: "",
+    college: "",
+    yearLevel: "",
+    attendanceType: "",
+    date: "",
+    status: "",
+  } as const
+}
+
+const getUniqueSortedValues = (values: unknown[]) => {
+  return [...new Set(values.map(normalizeText).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
+  )
+}
+
+const fetchStudentsForFilterOptions = async () => {
+  const pageSize = 1000
+  let from = 0
+  let allRows: StudentFilterRow[] = []
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("students")
+      .select("program, college, year_level")
+      .range(from, from + pageSize - 1)
+
+    if (error) {
+      throw error
+    }
+
+    const rows = data || []
+    allRows = [...allRows, ...rows]
+
+    if (rows.length < pageSize) {
+      break
+    }
+
+    from += pageSize
+  }
+
+  studentFilterRows.value = allRows
+}
+
+const fetchMasterFilterTables = async () => {
+  const [programResult, collegeResult] = await Promise.allSettled([
+    supabase
+      .from("programs")
+      .select("program_code, program_name, is_active")
+      .order("program_code", { ascending: true }),
+
+    supabase
+      .from("colleges")
+      .select("code, name, level")
+      .order("code", { ascending: true }),
+  ])
+
+  if (programResult.status === "fulfilled") {
+    if (programResult.value.error) {
+      console.error("Failed to fetch programs:", programResult.value.error)
+    } else {
+      programsMasterList.value = programResult.value.data || []
+    }
+  }
+
+  if (collegeResult.status === "fulfilled") {
+    if (collegeResult.value.error) {
+      console.error("Failed to fetch colleges:", collegeResult.value.error)
+    } else {
+      collegesMasterList.value = collegeResult.value.data || []
+    }
+  }
+}
+
+const fetchFilterOptions = async () => {
+  filterOptionsLoading.value = true
+
+  try {
+    await Promise.all([
+      fetchStudentsForFilterOptions(),
+      fetchMasterFilterTables(),
+    ])
+  } catch (error) {
+    console.error("Failed to fetch filter options:", error)
+  } finally {
+    filterOptionsLoading.value = false
+  }
 }
 
 const fetchAttendanceLogs = async () => {
@@ -84,17 +239,10 @@ const fetchAttendanceLogs = async () => {
   }
 }
 
-onMounted(() => {
-  fetchAttendanceLogs()
+onMounted(async () => {
+  await fetchFilterOptions()
+  await fetchAttendanceLogs()
 })
-
-const normalizeStudent = (student: Student | Student[] | null | undefined): Student => {
-  if (Array.isArray(student)) {
-    return student[0] || {}
-  }
-
-  return student || {}
-}
 
 const formatDateTime = (value: string | null) => {
   if (!value) return "--"
@@ -110,27 +258,45 @@ const formatDateTime = (value: string | null) => {
 }
 
 const uniquePrograms = computed(() => {
-  const values = logs.value
-    .map((log) => normalizeStudent(log.students).program)
-    .filter(Boolean) as string[]
+  const fromProgramsTable = programsMasterList.value
+    .filter((program) => program.is_active !== false)
+    .filter((program) => !isGraduateStudiesValue(program.program_code))
+    .filter((program) => !isGraduateStudiesValue(program.program_name))
+    .map((program) => program.program_code)
 
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b))
+  const fromStudents = studentFilterRows.value
+    .filter((student) => isUndergraduateYearLevel(student.year_level))
+    .filter((student) => !isGraduateStudiesValue(student.program))
+    .filter((student) => !isGraduateStudiesValue(student.college))
+    .map((student) => student.program)
+
+  return getUniqueSortedValues([...fromProgramsTable, ...fromStudents])
 })
 
 const uniqueColleges = computed(() => {
-  const values = logs.value
-    .map((log) => normalizeStudent(log.students).college)
-    .filter(Boolean) as string[]
+  const allowedCollegeCodes = collegesMasterList.value
+    .filter((college) => !isGraduateStudiesValue(college.code))
+    .filter((college) => !isGraduateStudiesValue(college.name))
+    .map((college) => normalizeCode(college.code))
 
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b))
+  const fromCollegesTable = collegesMasterList.value
+    .filter((college) => !isGraduateStudiesValue(college.code))
+    .filter((college) => !isGraduateStudiesValue(college.name))
+    .map((college) => college.code)
+
+  const fromStudents = studentFilterRows.value
+    .filter((student) => isUndergraduateYearLevel(student.year_level))
+    .map((student) => student.college)
+    .filter((college) => {
+      const code = normalizeCode(college)
+      return allowedCollegeCodes.includes(code)
+    })
+
+  return getUniqueSortedValues([...fromCollegesTable, ...fromStudents])
 })
 
 const uniqueYearLevels = computed(() => {
-  const values = logs.value
-    .map((log) => normalizeStudent(log.students).year_level)
-    .filter((v) => v !== null && v !== undefined && v !== "") as (string | number)[]
-
-  return [...new Set(values.map(String))].sort((a, b) => Number(a) - Number(b))
+  return ["1", "2", "3", "4"]
 })
 
 const uniqueAttendanceTypes = computed(() => {
@@ -138,7 +304,9 @@ const uniqueAttendanceTypes = computed(() => {
     .map((log) => log.attendance_type)
     .filter(Boolean) as string[]
 
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b))
+  const fallbackTypes = ["library", "event", "visitors"]
+
+  return getUniqueSortedValues([...values, ...fallbackTypes])
 })
 
 const hasActiveFilters = computed(() => {
@@ -151,6 +319,27 @@ const hasActiveFilters = computed(() => {
     !!selectedStatus.value ||
     !!selectedDate.value
   )
+})
+
+const emptyMessage = computed(() => {
+  if (
+    selectedProgram.value ||
+    selectedCollege.value ||
+    selectedYearLevel.value ||
+    selectedDate.value
+  ) {
+    return "No attendance record found for the selected filter."
+  }
+
+  return "No attendance records found."
+})
+
+const emptyHint = computed(() => {
+  if (selectedProgram.value || selectedCollege.value || selectedYearLevel.value) {
+    return "This program, college, or year level exists in the masterlist, but it has no attendance record for the selected date/filter."
+  }
+
+  return "Try changing your search or filter selection."
 })
 
 const paginatedLogs = computed(() => {
@@ -235,16 +424,41 @@ const saveExportHistory = async (fileName: string, fileType: string, rowCount: n
   }
 }
 
+const getAllAttendanceLogsForExport = async () => {
+  const pageSize = 1000
+  let page = 1
+  let allLogs: AttendanceLog[] = []
+
+  const exportFilters: AttendanceFilters = hasActiveFilters.value
+    ? buildFilters()
+    : getEmptyFilters()
+
+  while (true) {
+    const result = await getAttendanceLogs({
+      filters: exportFilters,
+      page,
+      pageSize,
+    })
+
+    const rows = result.data || []
+    allLogs = [...allLogs, ...rows]
+
+    if (rows.length < pageSize) {
+      break
+    }
+
+    page++
+  }
+
+  return allLogs
+}
+
 const exportToCSV = async () => {
   exporting.value = true
   errorMessage.value = ""
 
   try {
-    const exportResult = await getAttendanceLogs({
-      filters: buildFilters(),
-    })
-
-    const exportLogs = exportResult.data || []
+    const exportLogs = await getAllAttendanceLogsForExport()
 
     const headers = [
       "ID Number",
@@ -282,7 +496,13 @@ const exportToCSV = async () => {
       )
       .join("\n")
 
-    const fileName = `attendance-logs-${new Date().toISOString().slice(0, 10)}.csv`
+    const fileDate = selectedDate.value || new Date().toISOString().slice(0, 10)
+
+    const fileName = selectedDate.value
+      ? `attendance-logs-${selectedDate.value}.csv`
+      : hasActiveFilters.value
+        ? `attendance-logs-filtered-${fileDate}.csv`
+        : `attendance-logs-all-${fileDate}.csv`
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
